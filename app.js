@@ -875,11 +875,11 @@ mm.add({
             // première qui n'est pas encore tout à fait arrivée.
             if (derniere) {
                 const reste = Math.max(0, pageMax - scrollTop);
-                // Le départ n'est amorcé qu'une fois le bas de la case entré dans
-                // l'écran : on a le temps de lire et de cliquer avant qu'elle bouge.
+                // Le départ n'est amorcé qu'une fois le bas de la case passé sous
+                // l'écran d'une vingtaine de pixels : la case a fini d'être
+                // parcourue, puis les blocs du bas arrivent pendant l'animation.
                 const basFinEcran = basDocument - pageMax;
-                const entree = Math.max(0, vh - basFinEcran);
-                const course = Math.max(120, Math.min(vh * 0.45, entree));
+                const course = Math.max(160, vh - basFinEcran + 20);
                 const depart = Math.max(0, Math.min(1, 1 - reste / course));
                 distance = -Math.max(shaped, lastExit * depart);
             }
