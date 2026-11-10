@@ -2835,3 +2835,9 @@ body.hovering .cursor-spiral {
 .portfolio-lightbox.zoom-actif.zoomed .lightbox-content-box img {
     cursor: zoom-out;
 }
+
+/* Pendant le glissement d'une photo à l'autre, la transition CSS du zoom
+   doit se taire : c'est GSAP qui anime la transformation. */
+.portfolio-lightbox.glisse .lightbox-content-box img {
+    transition: none;
+}

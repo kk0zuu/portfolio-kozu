@@ -448,11 +448,12 @@ mm.add({
     // point survolé, sans déplacer la page derrière.
     const zoomAutorise = !!document.querySelector('.pr-card, .pe-section');
     let zoom = 1;
+    let animation = null;   // glissement en cours entre deux photos
 
     function reinitialiserZoom() {
         zoom = 1;
         if (imgEl) {
-            imgEl.style.transform = '';
+            if (!animation) imgEl.style.transform = '';
             imgEl.style.transformOrigin = '';
         }
         lightbox.classList.remove('zoomed');
@@ -501,8 +502,7 @@ mm.add({
         return gallery;
     }
 
-    function show(index) {
-        if (!gallery.length) return;
+    function remplir(index) {
         current = (index + gallery.length) % gallery.length;
         const photo = gallery[current];
         if (imgEl) {
@@ -517,10 +517,45 @@ mm.add({
         reinitialiserZoom();
     }
 
+    // Changement de photo : l'ancienne sort du côté opposé à la flèche utilisée,
+    // la nouvelle arrive du côté de cette flèche.
+    function show(index, direction) {
+        if (!gallery.length) return;
+
+        const cible = (index + gallery.length) % gallery.length;
+        const sens = direction || 1;
+        const course = 70;
+
+        if (!isOpen() || cible === current || typeof gsap === 'undefined') {
+            remplir(cible);
+            return;
+        }
+
+        if (animation) animation.kill();
+        animation = null;
+
+        reinitialiserZoom();
+        lightbox.classList.add('glisse');
+
+        animation = gsap.timeline({
+            onComplete: () => {
+                animation = null;
+                lightbox.classList.remove('glisse');
+            }
+        })
+            .to(imgEl, { x: -sens * course, opacity: 0, scale: 1, duration: 0.16, ease: 'power2.in' })
+            .add(() => remplir(cible))
+            .fromTo(imgEl,
+                { x: sens * course, opacity: 0, scale: 1 },
+                { x: 0, opacity: 1, scale: 1, duration: 0.3, ease: 'power2.out' }
+            );
+    }
+
     function openWith(img) {
         collectGallery();
         const index = gallery.findIndex(photo => photo.el === img);
-        show(index === -1 ? 0 : index);
+        if (typeof gsap !== 'undefined' && imgEl) gsap.set(imgEl, { clearProps: 'transform,opacity' });
+        show(index === -1 ? 0 : index, 1);
         lightbox.classList.add('active');
         document.body.style.overflow = 'hidden';
     }
@@ -539,8 +574,8 @@ mm.add({
     }
 
     if (closeBtn) closeBtn.addEventListener('click', (e) => { e.stopPropagation(); closeLightbox(); });
-    if (prevBtn) prevBtn.addEventListener('click', (e) => { e.stopPropagation(); show(current - 1); });
-    if (nextBtn) nextBtn.addEventListener('click', (e) => { e.stopPropagation(); show(current + 1); });
+    if (prevBtn) prevBtn.addEventListener('click', (e) => { e.stopPropagation(); show(current - 1, -1); });
+    if (nextBtn) nextBtn.addEventListener('click', (e) => { e.stopPropagation(); show(current + 1, 1); });
 
     lightbox.addEventListener('click', (e) => {
         if (e.target === lightbox) closeLightbox();
@@ -549,8 +584,8 @@ mm.add({
     document.addEventListener('keydown', (e) => {
         if (!isOpen()) return;
         if (e.key === 'Escape') closeLightbox();
-        else if (e.key === 'ArrowLeft') { e.preventDefault(); show(current - 1); }
-        else if (e.key === 'ArrowRight') { e.preventDefault(); show(current + 1); }
+        else if (e.key === 'ArrowLeft') { e.preventDefault(); show(current - 1, -1); }
+        else if (e.key === 'ArrowRight') { e.preventDefault(); show(current + 1, 1); }
     });
 
     document.addEventListener('click', (e) => {
