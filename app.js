@@ -443,6 +443,46 @@ mm.add({
     let gallery = [];
     let current = -1;
 
+    // --- Zoom à la molette dans la visionneuse (pages photo) ---
+    // La molette au-dessus de la photo agrandit ou réduit l'image autour du
+    // point survolé, sans déplacer la page derrière.
+    const zoomAutorise = !!document.querySelector('.pr-card, .pe-section');
+    let zoom = 1;
+
+    function reinitialiserZoom() {
+        zoom = 1;
+        if (imgEl) {
+            imgEl.style.transform = '';
+            imgEl.style.transformOrigin = '';
+        }
+        lightbox.classList.remove('zoomed');
+    }
+
+    if (zoomAutorise && imgEl) {
+        lightbox.classList.add('zoom-actif');
+
+        imgEl.addEventListener('wheel', (e) => {
+            if (!isOpen()) return;
+            const rect = imgEl.getBoundingClientRect();
+            if (!rect.width || !rect.height) return;
+
+            e.preventDefault();
+
+            // Repère du curseur dans l'image : la mise à l'échelle part de là,
+            // le point survolé reste donc sous le curseur.
+            const x = ((e.clientX - rect.left) / rect.width) * 100;
+            const y = ((e.clientY - rect.top) / rect.height) * 100;
+            const facteur = e.deltaY < 0 ? 1.12 : 1 / 1.12;
+            zoom = Math.min(4, Math.max(1, zoom * facteur));
+
+            if (zoom === 1) { reinitialiserZoom(); return; }
+
+            imgEl.style.transformOrigin = x.toFixed(2) + '% ' + y.toFixed(2) + '%';
+            imgEl.style.transform = 'scale(' + zoom.toFixed(3) + ')';
+            lightbox.classList.add('zoomed');
+        }, { passive: false });
+    }
+
     // Toutes les photos cliquables de la page, dans l'ordre du document
     function collectGallery() {
         const seen = new Set();
@@ -474,6 +514,7 @@ mm.add({
         const multiple = gallery.length > 1;
         if (prevBtn) prevBtn.hidden = !multiple;
         if (nextBtn) nextBtn.hidden = !multiple;
+        reinitialiserZoom();
     }
 
     function openWith(img) {
@@ -490,6 +531,7 @@ mm.add({
         if (imgEl) imgEl.src = '';
         if (captionEl) captionEl.textContent = '';
         if (counterEl) counterEl.textContent = '';
+        reinitialiserZoom();
     }
 
     function isOpen() {

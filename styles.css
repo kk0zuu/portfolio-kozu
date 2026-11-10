@@ -2821,3 +2821,17 @@ body.hovering .cursor-spiral {
 .pe .editorial-img-frame:hover img {
     transform: scale(1.03);
 }
+
+/* ==================================================== */
+/* VISIONNEUSE — ZOOM À LA MOLETTE (PAGES PHOTO)        */
+/* ==================================================== */
+
+.portfolio-lightbox.zoom-actif .lightbox-content-box img {
+    cursor: zoom-in;
+    transition: transform 0.18s ease;
+    will-change: transform;
+}
+
+.portfolio-lightbox.zoom-actif.zoomed .lightbox-content-box img {
+    cursor: zoom-out;
+}
