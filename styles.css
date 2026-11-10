@@ -2813,11 +2813,11 @@ body.hovering .cursor-spiral {
 
 .pr-card .editorial-img-frame img,
 .pe .editorial-img-frame img {
-    transition: filter 0.35s ease, opacity 0.35s ease;
+    transition: transform 0.45s ease;
+    transform-origin: center center;
 }
 
 .pr-card .editorial-img-frame:hover img,
 .pe .editorial-img-frame:hover img {
-    filter: brightness(1.06) saturate(1.06);
-    opacity: 0.96;
+    transform: scale(1.03);
 }
