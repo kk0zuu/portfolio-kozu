@@ -2160,9 +2160,9 @@ body.hovering .cursor-spiral {
     }
 
 /* ==================================================== */
-/* PHOTOGRAPHIE (PRO & EXPRESSIVE) — PLANCHES EN BULLES  */
-/* Même charte que les cases projets : carte blanche,    */
-/* pastille, méta, citation magenta, description lisible */
+/* PHOTOGRAPHIE (PRO & EXPRESSIVE) — PLANCHES EN CARTES  */
+/* Images à leur ratio d'origine, angles droits,         */
+/* textes placés comme sur la référence                  */
 /* ==================================================== */
 
 .pr-ref {
@@ -2172,7 +2172,6 @@ body.hovering .cursor-spiral {
     padding: 0 clamp(0.4rem, 1.2vw, 1.2rem);
 }
 
-/* La carte reprend la bulle projet, en plus large pour les planches photo */
 .pr-card {
     max-width: 1440px;
     width: calc(100% - 2rem);
@@ -2180,43 +2179,47 @@ body.hovering .cursor-spiral {
     padding: clamp(1.3rem, 3vw, 3rem);
 }
 
-.pr-card .bubble-top-bar {
-    margin-bottom: clamp(1rem, 1.8vw, 1.8rem);
-}
+/* --- Titres et textes --- */
 
 .pr-card .bubble-main-title {
     font-size: clamp(1.5rem, 2.6vw, 2.5rem);
     letter-spacing: -0.4px;
-    margin-bottom: 0.6rem;
+    margin: 0 0 clamp(0.8rem, 1.4vw, 1.4rem) 0;
 }
 
-.pr-card .bubble-quote {
-    margin-bottom: 0.9rem;
+.pr-title--right {
+    text-align: right;
 }
 
-.pr-card .bubble-description {
-    margin-bottom: clamp(1.3rem, 2.4vw, 2.4rem);
-    font-size: clamp(0.98rem, 1.1vw, 1.08rem);
+.pr-text,
+.pr-tagline {
+    font-family: var(--font-body);
+    font-size: clamp(0.98rem, 1.08vw, 1.08rem);
+    line-height: 1.7;
+    color: #3d3d3d;
+    margin: 0;
 }
 
-/* Images : cartes arrondies, comme les visuels des projets */
-.pr-card .editorial-img-frame {
-    border-radius: 20px;
-    border: 1px solid rgba(0, 0, 0, 0.08);
-    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.04);
-    background: #F5F5F5;
-    transition: transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1),
-                box-shadow 0.35s ease,
-                border-color 0.35s ease;
+.pr-text p {
+    margin: 0;
 }
 
-.pr-card .editorial-img-frame:hover {
-    transform: scale(1.01);
-    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.1);
-    border-color: var(--color-magenta);
+.pr-text p + p {
+    margin-top: 0.75em;
 }
 
-/* --- Légendes et listes --- */
+.pr-tagline {
+    font-weight: 500;
+    color: #333333;
+}
+
+.pr-subtitle {
+    font-family: var(--font-body);
+    font-size: clamp(1.02rem, 1.15vw, 1.15rem);
+    font-weight: 700;
+    color: #111111;
+    margin: 0 0 0.5rem 0;
+}
 
 .pr-caption {
     font-family: var(--font-body);
@@ -2236,12 +2239,12 @@ body.hovering .cursor-spiral {
 
 .pr-list {
     font-family: var(--font-body);
-    font-size: clamp(0.95rem, 1.05vw, 1.02rem);
+    font-size: clamp(0.95rem, 1.05vw, 1.05rem);
     line-height: 1.7;
     color: #3d3d3d;
     list-style: none;
     padding: 0;
-    margin: 0;
+    margin: 0.3rem 0 0 0;
 }
 
 .pr-list li::before {
@@ -2250,12 +2253,62 @@ body.hovering .cursor-spiral {
     font-weight: 700;
 }
 
+/* --- Images : ratio d'origine, aucun rognage, angles droits --- */
+
+.pr-card .editorial-img-frame {
+    border-radius: 0;
+    border: 0;
+    box-shadow: none;
+    background: transparent;
+}
+
+.pr-card .editorial-img-frame img {
+    width: 100%;
+    height: auto;
+    object-fit: contain;
+    display: block;
+}
+
+.pr-card .editorial-img-frame:hover {
+    transform: none;
+    box-shadow: none;
+    border-color: transparent;
+}
+
 /* --- Grilles Studio & Pro --- */
+
+.pr-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: clamp(1rem, 3vw, 3rem);
+    margin-bottom: clamp(0.6rem, 1.2vw, 1.2rem);
+}
+
+.pr-head .pr-tagline {
+    padding-bottom: 0.35rem;
+    text-align: right;
+}
+
+.pr-head--spread {
+    grid-column: 1 / -1;
+}
+
+.pr-head--spread .pr-text {
+    max-width: 58%;
+}
+
+.pr-head--spread .bubble-main-title {
+    text-align: right;
+    flex-shrink: 0;
+    margin-bottom: 0;
+}
 
 .pr-pair {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: var(--pr-gap);
+    align-items: start;
 }
 
 .pr-archi {
@@ -2263,6 +2316,10 @@ body.hovering .cursor-spiral {
     grid-template-columns: 1.39fr 1fr;
     gap: var(--pr-gap);
     align-items: start;
+}
+
+.pr-archi__text {
+    margin-top: clamp(1rem, 1.6vw, 1.6rem);
 }
 
 .pr-couple {
@@ -2279,6 +2336,14 @@ body.hovering .cursor-spiral {
     align-items: end;
 }
 
+.pr-studio__mid {
+    align-self: stretch;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: clamp(1rem, 3vw, 3rem);
+}
+
 .pr-studio > .pr-frame--mid {
     width: 76%;
     justify-self: center;
@@ -2289,6 +2354,19 @@ body.hovering .cursor-spiral {
     grid-template-columns: 1fr 0.85fr 1.63fr;
     gap: var(--pr-gap);
     align-items: end;
+}
+
+.pr-packshot__mid {
+    display: flex;
+    flex-direction: column;
+}
+
+.pr-packshot__mid .pr-subtitle {
+    margin-bottom: clamp(0.8rem, 2.5vw, 3rem);
+}
+
+.pr-packshot__text {
+    margin-top: clamp(1rem, 1.6vw, 1.6rem);
 }
 
 .pr-portrait {
@@ -2304,6 +2382,10 @@ body.hovering .cursor-spiral {
     gap: var(--pr-gap);
 }
 
+.pr-portrait__text {
+    margin-top: clamp(0.8rem, 1.4vw, 1.3rem);
+}
+
 .pr-sepia {
     display: grid;
     grid-template-columns: 1.27fr 1fr;
@@ -2311,26 +2393,13 @@ body.hovering .cursor-spiral {
     align-items: end;
 }
 
-/* Ratios relevés sur la référence */
-.pr-r-archi-main { aspect-ratio: 825 / 590; }
-.pr-r-archi-pair { aspect-ratio: 305 / 455; }
-.pr-r-couple-left { aspect-ratio: 440 / 620; }
-.pr-r-couple-right { aspect-ratio: 985 / 620; }
-.pr-r-studio-left { aspect-ratio: 495 / 705; }
-.pr-r-studio-mid { aspect-ratio: 350 / 345; }
-.pr-r-studio-right { aspect-ratio: 415 / 600; }
-.pr-r-pack-left { aspect-ratio: 365 / 710; }
-.pr-r-pack-mid { aspect-ratio: 310 / 545; }
-.pr-r-pack-right { aspect-ratio: 595 / 410; }
-.pr-r-portrait-wide { aspect-ratio: 600 / 280; }
-.pr-r-portrait-mid { aspect-ratio: 390 / 575; }
-.pr-r-portrait-right { aspect-ratio: 400 / 540; }
-.pr-r-sepia-portrait { aspect-ratio: 350 / 525; }
-.pr-r-sepia-land { aspect-ratio: 530 / 355; }
-
-/* Ratios réels des fichiers expressifs */
-.pr-r-portrait { aspect-ratio: 2 / 3; }
-.pr-r-landscape { aspect-ratio: 3 / 2; }
+.pr-sepia__right {
+    align-self: stretch;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: clamp(1rem, 2.5vw, 2.5rem);
+}
 
 /* --- Grilles Photo Expressive --- */
 
@@ -2340,16 +2409,11 @@ body.hovering .cursor-spiral {
     align-items: end;
 }
 
-.pr-exp--2 { grid-template-columns: repeat(2, 1fr); align-items: center; }
+.pr-exp--2 { grid-template-columns: repeat(2, 1fr); align-items: start; }
 .pr-exp--3 { grid-template-columns: repeat(3, 1fr); }
 .pr-exp--4 { grid-template-columns: repeat(4, 1fr); }
-.pr-exp--archi { grid-template-columns: 1fr 1fr 1.5fr; }
+.pr-exp--archi { grid-template-columns: 1fr 1fr 1.5fr; align-items: start; }
 .pr-exp--montagne { grid-template-columns: 1.55fr 1fr; }
-
-.pr-exp__spread {
-    justify-content: space-between;
-    height: 100%;
-}
 
 /* --- Vidéo --- */
 
@@ -2359,7 +2423,6 @@ body.hovering .cursor-spiral {
     aspect-ratio: 16 / 9;
     object-fit: cover;
     background: #000000;
-    border-radius: 20px;
 }
 
 .pr-video-note {
@@ -2368,7 +2431,7 @@ body.hovering .cursor-spiral {
     font-weight: 700;
     letter-spacing: 0.08em;
     text-transform: uppercase;
-    color: #9a9a9a;
+    color: #9A9A9A;
     text-align: center;
     margin: 0.8rem 0 0 0;
 }
@@ -2381,9 +2444,9 @@ body.hovering .cursor-spiral {
     align-items: center;
     flex-wrap: wrap;
     gap: 1rem;
-    margin-top: clamp(1.6rem, 2.6vw, 2.6rem);
+    margin-top: clamp(1.8rem, 3vw, 3rem);
     padding-top: 1.2rem;
-    border-top: 1px solid rgba(0, 0, 0, 0.06);
+    border-top: 1px solid rgba(0, 0, 0, 0.08);
     font-family: var(--font-body);
     font-size: clamp(0.85rem, 0.95vw, 0.95rem);
     font-weight: 500;
@@ -2420,6 +2483,22 @@ body.hovering .cursor-spiral {
 
     .pr-studio > .pr-frame--mid {
         width: 100%;
+    }
+
+    .pr-head {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.6rem;
+    }
+
+    .pr-head .pr-tagline,
+    .pr-head--spread .bubble-main-title,
+    .pr-title--right {
+        text-align: left;
+    }
+
+    .pr-head--spread .pr-text {
+        max-width: 100%;
     }
 
     .pr-caption--center {
