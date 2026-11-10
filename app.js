@@ -630,6 +630,49 @@ mm.add({
         }
     }
 })();
+// --- HERO ÉPINGLÉ (PAGES PHOTOGRAPHIE) ---
+// Le titre de la page reste en place et les cases défilent par-dessus lui.
+(function initPinnedHero() {
+    const hero = document.querySelector('.domain-hero-section');
+    const content = hero && hero.nextElementSibling;
+    if (!hero || !content || !content.classList.contains('domain-content')) return;
+
+    const root = document.documentElement;
+
+    function appliquer() {
+        // Sur mobile le hero est trop haut pour rester fixe : comportement normal.
+        if (window.innerWidth < 901) {
+            root.classList.remove('hero-pinned');
+            root.style.removeProperty('--hero-top');
+            root.style.removeProperty('--hero-offset');
+            if (typeof ScrollTrigger !== 'undefined') ScrollTrigger.refresh();
+            return;
+        }
+
+        // On mesure avant d'épingler, sinon position et hauteur lues sont celles
+        // de l'élément déjà sorti du flux.
+        root.classList.remove('hero-pinned');
+
+        const rect = hero.getBoundingClientRect();
+        const top = rect.top + (window.pageYOffset || 0);
+
+        root.style.setProperty('--hero-top', top + 'px');
+        root.style.setProperty('--hero-offset', rect.height + 'px');
+        root.classList.add('hero-pinned');
+
+        if (typeof ScrollTrigger !== 'undefined') ScrollTrigger.refresh();
+    }
+
+    appliquer();
+
+    let minuteur = null;
+    window.addEventListener('resize', () => {
+        clearTimeout(minuteur);
+        minuteur = setTimeout(appliquer, 150);
+    });
+    window.addEventListener('load', appliquer);
+})();
+
 // --- CARROUSEL 3D VERTICAL "TAMBOUR" (PAGES PHOTOGRAPHIE) ---
 // Les cartes (et non les photos) pivotent sur l'axe X selon la position de leur
 // portion visible par rapport au centre du viewport : plates au centre, inclinées
