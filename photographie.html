@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ian – Photographie : Choisissez votre univers</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Bebas+Neue&family=Bungee&family=Cinzel:wght@900&family=Playfair+Display:ital,wght@1,900&family=Schoolbell&family=Space+Grotesk:wght@500;700&family=Special+Elite&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body style="background-color: #0d0d0f; color: #ffffff; min-height: 100vh; overflow-x: hidden;">
+    <!-- Top Bar Navigation avec Bulle Liquid Glass -->
+    <nav class="top-bar" style="background: rgba(20, 20, 25, 0.4); border-color: rgba(255, 255, 255, 0.15);">
+        <div class="logo"><a href="index.html" style="color: #ffffff;">Ian Bossut‑Gandou</a></div>
+        <div class="nav-links">
+            <a href="numerique.html" style="color: #ffffff;">Numérique</a>
+            <a href="photographie.html" style="color: #ffffff;" class="active">Photographie</a>
+            <a href="plastique.html" style="color: #ffffff;">Projets plastiques</a>
+        </div>
+        <div class="nav-bubble"></div>
+    </nav>
+
+    <!-- Curseur personnalisé avec spirale au hover -->
+    <div class="custom-cursor">
+        <div class="cursor-dot"></div>
+        <svg class="cursor-spiral" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg">
+            <path d="M 30,30 A 3.5 3.5 0 0 1 30 37 A 7 7 0 0 1 30 23 A 10.5 10.5 0 0 1 30 44 A 14 14 0 0 1 30 16 A 17.5 17.5 0 0 1 30 51 A 21 21 0 0 1 30 9" fill="none" stroke="white" stroke-width="3.2" stroke-linecap="round"/>
+        </svg>
+    </div>
+
+    <!-- Écran de sélection plein écran style Team Select (Fortnite / Jeu Vidéo) -->
+    <main class="photo-split-screen">
+
+        <!-- En-tête textuel immersif -->
+        <header class="photo-split-header">
+            <h1 class="blur-reveal">La photographie est un domaine vaste</h1>
+            <p class="fade-in">Sélectionnez la facette que vous souhaitez explorer // Vous pouvez changer à tout moment</p>
+        </header>
+
+        <!-- Pastille centrale "OU" / "VS" -->
+        <div class="split-center-versus">
+            <span>OU</span>
+        </div>
+
+        <!-- CÔTÉ GAUCHE : PHOTO PRO & STUDIO (Magenta Theme) -->
+        <a href="photo-pro.html" class="photo-split-side side-pro" aria-label="Explorer Photographie Studio et Pro">
+            <div class="photo-split-bg"></div>
+            <div class="photo-split-content">
+                <span class="split-side-badge">Axe 01 • Rigueur & Composition</span>
+                <h2 class="split-side-title">Studio & Pro</h2>
+                <p class="split-side-desc">
+                    Clichés maîtrisés, architecture précise, shootings packshot produit et portraits lifestyle. La mise en lumière travaillée et la rigueur du cadrage.
+                </p>
+                <div class="split-side-cta">
+                    <span>Entrer dans le Studio</span>
+                    <span>→</span>
+                </div>
+            </div>
+        </a>
+
+        <!-- CÔTÉ DROID : PHOTO EXPRESSIVE (Green Theme) -->
+        <a href="photo-expressive.html" class="photo-split-side side-exp" aria-label="Explorer Photographie Expressive">
+            <div class="photo-split-bg"></div>
+            <div class="photo-split-content">
+                <span class="split-side-badge">Axe 02 • Spontanéité & Matière</span>
+                <h2 class="split-side-title">Expressive</h2>
+                <p class="split-side-desc">
+                    Instantanés urbains, reflets de métro, déambulations nocturnes, nature montagnarde brute et poésie des ombres.
+                </p>
+                <div class="split-side-cta">
+                    <span>Explorer l'Expressif</span>
+                    <span>→</span>
+                </div>
+            </div>
+        </a>
+
+    </main>
+
+    <!-- Footer minimaliste -->
+    <footer style="text-align: center; padding: 2rem 1.5rem; font-family: var(--font-body); color: #777; background: #0d0d0f; border-top: 1px solid rgba(255, 255, 255, 0.08);">
+        <p style="margin: 0;">© 2026 Ian Bossut‑Gandou – Photographie & Arts Visuels.</p>
+    </footer>
+
+    <!-- GSAP & App Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/MotionPathPlugin.min.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
