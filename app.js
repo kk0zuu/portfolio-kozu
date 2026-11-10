@@ -612,7 +612,9 @@ mm.add({
         return {
             tilt: mobile ? 14 : 30,          // rotateX des cartes éloignées
             depth: mobile ? -90 : -200,      // translateZ
-            shrink: mobile ? 0.92 : 0.85,    // scale
+            shrink: mobile ? 0.92 : 0.85,    // scale global
+            squash: mobile ? 0.14 : 0.22,    // écrasement vertical (effet dock)
+            spread: mobile ? 0.03 : 0.06,    // léger étirement horizontal
             haze: mobile ? 0.65 : 0.5,       // opacité
             blur: mobile ? 2 : 5,            // flou de profondeur
             perspective: mobile ? 900 : 1200,
@@ -644,10 +646,15 @@ mm.add({
 
     function apply(entry, distance) {
         const dist = Math.min(1, Math.abs(distance));
+        const base = 1 - (1 - p.shrink) * dist;
+
+        // Déformation « fenêtre macOS » : la carte s'aplatit verticalement et
+        // s'élargit très légèrement en partant vers le bord, comme aspirée.
         entry.set({
             rotateX: p.tilt * distance,
             z: p.depth * dist,
-            scale: 1 - (1 - p.shrink) * dist,
+            scaleX: base * (1 + p.spread * dist),
+            scaleY: base * (1 - p.squash * dist),
             opacity: 1 - (1 - p.haze) * dist,
             filter: 'blur(' + (p.blur * dist).toFixed(2) + 'px)'
         });
