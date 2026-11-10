@@ -411,17 +411,20 @@ mm.add({
     }
 });
 
-// --- LIGHTBOX INTERACTIVE POUR TOUTES LES BULLES D'IMAGES ---
+// --- VISIONNEUSE PHOTO : LIGHTBOX AVEC NAVIGATION ---
 (function initLightbox() {
     let lightbox = document.querySelector('.portfolio-lightbox');
     if (!lightbox) {
         lightbox = document.createElement('div');
         lightbox.className = 'portfolio-lightbox';
         lightbox.innerHTML = `
+            <button class="lightbox-nav lightbox-prev" aria-label="Photo précédente">‹</button>
+            <button class="lightbox-nav lightbox-next" aria-label="Photo suivante">›</button>
             <div class="lightbox-content-box">
                 <button class="lightbox-close-btn" aria-label="Fermer">✕</button>
                 <img src="" alt="Vue agrandie">
                 <p class="lightbox-caption"></p>
+                <p class="lightbox-counter"></p>
             </div>
         `;
         document.body.appendChild(lightbox);
@@ -429,40 +432,99 @@ mm.add({
 
     const imgEl = lightbox.querySelector('img');
     const captionEl = lightbox.querySelector('.lightbox-caption');
+    const counterEl = lightbox.querySelector('.lightbox-counter');
     const closeBtn = lightbox.querySelector('.lightbox-close-btn');
+    const prevBtn = lightbox.querySelector('.lightbox-prev');
+    const nextBtn = lightbox.querySelector('.lightbox-next');
+
+    let gallery = [];
+    let current = -1;
+
+    // Toutes les photos cliquables de la page, dans l'ordre du document
+    function collectGallery() {
+        const seen = new Set();
+        gallery = [];
+        document.querySelectorAll('.bubble-img-card, .lightbox-trigger, .editorial-img-frame').forEach(card => {
+            const img = card.tagName === 'IMG' ? card : card.querySelector('img');
+            if (!img || !img.src) return;
+            if (seen.has(img.src)) return;
+            seen.add(img.src);
+            const caption = (card.querySelector && card.querySelector('.img-caption') && card.querySelector('.img-caption').textContent.trim())
+                || img.getAttribute('data-caption')
+                || img.alt
+                || '';
+            gallery.push({ el: img, src: img.src, alt: img.alt, caption: caption });
+        });
+        return gallery;
+    }
+
+    function show(index) {
+        if (!gallery.length) return;
+        current = (index + gallery.length) % gallery.length;
+        const photo = gallery[current];
+        if (imgEl) {
+            imgEl.src = photo.src;
+            imgEl.alt = photo.alt || 'Vue agrandie';
+        }
+        if (captionEl) captionEl.textContent = photo.caption;
+        if (counterEl) counterEl.textContent = (current + 1) + ' / ' + gallery.length;
+        const multiple = gallery.length > 1;
+        if (prevBtn) prevBtn.hidden = !multiple;
+        if (nextBtn) nextBtn.hidden = !multiple;
+    }
+
+    function openWith(img) {
+        collectGallery();
+        const index = gallery.findIndex(photo => photo.el === img);
+        show(index === -1 ? 0 : index);
+        lightbox.classList.add('active');
+        document.body.style.overflow = 'hidden';
+    }
 
     function closeLightbox() {
         lightbox.classList.remove('active');
+        document.body.style.overflow = '';
         if (imgEl) imgEl.src = '';
         if (captionEl) captionEl.textContent = '';
+        if (counterEl) counterEl.textContent = '';
     }
 
-    if (closeBtn) closeBtn.addEventListener('click', closeLightbox);
+    function isOpen() {
+        return lightbox.classList.contains('active');
+    }
+
+    if (closeBtn) closeBtn.addEventListener('click', (e) => { e.stopPropagation(); closeLightbox(); });
+    if (prevBtn) prevBtn.addEventListener('click', (e) => { e.stopPropagation(); show(current - 1); });
+    if (nextBtn) nextBtn.addEventListener('click', (e) => { e.stopPropagation(); show(current + 1); });
+
     lightbox.addEventListener('click', (e) => {
         if (e.target === lightbox) closeLightbox();
     });
 
     document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape' && lightbox.classList.contains('active')) {
-            closeLightbox();
-        }
+        if (!isOpen()) return;
+        if (e.key === 'Escape') closeLightbox();
+        else if (e.key === 'ArrowLeft') { e.preventDefault(); show(current - 1); }
+        else if (e.key === 'ArrowRight') { e.preventDefault(); show(current + 1); }
     });
 
     document.addEventListener('click', (e) => {
         const card = e.target.closest('.bubble-img-card, .lightbox-trigger, .editorial-img-frame');
-        if (card) {
-            const img = card.querySelector('img') || (card.tagName === 'IMG' ? card : null);
-            if (img && img.src) {
-                const caption = card.querySelector('.img-caption')?.textContent || img.getAttribute('data-caption') || img.alt || '';
-                if (imgEl) {
-                    imgEl.src = img.src;
-                    imgEl.alt = img.alt || 'Zoom';
-                }
-                if (captionEl) captionEl.textContent = caption;
-                lightbox.classList.add('active');
-            }
-        }
+        if (!card || lightbox.contains(card)) return;
+        const img = card.tagName === 'IMG' ? card : card.querySelector('img');
+        if (img && img.src) openWith(img);
     });
+
+    // Préchauffe les images voisines pour une navigation instantanée
+    function preloadNeighbours() {
+        if (!gallery.length) return;
+        [current + 1, current - 1].forEach(i => {
+            const photo = gallery[(i + gallery.length) % gallery.length];
+            if (photo) { const pre = new Image(); pre.src = photo.src; }
+        });
+    }
+    if (prevBtn) prevBtn.addEventListener('mouseenter', preloadNeighbours);
+    if (nextBtn) nextBtn.addEventListener('mouseenter', preloadNeighbours);
 })();
 
 // --- ANIMATIONS D'APPARITION : BLUR TO FOCUS, FADE-IN & STAGGER ---

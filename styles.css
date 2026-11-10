@@ -2437,3 +2437,63 @@ body.hovering .cursor-spiral {
         gap: 0.7rem;
     }
 }
+
+/* --- Visionneuse : flèches de navigation et compteur --- */
+
+.lightbox-nav {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 56px;
+    height: 56px;
+    padding: 0 0 4px 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    background: rgba(255, 255, 255, 0.08);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    color: #FFFFFF;
+    font-size: 2.3rem;
+    line-height: 1;
+    cursor: pointer;
+    z-index: 3;
+    transition: background 0.25s ease, border-color 0.25s ease, transform 0.25s ease;
+}
+
+.lightbox-nav:hover {
+    background: var(--color-magenta);
+    border-color: var(--color-magenta);
+    transform: translateY(-50%) scale(1.06);
+}
+
+.lightbox-nav[hidden] {
+    display: none;
+}
+
+.lightbox-prev {
+    left: clamp(0.75rem, 3vw, 3rem);
+}
+
+.lightbox-next {
+    right: clamp(0.75rem, 3vw, 3rem);
+}
+
+.lightbox-counter {
+    color: #9A9A9A;
+    font-family: var(--font-body);
+    font-size: 0.78rem;
+    font-weight: 500;
+    letter-spacing: 0.16em;
+    margin: 0.35rem 0 0 0;
+}
+
+@media (max-width: 600px) {
+    .lightbox-nav {
+        width: 44px;
+        height: 44px;
+        font-size: 1.8rem;
+    }
+}
