@@ -695,12 +695,13 @@ mm.add({
             haze: mobile ? 0.65 : 0.5,       // opacité
             blur: mobile ? 2 : 5,            // flou de profondeur
             perspective: mobile ? 900 : 1200,
-            dead: 0.3,                       // zone centrale nette : plus petit = transition plus étalée
-            lastMax: 0.28                    // effet maximum de la dernière carte (garde un bout net)
+            dead: 0.3                        // zone centrale nette : plus petit = transition plus étalée
         };
     }
 
     let p = params();
+    let pageMax = 0;
+    let lastExit = 0.5;   // mi-départ de la dernière carte, calibré sur sa hauteur
 
     const entries = items.map((el) => {
         gsap.set(el, { transformPerspective: p.perspective, transformOrigin: '50% 50%' });
@@ -719,17 +720,19 @@ mm.add({
             entry.layoutHeight = rect.height;
         });
 
+        pageMax = Math.max(0, document.documentElement.scrollHeight - window.innerHeight);
+
+        calibrerDerniere();
         render();
     }
 
-    function apply(entry, distance) {
+    // Effet « fenêtre macOS » : la carte se pince vers le bord par lequel elle
+    // sort (origine de transformation déplacée vers ce bord), s'écrase
+    // verticalement et se resserre en largeur, sans jamais pencher.
+    function etatEffet(distance) {
         const dist = Math.min(1, Math.abs(distance));
         const base = 1 - (1 - p.shrink) * dist;
-
-        // Effet « fenêtre macOS » : la carte se pince vers le bord par lequel
-        // elle sort (origine de transformation déplacée vers ce bord), s'écrase
-        // verticalement et se resserre en largeur, sans jamais pencher.
-        entry.set({
+        return {
             transformOrigin: '50% ' + (50 + 50 * distance).toFixed(1) + '%',
             rotateX: p.tilt * distance,
             z: p.depth * dist,
@@ -737,7 +740,41 @@ mm.add({
             scaleY: base * (1 - p.squash * dist),
             opacity: 1 - (1 - p.haze) * dist,
             filter: 'blur(' + (p.blur * dist).toFixed(2) + 'px)'
-        });
+        };
+    }
+
+    function apply(entry, distance) {
+        entry.set(etatEffet(distance));
+    }
+
+    // La dernière carte est bien plus haute sur une page que sur l'autre : à
+    // intensité égale, elle sortirait de l'écran d'un côté et resterait entière
+    // de l'autre. On cherche donc le mi-départ le plus franc qui lui laisse
+    // encore un quart d'écran visible une fois la page arrivée en bas.
+    function calibrerDerniere() {
+        const entry = entries[entries.length - 1];
+        if (!entry || !entry.layoutHeight) return;
+
+        const vh = window.innerHeight;
+        const topFin = entry.layoutTop - pageMax;
+        const basFin = topFin + entry.layoutHeight;
+        const cible = vh * 0.25;
+
+        gsap.set(entry.el, { transformPerspective: p.perspective, transformOrigin: '50% 50%', rotateX: 0, z: 0, scaleX: 1, scaleY: 1 });
+        const neutre = entry.el.getBoundingClientRect();
+
+        let choisi = 0.15;
+        for (let test = 0.15; test <= 0.5501; test += 0.05) {
+            gsap.set(entry.el, etatEffet(-test));
+            const r = entry.el.getBoundingClientRect();
+            const decalageHaut = r.top - neutre.top;
+            const decalageBas = r.bottom - neutre.bottom;
+            const visible = Math.min(basFin + decalageBas, vh) - Math.max(topFin + decalageHaut, 0);
+            if (visible >= cible) choisi = test;
+        }
+
+        gsap.set(entry.el, etatEffet(0));
+        lastExit = choisi;
     }
 
     function render() {
@@ -750,12 +787,10 @@ mm.add({
             const top = entry.layoutTop - scrollTop;
             const bottom = top + entry.layoutHeight;
 
-            // La dernière carte ne s'efface pas complètement : son effet est
-            // plafonné pour qu'il en reste un bout net, comme la première.
-            const cap = i === entries.length - 1 ? p.lastMax : 1;
+            const derniere = i === entries.length - 1;
 
-            if (top > vh) { apply(entry, cap); continue; }        // pas encore entrée
-            if (bottom < 0) { apply(entry, -cap); continue; }     // déjà sortie en haut
+            if (top > vh) { apply(entry, derniere ? lastExit : 1); continue; }
+            if (bottom < 0) { apply(entry, derniere ? -lastExit : -1); continue; }
 
             // Centre de la portion réellement visible de la carte
             const visibleTop = Math.max(top, 0);
@@ -769,7 +804,18 @@ mm.add({
             // le centre de l'écran, puis l'effet monte progressivement.
             const shaped = abs <= p.dead ? 0 : Math.min(1, (abs - p.dead) / (1 - p.dead));
 
-            apply(entry, (raw < 0 ? -shaped : shaped) * cap);
+            let distance = raw < 0 ? -shaped : shaped;
+
+            // La dernière carte amorce son départ sur la fin du défilement et s'y
+            // arrête à mi-chemin : elle reste visible en haut de l'écran, comme la
+            // première qui n'est pas encore tout à fait arrivée.
+            if (derniere) {
+                const reste = Math.max(0, pageMax - scrollTop);
+                const depart = Math.max(0, 1 - reste / (vh * 0.45));
+                distance = -Math.max(shaped, lastExit * depart);
+            }
+
+            apply(entry, distance);
         }
     }
 
