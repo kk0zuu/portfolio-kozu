@@ -575,7 +575,8 @@ mm.add({
     });
 
     // 3. Éléments à l'intérieur des bulles et planches (Images en Stagger 0.1s + translation vers le haut)
-    document.querySelectorAll('.project-bubble, .editorial-board').forEach(container => {
+    //    Les cases photo (.pr-card) sont traitées plus bas, photo par photo.
+    document.querySelectorAll('.project-bubble:not(.pr-card), .editorial-board').forEach(container => {
         const items = container.querySelectorAll('.bubble-img-card, .editorial-img-frame');
         if (items.length > 0) {
             gsap.fromTo(items,
@@ -594,6 +595,31 @@ mm.add({
                 }
             );
         }
+    });
+    // 4. Pages photo : chaque photo apparaît dès qu'elle franchit le bas de
+    //    l'écran. Déclencher sur la case entière, très haute, faisait apparaître
+    //    les photos des cases suivantes bien trop tard.
+    document.querySelectorAll('.pr-card, .pe-section').forEach(container => {
+        const items = container.querySelectorAll('.editorial-img-frame');
+        if (!items.length) return;
+
+        gsap.utils.toArray(items).forEach((item, index) => {
+            gsap.fromTo(item,
+                { opacity: 0, y: 22 },
+                {
+                    opacity: 1,
+                    y: 0,
+                    duration: 0.7,
+                    ease: 'power2.out',
+                    delay: Math.min(index, 8) * 0.06,
+                    scrollTrigger: {
+                        trigger: item,
+                        start: 'top bottom-=10',
+                        toggleActions: 'play none none none'
+                    }
+                }
+            );
+        });
     });
 })();
 // --- CARROUSEL 3D VERTICAL "TAMBOUR" (PAGES PHOTOGRAPHIE) ---
