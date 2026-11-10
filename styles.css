@@ -2532,6 +2532,60 @@ body.hovering .cursor-spiral {
     }
 }
 
+/* ---------- Planches Photo Expressive : mêmes règles de base ---------- */
+
+.pr-exp {
+    display: grid;
+    gap: var(--pr-gap);
+    align-items: end;
+}
+
+.pr-exp--2 { grid-template-columns: repeat(2, 1fr); align-items: center; }
+.pr-exp--3 { grid-template-columns: repeat(3, 1fr); }
+.pr-exp--4 { grid-template-columns: repeat(4, 1fr); }
+
+.pr-exp--archi { grid-template-columns: 1fr 1fr 1.5fr; }
+
+.pr-exp--montagne {
+    grid-template-columns: 1.55fr 1fr;
+}
+
+.pr-exp__stack--spread {
+    justify-content: space-between;
+}
+
+.pr-exp__stack {
+    display: flex;
+    flex-direction: column;
+    gap: var(--pr-gap);
+}
+
+.pr-exp__stack .pr-title {
+    margin-bottom: clamp(0.5rem, 1vw, 1rem);
+}
+
+/* Ratios réels des fichiers : portraits 2/3, paysages 3/2 */
+.pr-r-portrait { aspect-ratio: 2 / 3; }
+.pr-r-landscape { aspect-ratio: 3 / 2; }
+
+@media (max-width: 900px) {
+    .pr-exp--2,
+    .pr-exp--3,
+    .pr-exp--4,
+    .pr-exp--archi,
+    .pr-exp--montagne {
+        grid-template-columns: 1fr;
+    }
+
+    .pr-exp--montagne {
+        align-items: start;
+    }
+
+    .pr-exp {
+        align-items: start;
+    }
+}
+
 
 
 
