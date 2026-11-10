@@ -2806,3 +2806,18 @@ body.hovering .cursor-spiral {
 .hero-pinned .next-domain-flow {
     margin: 0;
 }
+
+/* ==================================================== */
+/* PAGES PHOTO — SURVOL LÉGER DES PHOTOS                */
+/* ==================================================== */
+
+.pr-card .editorial-img-frame img,
+.pe .editorial-img-frame img {
+    transition: filter 0.35s ease, opacity 0.35s ease;
+}
+
+.pr-card .editorial-img-frame:hover img,
+.pe .editorial-img-frame:hover img {
+    filter: brightness(1.06) saturate(1.06);
+    opacity: 0.96;
+}
