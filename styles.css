@@ -2588,7 +2588,14 @@ body.hovering .cursor-spiral {
 }
 
 .pe-section {
-    margin: clamp(3rem, 5.5vw, 5.5rem) 0;
+    max-width: 1440px;
+    width: calc(100% - 2rem);
+    margin: clamp(1.4rem, 2.6vw, 2.6rem) auto;
+    padding: clamp(1.3rem, 3vw, 3rem);
+    background: #FFFFFF;
+    border-radius: 32px;
+    border: 1px solid rgba(0, 0, 0, 0.07);
+    box-shadow: 0 16px 45px rgba(0, 0, 0, 0.06), 0 2px 8px rgba(0, 0, 0, 0.02);
 }
 
 .pe-title {
