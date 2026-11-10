@@ -653,7 +653,7 @@ mm.add({
             haze: mobile ? 0.65 : 0.5,       // opacité
             blur: mobile ? 2 : 5,            // flou de profondeur
             perspective: mobile ? 900 : 1200,
-            dead: mobile ? 0.4 : 0.5         // zone centrale nette (0 = centre, 1 = bord)
+            dead: 0.3                        // zone centrale nette : plus petit = transition plus étalée
         };
     }
 
