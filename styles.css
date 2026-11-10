@@ -2762,3 +2762,12 @@ body.hovering .cursor-spiral {
 .photo-social a:hover {
     color: var(--color-neon-pink);
 }
+
+/* ==================================================== */
+/* CASE PORTRAIT — blocs empilés (portrait, vidéo, sépia) */
+/* ==================================================== */
+
+.pr-card .pr-video,
+.pr-card .pr-sepia {
+    margin-top: clamp(1.6rem, 3vw, 3rem);
+}
