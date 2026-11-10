@@ -267,13 +267,16 @@ if (ransomWrappers.length > 0 && heroSection) {
 
 
 // --- 3. SCROLLTRIGGER : CHANGEMENT DE FOND (BLANC -> VERT PÂLE) ---
-ScrollTrigger.create({
-    trigger: ".domain-selection",
-    start: "top 75%",
-    end: "bottom center",
-    onEnter: () => gsap.to("body", { backgroundColor: "var(--color-bg-end)", duration: 0.8 }),
-    onLeaveBack: () => gsap.to("body", { backgroundColor: "var(--color-bg-start)", duration: 0.8 })
-});
+// Uniquement sur les pages qui ont la section de choix des domaines.
+if (document.querySelector('.domain-selection')) {
+    ScrollTrigger.create({
+        trigger: ".domain-selection",
+        start: "top 75%",
+        end: "bottom center",
+        onEnter: () => gsap.to("body", { backgroundColor: "var(--color-bg-end)", duration: 0.8 }),
+        onLeaveBack: () => gsap.to("body", { backgroundColor: "var(--color-bg-start)", duration: 0.8 })
+    });
+}
 
 
 // --- 4. SCROLLTRIGGER : SPIRALE DES BULLES (DESCENDUES SOUS LE TITRE) ---
