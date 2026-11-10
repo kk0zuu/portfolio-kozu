@@ -2793,3 +2793,16 @@ body.hovering .cursor-spiral {
         background-color: var(--color-bg-end);
     }
 }
+
+/* ==================================================== */
+/* PAGES PHOTO — FIN DE PAGE RESSERRÉE                  */
+/* Laisse un bout de la dernière case visible           */
+/* ==================================================== */
+
+.hero-pinned .photo-social {
+    margin: 1.25rem auto;
+}
+
+.hero-pinned .next-domain-flow {
+    margin: 0;
+}

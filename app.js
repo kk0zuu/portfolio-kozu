@@ -695,7 +695,8 @@ mm.add({
             haze: mobile ? 0.65 : 0.5,       // opacité
             blur: mobile ? 2 : 5,            // flou de profondeur
             perspective: mobile ? 900 : 1200,
-            dead: 0.3                        // zone centrale nette : plus petit = transition plus étalée
+            dead: 0.3,                       // zone centrale nette : plus petit = transition plus étalée
+            lastMax: 0.28                    // effet maximum de la dernière carte (garde un bout net)
         };
     }
 
@@ -749,8 +750,12 @@ mm.add({
             const top = entry.layoutTop - scrollTop;
             const bottom = top + entry.layoutHeight;
 
-            if (top > vh) { apply(entry, 1); continue; }        // pas encore entrée
-            if (bottom < 0) { apply(entry, -1); continue; }     // déjà sortie en haut
+            // La dernière carte ne s'efface pas complètement : son effet est
+            // plafonné pour qu'il en reste un bout net, comme la première.
+            const cap = i === entries.length - 1 ? p.lastMax : 1;
+
+            if (top > vh) { apply(entry, cap); continue; }        // pas encore entrée
+            if (bottom < 0) { apply(entry, -cap); continue; }     // déjà sortie en haut
 
             // Centre de la portion réellement visible de la carte
             const visibleTop = Math.max(top, 0);
@@ -764,7 +769,7 @@ mm.add({
             // le centre de l'écran, puis l'effet monte progressivement.
             const shaped = abs <= p.dead ? 0 : Math.min(1, (abs - p.dead) / (1 - p.dead));
 
-            apply(entry, raw < 0 ? -shaped : shaped);
+            apply(entry, (raw < 0 ? -shaped : shaped) * cap);
         }
     }
 
