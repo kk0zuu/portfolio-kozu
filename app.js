@@ -609,22 +609,33 @@ mm.add({
         });
 
         if ('IntersectionObserver' in window) {
-            const observer = new IntersectionObserver((entries) => {
-                entries.forEach((entry) => {
-                    if (!entry.isIntersecting) return;
-                    const el = entry.target;
-                    observer.unobserve(el);
-                    gsap.to(el, {
-                        opacity: 1,
-                        y: 0,
-                        duration: 0.7,
-                        ease: 'power2.out',
-                        delay: parseFloat(el.dataset.revealDelay) || 0
+            // Les cases Expressive sont plus basses dans le viewport : leurs photos
+            // n'apparaissaient qu'une fois déjà bien installées à l'écran. On les
+            // déclenche donc avant même qu'elles ne franchissent le bord bas.
+            const creerObservateur = (marge) => {
+                const observateur = new IntersectionObserver((entries) => {
+                    entries.forEach((entry) => {
+                        if (!entry.isIntersecting) return;
+                        const el = entry.target;
+                        observateur.unobserve(el);
+                        gsap.to(el, {
+                            opacity: 1,
+                            y: 0,
+                            duration: 0.7,
+                            ease: 'power2.out',
+                            delay: parseFloat(el.dataset.revealDelay) || 0
+                        });
                     });
-                });
-            }, { rootMargin: '0px 0px -8% 0px', threshold: 0.01 });
+                }, { rootMargin: marge, threshold: 0.01 });
+                return observateur;
+            };
 
-            photos.forEach((el) => observer.observe(el));
+            const tot = creerObservateur('0px 0px 14% 0px');    // cases Expressive : plus tôt
+            const tard = creerObservateur('0px 0px -8% 0px');   // cases Studio & Pro
+
+            photos.forEach((el) => {
+                (el.closest('.pe-section') ? tot : tard).observe(el);
+            });
         } else {
             gsap.set(photos, { opacity: 1, y: 0 });
         }
