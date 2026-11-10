@@ -712,7 +712,9 @@ mm.add({
 
     let p = params();
     let pageMax = 0;
-    let lastExit = 0.5;   // mi-départ de la dernière carte, calibré sur sa hauteur
+    let lastExit = 0.5;      // mi-départ de la dernière carte, calibré sur sa hauteur
+    let basDocument = 0;     // bas de la dernière case en coordonnées du document
+    let dernierCalculPage = 0;
 
     const entries = items.map((el) => {
         gsap.set(el, { transformPerspective: p.perspective, transformOrigin: '50% 50%' });
@@ -769,6 +771,7 @@ mm.add({
         const vh = window.innerHeight;
         const topFin = entry.layoutTop - pageMax;
         const basFin = topFin + entry.layoutHeight;
+        basDocument = entry.layoutTop + entry.layoutHeight;
         const cible = vh * 0.25;
 
         gsap.set(entry.el, { transformPerspective: p.perspective, transformOrigin: '50% 50%', rotateX: 0, z: 0, scaleX: 1, scaleY: 1 });
@@ -792,6 +795,14 @@ mm.add({
         const vh = window.innerHeight;
         const middle = vh / 2;
         const scrollTop = window.pageYOffset || document.documentElement.scrollTop || 0;
+
+        // Le document grandit encore après la mesure (images, polices) : on
+        // rafraîchit la limite de défilement sans lire la mise en page à chaque image.
+        const maintenant = performance.now();
+        if (scrollTop + vh * 1.5 >= pageMax || maintenant - dernierCalculPage > 300) {
+            pageMax = Math.max(0, document.documentElement.scrollHeight - vh);
+            dernierCalculPage = maintenant;
+        }
 
         for (let i = 0; i < entries.length; i++) {
             const entry = entries[i];
@@ -822,7 +833,12 @@ mm.add({
             // première qui n'est pas encore tout à fait arrivée.
             if (derniere) {
                 const reste = Math.max(0, pageMax - scrollTop);
-                const depart = Math.max(0, 1 - reste / (vh * 0.45));
+                // Le départ n'est amorcé qu'une fois le bas de la case entré dans
+                // l'écran : on a le temps de lire et de cliquer avant qu'elle bouge.
+                const basFinEcran = basDocument - pageMax;
+                const entree = Math.max(0, vh - basFinEcran);
+                const course = Math.max(120, Math.min(vh * 0.45, entree));
+                const depart = Math.max(0, Math.min(1, 1 - reste / course));
                 distance = -Math.max(shaped, lastExit * depart);
             }
 
