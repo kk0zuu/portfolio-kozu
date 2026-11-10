@@ -592,4 +592,85 @@ mm.add({
         }
     });
 })();
+// --- CARROUSEL 3D VERTICAL "TAMBOUR" (PAGES PHOTOGRAPHIE) ---
+// Les cartes pivotent sur l'axe X selon la position de leur portion visible par
+// rapport au centre du viewport : plates au centre, inclinées en haut et en bas.
+(function initDrumCarousel() {
+    if (typeof gsap === 'undefined') return;
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
 
+    const items = Array.from(document.querySelectorAll('.pr-card, .pe .editorial-img-frame'));
+    if (!items.length) return;
+
+    function params() {
+        const mobile = window.innerWidth < 901;
+        return {
+            tilt: mobile ? 14 : 30,
+            depth: mobile ? -90 : -200,
+            shrink: mobile ? 0.92 : 0.85,
+            haze: mobile ? 0.65 : 0.5,
+            blur: mobile ? 2 : 5,
+            perspective: mobile ? 900 : 1200
+        };
+    }
+
+    let p = params();
+
+    const entries = items.map((el) => {
+        gsap.set(el, { transformPerspective: p.perspective, transformOrigin: '50% 50%' });
+        return { el: el, set: gsap.quickSetter(el, 'css') };
+    });
+
+    function apply(entry, distance) {
+        const dist = Math.min(1, Math.abs(distance));
+        entry.set({
+            rotateX: p.tilt * distance,
+            z: p.depth * dist,
+            scale: 1 - (1 - p.shrink) * dist,
+            opacity: 1 - (1 - p.haze) * dist,
+            filter: 'blur(' + (p.blur * dist).toFixed(2) + 'px)'
+        });
+    }
+
+    function render() {
+        const vh = window.innerHeight;
+        const middle = vh / 2;
+
+        for (let i = 0; i < entries.length; i++) {
+            const entry = entries[i];
+            const rect = entry.el.getBoundingClientRect();
+
+            if (rect.top > vh) { apply(entry, 1); continue; }
+            if (rect.bottom < 0) { apply(entry, -1); continue; }
+
+            const visibleTop = Math.max(rect.top, 0);
+            const visibleBottom = Math.min(rect.bottom, vh);
+            const visibleCenter = (visibleTop + visibleBottom) / 2;
+
+            apply(entry, (visibleCenter - middle) / middle);
+        }
+    }
+
+    function refreshParams() {
+        p = params();
+        entries.forEach((entry) => gsap.set(entry.el, { transformPerspective: p.perspective }));
+        render();
+    }
+
+    if (typeof ScrollTrigger !== 'undefined') {
+        ScrollTrigger.create({
+            trigger: document.body,
+            start: 0,
+            end: 'max',
+            onUpdate: render,
+            onRefresh: render
+        });
+    } else {
+        document.addEventListener('scroll', render, { passive: true });
+    }
+
+    window.addEventListener('resize', refreshParams);
+    window.addEventListener('load', render);
+
+    render();
+})();

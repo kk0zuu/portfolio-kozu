@@ -2701,3 +2701,21 @@ body.hovering .cursor-spiral {
         text-align: left;
     }
 }
+/* ==================================================== */
+/* CARROUSEL 3D VERTICAL (TAMBOUR) — PAGES PHOTO         */
+/* ==================================================== */
+
+.pr-ref,
+.pe {
+    transform-style: preserve-3d;
+}
+
+.pr-card,
+.pe .editorial-img-frame {
+    transform-style: preserve-3d;
+    transform-origin: center center;
+    backface-visibility: hidden;
+    will-change: transform, opacity, filter;
+    /* Le tambour pilote transform en continu : pas de transition dessus */
+    transition-property: box-shadow;
+}
