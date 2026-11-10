@@ -2330,7 +2330,7 @@ body.hovering .cursor-spiral {
     display: grid;
     grid-template-columns: 0.45fr 1fr;
     gap: var(--pr-gap);
-    align-items: end;
+    align-items: start;
 }
 
 .pr-studio {
