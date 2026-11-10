@@ -2730,3 +2730,35 @@ body.hovering .cursor-spiral {
     /* Le tambour pilote transform en continu : pas de transition dessus */
     transition-property: box-shadow;
 }
+
+/* ==================================================== */
+/* CONTACT INSTAGRAM — VERSION DISCRÈTE (PAGES PHOTO)   */
+/* ==================================================== */
+
+.photo-social {
+    max-width: 1440px;
+    margin: 2.5rem auto;
+    padding: 0 1rem;
+    text-align: center;
+}
+
+.photo-social p {
+    font-family: var(--font-body);
+    font-size: 0.95rem;
+    line-height: 1.6;
+    color: #3d3d3d;
+    margin: 0;
+}
+
+.photo-social a {
+    color: #000000;
+    font-weight: 700;
+    text-decoration: none;
+    border-bottom: 1px solid currentColor;
+    padding-bottom: 1px;
+    transition: color 0.2s ease;
+}
+
+.photo-social a:hover {
+    color: var(--color-neon-pink);
+}
