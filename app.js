@@ -596,31 +596,39 @@ mm.add({
             );
         }
     });
-    // 4. Pages photo : chaque photo apparaît dès qu'elle franchit le bas de
-    //    l'écran. Déclencher sur la case entière, très haute, faisait apparaître
-    //    les photos des cases suivantes bien trop tard.
-    document.querySelectorAll('.pr-card, .pe-section').forEach(container => {
-        const items = container.querySelectorAll('.editorial-img-frame');
-        if (!items.length) return;
+    // 4. Pages photo : chaque photo apparaît dès qu'elle devient visible.
+    //    Les cases étant transformées en 3D par le carrousel, les positions
+    //    calculées par ScrollTrigger seraient faussées : on observe donc la
+    //    visibilité réelle de chaque photo.
+    const photos = [...document.querySelectorAll('.pr-card .editorial-img-frame, .pe-section .editorial-img-frame')];
 
-        gsap.utils.toArray(items).forEach((item, index) => {
-            gsap.fromTo(item,
-                { opacity: 0, y: 22 },
-                {
-                    opacity: 1,
-                    y: 0,
-                    duration: 0.7,
-                    ease: 'power2.out',
-                    delay: Math.min(index, 8) * 0.06,
-                    scrollTrigger: {
-                        trigger: item,
-                        start: 'top bottom-=10',
-                        toggleActions: 'play none none none'
-                    }
-                }
-            );
+    if (photos.length) {
+        photos.forEach((item, index) => {
+            gsap.set(item, { opacity: 0, y: 22 });
+            item.dataset.revealDelay = String(Math.min(index, 8) * 0.06);
         });
-    });
+
+        if ('IntersectionObserver' in window) {
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach((entry) => {
+                    if (!entry.isIntersecting) return;
+                    const el = entry.target;
+                    observer.unobserve(el);
+                    gsap.to(el, {
+                        opacity: 1,
+                        y: 0,
+                        duration: 0.7,
+                        ease: 'power2.out',
+                        delay: parseFloat(el.dataset.revealDelay) || 0
+                    });
+                });
+            }, { rootMargin: '0px 0px -8% 0px', threshold: 0.01 });
+
+            photos.forEach((el) => observer.observe(el));
+        } else {
+            gsap.set(photos, { opacity: 1, y: 0 });
+        }
+    }
 })();
 // --- CARROUSEL 3D VERTICAL "TAMBOUR" (PAGES PHOTOGRAPHIE) ---
 // Les cartes (et non les photos) pivotent sur l'axe X selon la position de leur
