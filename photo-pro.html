@@ -9,7 +9,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Bebas+Neue&family=Bungee&family=Cinzel:wght@900&family=Playfair+Display:ital,wght@1,900&family=Schoolbell&family=Space+Grotesk:wght@500;700&family=Special+Elite&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
 </head>
-<body style="background-color: #ffffff;">
+<body style="background-color: var(--color-bg-end);">
     <!-- Top Bar Navigation avec Bulle Liquid Glass -->
     <nav class="top-bar">
         <div class="logo"><a href="index.html">Ian Bossut‑Gandou</a></div>
@@ -42,6 +42,7 @@
             <a href="#architecture" class="subnav-btn">Architecture</a>
             <a href="#couple-lifestyle" class="subnav-btn">Couple</a>
             <a href="#studio" class="subnav-btn">Studio</a>
+            <a href="#packshot" class="subnav-btn">Packshot</a>
             <a href="#portrait" class="subnav-btn">Portrait</a>
             <a href="#sepia" class="subnav-btn">Sépia</a>
             <a href="photo-expressive.html" class="subnav-btn active">Voir Photo Expressive →</a>
@@ -50,196 +51,235 @@
 
     <main class="domain-content">
 
-        <!-- ========================================================== -->
-        <!-- PLANCHES STUDIO & PRO — COMPOSITION DU SITE DE RÉFÉRENCE    -->
-        <!-- ========================================================== -->
         <div class="pr-ref">
 
             <!-- ================= ARCHITECTURE ================= -->
-            <section class="pr-section editorial-board" id="architecture">
+            <article class="pr-card project-bubble" id="architecture">
+                <div class="bubble-top-bar">
+                    <span class="bubble-category-pill dark-accent">Architecture & Patrimoine</span>
+                    <span class="bubble-metadata">Paris • Amsterdam • Bruxelles • Géométrie & Reflets</span>
+                </div>
+
+                <h2 class="bubble-main-title blur-reveal">Architecture</h2>
+                <p class="bubble-quote">“Isoler des détails ou bien capturer dans toute sa grandeur, l’architecture est un sujet rempli d’histoire et de culture.”</p>
+                <p class="bubble-description fade-in">
+                    J’aime en capturer pour toujours garder une trace des pays où j’ai mit les pieds. Lignes de fuite, façades historiques
+                    et détails de pierre : l’architecture raconte une ville autant qu’elle la structure.
+                </p>
+
                 <div class="pr-archi">
-                    <div>
-                        <div class="pr-archi__head">
-                            <h2 class="pr-title blur-reveal">Architecture</h2>
-                            <p class="pr-tagline fade-in">Paris, Amsterdam, Bruxelles</p>
-                        </div>
-                        <!-- DÉFILÉ (diapo) : vue principale des canaux -->
-                        <div class="editorial-img-frame pr-frame pr-r-archi-main">
-                            <img src="images/photographie/pro/diapo_amsterdam_canal.jpg" alt="Architecture - Amsterdam canal et gare" data-caption="Amsterdam • Gare centrale, tramway et reflets sur les canaux">
-                        </div>
+                    <!-- DÉFILÉ (diapo) : vue principale des canaux -->
+                    <div class="editorial-img-frame pr-r-archi-main">
+                        <img src="images/photographie/pro/diapo_amsterdam_canal.jpg" alt="Architecture - Amsterdam canal et gare" data-caption="Amsterdam • Gare centrale, tramway et reflets sur les canaux">
                     </div>
 
-                    <div>
-                        <div class="pr-pair">
-                            <div class="editorial-img-frame pr-frame pr-r-archi-pair">
-                                <img src="images/photographie/pro/01_df0bbad5c7c7b2fb74ccff825571f574.jpg" alt="Façades d'Amsterdam" data-caption="Amsterdam • Façades historiques et perspectives urbaines">
-                            </div>
-                            <div class="editorial-img-frame pr-frame pr-r-archi-pair">
-                                <img src="images/photographie/pro/02_ed0458d334d7b700db6bfba25e9f1785.jpg" alt="Flèche gothique de Bruxelles" data-caption="Bruxelles • Flèche gothique de l'Hôtel de Ville">
-                            </div>
+                    <div class="pr-pair">
+                        <div class="editorial-img-frame pr-r-archi-pair">
+                            <img src="images/photographie/pro/01_df0bbad5c7c7b2fb74ccff825571f574.jpg" alt="Façades d'Amsterdam" data-caption="Amsterdam • Façades historiques et perspectives urbaines">
                         </div>
-
-                        <div class="pr-desc pr-archi__text fade-in">
-                            <p>Isoler des détails ou bien capturer dans toute sa grandeur, l’architecture est partout un sujet de photo rempli d’histoire et de culture.</p>
-                            <p>J’aime en capturer pour toujours garder une trace des pays où j’ai mit les pieds.</p>
+                        <div class="editorial-img-frame pr-r-archi-pair">
+                            <img src="images/photographie/pro/02_ed0458d334d7b700db6bfba25e9f1785.jpg" alt="Flèche gothique de Bruxelles" data-caption="Bruxelles • Flèche gothique de l'Hôtel de Ville">
                         </div>
                     </div>
                 </div>
-            </section>
+            </article>
 
             <!-- ================= COUPLE LIFESTYLE ================= -->
-            <section class="pr-section editorial-board" id="couple-lifestyle">
-                <div class="pr-couple">
-                    <div class="pr-couple__head">
-                        <p class="pr-desc fade-in">Retranscrire le sentiment de l’amour dans une image est un défi mais aussi un plaisir.</p>
-                        <h2 class="pr-title blur-reveal">Couple Lifestyle</h2>
-                    </div>
+            <article class="pr-card project-bubble" id="couple-lifestyle">
+                <div class="bubble-top-bar">
+                    <span class="bubble-category-pill green-accent">Couple Lifestyle & Émotion</span>
+                    <span class="bubble-metadata">Direction de modèles • Spots prémédités • Lumière naturelle</span>
+                </div>
 
+                <h2 class="bubble-main-title blur-reveal">Couple Lifestyle</h2>
+                <p class="bubble-quote green-accent">“Retranscrire le sentiment de l’amour dans une image est un défi mais aussi un plaisir.”</p>
+                <p class="bubble-description fade-in">
+                    Préparation de l’itinéraire de la journée (différents spots) et direction discrète des sujets : je guide le cadre
+                    plutôt que la pose, pour laisser venir les gestes et la complicité.
+                </p>
+
+                <div class="pr-couple">
                     <div>
-                        <div class="editorial-img-frame pr-frame pr-r-couple-left">
+                        <div class="editorial-img-frame pr-r-couple-left">
                             <img src="images/photographie/pro/03_5b1a52a008d8b18659ad151a70bb2d2c.jpg" alt="Couple spontané à Montmartre" data-caption="Montmartre • Baiser volé devant la façade rose">
                         </div>
-                        <p class="pr-caption fade-in">Préparation de l’itinéraire de la journée (différents spots) et direction des sujets</p>
+                        <p class="pr-caption">Direction des sujets sur des spots repérés en amont, dans la lumière de fin de journée.</p>
                     </div>
 
                     <!-- DÉFILÉ (diapo) : couple de dos face au moulin -->
-                    <div class="editorial-img-frame pr-frame pr-r-couple-right">
+                    <div class="editorial-img-frame pr-r-couple-right">
                         <img src="images/photographie/pro/diapo_couple_moulin.jpg" alt="Couple de dos devant le moulin de la Galette" data-caption="Paris • Complicité face au Moulin de la Galette">
                     </div>
                 </div>
-            </section>
+            </article>
 
-            <!-- ================= STUDIO ================= -->
-            <section class="pr-section editorial-board" id="studio">
-                <h2 class="pr-title pr-title--studio blur-reveal">Studio</h2>
+            <!-- ================= STUDIO : POLAROÏD ================= -->
+            <article class="pr-card project-bubble" id="studio">
+                <div class="bubble-top-bar">
+                    <span class="bubble-category-pill dark-accent">Studio & Polaroïd de mannequinat</span>
+                    <span class="bubble-metadata">Castings agence • Sans retouche • Éclairage studio</span>
+                </div>
+
+                <h2 class="bubble-main-title blur-reveal">Polaroïd de mannequinat</h2>
+                <p class="bubble-quote">“Des clichés bruts, sans retouche, pensés pour les castings en agence.”</p>
+                <p class="bubble-description fade-in">
+                    Série de portraits destinés aux bookings : cadrage simple, lumière neutre, aucune retouche. Le sujet tel qu’il se présente,
+                    pour que l’agence voie juste.
+                </p>
 
                 <div class="pr-studio">
                     <!-- DÉFILÉ (diapo) : polaroïd plein pied -->
-                    <div class="editorial-img-frame pr-frame pr-r-studio-left">
+                    <div class="editorial-img-frame pr-r-studio-left">
                         <img src="images/photographie/pro/diapo_studio_man_white.jpg" alt="Polaroïd de mannequinat plein pied" data-caption="Studio • Polaroïd de mannequinat brut">
                     </div>
 
-                    <div class="pr-studio__mid">
-                        <div class="pr-studio__text fade-in">
-                            <h3 class="pr-subtitle">Polaroïd de mannequinat</h3>
-                            <p class="pr-desc">Série de clichés bruts et sans retouche destinés aux castings en agence.</p>
-                        </div>
-                        <div class="editorial-img-frame pr-frame pr-r-studio-mid">
-                            <img src="images/photographie/pro/04_13789ca013a1e081339de3ed5aa6687b.jpg" alt="Polaroïd mannequinat gros plan" data-caption="Studio • Gros plan portrait sans retouche">
-                        </div>
+                    <div class="editorial-img-frame pr-r-studio-mid pr-frame--mid">
+                        <img src="images/photographie/pro/04_13789ca013a1e081339de3ed5aa6687b.jpg" alt="Polaroïd mannequinat gros plan" data-caption="Studio • Gros plan portrait sans retouche">
                     </div>
 
-                    <div class="editorial-img-frame pr-frame pr-r-studio-right">
+                    <div class="editorial-img-frame pr-r-studio-right">
                         <img src="images/photographie/pro/06_e7b4feec60531eb8ac8f05a75268972c.jpg" alt="Mannequin en pose studio" data-caption="Studio • Pose casting dynamique et attitude">
                     </div>
                 </div>
+            </article>
 
-                <!-- PACKSHOT / SHOOTING PRODUIT -->
-                <div class="pr-packshot" id="packshot">
-                    <div class="editorial-img-frame pr-frame pr-r-pack-left">
+            <!-- ================= PACKSHOT / SHOOTING PRODUIT ================= -->
+            <article class="pr-card project-bubble" id="packshot">
+                <div class="bubble-top-bar">
+                    <span class="bubble-category-pill">Packshot & Shooting produit</span>
+                    <span class="bubble-metadata">Design produit • Fond noir • Éclairage directionnel</span>
+                </div>
+
+                <h2 class="bubble-main-title blur-reveal">Packshot / Shooting produit</h2>
+                <p class="bubble-quote">“Documenter un projet de design en studio : le volume d’abord, la matière ensuite.”</p>
+                <p class="bubble-description fade-in">
+                    Utilisation d’un éclairage directionnel sur fond noir pour accentuer le relief du volume et sublimer les textures des matériaux.
+                </p>
+
+                <div class="pr-packshot">
+                    <div class="editorial-img-frame pr-r-pack-left">
                         <img src="images/photographie/pro/09_4905987e99ac72b3482205275999b0a6.jpg" alt="Shooting studio projet design masque" data-caption="Shooting produit • Modèle portant le masque de design">
                     </div>
 
-                    <div class="pr-packshot__mid">
-                        <h3 class="pr-subtitle fade-in">Packshot/Shooting produit</h3>
-                        <div class="editorial-img-frame pr-frame pr-r-pack-mid">
-                            <img src="images/photographie/pro/07_e8f108a826dd0779b0245af5b116087e.jpg" alt="Gros plan profil masque design" data-caption="Studio design • Vue de profil et perles">
-                        </div>
+                    <div class="editorial-img-frame pr-r-pack-mid">
+                        <img src="images/photographie/pro/07_e8f108a826dd0779b0245af5b116087e.jpg" alt="Gros plan profil masque design" data-caption="Studio design • Vue de profil et perles">
                     </div>
 
-                    <div>
-                        <div class="editorial-img-frame pr-frame pr-r-pack-right">
-                            <img src="images/photographie/pro/08_81fe2d349f6271cd803de08c8326b3e9.jpg" alt="Gros plan face masque sculpté" data-caption="Studio design • Vue de face et texture du carton découpé">
-                        </div>
-                        <div class="pr-desc pr-packshot__text fade-in">
-                            <p>Documentation studio d'un projet de design.</p>
-                            <p>Utilisation d'un éclairage directionnel sur fond noir pour accentuer le relief du volume et sublimer les textures des matériaux.</p>
-                        </div>
+                    <div class="editorial-img-frame pr-r-pack-right">
+                        <img src="images/photographie/pro/08_81fe2d349f6271cd803de08c8326b3e9.jpg" alt="Gros plan face masque sculpté" data-caption="Studio design • Vue de face et texture du carton découpé">
                     </div>
                 </div>
-            </section>
+            </article>
 
-            <!-- ================= PORTRAIT (PARTIE 1) ================= -->
-            <section class="pr-section editorial-board" id="portrait">
-                <h2 class="pr-title pr-title--right blur-reveal">Portrait</h2>
+            <!-- ================= PORTRAIT ================= -->
+            <article class="pr-card project-bubble" id="portrait">
+                <div class="bubble-top-bar">
+                    <span class="bubble-category-pill green-accent">Portrait & Spontanéité</span>
+                    <span class="bubble-metadata">Lumière naturelle • Sujet non dirigé • Instant volé</span>
+                </div>
+
+                <h2 class="bubble-main-title blur-reveal">Portrait</h2>
+                <p class="bubble-quote green-accent">“Photos axées sur le spontané : sujet non dirigé ou légèrement, photos prises dans l’élan.”</p>
+                <p class="bubble-description fade-in">
+                    Recherche d’un aspect naturel avant tout : pas de pose forcée, la lumière fait le reste. Un cadre qui laisse de la place
+                    au geste et au regard.
+                </p>
 
                 <div class="pr-portrait">
-                    <div class="pr-portrait__stack">
-                        <div class="editorial-img-frame pr-frame pr-r-portrait-wide">
+                    <div class="pr-stack">
+                        <div class="editorial-img-frame pr-r-portrait-wide">
                             <img src="images/photographie/pro/12_8ce26cbf73593c23d30736b0acc6378b.jpg" alt="Portrait Tour Eiffel" data-caption="Paris • Attitude décontractée sous la Tour Eiffel">
                         </div>
-                        <div class="editorial-img-frame pr-frame pr-r-portrait-wide">
+                        <div class="editorial-img-frame pr-r-portrait-wide">
                             <img src="images/photographie/pro/14_ac9a46df51b223b0896c5b929970d9fd.jpg" alt="Portraits spontanés dans l'herbe" data-caption="Parc • Rires et complicité spontanée">
                         </div>
                     </div>
 
-                    <div>
-                        <div class="editorial-img-frame pr-frame pr-r-portrait-mid">
+                    <div class="pr-stack">
+                        <div class="editorial-img-frame pr-r-portrait-mid">
                             <img src="images/photographie/pro/11_47100e1238a82b5a19cf5e27335e7a97.jpg" alt="Portrait à la mer avec fleur" data-caption="Bord de mer • Lumière naturelle et fleur dans les cheveux">
                         </div>
-                        <div class="pr-desc pr-portrait__text fade-in">
-                            <p class="pr-list-title">Photos axés sur le spontané :</p>
-                            <ul class="pr-list">
-                                <li>Sujet non dirigé ou légèrement</li>
-                                <li>Photos prises dans l’élan</li>
-                                <li>Recherche d’un aspect naturel</li>
-                            </ul>
-                        </div>
+                        <ul class="pr-list">
+                            <li>Sujet non dirigé ou légèrement</li>
+                            <li>Photos prises dans l’élan</li>
+                            <li>Recherche d’un aspect naturel</li>
+                        </ul>
                     </div>
 
-                    <div class="editorial-img-frame pr-frame pr-r-portrait-right pr-portrait__offset">
+                    <div class="editorial-img-frame pr-r-portrait-right">
                         <img src="images/photographie/pro/10_52846f04b6567ee9301c27025dc6afe6.jpg" alt="Portrait spontané cheveux au vent" data-caption="Golden hour • Cheveux au vent et regard en mouvement">
                     </div>
                 </div>
-            </section>
+            </article>
 
-            <!-- ================= VIDÉO SEULE (entre portrait 1 et sépia) ================= -->
-            <div class="pr-video" id="portrait-video">
-                <video controls poster="images/photographie/pro/video_poster_portrait.jpg" playsinline preload="metadata">
-                    <!-- SOURCE VIDÉO À AJOUTER ICI (screen n° 110144) -->
-                    <source src="" type="video/mp4">
-                    Votre navigateur ne supporte pas la lecture vidéo.
-                </video>
-                <p class="pr-video-note">Emplacement de la vidéo — source à intégrer ici.</p>
-            </div>
+            <!-- ================= VIDÉO SEULE (entre portrait et sépia) ================= -->
+            <article class="pr-card project-bubble" id="portrait-video">
+                <div class="bubble-top-bar">
+                    <span class="bubble-category-pill dark-accent">Vidéo</span>
+                    <span class="bubble-metadata">Emplacement réservé • Source à intégrer</span>
+                </div>
 
-            <!-- ================= SÉPIA (PARTIE 2) ================= -->
-            <section class="pr-section editorial-board" id="sepia">
+                <h2 class="bubble-main-title blur-reveal">En mouvement</h2>
+                <p class="bubble-description fade-in">
+                    Séquence vidéo à venir : l’emplacement est réservé entre la série portrait et les tirages sépia.
+                </p>
+
+                <div class="pr-video">
+                    <video controls poster="images/photographie/pro/video_poster_portrait.jpg" playsinline preload="metadata">
+                        <!-- SOURCE VIDÉO À AJOUTER ICI (screen n° 110144) -->
+                        <source src="" type="video/mp4">
+                        Votre navigateur ne supporte pas la lecture vidéo.
+                    </video>
+                    <p class="pr-video-note">Emplacement de la vidéo — source à intégrer ici.</p>
+                </div>
+            </article>
+
+            <!-- ================= SÉPIA ================= -->
+            <article class="pr-card project-bubble" id="sepia">
+                <div class="bubble-top-bar">
+                    <span class="bubble-category-pill green-accent">Monochrome & Sépia</span>
+                    <span class="bubble-metadata">Tirage sépia • Pigment naturel • Chaleur argentique</span>
+                </div>
+
+                <h2 class="bubble-main-title blur-reveal">Sépia</h2>
+                <p class="bubble-quote green-accent">“Le sépia apporte une chaleur que le noir & blanc n’a pas.”</p>
+                <p class="bubble-description fade-in">
+                    Originellement issu d’un pigment tiré de la seiche pour conserver les tirages, le sépia est un monochrome qui réchauffe l’image.
+                    Je l’utilise dans mes portraits monochromes lorsque je veux représenter un instant chaleureux.
+                </p>
+
                 <div class="pr-sepia">
                     <div>
-                        <div class="pr-pair pr-pair--sepia">
-                            <div class="editorial-img-frame pr-frame pr-r-sepia-portrait">
+                        <div class="pr-pair">
+                            <div class="editorial-img-frame pr-r-sepia-portrait">
                                 <img src="images/photographie/pro/16_04eee0b2d4afb981cc2801854f70ffca.jpg" alt="Portrait sépia minutie" data-caption="Tirage sépia • Instant concentré et intimité argentique">
                             </div>
-                            <div class="editorial-img-frame pr-frame pr-r-sepia-portrait">
+                            <div class="editorial-img-frame pr-r-sepia-portrait">
                                 <img src="images/photographie/pro/15_405acdc7fd23f98288e32ca80cff7d86.jpg" alt="Portrait sépia artisanat" data-caption="Tirage sépia • Travail manuel et texture monochrome">
                             </div>
                         </div>
-                        <p class="pr-caption pr-caption--center fade-in">J’apprécie l’utiliser dans mes portrait monochromes lorsque je veux représenter un instant chaleureux.</p>
+                        <p class="pr-caption pr-caption--center">Un instant chaleureux, patiné par le temps.</p>
                     </div>
 
-                    <div class="pr-sepia__right">
-                        <p class="pr-desc fade-in">Le sépia, originellement issu d’un pigment tiré de la seiche pour conserver les tirages, est un monochrome qui contrairement au noir&blanc apporte de la chaleur dans l’image.</p>
-                        <div class="editorial-img-frame pr-frame pr-r-sepia-land">
-                            <img src="images/photographie/pro/17_bd7d8e4b831b617622c11a0c0fd66c67.jpg" alt="Accordéoniste de rue en sépia" data-caption="Scène de rue • Accordéoniste et tonalité chaude sépia">
-                        </div>
+                    <div class="editorial-img-frame pr-r-sepia-land">
+                        <img src="images/photographie/pro/17_bd7d8e4b831b617622c11a0c0fd66c67.jpg" alt="Accordéoniste de rue en sépia" data-caption="Scène de rue • Accordéoniste et tonalité chaude sépia">
                     </div>
                 </div>
 
-                <!-- Navigation bas de page fidèle au screen 6 -->
                 <div class="pr-footer-nav fade-in">
-                    <a href="https://instagram.com/kkozuu" target="_blank" rel="noopener noreferrer">Envie d’un shooting ? Contactez moi sur <strong>INSTAGRAM</strong></a>
+                    <a href="https://instagram.com/kkozuu" target="_blank" rel="noopener noreferrer">Envie d’un shooting ? Contactez moi sur INSTAGRAM</a>
                     <a href="photo-expressive.html">Revenir à la page précédente (Photos expressives)</a>
                 </div>
-            </section>
+            </article>
 
         </div>
         <!-- /.pr-ref -->
 
         <!-- SECTION CONTACT INSTAGRAM -->
-        <div id="instagram-section" class="editorial-board" style="text-align: center; background: #FFFDF0; border: 2px dashed #000; padding: 2.5rem 1.5rem; max-width: 1320px; margin: 0 auto 3.5rem;">
-            <h2 class="editorial-title blur-reveal" style="font-size: 2.2rem; margin-bottom: 0.8rem;">Retrouvez mes séries sur Instagram</h2>
-            <p class="editorial-tagline fade-in" style="margin: 0 auto 1.5rem; max-width: 600px; font-size: 1.05rem; color: #555;">
+        <div id="instagram-section" class="project-bubble" style="text-align: center; background: #FFFDF0; border: 2px dashed #000; max-width: 1440px;">
+            <span class="bubble-category-pill dark-accent" style="margin-bottom: 1rem;">Envie d’un shooting ?</span>
+            <h2 class="bubble-main-title blur-reveal" style="font-size: 2.2rem;">Retrouvez mes séries sur Instagram</h2>
+            <p class="bubble-quote" style="margin: 0 auto 1.5rem;">
                 Coulisses, formats bruts, tirages récents et projets en cours :
             </p>
             <a href="https://instagram.com/kkozuu" target="_blank" rel="noopener noreferrer" class="subnav-btn active" style="font-size: 1.1rem; padding: 0.8rem 2.2rem; display: inline-block;">
@@ -247,8 +287,8 @@
             </a>
         </div>
 
-        <!-- BANNIÈRE DE CONTINUATION VERS PHOTO EXPRESSIVE OU PLASTIQUE -->
-        <div style="display: flex; gap: 1.5rem; flex-wrap: wrap; margin-bottom: 3rem; max-width: 1320px; margin-left: auto; margin-right: auto;">
+        <!-- BANNIÈRE DE CONTINUATION -->
+        <div style="display: flex; gap: 1.5rem; flex-wrap: wrap; margin-bottom: 3rem; max-width: 1440px; margin-left: auto; margin-right: auto; width: calc(100% - 2rem);">
             <a href="photo-expressive.html" class="next-domain-flow" style="flex: 1; min-width: 280px; background: #358E14;">
                 <div>
                     <span class="next-flow-label">Découvrir l'autre facette ↗</span>

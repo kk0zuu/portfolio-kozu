@@ -2160,110 +2160,158 @@ body.hovering .cursor-spiral {
     }
 
 /* ==================================================== */
-/* PHOTOGRAPHIE STUDIO & PRO — COMPOSITION "RÉFÉRENCE"  */
-/* (pistes plein cadre sur fond blanc, titres décalés)   */
+/* PHOTOGRAPHIE (PRO & EXPRESSIVE) — PLANCHES EN BULLES  */
+/* Même charte que les cases projets : carte blanche,    */
+/* pastille, méta, citation magenta, description lisible */
 /* ==================================================== */
 
 .pr-ref {
-    --pr-magenta: #c62bc9;
-    --pr-gap: clamp(8px, 0.95vw, 16px);
+    --pr-gap: clamp(10px, 1vw, 18px);
     max-width: 1600px;
     margin: 0 auto;
-    padding: 0 clamp(0.75rem, 2vw, 2.25rem);
-    background: #ffffff;
-    color: #000000;
+    padding: 0 clamp(0.4rem, 1.2vw, 1.2rem);
 }
 
-/* Les sections ne sont plus des cartes : on neutralise l'habillage
-   "editorial-board" tout en gardant la classe pour les animations de app.js. */
-.pr-ref .editorial-board {
-    background: transparent;
-    border: 0;
-    border-radius: 0;
-    box-shadow: none;
-    padding: 0;
-    margin: 0 0 clamp(3rem, 6.5vw, 6.5rem) 0;
-    max-width: none;
-    overflow: visible;
+/* La carte reprend la bulle projet, en plus large pour les planches photo */
+.pr-card {
+    max-width: 1440px;
+    width: calc(100% - 2rem);
+    margin: clamp(1.4rem, 2.6vw, 2.6rem) auto;
+    padding: clamp(1.3rem, 3vw, 3rem);
 }
 
-/* ---------- Typographie ---------- */
-
-.pr-title {
-    font-family: 'Archivo Black', var(--font-display);
-    font-size: clamp(1.7rem, 3vw, 3rem);
-    line-height: 0.95;
-    letter-spacing: 0.005em;
-    text-transform: uppercase;
-    color: #000000;
-    text-shadow: 0.055em 0.055em 0 var(--pr-magenta);
-    margin: 0;
+.pr-card .bubble-top-bar {
+    margin-bottom: clamp(1rem, 1.8vw, 1.8rem);
 }
 
-.pr-title--right {
-    text-align: right;
-    margin-bottom: clamp(1rem, 1.7vw, 1.7rem);
+.pr-card .bubble-main-title {
+    font-size: clamp(1.5rem, 2.6vw, 2.5rem);
+    letter-spacing: -0.4px;
+    margin-bottom: 0.6rem;
 }
 
-.pr-title--studio {
-    margin-bottom: clamp(1rem, 1.7vw, 1.7rem);
+.pr-card .bubble-quote {
+    margin-bottom: 0.9rem;
 }
 
-.pr-desc,
-.pr-caption,
-.pr-tagline,
-.pr-subtitle,
-.pr-list-title,
-.pr-list {
-    font-family: 'Archivo Black', var(--font-body);
-    font-weight: 400;
-    font-size: clamp(0.92rem, 1.05vw, 1.2rem);
-    line-height: 1.42;
-    color: #000000;
-    margin: 0;
+.pr-card .bubble-description {
+    margin-bottom: clamp(1.3rem, 2.4vw, 2.4rem);
+    font-size: clamp(0.98rem, 1.1vw, 1.08rem);
 }
 
-.pr-desc p {
-    margin: 0 0 0.85em 0;
+/* Images : cartes arrondies, comme les visuels des projets */
+.pr-card .editorial-img-frame {
+    border-radius: 20px;
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.04);
+    background: #F5F5F5;
+    transition: transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1),
+                box-shadow 0.35s ease,
+                border-color 0.35s ease;
 }
 
-.pr-desc p:last-child {
-    margin-bottom: 0;
+.pr-card .editorial-img-frame:hover {
+    transform: scale(1.01);
+    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.1);
+    border-color: var(--color-magenta);
 }
 
-.pr-subtitle {
-    font-size: clamp(1rem, 1.15vw, 1.32rem);
-    line-height: 1.25;
-    margin: 0 0 0.6em 0;
-}
+/* --- Légendes et listes --- */
 
 .pr-caption {
-    margin-top: clamp(0.6rem, 1vw, 1rem);
+    font-family: var(--font-body);
+    font-size: 0.95rem;
+    font-weight: 500;
+    line-height: 1.55;
+    color: #6b6b6b;
+    margin: clamp(0.7rem, 1vw, 1rem) 0 0 0;
+}
+
+.pr-caption--center {
+    text-align: center;
+    max-width: 78%;
+    margin-left: auto;
+    margin-right: auto;
 }
 
 .pr-list {
+    font-family: var(--font-body);
+    font-size: clamp(0.95rem, 1.05vw, 1.02rem);
+    line-height: 1.7;
+    color: #3d3d3d;
     list-style: none;
     padding: 0;
-    margin: 0.45em 0 0 0;
+    margin: 0;
 }
 
 .pr-list li::before {
     content: "\2022\00a0\00a0";
+    color: var(--color-magenta);
+    font-weight: 700;
 }
 
-/* ---------- Images ---------- */
+/* --- Grilles Studio & Pro --- */
 
-.pr-ref .editorial-img-frame {
-    border-radius: 0;
-    background: #f2f2f2;
+.pr-pair {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--pr-gap);
 }
 
-.pr-ref .editorial-img-frame:hover {
-    transform: none;
-    box-shadow: none;
+.pr-archi {
+    display: grid;
+    grid-template-columns: 1.39fr 1fr;
+    gap: var(--pr-gap);
+    align-items: start;
 }
 
-/* Rapports d'image relevés sur la référence */
+.pr-couple {
+    display: grid;
+    grid-template-columns: 0.45fr 1fr;
+    gap: var(--pr-gap);
+    align-items: end;
+}
+
+.pr-studio {
+    display: grid;
+    grid-template-columns: 1fr 1.02fr 0.86fr;
+    gap: var(--pr-gap);
+    align-items: end;
+}
+
+.pr-studio > .pr-frame--mid {
+    width: 76%;
+    justify-self: center;
+}
+
+.pr-packshot {
+    display: grid;
+    grid-template-columns: 1fr 0.85fr 1.63fr;
+    gap: var(--pr-gap);
+    align-items: end;
+}
+
+.pr-portrait {
+    display: grid;
+    grid-template-columns: 1.54fr 1fr 1.02fr;
+    gap: var(--pr-gap);
+    align-items: end;
+}
+
+.pr-stack {
+    display: flex;
+    flex-direction: column;
+    gap: var(--pr-gap);
+}
+
+.pr-sepia {
+    display: grid;
+    grid-template-columns: 1.27fr 1fr;
+    gap: var(--pr-gap);
+    align-items: end;
+}
+
+/* Ratios relevés sur la référence */
 .pr-r-archi-main { aspect-ratio: 825 / 590; }
 .pr-r-archi-pair { aspect-ratio: 305 / 455; }
 .pr-r-couple-left { aspect-ratio: 440 / 620; }
@@ -2280,259 +2328,11 @@ body.hovering .cursor-spiral {
 .pr-r-sepia-portrait { aspect-ratio: 350 / 525; }
 .pr-r-sepia-land { aspect-ratio: 530 / 355; }
 
-.pr-pair {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: var(--pr-gap);
-}
+/* Ratios réels des fichiers expressifs */
+.pr-r-portrait { aspect-ratio: 2 / 3; }
+.pr-r-landscape { aspect-ratio: 3 / 2; }
 
-/* ---------- Architecture ---------- */
-
-.pr-archi {
-    display: grid;
-    grid-template-columns: 1.39fr 1fr;
-    gap: var(--pr-gap);
-    align-items: start;
-}
-
-.pr-archi__head {
-    margin-bottom: clamp(0.6rem, 1.2vw, 1.3rem);
-}
-
-.pr-archi__head .pr-tagline {
-    text-align: right;
-    margin-top: clamp(0.7rem, 1.4vw, 1.5rem);
-}
-
-.pr-archi__text {
-    margin-top: clamp(1rem, 1.6vw, 1.7rem);
-}
-
-/* ---------- Couple Lifestyle ---------- */
-
-.pr-couple {
-    display: grid;
-    grid-template-columns: 0.45fr 1fr;
-    gap: var(--pr-gap);
-    align-items: start;
-}
-
-.pr-couple__head {
-    grid-column: 1 / -1;
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    gap: clamp(1rem, 3vw, 3rem);
-    margin-bottom: clamp(0.5rem, 1vw, 1rem);
-}
-
-.pr-couple__head .pr-desc {
-    max-width: 58%;
-}
-
-.pr-couple__head .pr-title {
-    text-align: right;
-    flex-shrink: 0;
-}
-
-/* ---------- Studio + Packshot ---------- */
-
-.pr-studio {
-    display: grid;
-    grid-template-columns: 1fr 1.02fr 0.86fr;
-    gap: var(--pr-gap);
-    align-items: end;
-}
-
-.pr-studio__mid {
-    align-self: stretch;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    gap: clamp(1.5rem, 4vw, 4rem);
-}
-
-.pr-studio__mid .pr-frame {
-    width: 76%;
-    align-self: center;
-}
-
-.pr-studio__text {
-    padding-top: clamp(0.3rem, 1.6vw, 1.8rem);
-}
-
-.pr-packshot {
-    display: grid;
-    grid-template-columns: 1fr 0.85fr 1.63fr;
-    gap: var(--pr-gap);
-    align-items: start;
-    margin-top: clamp(2.5rem, 5vw, 5rem);
-}
-
-.pr-packshot__mid {
-    display: flex;
-    flex-direction: column;
-}
-
-.pr-packshot__mid .pr-subtitle {
-    margin-bottom: clamp(0.8rem, 2.5vw, 3rem);
-}
-
-.pr-packshot__text {
-    margin-top: clamp(1rem, 1.6vw, 1.7rem);
-}
-
-/* ---------- Portrait ---------- */
-
-.pr-portrait {
-    display: grid;
-    grid-template-columns: 1.54fr 1fr 1.02fr;
-    gap: clamp(10px, 1.5vw, 24px);
-    align-items: start;
-}
-
-.pr-portrait__stack {
-    display: flex;
-    flex-direction: column;
-    gap: var(--pr-gap);
-}
-
-.pr-portrait__text {
-    margin-top: clamp(0.8rem, 1.4vw, 1.3rem);
-}
-
-.pr-portrait__offset {
-    margin-top: clamp(1.5rem, 9vw, 8.5rem);
-}
-
-/* ---------- Vidéo ---------- */
-
-.pr-video {
-    max-width: 1160px;
-    margin: 0 auto clamp(3rem, 6.5vw, 6.5rem) auto;
-    padding: 0 clamp(0.75rem, 2vw, 2.25rem);
-}
-
-.pr-video video {
-    display: block;
-    width: 100%;
-    aspect-ratio: 16 / 9;
-    object-fit: cover;
-    background: #000000;
-}
-
-.pr-video-note {
-    font-family: var(--font-body);
-    font-size: 0.72rem;
-    font-weight: 700;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    color: #9a9a9a;
-    text-align: center;
-    margin: 0.7rem 0 0 0;
-}
-
-/* ---------- Sépia ---------- */
-
-.pr-sepia {
-    display: grid;
-    grid-template-columns: 1.27fr 1fr;
-    gap: clamp(14px, 2.2vw, 34px);
-    align-items: start;
-}
-
-.pr-pair--sepia {
-    gap: clamp(10px, 1.5vw, 24px);
-}
-
-.pr-caption--center {
-    text-align: center;
-    max-width: 78%;
-    margin: clamp(0.8rem, 1.2vw, 1.2rem) auto 0 auto;
-}
-
-.pr-sepia__right {
-    align-self: stretch;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    gap: clamp(1.5rem, 3vw, 3rem);
-}
-
-/* ---------- Liens de bas de page ---------- */
-
-.pr-footer-nav {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: 1.5rem;
-    margin-top: clamp(2rem, 4vw, 4rem);
-    padding-top: 0;
-    border-top: 0;
-    font-family: 'Archivo Black', var(--font-body);
-    font-weight: 400;
-    font-size: clamp(0.85rem, 1vw, 1.05rem);
-}
-
-.pr-footer-nav a {
-    color: #000000;
-    text-decoration: underline;
-    font-size: inherit;
-    transition: color 0.2s ease;
-}
-
-.pr-footer-nav a:hover {
-    color: var(--pr-magenta);
-}
-
-/* ---------- Adaptations petits écrans ---------- */
-
-@media (max-width: 900px) {
-    .pr-archi,
-    .pr-couple,
-    .pr-studio,
-    .pr-packshot,
-    .pr-portrait,
-    .pr-sepia {
-        grid-template-columns: 1fr;
-    }
-
-    .pr-couple__head {
-        flex-direction: column;
-        gap: 0.8rem;
-    }
-
-    .pr-couple__head .pr-desc {
-        max-width: 100%;
-    }
-
-    .pr-couple__head .pr-title,
-    .pr-archi__head .pr-tagline,
-    .pr-title--right {
-        text-align: left;
-    }
-
-    .pr-studio__mid .pr-frame {
-        width: 100%;
-    }
-
-    .pr-portrait__offset {
-        margin-top: 0;
-    }
-
-    .pr-caption--center {
-        max-width: 100%;
-    }
-
-    .pr-footer-nav {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 0.8rem;
-    }
-}
-
-/* ---------- Planches Photo Expressive : mêmes règles de base ---------- */
+/* --- Grilles Photo Expressive --- */
 
 .pr-exp {
     display: grid;
@@ -2543,50 +2343,97 @@ body.hovering .cursor-spiral {
 .pr-exp--2 { grid-template-columns: repeat(2, 1fr); align-items: center; }
 .pr-exp--3 { grid-template-columns: repeat(3, 1fr); }
 .pr-exp--4 { grid-template-columns: repeat(4, 1fr); }
-
 .pr-exp--archi { grid-template-columns: 1fr 1fr 1.5fr; }
+.pr-exp--montagne { grid-template-columns: 1.55fr 1fr; }
 
-.pr-exp--montagne {
-    grid-template-columns: 1.55fr 1fr;
-}
-
-.pr-exp__stack--spread {
+.pr-exp__spread {
     justify-content: space-between;
+    height: 100%;
 }
 
-.pr-exp__stack {
+/* --- Vidéo --- */
+
+.pr-video video {
+    display: block;
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    object-fit: cover;
+    background: #000000;
+    border-radius: 20px;
+}
+
+.pr-video-note {
+    font-family: var(--font-body);
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #9a9a9a;
+    text-align: center;
+    margin: 0.8rem 0 0 0;
+}
+
+/* --- Liens de bas de page --- */
+
+.pr-footer-nav {
     display: flex;
-    flex-direction: column;
-    gap: var(--pr-gap);
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-top: clamp(1.6rem, 2.6vw, 2.6rem);
+    padding-top: 1.2rem;
+    border-top: 1px solid rgba(0, 0, 0, 0.06);
+    font-family: var(--font-body);
+    font-size: clamp(0.85rem, 0.95vw, 0.95rem);
+    font-weight: 500;
 }
 
-.pr-exp__stack .pr-title {
-    margin-bottom: clamp(0.5rem, 1vw, 1rem);
+.pr-footer-nav a {
+    color: #444444;
+    text-decoration: underline;
+    font-size: inherit;
+    transition: color 0.2s ease;
 }
 
-/* Ratios réels des fichiers : portraits 2/3, paysages 3/2 */
-.pr-r-portrait { aspect-ratio: 2 / 3; }
-.pr-r-landscape { aspect-ratio: 3 / 2; }
+.pr-footer-nav a:hover {
+    color: var(--color-magenta);
+}
+
+/* --- Petits écrans --- */
 
 @media (max-width: 900px) {
+    .pr-archi,
+    .pr-couple,
+    .pr-studio,
+    .pr-packshot,
+    .pr-portrait,
+    .pr-sepia,
     .pr-exp--2,
     .pr-exp--3,
     .pr-exp--4,
     .pr-exp--archi,
     .pr-exp--montagne {
         grid-template-columns: 1fr;
-    }
-
-    .pr-exp--montagne {
         align-items: start;
     }
 
-    .pr-exp {
-        align-items: start;
+    .pr-studio > .pr-frame--mid {
+        width: 100%;
+    }
+
+    .pr-caption--center {
+        max-width: 100%;
+    }
+
+    .pr-card {
+        width: calc(100% - 1.2rem);
+        border-radius: 24px;
+    }
+
+    .pr-footer-nav {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.7rem;
     }
 }
-
-
-
-
-
