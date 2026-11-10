@@ -512,9 +512,13 @@ mm.add({
     });
 
     document.addEventListener('click', (e) => {
-        const card = e.target.closest('.bubble-img-card, .lightbox-trigger, .editorial-img-frame');
-        if (!card || lightbox.contains(card)) return;
-        const img = card.tagName === 'IMG' ? card : card.querySelector('img');
+        const target = e.target;
+        if (!target || !target.closest) return;
+        if (lightbox.contains(target)) return;
+        const card = target.closest('.bubble-img-card, .lightbox-trigger, .editorial-img-frame');
+        // Un clic direct sur une photo doit ouvrir la visionneuse, même quand la
+        // carte qui la contient est transformée en 3D par le carrousel.
+        const img = target.tagName === 'IMG' ? target : (card && card.querySelector('img'));
         if (img && img.src) openWith(img);
     });
 
@@ -593,24 +597,26 @@ mm.add({
     });
 })();
 // --- CARROUSEL 3D VERTICAL "TAMBOUR" (PAGES PHOTOGRAPHIE) ---
-// Les cartes pivotent sur l'axe X selon la position de leur portion visible par
-// rapport au centre du viewport : plates au centre, inclinées en haut et en bas.
+// Les cartes (et non les photos) pivotent sur l'axe X selon la position de leur
+// portion visible par rapport au centre du viewport : plates au centre, inclinées
+// en haut et en bas. Une zone centrale les garde nettes plus longtemps.
 (function initDrumCarousel() {
     if (typeof gsap === 'undefined') return;
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
 
-    const items = Array.from(document.querySelectorAll('.pr-card, .pe .editorial-img-frame'));
+    const items = Array.from(document.querySelectorAll('.pr-card, .pe-section'));
     if (!items.length) return;
 
     function params() {
         const mobile = window.innerWidth < 901;
         return {
-            tilt: mobile ? 14 : 30,
-            depth: mobile ? -90 : -200,
-            shrink: mobile ? 0.92 : 0.85,
-            haze: mobile ? 0.65 : 0.5,
-            blur: mobile ? 2 : 5,
-            perspective: mobile ? 900 : 1200
+            tilt: mobile ? 14 : 30,          // rotateX des cartes éloignées
+            depth: mobile ? -90 : -200,      // translateZ
+            shrink: mobile ? 0.92 : 0.85,    // scale
+            haze: mobile ? 0.65 : 0.5,       // opacité
+            blur: mobile ? 2 : 5,            // flou de profondeur
+            perspective: mobile ? 900 : 1200,
+            dead: mobile ? 0.4 : 0.5         // zone centrale nette (0 = centre, 1 = bord)
         };
     }
 
@@ -618,8 +624,23 @@ mm.add({
 
     const entries = items.map((el) => {
         gsap.set(el, { transformPerspective: p.perspective, transformOrigin: '50% 50%' });
-        return { el: el, set: gsap.quickSetter(el, 'css') };
+        return { el: el, set: gsap.quickSetter(el, 'css'), layoutTop: 0, layoutHeight: 0 };
     });
+
+    // Mesure de la mise en page réelle : on neutralise d'abord l'effet, sinon les
+    // rectangles renvoyés sont ceux déjà déformés par la rotation et l'échelle.
+    function measure() {
+        entries.forEach((entry) => gsap.set(entry.el, { rotateX: 0, z: 0, scale: 1 }));
+
+        const scrollTop = window.pageYOffset || document.documentElement.scrollTop || 0;
+        entries.forEach((entry) => {
+            const rect = entry.el.getBoundingClientRect();
+            entry.layoutTop = rect.top + scrollTop;
+            entry.layoutHeight = rect.height;
+        });
+
+        render();
+    }
 
     function apply(entry, distance) {
         const dist = Math.min(1, Math.abs(distance));
@@ -635,26 +656,36 @@ mm.add({
     function render() {
         const vh = window.innerHeight;
         const middle = vh / 2;
+        const scrollTop = window.pageYOffset || document.documentElement.scrollTop || 0;
 
         for (let i = 0; i < entries.length; i++) {
             const entry = entries[i];
-            const rect = entry.el.getBoundingClientRect();
+            const top = entry.layoutTop - scrollTop;
+            const bottom = top + entry.layoutHeight;
 
-            if (rect.top > vh) { apply(entry, 1); continue; }
-            if (rect.bottom < 0) { apply(entry, -1); continue; }
+            if (top > vh) { apply(entry, 1); continue; }        // pas encore entrée
+            if (bottom < 0) { apply(entry, -1); continue; }     // déjà sortie en haut
 
-            const visibleTop = Math.max(rect.top, 0);
-            const visibleBottom = Math.min(rect.bottom, vh);
+            // Centre de la portion réellement visible de la carte
+            const visibleTop = Math.max(top, 0);
+            const visibleBottom = Math.min(bottom, vh);
             const visibleCenter = (visibleTop + visibleBottom) / 2;
 
-            apply(entry, (visibleCenter - middle) / middle);
+            const raw = (visibleCenter - middle) / middle;
+            const abs = Math.abs(raw);
+
+            // Zone morte : la carte reste parfaitement nette tant qu'elle occupe
+            // le centre de l'écran, puis l'effet monte progressivement.
+            const shaped = abs <= p.dead ? 0 : Math.min(1, (abs - p.dead) / (1 - p.dead));
+
+            apply(entry, raw < 0 ? -shaped : shaped);
         }
     }
 
     function refreshParams() {
         p = params();
         entries.forEach((entry) => gsap.set(entry.el, { transformPerspective: p.perspective }));
-        render();
+        measure();
     }
 
     if (typeof ScrollTrigger !== 'undefined') {
@@ -663,14 +694,15 @@ mm.add({
             start: 0,
             end: 'max',
             onUpdate: render,
-            onRefresh: render
+            onRefresh: measure
         });
     } else {
         document.addEventListener('scroll', render, { passive: true });
     }
 
     window.addEventListener('resize', refreshParams);
-    window.addEventListener('load', render);
+    window.addEventListener('load', measure);
+    setTimeout(measure, 1200);
 
-    render();
+    measure();
 })();

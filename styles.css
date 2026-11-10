@@ -2724,7 +2724,7 @@ body.hovering .cursor-spiral {
 }
 
 .pr-card,
-.pe .editorial-img-frame {
+.pe-section {
     transform-style: preserve-3d;
     transform-origin: center center;
     backface-visibility: hidden;
