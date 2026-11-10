@@ -62,7 +62,7 @@ body {
     font-family: var(--font-display);
 }
     .top-bar a, .top-bar .logo {
-        color: #333333; /* dark gray */
+        color: #ffffff; /* texte en négatif, comme le curseur */
         text-decoration: none;
         margin: 0 0.5rem;
         font-size: 0.95rem;
@@ -86,7 +86,11 @@ body {
         transition: left 0.35s cubic-bezier(0.34, 1.56, 0.64, 1), width 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
         pointer-events: none;
         z-index: 0;
-    }.top-bar a:hover {
+    }.top-bar a {
+        mix-blend-mode: difference;
+    }
+
+.top-bar a:hover {
     color: var(--color-neon-pink);
     mix-blend-mode: normal; /* keep hover visible */
 }
