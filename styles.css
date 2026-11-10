@@ -1902,12 +1902,7 @@ body.hovering .cursor-spiral {
 }
 
 .photo-split-side.side-exp .photo-split-bg {
-    /* Photo du domaine expressif. La précédente reste en seconde couche : une
-       couche dont le fichier manque n'est pas peinte, elle sert donc de recours
-       tant que la nouvelle image n'a pas été déposée. */
-    background-image:
-        url('images/photographie/expressive/37_mur_casse.jpg'),
-        url('images/photographie/expressive/20_76ffea63b61e08754e1098086ea070cf.jpg');
+    background-image: url('images/photographie/expressive/08_46f920ee78c7a5399f47f6cbb604d31e.jpg');
 }
 
 .photo-split-side.side-pro::before {
