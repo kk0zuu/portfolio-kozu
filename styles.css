@@ -2680,8 +2680,8 @@ body.hovering .cursor-spiral {
 }
 
 /* L'Urbain vue de près : décalages resserrés pour tenir dans l'écran */
-#exp-urbain .pe-off-1 { margin-top: clamp(0.5rem, 3.4vw, 3.4rem); }
-#exp-urbain .pe-off-2 { margin-top: clamp(1rem, 6.6vw, 6.6rem); }
+#exp-urbain .pe-off-1 { margin-top: clamp(0.4rem, 2.2vw, 2.2rem); }
+#exp-urbain .pe-off-2 { margin-top: clamp(0.8rem, 3vw, 3rem); }
 
 .pe-vibrantes { margin-top: clamp(1rem, 2.6vw, 2.6rem); }
 
