@@ -2665,6 +2665,63 @@ body.hovering .cursor-spiral {
     gap: 0;
 }
 
+/* Cases resserrées : elles tiennent entières dans l'écran */
+#exp-architecture { max-width: 1320px; }
+#exp-urbain { max-width: 1160px; }
+#exp-montagne { max-width: 1160px; }
+
+/* Architecture : les deux photos du bas remontent sur la grande et débordent
+   légèrement sur le réverbère, comme sur la planche de référence */
+.pe-archi .pe-stack {
+    gap: 0;
+}
+
+.pe-archi .pe-stack > .pe-2 {
+    position: relative;
+    z-index: 2;
+    margin: -1vw 0.8vw 0 -4vw;
+    gap: clamp(10px, 1.2vw, 18px);
+}
+
+/* L'Urbain vue de près : décalages resserrés pour tenir dans l'écran */
+#exp-urbain .pe-off-1 { margin-top: clamp(0.6rem, 4vw, 4rem); }
+#exp-urbain .pe-off-2 { margin-top: clamp(1.2rem, 7.5vw, 7.5rem); }
+
+/* Portraits de rue : la voiture se glisse entre les deux piles */
+.pe-rue { grid-template-columns: 1.02fr 1fr 1.12fr; }
+
+.pe-rue .pe-stack { gap: 0; }
+
+.pe-rue .pe-stack > * + * {
+    margin-top: clamp(0.4rem, 1.8vw, 1.8rem);
+}
+
+.pe-rue > .editorial-img-frame {
+    position: relative;
+    z-index: 2;
+    margin: clamp(1rem, 3.5vw, 3.5rem) -3.2vw 0;
+}
+
+/* À la montagne : panorama à gauche, les deux skieurs empilés à droite,
+   le second chevauchant légèrement le premier */
+.pe-montagne {
+    grid-template-columns: 2.15fr 1fr;
+    align-items: start;
+}
+
+#exp-montagne .pe-off-1 { margin-top: clamp(0.8rem, 4vw, 4rem); }
+
+.pe-montagne .pe-stack { gap: 0; }
+
+.pe-montagne .pe-stack > * + * {
+    position: relative;
+    z-index: 2;
+    margin-top: clamp(-1.5rem, -2.2vw, -0.6rem);
+}
+
+/* Portraits : la suite des scènes vibrantes rejoint la case */
+.pe-vibrantes { margin-top: clamp(1rem, 2.6vw, 2.6rem); }
+
 /* Images telles quelles, sans cadre */
 .pe .editorial-img-frame {
     border-radius: 0;
