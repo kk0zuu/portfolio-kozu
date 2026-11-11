@@ -2665,61 +2665,53 @@ body.hovering .cursor-spiral {
     gap: 0;
 }
 
-/* Cases resserrées : elles tiennent entières dans l'écran */
-#exp-architecture { max-width: 1320px; }
-#exp-urbain { max-width: 1160px; }
-#exp-montagne { max-width: 1160px; }
-
-/* Architecture : les deux photos du bas remontent sur la grande et débordent
-   légèrement sur le réverbère, comme sur la planche de référence */
-.pe-archi .pe-stack {
-    gap: 0;
-}
-
-.pe-archi .pe-stack > .pe-2 {
+/* Collages libres : chaque photo est placée à la main dans un cadre au ratio
+   de la planche de référence, pour retrouver l'esprit de l'expressif */
+.pe-collage {
     position: relative;
-    z-index: 2;
-    margin: -1vw 0.8vw 0 -4vw;
-    gap: clamp(10px, 1.2vw, 18px);
+    margin: 0 auto;
 }
+
+.pe-collage > .editorial-img-frame {
+    position: absolute;
+    margin: 0;
+}
+
+.pe-collage--archi {
+    width: 94%;
+    aspect-ratio: 1522 / 860;
+}
+
+.pe-collage--archi .pe-c1 { left: 0;     top: 20.9%; width: 28.7%; }
+.pe-collage--archi .pe-c2 { left: 30.0%; top: 0;     width: 24.8%; }
+.pe-collage--archi .pe-c3 { left: 56.6%; top: 0;     width: 35.3%; }
+.pe-collage--archi .pe-c4 { left: 48.8%; top: 58.4%; width: 30.6%; }
+.pe-collage--archi .pe-c5 { left: 82.3%; top: 52.2%; width: 17.7%; }
+
+.pe-collage--rue {
+    width: 94%;
+    aspect-ratio: 1460 / 850;
+}
+
+.pe-collage--rue .pe-c1 { left: 0.3%; top: 0.6%;  width: 29.5%; }
+.pe-collage--rue .pe-c2 { left: 0;     top: 41.8%; width: 30.1%; }
+.pe-collage--rue .pe-c3 { left: 52.2%; top: 0;     width: 47.5%; }
+.pe-collage--rue .pe-c4 { left: 27.4%; top: 56.5%; width: 37.1%; }
+.pe-collage--rue .pe-c5 { left: 63.7%; top: 57.7%; width: 36.3%; }
+
+.pe-collage--montagne {
+    width: 100%;
+    aspect-ratio: 1522 / 800;
+}
+
+.pe-collage--montagne .pe-c1 { left: 0;     top: 16.3%; width: 62.9%; }
+.pe-collage--montagne .pe-c2 { left: 76.7%; top: 0;     width: 23.3%; }
+.pe-collage--montagne .pe-c3 { left: 64.2%; top: 58.8%; width: 31.9%; }
 
 /* L'Urbain vue de près : décalages resserrés pour tenir dans l'écran */
-#exp-urbain .pe-off-1 { margin-top: clamp(0.6rem, 4vw, 4rem); }
-#exp-urbain .pe-off-2 { margin-top: clamp(1.2rem, 7.5vw, 7.5rem); }
+#exp-urbain .pe-off-1 { margin-top: clamp(0.5rem, 3.4vw, 3.4rem); }
+#exp-urbain .pe-off-2 { margin-top: clamp(1rem, 6.6vw, 6.6rem); }
 
-/* Portraits de rue : la voiture se glisse entre les deux piles */
-.pe-rue { grid-template-columns: 1.02fr 1fr 1.12fr; }
-
-.pe-rue .pe-stack { gap: 0; }
-
-.pe-rue .pe-stack > * + * {
-    margin-top: clamp(0.4rem, 1.8vw, 1.8rem);
-}
-
-.pe-rue > .editorial-img-frame {
-    position: relative;
-    z-index: 2;
-    margin: clamp(1rem, 3.5vw, 3.5rem) -3.2vw 0;
-}
-
-/* À la montagne : panorama à gauche, les deux skieurs empilés à droite,
-   le second chevauchant légèrement le premier */
-.pe-montagne {
-    grid-template-columns: 2.15fr 1fr;
-    align-items: start;
-}
-
-#exp-montagne .pe-off-1 { margin-top: clamp(0.8rem, 4vw, 4rem); }
-
-.pe-montagne .pe-stack { gap: 0; }
-
-.pe-montagne .pe-stack > * + * {
-    position: relative;
-    z-index: 2;
-    margin-top: clamp(-1.5rem, -2.2vw, -0.6rem);
-}
-
-/* Portraits : la suite des scènes vibrantes rejoint la case */
 .pe-vibrantes { margin-top: clamp(1rem, 2.6vw, 2.6rem); }
 
 /* Images telles quelles, sans cadre */
