@@ -2639,9 +2639,14 @@ body.hovering .cursor-spiral {
 .pe-off-5 { margin-top: clamp(0.5rem, 2.8vw, 2.8rem); }
 
 /* Dispositions spécifiques */
-.pe-archi { grid-template-columns: 1fr 1fr 1.5fr; }
+/* Architecture : trois portraits en bandeau, les deux paysages empilés au bout */
+.pe-archi { grid-template-columns: repeat(4, 1fr); }
 
-.pe-montagne { grid-template-columns: 1.9fr 1fr; }
+/* À la montagne : triptyque, le portrait au centre */
+.pe-montagne {
+    grid-template-columns: repeat(3, 1fr);
+    align-items: center;
+}
 
 .pe-lumiere {
     grid-template-columns: 2.1fr 1fr;
@@ -2653,7 +2658,16 @@ body.hovering .cursor-spiral {
     align-items: end;
 }
 
-.pe-rue { grid-template-columns: 1fr 1fr 1fr; }
+/* Portraits de rue : trois petits en haut, deux grands en bas */
+.pe-rue {
+    grid-template-columns: repeat(6, 1fr);
+    width: 90%;
+    margin: 0 auto;
+}
+
+.pe-rue > * { grid-column: span 2; }
+
+.pe-rue > :nth-child(n + 4) { grid-column: span 3; }
 
 .pe-stack {
     display: flex;
@@ -2664,49 +2678,6 @@ body.hovering .cursor-spiral {
 .pe-stack--flush {
     gap: 0;
 }
-
-/* Collages libres : chaque photo est placée à la main dans un cadre au ratio
-   de la planche de référence, pour retrouver l'esprit de l'expressif */
-.pe-collage {
-    position: relative;
-    margin: 0 auto;
-}
-
-.pe-collage > .editorial-img-frame {
-    position: absolute;
-    margin: 0;
-}
-
-.pe-collage--archi {
-    width: 94%;
-    aspect-ratio: 1522 / 860;
-}
-
-.pe-collage--archi .pe-c1 { left: 0;     top: 20.9%; width: 28.7%; }
-.pe-collage--archi .pe-c2 { left: 30.0%; top: 0;     width: 24.8%; }
-.pe-collage--archi .pe-c3 { left: 56.6%; top: 0;     width: 35.3%; }
-.pe-collage--archi .pe-c4 { left: 48.8%; top: 58.4%; width: 30.6%; }
-.pe-collage--archi .pe-c5 { left: 82.3%; top: 52.2%; width: 17.7%; }
-
-.pe-collage--rue {
-    width: 94%;
-    aspect-ratio: 1460 / 850;
-}
-
-.pe-collage--rue .pe-c1 { left: 0.3%; top: 0.6%;  width: 29.5%; }
-.pe-collage--rue .pe-c2 { left: 0;     top: 41.8%; width: 30.1%; }
-.pe-collage--rue .pe-c3 { left: 52.2%; top: 0;     width: 47.5%; }
-.pe-collage--rue .pe-c4 { left: 27.4%; top: 56.5%; width: 37.1%; }
-.pe-collage--rue .pe-c5 { left: 63.7%; top: 57.7%; width: 36.3%; }
-
-.pe-collage--montagne {
-    width: 100%;
-    aspect-ratio: 1522 / 800;
-}
-
-.pe-collage--montagne .pe-c1 { left: 0;     top: 16.3%; width: 62.9%; }
-.pe-collage--montagne .pe-c2 { left: 76.7%; top: 0;     width: 23.3%; }
-.pe-collage--montagne .pe-c3 { left: 64.2%; top: 58.8%; width: 31.9%; }
 
 /* L'Urbain vue de près : décalages resserrés pour tenir dans l'écran */
 #exp-urbain .pe-off-1 { margin-top: clamp(0.5rem, 3.4vw, 3.4rem); }
@@ -2746,6 +2717,13 @@ body.hovering .cursor-spiral {
     .pe-rue {
         grid-template-columns: 1fr;
         align-items: start;
+    }
+    .pe-rue {
+        width: 100%;
+    }
+
+    .pe-rue > * {
+        grid-column: auto;
     }
 
     .pe-off-1,
