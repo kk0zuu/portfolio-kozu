@@ -2,3 +2,6 @@
 Thumbs.db
 desktop.ini
 *.tmp
+
+# pièces jointes de conversation (non publiables)
+.cloud-attachments/
