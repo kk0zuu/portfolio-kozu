@@ -318,15 +318,23 @@
             enCours = true;
             e.preventDefault();
 
-            gsap.timeline({
-                onComplete: function () { window.location.href = lien.getAttribute('href'); }
-            }).to([zone].concat(note ? [note] : []), {
+            gsap.timeline().to([zone].concat(note ? [note] : []), {
                 opacity: 0,
                 scale: 1.02,
                 filter: 'blur(8px)',
                 duration: 0.5,
                 ease: 'power2.in'
             });
+
+            /* La navigation est laissée à la transition d'étoiles (app.js) :
+               elle seule enregistre la position de la trame avant d'ouvrir la
+               page, ce qui fait que les étoiles se raccordent d'un bord à
+               l'autre. Si ce voile n'est pas là, on ouvre nous-mêmes. */
+            setTimeout(function () {
+                if (!document.documentElement.classList.contains('barre-sombre')) {
+                    window.location.href = lien.getAttribute('href');
+                }
+            }, 700);
         });
 
         window.addEventListener('pageshow', function (e) {
