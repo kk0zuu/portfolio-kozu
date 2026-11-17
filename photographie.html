@@ -1086,9 +1086,18 @@
             }
             body.appendChild(voile);
 
+            /* la page d'arrivée ne s'installe qu'une fois : pendant la passation du
+               mot quand il voyage, sinon à la fin de la transition */
+            var installe = false;
+            function poserPage() {
+                if (installe) return;
+                installe = true;
+                installer(bloc, url);
+            }
+
             var tl = gsap.timeline({
                 onComplete: function () {
-                    installer(bloc, url);
+                    poserPage();
                     body.classList.remove('photo-etape-en-cours');
                     cotes.forEach(function (c) { c.classList.remove('cote-actif'); });
 
@@ -1133,12 +1142,33 @@
                     y: motArrivee.top - rMot.top,
                     scale: motArrivee.echelle,
                     color: '#000000', textShadow: 'none',
-                    duration: 0.78, ease: 'power2.inOut'
-                }, 0.12);
+                    duration: 0.7, ease: 'power2.inOut'
+                }, 0.1);
+                /* le voile couvre déjà tout l'écran : on installe la page derrière lui,
+                   on relève la place réelle du mot dans le titre et on y amène la copie
+                   en une fraction de seconde. La passation se fait quand la copie est
+                   pile dessus, donc sans un seul instant où le mot manque. */
                 tl.call(function () {
-                    cloneMot.remove();
-                    if (motCible) gsap.set(motCible, { opacity: 1 });
-                }, null, 0.94);
+                    poserPage();
+                    var motFinal = motCible || null;
+                    var rectFinal = motFinal ? motFinal.getBoundingClientRect() : null;
+                    if (!rectFinal) {
+                        cloneMot.remove();
+                        return;
+                    }
+                    var csFinal = getComputedStyle(motFinal);
+                    var echelleFinale = parseFloat(csFinal.fontSize) / parseFloat(csMot.fontSize) || 1;
+                    gsap.to(cloneMot, {
+                        x: rectFinal.left - rMot.left,
+                        y: rectFinal.top - rMot.top,
+                        scale: echelleFinale,
+                        duration: 0.1, ease: 'power1.out',
+                        onComplete: function () {
+                            cloneMot.remove();
+                            gsap.set(motFinal, { opacity: 1 });
+                        }
+                    });
+                }, null, 0.82);
             }
 
             /* la photo choisie prend tout l'écran ; pendant l'ouverture, son cadrage et
