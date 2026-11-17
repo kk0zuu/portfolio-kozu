@@ -2653,6 +2653,7 @@ if (!document.body.classList.contains('photo-fusion')) construireTambour();
         'OUI': { texte: "c'est un grand" },
         'GOUT': { texte: 'vous avez bon' },
         'GOAT': { texte: "c'est moi le" },
+        'AND': { texte: 'we do english here,' },
         'AUTO': { texte: "fan d'", signe: '?' },
         'DOS': { texte: "j'ai mal au" }
     };
