@@ -29,6 +29,25 @@ body.pm-focus .pm-entete{opacity:0 !important;}
 body.pm-focus .pm-halo{opacity:.2;}
 .pm-piste{position:absolute;inset:0;}
 
+/* ---------- fond : étoiles filantes bleues (le bleu de Contact) ---------- */
+.pm-ciel{position:fixed;inset:0;z-index:0;overflow:hidden;pointer-events:none;}
+.pm-etoile{position:absolute;left:0;top:0;height:2px;border-radius:2px;
+  width:var(--long,90px);
+  background:linear-gradient(90deg,rgba(18,50,180,0) 0%,rgba(18,50,180,.32) 55%,rgba(18,50,180,.9) 100%);
+  rotate:45deg;opacity:0;will-change:translate,opacity;
+  animation:pm-file var(--duree,6s) linear var(--retard,0s) infinite;}
+/* la tête, plus dense, mène la course */
+.pm-etoile::after{content:'';position:absolute;right:-1px;top:50%;width:3px;height:3px;margin-top:-1.5px;border-radius:50%;
+  background:rgba(18,50,180,.95);box-shadow:0 0 6px rgba(18,50,180,.55);}
+/* le trajet est un vrai 45° : autant de pixels en x qu'en y (vmax des deux côtés) */
+@keyframes pm-file{
+  0%{translate:var(--x) var(--y);opacity:0;}
+  9%{opacity:var(--op,.6);}
+  62%{opacity:var(--op,.6);}
+  80%{translate:calc(var(--x) + 115vmax) calc(var(--y) + 115vmax);opacity:0;}
+  100%{translate:calc(var(--x) + 115vmax) calc(var(--y) + 115vmax);opacity:0;}
+}
+
 .pm-voile{position:fixed;inset:0;z-index:30;background:rgba(5,5,6,.86);
   opacity:0;visibility:hidden;transition:opacity .45s ease,visibility .45s;}
 .pm-voile.on{opacity:1;visibility:visible;}
@@ -268,6 +287,8 @@ body.pm-focus .pm-retour-focus{opacity:1;visibility:visible;}
         <path d="M 30,30 A 3.5 3.5 0 0 1 30 37 A 7 7 0 0 1 30 23 A 10.5 10.5 0 0 1 30 44 A 14 14 0 0 1 30 16 A 17.5 17.5 0 0 1 30 51 A 21 21 0 0 1 30 9" fill="none" stroke="white" stroke-width="3.2" stroke-linecap="round"/>
     </svg>
 </div>
+
+<div class="pm-ciel" id="pmCiel" aria-hidden="true"></div>
 
 <header class="pm-entete">
     <h1 class="pm-titre">Scénographies &amp; Projets Plastiques</h1>
@@ -1024,6 +1045,30 @@ body.pm-focus .pm-retour-focus{opacity:1;visibility:visible;}
 
     gsap.fromTo('.pm-entete', { y: -18 },
         { y: 0, opacity: 1, duration: 0.55, ease: 'power2.out', delay: calme ? 0 : 0.9 });
+})();
+
+/* ---------- étoiles filantes du fond ---------- */
+// Chaque étoile a sa position de départ, sa longueur, sa vitesse et son
+// décalage : le ciel ne se répète jamais exactement, mais reste calme.
+(function () {
+    var ciel = document.getElementById('pmCiel');
+    if (!ciel) return;
+    if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+    var TOTAL = 16;
+    function hasard(min, max) { return min + Math.random() * (max - min); }
+
+    for (var i = 0; i < TOTAL; i++) {
+        var etoile = document.createElement('span');
+        etoile.className = 'pm-etoile';
+        etoile.style.setProperty('--x', hasard(-30, 100).toFixed(2) + 'vw');
+        etoile.style.setProperty('--y', hasard(-40, 95).toFixed(2) + 'vh');
+        etoile.style.setProperty('--long', Math.round(hasard(55, 155)) + 'px');
+        etoile.style.setProperty('--duree', hasard(3.4, 7.2).toFixed(2) + 's');
+        etoile.style.setProperty('--retard', hasard(-7.2, 9).toFixed(2) + 's');
+        etoile.style.setProperty('--op', hasard(0.28, 0.78).toFixed(2));
+        ciel.appendChild(etoile);
+    }
 })();
 </script>
 </body>
