@@ -2537,8 +2537,14 @@ if (!document.body.classList.contains('photo-fusion')) construireTambour();
     if (typeof gsap === 'undefined' || !window.PointerEvent) return;
 
     var GLYPHES = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789?!&%@';
-    var PLACES = 3;                       // trois lettres au maximum
-    var SECRETS = { 'IAN': "et oui c'est mon nom" };
+    var PLACES = 4;                       // quatre lettres au maximum
+    var SECRETS = {
+        'IAN': "et oui c'est mon nom",
+        'BOSS': "et oui, c'est moi le",
+        'NOUS': "la république, c'est",
+        'TG': 'pas très gentil ça',
+        '-': ', lol'
+    };
     var DEFAUT = 'secret ?!';
     var ETALEMENT = 0.028;                // décalage du rouleau, colonne par colonne
     var ITEMS = 6;                        // cases parcourues par le rouleau
@@ -2623,6 +2629,13 @@ if (!document.body.classList.contains('photo-fusion')) construireTambour();
         if (texte === texteActuel) return;
         texteActuel = texte;
 
+        /* Tout ce qui va bouger est mesuré avant : le texte, la case et le
+           badge glissent ensuite vers leur nouvelle place, au lieu de sauter
+           quand la ligne se recentre. */
+        var avantTexte = sousTitre.getBoundingClientRect();
+        var avantCase = boite.getBoundingClientRect();
+        var avantBadge = badge.getBoundingClientRect();
+
         var ancienne = sousTitre.firstElementChild;
         if (ancienne) {
             gsap.set(ancienne, { position: 'absolute', left: 0, top: 0, whiteSpace: 'nowrap' });
@@ -2636,6 +2649,30 @@ if (!document.body.classList.contains('photo-fusion')) construireTambour();
         sousTitre.appendChild(neuve);
         ajuster(neuve);
 
+        var apresTexte = sousTitre.getBoundingClientRect();
+        var dxTexte = avantTexte.left - apresTexte.left;
+        if (Math.abs(dxTexte) > 1) {
+            gsap.fromTo(neuve, { x: dxTexte }, { x: 0, duration: 0.5, ease: 'power3.out', overwrite: 'auto' });
+        }
+
+        var apresCase = boite.getBoundingClientRect();
+        var dxCase = avantCase.left - apresCase.left;
+        var dyCase = avantCase.top - apresCase.top;
+        if (Math.abs(dxCase) > 1 || Math.abs(dyCase) > 1) {
+            gsap.fromTo(boite, { x: dxCase, y: dyCase }, { x: 0, y: 0, duration: 0.5, ease: 'power3.out', overwrite: 'auto' });
+        }
+
+        if (!priseBadge) {
+            var apresBadge = badge.getBoundingClientRect();
+            var dxBadge = avantBadge.left - apresBadge.left;
+            var dyBadge = avantBadge.top - apresBadge.top;
+            if (Math.abs(dxBadge) > 1 || Math.abs(dyBadge) > 1) {
+                var bx = Number(gsap.getProperty(badge, 'x')) || 0;
+                var by = Number(gsap.getProperty(badge, 'y')) || 0;
+                gsap.fromTo(badge, { x: bx + dxBadge, y: by + dyBadge }, { x: bx, y: by, duration: 0.5, ease: 'power3.out', overwrite: 'auto' });
+            }
+        }
+
         var piles = [];
         Array.prototype.forEach.call(neuve.children, function (col) { if (col._pile) piles.push(col._pile); });
         if (piles.length) {
@@ -2647,8 +2684,9 @@ if (!document.body.classList.contains('photo-fusion')) construireTambour();
             });
         }
 
-        // la case a pu se décaler avec la nouvelle longueur : on y replace les lettres
-        if (posees.length) placer();
+        // la case a pu se décaler avec la nouvelle longueur : on y replace les
+        // lettres, sur la même durée que le glissement
+        if (posees.length) placer(0.5);
     }
 
     emballer();
@@ -2721,7 +2759,8 @@ if (!document.body.classList.contains('photo-fusion')) construireTambour();
         return -1;
     }
 
-    function placer() {
+    function placer(duree) {
+        var d = duree || 0.32;
         var r = boite.getBoundingClientRect();
         var largeur = r.width / PLACES;
         posees.forEach(function (c) {
@@ -2738,7 +2777,7 @@ if (!document.body.classList.contains('photo-fusion')) construireTambour();
                 y: cy - c.hy,
                 rotation: 0,
                 scale: echelle,
-                duration: 0.32,
+                duration: d,
                 ease: 'power3.out',
                 overwrite: true
             });
