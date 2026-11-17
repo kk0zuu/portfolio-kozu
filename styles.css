@@ -869,17 +869,17 @@ body.contact-page .logiciels-aide-point {
    intacts, sans `!important` supplémentaire. */
 @keyframes etiquette-bercement {
     0%   { rotate: 0deg; }
-    16%  { rotate: -3.6deg; }
-    34%  { rotate: -3.6deg; }
-    50%  { rotate: 3.6deg; }
-    68%  { rotate: 3.6deg; }
-    84%  { rotate: 0deg; }
+    12%  { rotate: -5.5deg; }
+    30%  { rotate: -5.5deg; }
+    44%  { rotate: 5.5deg; }
+    62%  { rotate: 5.5deg; }
+    76%  { rotate: 0deg; }
     100% { rotate: 0deg; }
 }
 
 .bubble-card:hover .handwritten-label {
     transform: scale(1.08) rotate(0deg);
-    animation: etiquette-bercement 4.2s ease-in-out infinite;
+    animation: etiquette-bercement 2.8s ease-in-out infinite;
 }
 
 /* RESPONSIVE */
