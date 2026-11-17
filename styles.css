@@ -343,6 +343,8 @@ body.hovering .cursor-spiral {
 
 /* Ligne supérieure : "et voici mon" (Schoolbell en minuscule) + "PORTFOLIO" (Badge) */
 .hero-intro-line {
+    position: relative;
+    z-index: 3; /* au-dessus de la case secrète, qui reste derrière le badge */
     display: flex;
     align-items: center;
     justify-content: center;
@@ -380,6 +382,66 @@ body.hovering .cursor-spiral {
     transform-origin: center center;
     user-select: none;
     will-change: transform, opacity;
+}
+
+/* --- LA CASE SECRÈTE DU MINI-JEU ------------------------------------
+   Elle est cachée derrière le badge « PORTFOLIO » : en tirant le badge
+   on découvre une case blanche qui garde sa largeur et s'allonge jusqu'à
+   la hauteur des lettres, pour qu'on puisse y déposer des lettres. */
+.portfolio-badge {
+    position: relative;
+    z-index: 2;
+}
+
+.portfolio-badge.badge-prise {
+    z-index: 6;
+}
+
+.case-secrete {
+    position: absolute;
+    left: 0;
+    top: 0;
+    z-index: 1;
+    width: 0;
+    height: 0;
+    background: var(--color-white);
+    border: 3px solid var(--color-black);
+    box-shadow: 5px 5px 0 var(--color-magenta);
+    transform: translate(-50%, -50%);
+    opacity: 0;
+    overflow: hidden;
+    pointer-events: none;
+}
+
+/* --- ROULEAU DE MACHINE À SOUS DU SOUS-TITRE --------------------------
+   Chaque caractère est une colonne qui défile puis se pose, un peu après
+   sa voisine : c'est la transition « jackpot ». */
+.hero-manuscript-text {
+    position: relative;
+}
+
+.slot-ligne {
+    display: inline;
+}
+
+.slot-case {
+    display: inline-block;
+    height: 1.3em;
+    line-height: 1.3em;
+    overflow: hidden;
+    vertical-align: bottom;
+    text-transform: none;
+}
+
+.slot-pile {
+    display: block;
+}
+
+.slot-item {
+    display: block;
+    height: 1.3em;
+    line-height: 1.3em;
+    white-space: nowrap;
 }
 
 /* --- TITRE PRINCIPAL GRAND FORMAT SUR UNE SEULE LIGNE (RANSOM NOTE MAGAZINE) --- */

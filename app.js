@@ -2069,7 +2069,7 @@ if (!document.body.classList.contains('photo-fusion')) construireTambour();
 
     function pas(dt) {
         corps.forEach(function (c) {
-            if (c === prise || !c.libre) return;
+            if (c === prise || !c.libre || c.dansCase) return;
 
             var f = Math.pow(AIR, dt * 60);
             c.vx *= f;
@@ -2090,10 +2090,10 @@ if (!document.body.classList.contains('photo-fusion')) construireTambour();
         // chocs entre lettres
         for (var i = 0; i < corps.length; i++) {
             var A = corps[i];
-            if (!A.libre) continue;
+            if (!A.libre || A.dansCase) continue;
             for (var j = i + 1; j < corps.length; j++) {
                 var B = corps[j];
-                if (!B.libre) continue;
+                if (!B.libre || B.dansCase) continue;
                 var dx2 = B.x - A.x, dy2 = B.y - A.y;
                 var ox = (A.w + B.w) / 2 - Math.abs(dx2);
                 var oy = (A.h + B.h) / 2 - Math.abs(dy2);
@@ -2118,7 +2118,7 @@ if (!document.body.classList.contains('photo-fusion')) construireTambour();
 
         // rendu
         corps.forEach(function (c) {
-            if (!c.libre) return;
+            if (!c.libre || c.dansCase) return;
             gsap.set(c.el, { x: c.x - c.hx, y: c.y - c.hy, rotation: c.rot0 + c.a });
             if (c === prise) return;
             var z = 100 + Math.round(c.y / 10);
@@ -2161,6 +2161,7 @@ if (!document.body.classList.contains('photo-fusion')) construireTambour();
         c.el.addEventListener('pointerdown', function (e) {
             if (!actif || e.button !== 0) return;
             e.preventDefault();
+            if (c.dansCase && window.caseSecrete) window.caseSecrete.retirer(c);
             c.libre = true;
             prise = c;
             c.el.classList.add('saisie');
@@ -2195,6 +2196,8 @@ if (!document.body.classList.contains('photo-fusion')) construireTambour();
         if (!prise) return;
         prise.el.classList.remove('saisie');
         prise.z = -1;
+        // lâchée au-dessus de la case secrète, la lettre s'y range
+        if (window.caseSecrete) window.caseSecrete.deposer(prise);
         prise = null;
     });
 
@@ -2517,4 +2520,272 @@ if (!document.body.classList.contains('photo-fusion')) construireTambour();
     tl.from(titre, { y: -70, opacity: 0, duration: 0.8, ease: 'power3.out' }, 0);
     if (sous) tl.from(sous, { y: -50, opacity: 0, duration: 0.8, ease: 'power3.out' }, 0.12);
     if (nav) tl.from(nav, { y: -30, opacity: 0, duration: 0.6, ease: 'power2.out' }, 0.24);
+})();
+
+// --- 7. LA CASE SECRÈTE DERRIÈRE « PORTFOLIO » (mini-jeu) ---------------
+// Le badge « PORTFOLIO » se tire sans que rien ne l'annonce : derrière lui
+// attend une case blanche, qui garde sa largeur mais s'allonge jusqu'à la
+// hauteur des lettres. On y dépose des lettres, et le sous-titre change de
+// mot sur un rouleau de machine à sous.
+(function () {
+    var ligne = document.querySelector('.hero-intro-line');
+    var conteneur = document.querySelector('.hero-content');
+    var badge = document.querySelector('.portfolio-badge');
+    var sousTitre = document.querySelector('.hero-manuscript-text');
+    var titre = document.querySelector('#hero-title');
+    if (!ligne || !conteneur || !badge || !sousTitre || !titre) return;
+    if (typeof gsap === 'undefined' || !window.PointerEvent) return;
+
+    var GLYPHES = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789?!&%@';
+    var PLACES = 3;                       // trois lettres au maximum
+    var SECRETS = { 'IAN': "et oui c'est mon nom" };
+    var DEFAUT = 'secret ?!';
+    var ETALEMENT = 0.028;                // décalage du rouleau, colonne par colonne
+    var ITEMS = 6;                        // cases parcourues par le rouleau
+
+    /* la case blanche : dans .hero-content, sous la ligne d'intro (donc
+       derrière le badge) et sous le titre (donc sous les lettres). Elle est
+       ancrée là et non dans la ligne d'intro, dont la largeur change avec le
+       texte du sous-titre : la case ne doit pas se déplacer. */
+    var boite = document.createElement('div');
+    boite.className = 'case-secrete';
+    boite.setAttribute('aria-hidden', 'true');
+    conteneur.insertBefore(boite, conteneur.firstChild);
+
+    var revelee = false;
+    var texteActuel = '';
+    var posees = [];
+    var pret = false;
+    var priseBadge = null;
+
+    document.addEventListener('hero:intro-done', function () { pret = true; });
+
+    /* ---------- le rouleau du sous-titre ---------- */
+    function colonne(ch) {
+        var col = document.createElement('span');
+        col.className = 'slot-case';
+        if (ch === ' ') {
+            col.innerHTML = '&nbsp;';
+            return col;
+        }
+        var pile = document.createElement('span');
+        pile.className = 'slot-pile';
+        for (var k = 0; k < ITEMS; k++) {
+            var it = document.createElement('span');
+            it.className = 'slot-item';
+            it.textContent = (k === ITEMS - 1) ? ch : GLYPHES.charAt(Math.floor(Math.random() * GLYPHES.length));
+            pile.appendChild(it);
+        }
+        col.appendChild(pile);
+        col._pile = pile;
+        return col;
+    }
+
+    // le texte d'origine est emballé dans les mêmes colonnes : il peut donc
+    // s'en aller comme les suivants
+    function emballer() {
+        var texte = (sousTitre.textContent || '').trim();
+        var l = document.createElement('span');
+        l.className = 'slot-ligne';
+        for (var i = 0; i < texte.length; i++) l.appendChild(colonne(texte.charAt(i)));
+        sousTitre.textContent = '';
+        sousTitre.appendChild(l);
+        texteActuel = texte;
+    }
+
+    function ecrire(texte) {
+        if (texte === texteActuel) return;
+        texteActuel = texte;
+
+        var ancienne = sousTitre.firstElementChild;
+        if (ancienne) {
+            gsap.set(ancienne, { position: 'absolute', left: 0, top: 0, whiteSpace: 'nowrap' });
+            gsap.to(ancienne, {
+                yPercent: -50, opacity: 0, duration: 0.24, ease: 'power2.in',
+                onComplete: function () { if (ancienne.parentNode) ancienne.parentNode.removeChild(ancienne); }
+            });
+        }
+
+        var neuve = document.createElement('span');
+        neuve.className = 'slot-ligne';
+        var piles = [];
+        for (var i = 0; i < texte.length; i++) {
+            var col = colonne(texte.charAt(i));
+            neuve.appendChild(col);
+            if (col._pile) piles.push(col._pile);
+        }
+        sousTitre.appendChild(neuve);
+
+        if (!piles.length) return;
+        gsap.fromTo(piles, { yPercent: 0 }, {
+            yPercent: -((ITEMS - 1) / ITEMS) * 100,
+            duration: 0.62,
+            ease: 'back.out(1.2)',
+            stagger: ETALEMENT
+        });
+    }
+
+    emballer();
+
+    /* ---------- la case : sa largeur, puis la hauteur des lettres ---------- */
+    var hauteurLettres = 66;
+
+    // la case se cale sur l'emplacement d'origine du badge, dans .hero-content
+    function ancrer() {
+        var rb = badge.getBoundingClientRect();
+        var gx = Number(gsap.getProperty(badge, 'x')) || 0;
+        var gy = Number(gsap.getProperty(badge, 'y')) || 0;
+        var rc = conteneur.getBoundingClientRect();
+        boite.style.left = (rb.left - gx - rc.left + rb.width / 2) + 'px';
+        boite.style.top = (rb.top - gy - rc.top + rb.height / 2) + 'px';
+        boite.style.width = rb.width + 'px';
+        return rb;
+    }
+
+    function reveler() {
+        if (revelee) return;
+        revelee = true;
+
+        var rb = ancrer();
+        var carte = titre.querySelector('.ransom-card');
+        hauteurLettres = carte ? carte.getBoundingClientRect().height : 66;
+
+        boite.style.height = rb.height + 'px';
+        gsap.to(boite, { opacity: 1, duration: 0.18, ease: 'power1.out' });
+        gsap.to(boite, { height: hauteurLettres, duration: 0.5, ease: 'power3.out' });
+
+        ecrire(DEFAUT);
+    }
+
+    /* ---------- le badge qu'on peut tirer, sans l'annoncer ---------- */
+    badge.addEventListener('pointerdown', function (e) {
+        if (!pret || priseBadge || e.button !== 0) return;
+        e.preventDefault();
+        priseBadge = {
+            x: Number(gsap.getProperty(badge, 'x')) || 0,
+            y: Number(gsap.getProperty(badge, 'y')) || 0,
+            px: e.clientX,
+            py: e.clientY,
+            bouge: false
+        };
+        badge.classList.add('badge-prise');
+        try { badge.setPointerCapture(e.pointerId); } catch (err) {}
+    });
+
+    window.addEventListener('pointermove', function (e) {
+        if (!priseBadge) return;
+        var dx = e.clientX - priseBadge.px;
+        var dy = e.clientY - priseBadge.py;
+        if (!priseBadge.bouge && Math.abs(dx) + Math.abs(dy) > 4) {
+            priseBadge.bouge = true;
+            reveler();
+        }
+        if (!priseBadge.bouge) return;
+        gsap.set(badge, { x: priseBadge.x + dx, y: priseBadge.y + dy });
+    }, { passive: true });
+
+    window.addEventListener('pointerup', function () {
+        if (!priseBadge) return;
+        priseBadge = null;
+        badge.classList.remove('badge-prise');
+    });
+
+    window.addEventListener('pointercancel', function () {
+        if (!priseBadge) return;
+        priseBadge = null;
+        badge.classList.remove('badge-prise');
+    });
+
+    // la fenêtre change : la case se recale, les lettres posées la suivent
+    var minuteur = null;
+    window.addEventListener('resize', function () {
+        if (!revelee) return;
+        clearTimeout(minuteur);
+        minuteur = setTimeout(function () {
+            ancrer();
+            gsap.set(boite, { height: hauteurLettres });
+            placer();
+        }, 220);
+    });
+
+    /* ---------- les lettres qu'on dépose dans la case ---------- */
+    // la place libre la plus proche de celle visée
+    function placeLibre(vise) {
+        var prises = {};
+        posees.forEach(function (o) { prises[o.slotCase] = true; });
+        for (var d = 0; d < PLACES; d++) {
+            var a = vise - d;
+            var b = vise + d;
+            if (a >= 0 && !prises[a]) return a;
+            if (b < PLACES && b !== a && !prises[b]) return b;
+        }
+        return -1;
+    }
+
+    function placer() {
+        var r = boite.getBoundingClientRect();
+        var largeur = r.width / PLACES;
+        posees.forEach(function (c) {
+            var i = c.slotCase;
+            var cx = r.left + largeur * (i + 0.5);
+            var cy = r.top + r.height / 2;
+            var echelle = Math.min(1, (r.height - 14) / c.h, (largeur - 8) / c.w);
+            c.x = cx;
+            c.y = cy;
+            c.vx = 0;
+            c.vy = 0;
+            gsap.to(c.el, {
+                x: cx - c.hx,
+                y: cy - c.hy,
+                rotation: 0,
+                scale: echelle,
+                duration: 0.32,
+                ease: 'power3.out',
+                overwrite: true
+            });
+        });
+    }
+
+    function verifier() {
+        // les lettres se lisent de gauche à droite, quel que soit l'ordre
+        // dans lequel on les a posées
+        var mot = posees.slice().sort(function (a, b) { return a.slotCase - b.slotCase; }).map(function (c) {
+            var carte = c.el.querySelector('.ransom-card');
+            return (carte ? carte.textContent : '').trim();
+        }).join('');
+        ecrire(SECRETS[mot] || DEFAUT);
+    }
+
+    function deposer(c) {
+        if (!revelee || !c || posees.indexOf(c) >= 0) return false;
+        var r = boite.getBoundingClientRect();
+        if (!r.width || !r.height) return false;
+        if (c.x < r.left || c.x > r.right || c.y < r.top || c.y > r.bottom) return false;
+        if (posees.length >= PLACES) return false;
+        var largeur = r.width / PLACES;
+        var vise = Math.floor((c.x - r.left) / largeur);
+        if (vise < 0) vise = 0;
+        if (vise > PLACES - 1) vise = PLACES - 1;
+        var place = placeLibre(vise);
+        if (place < 0) return false;
+        c.slotCase = place;
+        c.dansCase = true;
+        posees.push(c);
+        placer();
+        verifier();
+        return true;
+    }
+
+    function retirer(c) {
+        var i = posees.indexOf(c);
+        if (i < 0) return;
+        posees.splice(i, 1);
+        c.dansCase = false;
+        delete c.slotCase;
+        gsap.to(c.el, { scale: 1, duration: 0.2, ease: 'power2.out', overwrite: true });
+        placer();
+        verifier();
+    }
+
+    window.caseSecrete = { deposer: deposer, retirer: retirer };
 })();
