@@ -674,7 +674,7 @@ body.hovering .cursor-spiral {
 
 /* --- SECTION INTRO (QUI EST IAN) --- */
 .intro-section {
-    padding: 6rem 2rem;
+    padding: 6rem 2rem 3rem;
     max-width: 1200px;
     margin: 0 auto;
 }
@@ -901,7 +901,7 @@ body.contact-page .logiciels-aide-point {
     flex-direction: column;
     align-items: center;
     justify-content: flex-start;
-    padding: 3rem 1.5rem 6rem 1.5rem;
+    padding: 1.5rem 1.5rem 6rem 1.5rem;
     overflow: hidden;
 }
 
@@ -913,7 +913,9 @@ body.contact-page .logiciels-aide-point {
     display: flex;
     align-items: center;
     justify-content: center;
-    margin-top: 11.6rem;
+    /* la spirale démarre juste sous la section précédente : moins de vide
+       entre « qui suis-je ? » et « où on va ? » */
+    margin-top: 1.5rem;
 }
 
 /* Deux lignes sous les bulles : chaque domaine est un monde à part */
@@ -4949,7 +4951,9 @@ body.photo-fond-actif .hero-pinned .domain-content {
         padding-bottom: 14px;
     }
     .organic-container {
-        margin-top: 13rem;
+        /* la spirale monte juste sous « qui suis-je ? » : moins de vide entre
+           les deux sections */
+        margin-top: 2rem;
         /* les trois cases remontent de quelques pixels (sans changer la hauteur) */
         transform: translateY(-8px);
     }
