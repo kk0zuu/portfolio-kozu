@@ -2195,9 +2195,11 @@ if (!document.body.classList.contains('photo-fusion')) construireTambour();
     var aide = document.createElement('div');
     aide.className = 'titre-saisie';
     aide.setAttribute('aria-hidden', 'true');
+    /* Le tracé a été pivoté de 45° : même courbure, mais il va maintenant de
+       droite à gauche, comme le décalage de la lettre. */
     aide.innerHTML =
         '<svg viewBox="0 0 24 20" xmlns="http://www.w3.org/2000/svg">' +
-        '<path class="titre-saisie-trait" d="M 20 16 C 17 14.5 14 11.5 12 8"/></svg>' +
+        '<path class="titre-saisie-trait" d="M 20 16 C 17.75 17.06 14.75 17.06 12 16"/></svg>' +
         '<span class="titre-saisie-point"></span>';
     titre.appendChild(aide);
 
@@ -2234,11 +2236,10 @@ if (!document.body.classList.contains('photo-fusion')) construireTambour();
     var minuteur = null;
     var saisie = false;
     var fini = false;          // une lettre a déjà été bougée : plus d'invitation
-    var arme = 0;
 
-    // L'invitation ne se montre qu'après un temps sans geste : si la souris
-    // bouge encore, le minuteur repart et rien n'apparaît.
-    var INACTIVITE = 700;
+    // L'invitation arrive 550 ms après le dernier défilement. Bouger la souris
+    // ne compte pas : seule l'immobilité de la page compte.
+    var REPOS = 550;
 
     function possible() {
         if (fini || saisie || window.scrollY > 12) return false;
@@ -2249,17 +2250,8 @@ if (!document.body.classList.contains('photo-fusion')) construireTambour();
     function programmer(delai) {
         if (fini) return;
         clearTimeout(minuteur);
-        minuteur = setTimeout(montrer, delai === undefined ? INACTIVITE : delai);
+        minuteur = setTimeout(montrer, delai === undefined ? REPOS : delai);
     }
-
-    window.addEventListener('pointermove', function (e) {
-        if (e.pointerType && e.pointerType !== 'mouse') return;
-        if (fini || saisie || heroSection.classList.contains('titre-invite')) return;
-        var maintenant = Date.now();
-        if (maintenant - arme < 150) return;   // pas un minuteur par pixel parcouru
-        arme = maintenant;
-        programmer();
-    }, { passive: true });
 
     function montrer() {
         if (!possible()) { cacher(); return; }
@@ -2279,7 +2271,7 @@ if (!document.body.classList.contains('photo-fusion')) construireTambour();
     window.addEventListener('scroll', function () {
         cacher();
         document.body.classList.remove('lettre-survolee');
-        programmer(300);
+        programmer(REPOS);
     }, { passive: true });
 
     window.addEventListener('resize', function () {
@@ -2316,11 +2308,11 @@ if (!document.body.classList.contains('photo-fusion')) construireTambour();
     });
 
     document.addEventListener('hero:intro-done', function () {
-        programmer(900);
+        programmer(REPOS);
     });
 
     window.addEventListener('load', function () {
-        programmer(900);
+        programmer(REPOS);
     });
 })();
 

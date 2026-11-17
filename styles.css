@@ -497,7 +497,7 @@ body.hovering .cursor-spiral {
     border-radius: 50%;
     background: var(--color-black);
     box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.45);
-    offset-path: path('M 20 16 C 17 14.5 14 11.5 12 8');
+    offset-path: path('M 20 16 C 17.75 17.06 14.75 17.06 12 16');
     offset-rotate: 0deg;
     will-change: offset-distance;
 }
