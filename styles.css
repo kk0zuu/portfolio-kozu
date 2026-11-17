@@ -4679,9 +4679,11 @@ body.photo-etape-en-cours .photo-split-side.cote-actif::before {
    choix passent au-dessus de la photo qui se referme (elles apparaissent en
    fondu, jamais sous l'image), et les images propres des deux côtés s'effacent
    pendant le retour pour laisser voir la copie du voile, qui se cale dessus. */
+/* au-dessus des deux côtés (960) : sans ça, la photo de l'axe d'où l'on ne
+   vient pas recouvre le « OU » et le titre du choix */
 body.photo-retour-en-cours .photo-split-header,
 body.photo-retour-en-cours .split-center-versus {
-    z-index: 950;
+    z-index: 970;
 }
 
 body.photo-retour-en-cours .photo-split-side {
