@@ -2642,7 +2642,7 @@ if (!document.body.classList.contains('photo-fusion')) construireTambour();
         'BOSS': { texte: "et oui, c'est moi le" },
         'NOUS': { texte: "la république, c'est" },
         'TG': { texte: 'pas très gentil ça' },
-        '-': { texte: ', lol' },
+        '-': { texte: '" +", lol' },
         'SOS': { texte: 'tous les cris les' },
         'TUTO': { texte: "besoin d'un", signe: '?' },
         'NON': { texte: "non c'est" },
