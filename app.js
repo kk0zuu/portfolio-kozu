@@ -2157,7 +2157,7 @@ if (!document.body.classList.contains('photo-fusion')) construireTambour();
     }
 
     // saisir une lettre
-    corps.forEach(function (c) {
+    function brancher(c) {
         c.el.addEventListener('pointerdown', function (e) {
             if (!actif || e.button !== 0) return;
             e.preventDefault();
@@ -2173,7 +2173,48 @@ if (!document.body.classList.contains('photo-fusion')) construireTambour();
             c.el.style.zIndex = 5000;
             try { c.el.setPointerCapture(e.pointerId); } catch (err) {}
         });
-    });
+    }
+    corps.forEach(brancher);
+
+    /* Fait apparaître une lettre de plus, posée hors du flux au-dessus du
+       titre, et l'inscrit dans la physique : elle se saisit et se range dans
+       la case comme les autres. Sert au second T de TOUT et TUTO. */
+    window.lettresTitre = {
+        ajouter: function (modele, cx, cy) {
+            if (!modele || !modele.parentNode) return false;
+            var el = modele.cloneNode(true);
+            el.classList.add('lettre-en-plus');
+            el.style.position = 'absolute';
+            el.style.margin = '0';
+            el.style.left = '0px';
+            el.style.top = '0px';
+            el.style.zIndex = 4000;
+            (modele.closest('.ransom-title-wrapper') || modele.parentNode).appendChild(el);
+
+            var racine = el.parentNode;
+            var rb = racine.getBoundingClientRect();
+            el.style.left = (cx - rb.left - el.offsetWidth / 2) + 'px';
+            el.style.top = (cy - rb.top - el.offsetHeight / 2) + 'px';
+
+            var b = el.getBoundingClientRect();
+            var c = {
+                el: el,
+                x: b.left + b.width / 2, y: b.top + b.height / 2,
+                vx: 0, vy: 0, a: 0, va: 0,
+                hx: b.left + b.width / 2, hy: b.top + b.height / 2,
+                w: b.width, h: b.height,
+                rot0: parseFloat(el.getAttribute('data-rot')) || 0,
+                libre: true,
+                z: 0
+            };
+            corps.push(c);
+            brancher(c);
+
+            var carte = el.querySelector('.ransom-card');
+            if (carte && window.gsap) gsap.from(carte, { scale: 0.4, opacity: 0, duration: 0.5, ease: 'back.out(1.8)' });
+            return true;
+        }
+    };
 
     window.addEventListener('pointermove', function (e) {
         if (e.pointerType === 'mouse' || e.pointerType === '') sourisVue = true;
@@ -2549,6 +2590,9 @@ if (!document.body.classList.contains('photo-fusion')) construireTambour();
         'NON': { texte: "non c'est" },
         'GO': { texte: '1, 2, 3...' },
         'SUD': { texte: 'Nord ou' },
+        'TU': { texte: "la 2e personne du singulier, c'est" },
+        'TOUT': { texte: "un point c'est" },
+        'TOUS': { texte: 'Tous pour un et un pour' },
         'OUI': { texte: "c'est un grand" },
         'GOUT': { texte: 'vous avez bon' },
         'AUTO': { texte: "fan d'", signe: '?' },
@@ -2585,6 +2629,11 @@ if (!document.body.classList.contains('photo-fusion')) construireTambour();
     var pret = false;
     var priseBadge = null;
     var hauteurLettres = 66;
+    var tAjoute = false;
+    /* écart fixe entre la place du badge et la case : il est mesuré à la
+       révélation pour que la case reste pile à l'endroit d'où PORTFOLIO a
+       été soulevé, malgré le changement de longueur de la ligne */
+    var decalage = { x: 0, y: 0 };
 
     document.addEventListener('hero:intro-done', function () { pret = true; });
 
@@ -2735,8 +2784,8 @@ if (!document.body.classList.contains('photo-fusion')) construireTambour();
     /* ---------- la case : sa largeur, puis la hauteur des lettres ---------- */
     // centrage par marges négatives : exact, et à l'abri des transformations
     function centrer() {
-        boite.style.marginLeft = (-boite.offsetWidth / 2) + 'px';
-        boite.style.marginTop = (-boite.offsetHeight / 2) + 'px';
+        boite.style.marginLeft = (decalage.x - boite.offsetWidth / 2) + 'px';
+        boite.style.marginTop = (decalage.y - boite.offsetHeight / 2) + 'px';
     }
 
     function reveler() {
@@ -2757,7 +2806,17 @@ if (!document.body.classList.contains('photo-fusion')) construireTambour();
             onComplete: centrer
         });
 
+        /* PORTFOLIO est encore chez lui à cet instant : c'est exactement cette
+           position que la case doit reprendre. On mesure donc l'écart avec la
+           place après le changement de texte (« et voici mon » devient
+           « secret ?! », la ligne se resserre) et on le garde à demeure :
+           ni glissement, ni saut, la case est pile là où était le badge. */
+        var rb = badge.getBoundingClientRect();
         ecrire(DEFAUT, '', false);
+        var pa = place.getBoundingClientRect();
+        decalage.x = Math.round((rb.left + rb.width / 2) - (pa.left + pa.width / 2));
+        decalage.y = Math.round((rb.top + rb.height / 2) - (pa.top + pa.height / 2));
+        centrer();
     }
 
     /* ---------- le badge qu'on peut tirer, sans l'annoncer ---------- */
@@ -2822,8 +2881,8 @@ if (!document.body.classList.contains('photo-fusion')) construireTambour();
         var p = place.getBoundingClientRect();
         var w = boite.offsetWidth;
         var h = boite.offsetHeight;
-        var l = p.left + p.width / 2 - w / 2;
-        var t = p.top + p.height / 2 - h / 2;
+        var l = p.left + p.width / 2 - w / 2 + decalage.x;
+        var t = p.top + p.height / 2 - h / 2 + decalage.y;
         return { left: l, top: t, right: l + w, bottom: t + h, width: w, height: h };
     }
 
@@ -2861,6 +2920,24 @@ if (!document.body.classList.contains('photo-fusion')) construireTambour();
         }).join('');
         var secret = SECRETS[mot];
         ecrire(secret ? secret.texte : DEFAUT, secret ? secret.signe : '');
+
+        // le second T : il n'apparaît qu'un fois TOU ou TU formé, pour
+        // permettre TOUT et TUTO malgré l'unique T du nom
+        if (!tAjoute && (mot === 'TOU' || mot === 'TU')) {
+            tAjoute = true;
+            var modele = null;
+            for (var i = 0; i < posees.length; i++) {
+                var carte = posees[i].el.querySelector('.ransom-card');
+                if (carte && carte.textContent.trim() === 'T') { modele = posees[i].el; break; }
+            }
+            if (modele && window.lettresTitre) {
+                /* il tombe juste sous la case, à hauteur de la 4e place */
+                var rc = boite.getBoundingClientRect();
+                var hb = heroSection.getBoundingClientRect();
+                var ty = Math.min(rc.bottom + 66, hb.bottom - 40);
+                window.lettresTitre.ajouter(modele, rc.left + rc.width * 0.8, ty);
+            }
+        }
     }
 
     function deposer(c) {
