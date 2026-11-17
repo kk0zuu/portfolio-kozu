@@ -4688,8 +4688,10 @@ body.photo-retour-en-cours .photo-split-side {
     z-index: 960;
 }
 
-body.photo-retour-en-cours .photo-split-side .photo-split-bg,
-body.photo-retour-en-cours .photo-split-side::before {
+/* seul le côté que la photo réintègre reste transparent : l'autre axe garde
+   son image, sinon son côté apparaît vide pendant tout le retour */
+body.photo-retour-en-cours .photo-split-side.cote-actif .photo-split-bg,
+body.photo-retour-en-cours .photo-split-side.cote-actif::before {
     opacity: 0 !important;
     transition: none !important;
 }

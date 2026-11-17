@@ -743,6 +743,9 @@
             try { sessionStorage.setItem('photo-retour', '1'); } catch (e) { /* sans stockage, tant pis */ }
 
             var cote = document.querySelector(bloc.id === 'domaine-pro' ? '.side-pro' : '.side-exp');
+            /* le côté que la photo réintègre : sa propre image s'efface le temps du
+               retour (le voile la remplace au même endroit), l'autre axe garde la sienne */
+            cote.classList.add('cote-actif');
             var url = bloc.getAttribute('data-fond');
             var y = window.scrollY || window.pageYOffset || 0;
 
