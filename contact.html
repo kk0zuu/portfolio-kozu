@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <script>
+    (function () {
+        var r = document.documentElement;
+        r.classList.add('anim');
+        var calme = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        /* la barre arrive en verre sombre : elle se fond dans celle de la page
+           une fois la page chargée */
+        r.classList.add('barre-sombre');
+        /* la page reste vide sur le bleu le temps que la barre se fonde : les
+           pois et les textes n'apparaissent qu'ensuite */
+        if (!calme) r.classList.add('contact-attente');
+        window.addEventListener('load', function () {
+            setTimeout(function () { r.classList.remove('barre-sombre'); }, 180);
+            setTimeout(function () {
+                r.classList.remove('contact-attente');
+                document.dispatchEvent(new Event('contact:pret'));
+            }, 280);
+        });
+        /* filet de sécurité : si GSAP ne se charge pas, on rend tout visible */
+        setTimeout(function () { if (!window.gsap) r.classList.remove('anim'); }, 1200);
+    })();
+    </script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact - Ian Bossut-Gandou</title>
+    <meta name="description" content="Contacter Ian Bossut-Gandou : e-mail, Instagram, Behance. Disponible pour collaborations, projets créatifs, alternance et opportunités artistiques.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Bebas+Neue&family=Bungee&family=Cinzel:wght@900&family=Playfair+Display:ital,wght@1,900&family=Schoolbell&family=Space+Grotesk:wght@700&family=Special+Elite&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <style>
+    /* le fond est bleu dès la première image : plus d'éclair clair au chargement */
+    body.contact-page { background: #1232B4; }
+    /* à l'arrivée, seule la barre et le fond bleu sont là : le reste attend
+       le signal pour apparaître */
+    html.contact-attente body > *:not(.top-bar):not(.custom-cursor) { opacity: 0; }
+    </style>
+</head>
+<body class="inner-page contact-page">
+    <!-- Fond bleu à pois verts, animé au défilement -->
+    <div class="contact-fond" aria-hidden="true">
+        <div class="contact-fond-pois" id="contactPois"></div>
+    </div>
+
+    <!-- Top Bar Liquid Glass -->
+    <nav class="top-bar">
+        <div class="logo"><a href="index.html">Ian Bossut‑Gandou</a></div>
+        <div class="nav-links">
+            <a href="numerique.html">Numérique</a>
+            <a href="photographie.html">Photographie</a>
+            <a href="plastique.html">Projets plastiques</a>
+            <a href="contact.html">Contact</a>
+        </div>
+        <div class="nav-bubble"></div>
+    </nav>
+
+    <!-- Curseur Personnalisé -->
+    <div class="custom-cursor">
+        <div class="cursor-dot"></div>
+        <svg class="cursor-spiral" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg">
+            <path d="M 30,30 A 3.5 3.5 0 0 1 30 37 A 7 7 0 0 1 30 23 A 10.5 10.5 0 0 1 30 44 A 14 14 0 0 1 30 16 A 17.5 17.5 0 0 1 30 51 A 21 21 0 0 1 30 9" fill="none" stroke="white" stroke-width="3.2" stroke-linecap="round"/>
+        </svg>
+    </div>
+
+    <!-- Accroche -->
+    <header class="contact-hero">
+        <h1 class="section-title brutal-highlight">PARLONS-EN.</h1>
+        <p class="contact-lead">Un projet, une collaboration, ou simplement envie d'échanger sur l'art, le design ou l'animation ? Écrivez-moi directement — je lis tout, et je réponds.</p>
+    </header>
+
+    <main class="contact-page-main">
+        <!-- Le geste principal -->
+        <a href="mailto:gandou.christian@gmail.com" class="contact-mail hover-target">
+            <span class="contact-mail-label">Écrire un mail</span>
+            <span class="contact-mail-adresse">gandou.christian@gmail.com</span>
+            <span class="contact-mail-fleche" aria-hidden="true">→</span>
+        </a>
+
+        <!-- Les réseaux -->
+        <div class="contact-liens">
+            <a href="https://www.instagram.com/kkozuu/" target="_blank" rel="noopener noreferrer" class="contact-lien instagram hover-target">
+                <span class="contact-lien-logo" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round">
+                        <rect x="3" y="3" width="18" height="18" rx="5" />
+                        <circle cx="12" cy="12" r="4.2" />
+                        <circle cx="17.2" cy="6.8" r="1.1" fill="currentColor" stroke="none" />
+                    </svg>
+                </span>
+                <span class="contact-lien-titre">Instagram</span>
+                <span class="contact-lien-valeur">@kkozuu</span>
+                <span class="contact-lien-action">Voir les coulisses & stories →</span>
+            </a>
+            <a href="https://www.behance.net/christiangandou" target="_blank" rel="noopener noreferrer" class="contact-lien behance hover-target">
+                <span class="contact-lien-logo" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M16.969 16.927a2.561 2.561 0 0 0 1.901.677 2.501 2.501 0 0 0 1.531-.475c.362-.235.636-.584.779-.99h2.585a5.091 5.091 0 0 1-1.9 2.896 5.292 5.292 0 0 1-3.091.88 5.839 5.839 0 0 1-2.284-.433 4.871 4.871 0 0 1-1.723-1.211 5.657 5.657 0 0 1-1.08-1.874 7.057 7.057 0 0 1-.383-2.393c-.005-.8.129-1.595.396-2.349a5.313 5.313 0 0 1 5.088-3.604 4.87 4.87 0 0 1 2.376.563c.661.362 1.231.87 1.668 1.485a6.2 6.2 0 0 1 .943 2.133c.194.821.263 1.666.205 2.508h-7.699c-.063.79.184 1.574.688 2.187ZM6.947 4.084a8.065 8.065 0 0 1 1.928.198 4.29 4.29 0 0 1 1.49.638c.418.303.748.711.958 1.182.241.579.357 1.203.341 1.83a3.506 3.506 0 0 1-.506 1.961 3.726 3.726 0 0 1-1.503 1.287 3.588 3.588 0 0 1 2.027 1.437c.464.747.697 1.615.67 2.494a4.593 4.593 0 0 1-.423 2.032 3.945 3.945 0 0 1-1.163 1.413 5.114 5.114 0 0 1-1.683.807 7.135 7.135 0 0 1-1.928.259H0V4.084h6.947Zm-.235 12.9c.308.004.616-.029.916-.099a2.18 2.18 0 0 0 .766-.332c.228-.158.411-.371.534-.619.142-.317.208-.663.191-1.009a2.08 2.08 0 0 0-.642-1.715 2.618 2.618 0 0 0-1.696-.505h-3.54v4.279h3.471Zm13.635-5.967a2.13 2.13 0 0 0-1.654-.619 2.336 2.336 0 0 0-1.163.259 2.474 2.474 0 0 0-.738.62 2.359 2.359 0 0 0-.396.792c-.074.239-.12.485-.137.734h4.769a3.239 3.239 0 0 0-.679-1.785l-.002-.001Zm-13.813-.648a2.254 2.254 0 0 0 1.423-.433c.399-.355.607-.88.56-1.413a1.916 1.916 0 0 0-.178-.891 1.298 1.298 0 0 0-.495-.533 1.851 1.851 0 0 0-.711-.274 3.966 3.966 0 0 0-.835-.073H3.241v3.631h3.293v-.014ZM21.62 5.122h-5.976v1.527h5.976V5.122Z" />
+                    </svg>
+                </span>
+                <span class="contact-lien-titre">Behance</span>
+                <span class="contact-lien-valeur">Ian Gandou</span>
+                <span class="contact-lien-action">Consulter les projets publiés →</span>
+            </a>
+            <a href="https://www.linkedin.com/in/ian-bossut-gandou-b87b21382/" target="_blank" rel="noopener noreferrer" class="contact-lien linkedin hover-target">
+                <span class="contact-lien-logo" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M4.98 3.5a2.5 2.5 0 1 1 0 5 2.5 2.5 0 0 1 0-5zM3 9h4v12H3zM9 9h3.8v1.7h.05c.53-.95 1.83-1.95 3.77-1.95 4.03 0 4.78 2.5 4.78 5.76V21h-4v-5.6c0-1.34-.03-3.06-1.9-3.06-1.9 0-2.19 1.45-2.19 2.96V21H9z" />
+                    </svg>
+                </span>
+                <span class="contact-lien-titre">LinkedIn</span>
+                <span class="contact-lien-valeur">Ian Bossut‑Gandou</span>
+                <span class="contact-lien-action">Parcours, expériences & contacts →</span>
+            </a>
+        </div>
+
+        <!-- Infos pratiques -->
+        <section class="contact-infos" aria-label="Informations pratiques">
+            <div class="contact-info">
+                <span class="contact-info-titre">Disponibilité</span>
+                <p>Collaborations, projets créatifs, alternance et opportunités artistiques.</p>
+            </div>
+            <div class="contact-info">
+                <span class="contact-info-titre">Domaines</span>
+                <p>Animation 2D & 3D, identité visuelle, photographie, sculpture.</p>
+            </div>
+            <div class="contact-info">
+                <span class="contact-info-titre">Outils</span>
+                <p>Suite Adobe, Blender, DaVinci Resolve, Krita, Affinity, Figma, VS Code.</p>
+            </div>
+            <div class="contact-info">
+                <span class="contact-info-titre">Parcours</span>
+                <p>CV complet et compétences détaillées, à lire plus bas sur la page.</p>
+            </div>
+        </section>
+
+        <!-- Ce que je fais -->
+        <section class="contact-domaines" aria-label="Ce que je fais">
+            <h2 class="contact-sous-titre">Ce que je fais</h2>
+            <div class="contact-domaines-liste">
+                <a href="numerique.html" class="contact-domaine hover-target">
+                    <span class="contact-domaine-num">01</span>
+                    <span class="contact-domaine-titre">Numérique</span>
+                    <span class="contact-domaine-desc">Animation 2D & 3D, identité visuelle kozu™, sites et mini-jeux.</span>
+                    <span class="contact-domaine-fleche">→</span>
+                </a>
+                <a href="photographie.html" class="contact-domaine hover-target">
+                    <span class="contact-domaine-num">02</span>
+                    <span class="contact-domaine-titre">Photographie</span>
+                    <span class="contact-domaine-desc">Portraits, studio, argentique et polaroïd.</span>
+                    <span class="contact-domaine-fleche">→</span>
+                </a>
+                <a href="plastique.html" class="contact-domaine hover-target">
+                    <span class="contact-domaine-num">03</span>
+                    <span class="contact-domaine-titre">Projets plastiques</span>
+                    <span class="contact-domaine-desc">Sculpture, gaufrage, cyanotype et sérigraphie.</span>
+                    <span class="contact-domaine-fleche">→</span>
+                </a>
+            </div>
+        </section>
+
+        <!-- Logiciels maîtrisés -->
+        <div class="logiciels" id="logiciels" aria-label="Logiciels maîtrisés — faites glisser pour parcourir la ligne">
+            <div class="logiciels-glisse" id="logicielsGlisse">
+                <div class="logiciels-piste" id="logicielsPiste">
+                    <div class="logiciels-groupe">
+                        <span class="logiciel">
+                            <img src="images/logiciels/blender.svg" alt="Blender" draggable="false">
+                            <span class="logiciel-nom">Blender</span>
+                        </span>
+                        <span class="logiciel">
+                            <img src="images/accueil/logo%20solidworks.png" alt="SolidWorks" draggable="false">
+                            <span class="logiciel-nom">SolidWorks</span>
+                        </span>
+                        <span class="logiciel">
+                            <img src="images/logiciels/adobe-photoshop.svg" alt="Photoshop" draggable="false">
+                            <span class="logiciel-nom">Photoshop</span>
+                        </span>
+                        <span class="logiciel">
+                            <img src="images/logiciels/adobe-illustrator.svg" alt="Illustrator" draggable="false">
+                            <span class="logiciel-nom">Illustrator</span>
+                        </span>
+                        <span class="logiciel">
+                            <img src="images/logiciels/adobe-indesign.svg" alt="InDesign" draggable="false">
+                            <span class="logiciel-nom">InDesign</span>
+                        </span>
+                        <span class="logiciel">
+                            <img src="images/logiciels/adobe-after-effects.svg" alt="After Effects" draggable="false">
+                            <span class="logiciel-nom">After Effects</span>
+                        </span>
+                        <span class="logiciel">
+                            <img src="images/logiciels/adobe-premiere.svg" alt="Premiere Pro" draggable="false">
+                            <span class="logiciel-nom">Premiere Pro</span>
+                        </span>
+                        <span class="logiciel">
+                            <img src="images/logiciels/adobe-lightroom.svg" alt="Lightroom" draggable="false">
+                            <span class="logiciel-nom">Lightroom</span>
+                        </span>
+                        <span class="logiciel">
+                            <img src="images/accueil/Affinity-Symbol.png" alt="Affinity" draggable="false">
+                            <span class="logiciel-nom">Affinity</span>
+                        </span>
+                        <span class="logiciel">
+                            <img src="images/accueil/da%20vinci%20resolve.webp" alt="DaVinci Resolve" draggable="false">
+                            <span class="logiciel-nom">DaVinci Resolve</span>
+                        </span>
+                        <span class="logiciel">
+                            <img src="images/accueil/filmora_logo.png" alt="Filmora" draggable="false">
+                            <span class="logiciel-nom">Filmora</span>
+                        </span>
+                        <span class="logiciel">
+                            <img src="images/accueil/darktable_104513.webp" alt="Darktable" draggable="false">
+                            <span class="logiciel-nom">Darktable</span>
+                        </span>
+                        <span class="logiciel">
+                            <img src="images/accueil/Krita-logo-150x150.png" alt="Krita" draggable="false">
+                            <span class="logiciel-nom">Krita</span>
+                        </span>
+                        <span class="logiciel">
+                            <img src="images/logiciels/canva.svg" alt="Canva" draggable="false">
+                            <span class="logiciel-nom">Canva</span>
+                        </span>
+                        <span class="logiciel">
+                            <img src="images/logiciels/figma.svg" alt="Figma" draggable="false">
+                            <span class="logiciel-nom">Figma</span>
+                        </span>
+                        <span class="logiciel">
+                            <img src="images/logiciels/visual-studio-code.svg" alt="Visual Studio Code" draggable="false">
+                            <span class="logiciel-nom">VS Code</span>
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Le CV, décomposé directement dans la page -->
+        <section class="cv" aria-label="Curriculum vitæ">
+            <header class="cv-tete">
+                <div class="cv-tete-texte">
+                    <p class="cv-kicker">Curriculum vitæ</p>
+                    <h2 class="cv-nom">Ian Bossut‑Gandou</h2>
+                    <p class="cv-objectif">Recherche alternance DNMADE Animation / Motion Design</p>
+                </div>
+                <div class="cv-contacts">
+                    <a href="mailto:gandou.christian@gmail.com" class="hover-target">gandou.christian@gmail.com</a>
+                    <a href="index.html" class="hover-target">Portfolio en ligne</a>
+                </div>
+            </header>
+
+            <div class="cv-corps">
+                <aside class="cv-colonne">
+                    <section class="cv-bloc">
+                        <h3 class="cv-titre">Compétences</h3>
+                        <ul class="cv-liste">
+                            <li>Photographie professionnelle</li>
+                            <li>Suite Adobe (Photoshop, Lightroom, etc.)</li>
+                            <li>Montage vidéo (Wondershare Filmora)</li>
+                            <li>Animation 2D image par image</li>
+                            <li>Bases essentielles en 3D</li>
+                        </ul>
+                        <ul class="cv-liste cv-langues">
+                            <li><span>Français</span><span>Maternelle</span><i class="cv-niveau" style="--n:5" aria-hidden="true"></i></li>
+                            <li><span>Anglais</span><span>B2</span><i class="cv-niveau" style="--n:4" aria-hidden="true"></i></li>
+                            <li><span>Japonais</span><span>N5</span><i class="cv-niveau" style="--n:2" aria-hidden="true"></i></li>
+                        </ul>
+                    </section>
+
+                    <section class="cv-bloc">
+                        <h3 class="cv-titre">Engagements</h3>
+                        <ul class="cv-liste">
+                            <li>Pratique musicale associative au collectif Apacheta, dans les maisons de retraite et les IME.</li>
+                            <li>Membre du collectif « Les Hybrides d'Eugénie Cotton », groupe de cinq artistes événementiels.</li>
+                        </ul>
+                        <p class="cv-note">Apport au design : sensibilité accrue au rythme et à l'univers sonore d'une identité.</p>
+                    </section>
+
+                    <section class="cv-bloc">
+                        <h3 class="cv-titre">Centres d'intérêt</h3>
+                        <ul class="cv-liste">
+                            <li>Dessin digital</li>
+                            <li>Photographie de rue & portraits</li>
+                            <li>Cinéma d'animation & motion design</li>
+                            <li>Pratique multi‑instrumentale</li>
+                            <li>Écriture de science‑fiction</li>
+                            <li>Couture & broderie</li>
+                        </ul>
+                    </section>
+                </aside>
+
+                <div class="cv-principal">
+                    <section class="cv-bloc">
+                        <h3 class="cv-titre">Profil</h3>
+                        <p class="cv-texte">Élève en terminale Design et Arts Appliqués, porteur de grandes convictions, au lycée Eugénie Cotton, Montreuil. Intérêt marqué pour le contact humain, la narration et le graphisme.</p>
+                    </section>
+
+                    <section class="cv-bloc">
+                        <h3 class="cv-titre">Formation</h3>
+                        <article class="cv-entree">
+                            <div class="cv-entree-tete">
+                                <h4 class="cv-entree-titre">Bac STD2A</h4>
+                                <span class="cv-date">Depuis septembre 2023</span>
+                            </div>
+                            <ul class="cv-points">
+                                <li>En cours d'obtention</li>
+                                <li>Bac de français écrit : 18/20</li>
+                            </ul>
+                        </article>
+                        <article class="cv-entree">
+                            <div class="cv-entree-tete">
+                                <h4 class="cv-entree-titre">BAFA</h4>
+                                <span class="cv-date">Février 2024</span>
+                            </div>
+                            <ul class="cv-points">
+                                <li>Formation théorique validée</li>
+                            </ul>
+                        </article>
+                        <article class="cv-entree">
+                            <div class="cv-entree-tete">
+                                <h4 class="cv-entree-titre">Diplôme national du brevet</h4>
+                                <span class="cv-date">Juin 2023</span>
+                            </div>
+                            <ul class="cv-points">
+                                <li>Obtenu avec mention Très bien</li>
+                            </ul>
+                        </article>
+                    </section>
+
+                    <section class="cv-bloc">
+                        <h3 class="cv-titre">Projets & créations</h3>
+                        <article class="cv-entree">
+                            <div class="cv-entree-tete">
+                                <h4 class="cv-entree-titre">Réalisation de courts‑métrages d'animation — Festival du film, 1<sup>re</sup> & 2<sup>de</sup> édition du collège Louise Michel</h4>
+                                <span class="cv-date">Avril 2021 & 2022</span>
+                            </div>
+                            <ul class="cv-points">
+                                <li>Conception complète d'une animation 2D image par image (character design et scénario).</li>
+                                <li>Lauréat du prix de la technique en 2022.</li>
+                            </ul>
+                        </article>
+                        <article class="cv-entree">
+                            <div class="cv-entree-tete">
+                                <h4 class="cv-entree-titre">Scénographie & design d'objet</h4>
+                                <span class="cv-date">Mai 2025</span>
+                            </div>
+                            <ul class="cv-points">
+                                <li>Conception et exposition d'une statue en métal de 2 m et d'une scénographie autour de son univers, à Romainville.</li>
+                                <li>Design graphique et commercialisation de produits dérivés.</li>
+                            </ul>
+                        </article>
+                    </section>
+
+                    <section class="cv-bloc">
+                        <h3 class="cv-titre">Expérience professionnelle</h3>
+                        <article class="cv-entree">
+                            <div class="cv-entree-tete">
+                                <h4 class="cv-entree-titre">Photographe événementiel (indépendant)</h4>
+                                <span class="cv-date">Depuis 2025</span>
+                            </div>
+                            <ul class="cv-points">
+                                <li>Couverture photographique de cérémonies et d'événements.</li>
+                                <li>Gestion du stress et réactivité pour capturer les moments clés.</li>
+                            </ul>
+                        </article>
+                        <article class="cv-entree">
+                            <div class="cv-entree-tete">
+                                <h4 class="cv-entree-titre">Animateur social — Centre social de la Dh uys (CSID)</h4>
+                                <span class="cv-date">Janvier – Février 2023</span>
+                            </div>
+                            <ul class="cv-points">
+                                <li>Conception et coordination d'activités polyvalentes et intergénérationnelles (enfants, pré‑ados et seniors).</li>
+                            </ul>
+                        </article>
+                        <article class="cv-entree">
+                            <div class="cv-entree-tete">
+                                <h4 class="cv-entree-titre">Employé polyvalent — stage, Carrefour</h4>
+                                <span class="cv-date">Juillet 2024</span>
+                            </div>
+                            <ul class="cv-points">
+                                <li>Gestion des stocks, mise en rayon et préparation de produits.</li>
+                                <li>Sens du service : accueil, orientation et conseil à la clientèle.</li>
+                            </ul>
+                        </article>
+                    </section>
+                </div>
+            </div>
+        </section>
+
+        <!-- juste un merci, calé à droite sous le CV -->
+        <p class="cv-merci"><span>Merci de votre visite</span></p>
+    </main>
+
+
+    <!-- Modale Lightbox universelle -->
+    <div class="portfolio-lightbox" id="portfolio-lightbox">
+        <div class="lightbox-content-box">
+            <button class="lightbox-close-btn" aria-label="Fermer">✕</button>
+            <img src="" alt="Vue agrandie">
+            <p class="lightbox-caption"></p>
+        </div>
+    </div>
+
+    <!-- GSAP & Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    <script src="app.js"></script>
+    <script>
+    (function () {
+        var calme = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        var pois = document.getElementById('contactPois');
+
+        /* ---------- les pois : un point par élément, éclosion du haut vers le bas ---------- */
+        if (pois && !calme) {
+            var pas = 72;
+
+            function semerPois(animer) {
+                var W = pois.clientWidth;
+                var H = pois.clientHeight;
+                var cols = Math.ceil(W / pas) + 1;
+                var lignes = Math.ceil(H / pas) + 1;
+                var ox = Math.round((W % pas) / 2);
+                var oy = Math.round((H % pas) / 2);
+                /* la couche déborde de 60vh en haut : la vague part de la
+                   première rangée réellement visible, pas du haut de la couche */
+                var premiere = Math.max(0, Math.round((window.innerHeight * 0.6) / pas));
+                var frag = document.createDocumentFragment();
+
+                for (var r = 0; r < lignes; r++) {
+                    for (var c = 0; c < cols; c++) {
+                        var point = document.createElement('span');
+                        point.className = 'contact-pois-point';
+                        point.style.left = (c * pas + ox) + 'px';
+                        point.style.top = (r * pas + oy) + 'px';
+                        if (animer) {
+                            point.classList.add('pop');
+                            /* 26 ms par rangée : la vague descend, chaque pois éclot en 340 ms */
+                            point.style.setProperty('--d', Math.max(0, r - premiere) * 26 + 'ms');
+                        } else {
+                            point.style.transform = 'scale(1)';
+                        }
+                        frag.appendChild(point);
+                    }
+                }
+                pois.innerHTML = '';
+                pois.appendChild(frag);
+            }
+
+            pois.style.backgroundImage = 'none';
+            /* l'éclosion attend que la page soit révélée, sinon elle se joue à vide */
+            if (document.documentElement.classList.contains('contact-attente')) {
+                document.addEventListener('contact:pret', function () { semerPois(true); }, { once: true });
+            } else {
+                semerPois(true);
+            }
+
+            /* la trame se refait si la fenêtre change de taille, sans rejouer l'éclosion */
+            var minuteur;
+            window.addEventListener('resize', function () {
+                clearTimeout(minuteur);
+                minuteur = setTimeout(function () { semerPois(false); }, 220);
+            });
+        }
+
+        if (!window.gsap || !window.ScrollTrigger) return;
+
+        /* ---------- le fond suit le défilement ---------- */
+        if (pois) {
+            gsap.fromTo(pois, { y: '-40vh' }, {
+                y: '0vh',
+                ease: 'none',
+                scrollTrigger: {
+                    trigger: document.documentElement,
+                    start: 'top top',
+                    end: 'bottom bottom',
+                    scrub: true
+                }
+            });
+        }
+
+        if (calme) return;
+
+        /* ---------- apparition des blocs : léger glissement + fondu ---------- */
+        function apparait(sel, base, ecart) {
+            var els = [].slice.call(document.querySelectorAll(sel));
+            els.forEach(function (el, i) {
+                /* état final explicite : un simple from() repartirait de l'opacité
+                   déjà mise à 0 par le CSS et laisserait l'élément invisible */
+                gsap.fromTo(el,
+                    { y: 26, opacity: 0 },
+                    {
+                        y: 0,
+                        opacity: 1,
+                        duration: 0.6,
+                        ease: 'power2.out',
+                        delay: base + i * (ecart || 0),
+                        scrollTrigger: { trigger: el, start: 'top 88%', once: true }
+                    });
+            });
+        }
+
+        function lancerApparitions() {
+            apparait('.contact-hero .section-title', 0.05);
+            apparait('.contact-hero .contact-lead', 0.14);
+            apparait('.contact-mail', 0.24);
+            apparait('.contact-liens > a', 0.32, 0.07);
+            apparait('.contact-infos', 0.3);
+            apparait('.contact-sous-titre', 0);
+            apparait('.contact-domaines-liste > a', 0.08, 0.07);
+            apparait('.logiciels', 0.06);
+            apparait('.cv-tete', 0);
+            apparait('.cv-bloc', 0, 0.05);
+            
+        }
+
+        /* les apparitions ne partent qu'une fois la page révélée */
+        if (document.documentElement.classList.contains('contact-attente')) {
+            document.addEventListener('contact:pret', lancerApparitions, { once: true });
+        } else {
+            lancerApparitions();
+        }
+    })();
+    </script>
+</body>
+</html>

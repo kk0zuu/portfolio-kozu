@@ -9,14 +9,31 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Bebas+Neue&family=Bungee&family=Cinzel:wght@900&family=Playfair+Display:ital,wght@1,900&family=Schoolbell&family=Space+Grotesk:wght@700&family=Special+Elite&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
+    <style>
+    /* la barre reste invisible tant que son animation d'apparition n'est pas prête :
+       plus d'éclair de la barre à sa place définitive au chargement */
+    html.barre-attente .top-bar { opacity: 0; }
+    </style>
+    <script>
+    (function () {
+        var r = document.documentElement;
+        r.classList.add('barre-attente');
+        /* filet de sécurité si GSAP ne se charge pas */
+        setTimeout(function () { r.classList.remove('barre-attente'); }, 1500);
+    })();
+    </script>
 </head>
 <body>
+    <!-- Fond photographique qui s'efface au fil du scroll -->
+    <div class="fond-image" id="fondImage" aria-hidden="true"></div>
+
     <nav class="top-bar">
         <div class="logo"><a href="index.html">Ian Bossut‑Gandou</a></div>
         <div class="nav-links">
             <a href="numerique.html">Numérique</a>
             <a href="photographie.html">Photographie</a>
             <a href="plastique.html">Projets plastiques</a>
+            <a href="contact.html">Contact</a>
         </div>
         <div class="nav-bubble"></div>
     </nav>
@@ -45,36 +62,110 @@
         </div>
     </section>
 
-    <!-- Section Intro / Qui est Ian -->
+    <!-- Section Intro / Qui suis-je -->
     <section class="intro-section">
-         <h2 class="section-title brutal-highlight">QUI EST IAN ?</h2>
+         <h2 class="section-title brutal-highlight">QUI SUIS-JE ?</h2>
+
+         <!-- Bandeau des logiciels maîtrisés (glisser pour parcourir + déplacement au scroll) -->
+         <div class="logiciels" id="logiciels" aria-label="Logiciels maîtrisés — faites glisser pour parcourir la ligne">
+             <div class="logiciels-glisse" id="logicielsGlisse">
+                 <div class="logiciels-piste" id="logicielsPiste">
+                     <div class="logiciels-groupe">
+                         <span class="logiciel">
+                             <img src="images/logiciels/blender.svg" alt="Blender" draggable="false">
+                             <span class="logiciel-nom">Blender</span>
+                         </span>
+                         <span class="logiciel">
+                             <img src="images/accueil/logo%20solidworks.png" alt="SolidWorks" draggable="false">
+                             <span class="logiciel-nom">SolidWorks</span>
+                         </span>
+                         <span class="logiciel">
+                             <img src="images/logiciels/adobe-photoshop.svg" alt="Photoshop" draggable="false">
+                             <span class="logiciel-nom">Photoshop</span>
+                         </span>
+                         <span class="logiciel">
+                             <img src="images/logiciels/adobe-illustrator.svg" alt="Illustrator" draggable="false">
+                             <span class="logiciel-nom">Illustrator</span>
+                         </span>
+                         <span class="logiciel">
+                             <img src="images/logiciels/adobe-indesign.svg" alt="InDesign" draggable="false">
+                             <span class="logiciel-nom">InDesign</span>
+                         </span>
+                         <span class="logiciel">
+                             <img src="images/logiciels/adobe-after-effects.svg" alt="After Effects" draggable="false">
+                             <span class="logiciel-nom">After Effects</span>
+                         </span>
+                         <span class="logiciel">
+                             <img src="images/logiciels/adobe-premiere.svg" alt="Premiere Pro" draggable="false">
+                             <span class="logiciel-nom">Premiere Pro</span>
+                         </span>
+                         <span class="logiciel">
+                             <img src="images/logiciels/adobe-lightroom.svg" alt="Lightroom" draggable="false">
+                             <span class="logiciel-nom">Lightroom</span>
+                         </span>
+                         <span class="logiciel">
+                             <img src="images/accueil/Affinity-Symbol.png" alt="Affinity" draggable="false">
+                             <span class="logiciel-nom">Affinity</span>
+                         </span>
+                         <span class="logiciel">
+                             <img src="images/accueil/da%20vinci%20resolve.webp" alt="DaVinci Resolve" draggable="false">
+                             <span class="logiciel-nom">DaVinci Resolve</span>
+                         </span>
+                         <span class="logiciel">
+                             <img src="images/accueil/filmora_logo.png" alt="Filmora" draggable="false">
+                             <span class="logiciel-nom">Filmora</span>
+                         </span>
+                         <span class="logiciel">
+                             <img src="images/accueil/darktable_104513.webp" alt="Darktable" draggable="false">
+                             <span class="logiciel-nom">Darktable</span>
+                         </span>
+                         <span class="logiciel">
+                             <img src="images/accueil/Krita-logo-150x150.png" alt="Krita" draggable="false">
+                             <span class="logiciel-nom">Krita</span>
+                         </span>
+                         <span class="logiciel">
+                             <img src="images/logiciels/canva.svg" alt="Canva" draggable="false">
+                             <span class="logiciel-nom">Canva</span>
+                         </span>
+                         <span class="logiciel">
+                             <img src="images/logiciels/figma.svg" alt="Figma" draggable="false">
+                             <span class="logiciel-nom">Figma</span>
+                         </span>
+                         <span class="logiciel">
+                             <img src="images/logiciels/visual-studio-code.svg" alt="Visual Studio Code" draggable="false">
+                             <span class="logiciel-nom">VS Code</span>
+                         </span>
+                     </div>
+                 </div>
+             </div>
+         </div>
+
          <div class="intro-grid">
              <div class="intro-text">
                  <p>Artiste pluridisciplinaire avec une insatiable envie d'apprendre, je crée avec l'envie d'impressionner.</p>
                  <p>J'aime mélanger mon univers imaginaire au monde réel pour le sublimer et mon but est et restera toujours d'atteindre le cœur des gens par l'image.</p>
-                 <a href="cv.html" class="bio-cv-link hover-target">
-                     <span>Envie d'en savoir plus ?</span>
-                     <strong>Découvrir mon CV →</strong>
-                 </a>
              </div>
-             
-             <!-- Image Qui est Ian avec lien direct vers le CV -->
+
              <div class="intro-image-container">
-                 <a href="cv.html" class="hover-target" title="Cliquer pour découvrir mon CV">
-                     <div class="intro-image-placeholder drop-zone clip-hex" data-id="img-profile">
-                         <img src="images/accueil/05_183fc2ef0c4709a81b47ec1e20999c5c.png" alt="Ian Profil">
-                     </div>
-                     <div class="arrow-text hover-target">C'est lui ! Cliquez pour voir mon CV ↘</div>
-                 </a>
+                 <div class="intro-image-placeholder drop-zone clip-hex" data-id="img-profile">
+                     <img src="images/accueil/05_183fc2ef0c4709a81b47ec1e20999c5c.png" alt="Ian Profil">
+                 </div>
              </div>
          </div>
     </section>
 
     <!-- Section Choix de Domaine (Organique) -->
     <section class="domain-selection organic-selection">
-        <h2 class="section-title brutal-highlight">OÙ ON VA ?</h2>
         
         <div class="organic-container">
+            <!-- Titre au centre, dévoilé quand les bulles se sont écartées -->
+            <h2 class="section-title brutal-highlight titre-centre">OÙ ON VA ?</h2>
+            <!-- flèche rouge géométrique : elle orbite autour du titre et pointe le curseur -->
+            <span class="fleche-orbitale" aria-hidden="true">
+                <svg viewBox="0 0 48 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M1.5 10.5 H25 V3.5 L46 16 L25 28.5 V21.5 H1.5 Z" fill="currentColor" stroke="#000000" stroke-width="3" stroke-linejoin="miter" />
+                </svg>
+            </span>
             <!-- Les 3 bulles superposées au centre au repos, dispersées en spirale au scroll -->
             <a href="numerique.html" class="bubble-card bubble-num hover-target">
                 <div class="bubble-image-wrapper">
@@ -97,59 +188,142 @@
                 <span class="handwritten-label">plastique</span>
             </a>
         </div>
+
+        <p class="domain-note">Chaque domaine a été pensé comme un monde à part : découvrez chacun de ces mondes dans des visuels qui leur sont propres.</p>
     </section>
 
-    <!-- Section Contact / Vous avez apprécié mon travail ? -->
-    <section class="contact-section">
-        <div class="contact-bubble">
-            <div class="bubble-top-bar" style="margin-bottom: 2rem;">
-                <div class="bubble-category-pill" style="background: #FCE7F3; color: #BE185D;">RESTONS EN CONTACT</div>
-                <div class="scrapbook-note">Un projet ? Échangeons ! 💬</div>
-            </div>
+    <!-- Passage vers le domaine numérique : la fente du rideau d'entrée de numerique.html -->
+    <div class="sas-num" id="sasNum" aria-hidden="true">
+        <span class="sas-num-trait"></span>
+    </div>
 
-            <div class="contact-header">
-                <h2 class="bubble-main-title">VOUS AVEZ APPRÉCIÉ MON TRAVAIL ?</h2>
-                <p class="bubble-desc-text">Un projet, une collaboration, ou simplement envie d'échanger sur l'art, le design ou l'animation ? Contactez-moi !</p>
-            </div>
-
-            <div class="contact-grid">
-                <!-- Carte Email -->
-                <a href="mailto:gandou.christian@gmail.com" class="contact-card email hover-target">
-                    <span class="contact-card-badge">E-mail direct</span>
-                    <h3 class="contact-card-title">Courrier électronique</h3>
-                    <p class="contact-card-value">gandou.christian@gmail.com</p>
-                    <span class="contact-card-arrow">M'envoyer un message →</span>
-                </a>
-
-                <!-- Carte Instagram -->
-                <a href="https://www.instagram.com/kkozuu/" target="_blank" rel="noopener noreferrer" class="contact-card instagram hover-target">
-                    <span class="contact-card-badge">Réseau visuel</span>
-                    <h3 class="contact-card-title">Instagram</h3>
-                    <p class="contact-card-value">@kkozuu</p>
-                    <span class="contact-card-arrow">Voir les coulisses & stories →</span>
-                </a>
-
-                <!-- Carte Behance -->
-                <a href="https://www.behance.net/christiangandou" target="_blank" rel="noopener noreferrer" class="contact-card behance hover-target">
-                    <span class="contact-card-badge">Portfolio Pro</span>
-                    <h3 class="contact-card-title">Behance</h3>
-                    <p class="contact-card-value">Ian Gandou</p>
-                    <span class="contact-card-arrow">Consulter sur Behance →</span>
-                </a>
-            </div>
-
-            <div class="contact-footer-note">
-                <a href="cv.html" class="flow-secondary-link hover-target" style="font-weight: 600;">
-                    📄 Consulter également mon CV complet et mes compétences détaillées →
-                </a>
-            </div>
-        </div>
-    </section>
+    <!-- Fermeture vers le domaine photo : les deux volets de photographie.html se referment ici -->
+    <div class="sas-photo" id="sasPhoto" aria-hidden="true">
+        <div class="sas-photo-volet sas-photo-gauche"></div>
+        <div class="sas-photo-volet sas-photo-droite"></div>
+    </div>
 
     <!-- Librairies GSAP -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/MotionPathPlugin.min.js"></script>
     <script src="app.js"></script>
+    <!-- La fermeture des volets vers la page photo est commune à toutes les
+         pages : elle est dans app.js (sas-photo). -->
+    <script>
+    /* Clic sur le domaine numérique : les bulles et le « où on va ? »
+       se dissolvent, la barre de navigation rejoue son apparition à
+       l'envers, puis numerique.html prend le relais sur le même vert. */
+    (function () {
+        var lien = document.querySelector('.bubble-num');
+        var bar = document.querySelector('.top-bar');
+        var zone = document.querySelector('.organic-container');
+        if (!lien || !bar || !zone || typeof gsap === 'undefined') return;
+
+        var enCours = false;
+        var calme = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        var cibles = [bar.querySelector('.logo')]
+            .concat([].slice.call(bar.querySelectorAll('.nav-links a')))
+            .filter(Boolean);
+        var pastille = bar.querySelector('.nav-bubble');
+
+        lien.addEventListener('click', function (e) {
+            if (enCours || calme) return;
+            if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button === 1) return;
+            enCours = true;
+            e.preventDefault();
+
+            /* géométrie mesurée avant de toucher à la barre */
+            var r0 = bar.getBoundingClientRect();
+            var haut = r0.top;
+            var large = r0.width;
+
+            bar.classList.add('barre-intro');
+            bar.style.setProperty('--fb-w', large + 'px');
+            bar.style.setProperty('--fb-r', '16px');
+
+            var tl = gsap.timeline({
+                onComplete: function () { window.location.href = lien.getAttribute('href'); }
+            });
+
+            /* la fente du rideau numérique se trace en même temps que la sélection s'efface */
+            var sasNum = document.getElementById('sasNum');
+            if (sasNum) {
+                sasNum.classList.add('on');
+                /* le filet se trace du centre vers les bords, lentement,
+                   puis reste en place pendant que la barre remonte */
+                tl.to(sasNum.querySelector('.sas-num-trait'),
+                    { scaleX: 1, duration: 0.68, ease: 'power1.inOut' }, 0.04);
+            }
+
+            /* la sélection se dissout : plus de bulles, plus de titre, plus de note */
+            var note = document.querySelector('.domain-note');
+            tl.to([zone].concat(note ? [note] : []),
+                { opacity: 0, scale: 1.02, filter: 'blur(8px)', duration: 0.5, ease: 'power2.in' }, 0);
+
+            /* la barre se vide, redevient pastille et remonte hors champ */
+            tl.to(cibles, { opacity: 0, duration: 0.26, ease: 'power2.in' }, 0.04)
+              .to(pastille, { opacity: 0, duration: 0.2, ease: 'power2.in' }, 0.04)
+              .to(bar, { '--fb-w': '52px', '--fb-r': '26px', duration: 0.46, ease: 'power3.inOut' }, 0.16)
+              .to(bar, { top: (haut - 96) + 'px', opacity: 0, duration: 0.4, ease: 'power3.in' }, 0.44);
+        });
+
+        /* retour arrière : on remet l'accueil dans son état normal */
+        window.addEventListener('pageshow', function (e) {
+            if (!e.persisted) return;
+            bar.classList.remove('barre-intro');
+            gsap.set(bar, { clearProps: 'top,opacity' });
+            bar.style.removeProperty('--fb-w');
+            bar.style.removeProperty('--fb-r');
+            gsap.set(cibles, { clearProps: 'opacity' });
+            if (pastille) pastille.style.opacity = '';
+            gsap.set(zone, { clearProps: 'opacity,transform,filter' });
+            var noteRetour = document.querySelector('.domain-note');
+            if (noteRetour) gsap.set(noteRetour, { clearProps: 'opacity,transform,filter' });
+            var sasNum = document.getElementById('sasNum');
+            if (sasNum) {
+                sasNum.classList.remove('on');
+                gsap.set(sasNum.querySelectorAll('.sas-num-trait'), { clearProps: 'transform' });
+            }
+            enCours = false;
+        });
+    })();
+    </script>
+    <script>
+    /* Clic sur le domaine plastique : les bulles et la note s'effacent,
+       la barre de navigation reste, puis plastique.html prend le relais. */
+    (function () {
+        var lien = document.querySelector('.bubble-plastique');
+        var zone = document.querySelector('.organic-container');
+        var note = document.querySelector('.domain-note');
+        if (!lien || !zone || typeof gsap === 'undefined') return;
+
+        var enCours = false;
+        var calme = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+        lien.addEventListener('click', function (e) {
+            if (enCours || calme) return;
+            if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button === 1) return;
+            enCours = true;
+            e.preventDefault();
+
+            gsap.timeline({
+                onComplete: function () { window.location.href = lien.getAttribute('href'); }
+            }).to([zone].concat(note ? [note] : []), {
+                opacity: 0,
+                scale: 1.02,
+                filter: 'blur(8px)',
+                duration: 0.5,
+                ease: 'power2.in'
+            });
+        });
+
+        window.addEventListener('pageshow', function (e) {
+            if (!e.persisted) return;
+            gsap.set([zone].concat(note ? [note] : []), { clearProps: 'opacity,transform,filter' });
+            enCours = false;
+        });
+    })();
+    </script>
 </body>
 </html>

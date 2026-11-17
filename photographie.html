@@ -9,7 +9,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Bebas+Neue&family=Bungee&family=Cinzel:wght@900&family=Playfair+Display:ital,wght@1,900&family=Schoolbell&family=Space+Grotesk:wght@500;700&family=Special+Elite&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
 </head>
-<body style="background-color: #0d0d0f; color: #ffffff; min-height: 100vh; overflow-x: hidden; padding-top: 0;">
+<body class="photo-choice photo-fusion" style="color: #ffffff; min-height: 100vh; overflow-x: hidden; padding-top: 0;">
     <!-- Top Bar Navigation avec Bulle Liquid Glass -->
     <nav class="top-bar" style="background: rgba(20, 20, 25, 0.4); border-color: rgba(255, 255, 255, 0.15);">
         <div class="logo"><a href="index.html" style="color: #ffffff;">Ian Bossut‑Gandou</a></div>
@@ -17,6 +17,7 @@
             <a href="numerique.html" style="color: #ffffff;">Numérique</a>
             <a href="photographie.html" style="color: #ffffff;" class="active">Photographie</a>
             <a href="plastique.html" style="color: #ffffff;">Projets plastiques</a>
+            <a href="contact.html" style="color: #ffffff;">Contact</a>
         </div>
         <div class="nav-bubble"></div>
     </nav>
@@ -34,7 +35,7 @@
 
         <!-- En-tête textuel immersif -->
         <header class="photo-split-header">
-            <h1 class="blur-reveal">La photographie est un domaine vaste</h1>
+            <h1 class="blur-reveal"><span class="mot">La</span> <span class="mot mot-photo">photographie</span> <span class="mot">est</span> <span class="mot">un</span> <span class="mot">domaine</span> <span class="mot">vaste</span></h1>
             <p class="fade-in">Sélectionnez la facette que vous souhaitez explorer // Vous pouvez changer à tout moment</p>
         </header>
 
@@ -44,7 +45,7 @@
         </div>
 
         <!-- CÔTÉ GAUCHE : PHOTO PRO & STUDIO (Magenta Theme) -->
-        <a href="photo-pro.html" class="photo-split-side side-pro" aria-label="Explorer Photographie Studio et Pro">
+        <a href="#domaine-pro" class="photo-split-side side-pro" aria-label="Explorer Photographie Studio et Pro">
             <div class="photo-split-bg"></div>
             <div class="photo-split-content">
                 <span class="split-side-badge">Axe 01 • Rigueur & Composition</span>
@@ -60,7 +61,7 @@
         </a>
 
         <!-- CÔTÉ DROID : PHOTO EXPRESSIVE (Green Theme) -->
-        <a href="photo-expressive.html" class="photo-split-side side-exp" aria-label="Explorer Photographie Expressive">
+        <a href="#domaine-exp" class="photo-split-side side-exp" aria-label="Explorer Photographie Expressive">
             <div class="photo-split-bg"></div>
             <div class="photo-split-content">
                 <span class="split-side-badge">Axe 02 • Spontanéité & Matière</span>
@@ -77,8 +78,434 @@
 
     </main>
 
+
+    <!-- ================= DOMAINE STUDIO & PRO ================= -->
+    <div class="photo-domaine-bloc" id="domaine-pro" hidden data-domaine="pro" data-teinte="rgba(156, 29, 189, 0.12)" data-fond="images/photographie/pro/10_52846f04b6567ee9301c27025dc6afe6.jpg">
+<header class="domain-hero-section">
+        <h1 class="domain-hero-title"><span class="titre-photo">Photographie</span> Studio &amp; Pro</h1>
+        <p class="domain-hero-subtitle">
+            Rigueur de composition, architecture précise, éclairages directionnels studio et portraits lifestyle.
+        </p>
+    
+        <div class="domain-subnav domain-retour">
+            <a href="#choix" class="subnav-btn" data-retour>← Retour au choix d'axe</a>
+        </div>
+
+        <div class="domain-subnav">
+            <a href="#domaine-exp" class="subnav-btn active" data-bascule>Voir Photos Expressives →</a>
+        </div>
+    </header>
+
+    <main class="domain-content">
+
+        <div class="pr-ref">
+
+            <!-- ================= ARCHITECTURE ================= -->
+            <article class="pr-card project-bubble" id="architecture" data-diapo="images/photographie/pro/01_df0bbad5c7c7b2fb74ccff825571f574.jpg">
+                <div class="pr-archi">
+                    <div>
+                        <div class="pr-head">
+                            <h2 class="bubble-main-title blur-reveal">Architecture</h2>
+                            <p class="pr-tagline fade-in">Paris, Amsterdam, Bruxelles</p>
+                        </div>
+                        <!-- DÉFILÉ (diapo) : vue principale des canaux -->
+                        <div class="editorial-img-frame">
+                            <img src="images/photographie/pro/diapo_amsterdam_canal.jpg" alt="Architecture - Amsterdam canal et gare" data-caption="Amsterdam • Gare centrale, tramway et reflets sur les canaux">
+                        </div>
+                    </div>
+
+                    <div>
+                        <div class="pr-pair">
+                            <div class="editorial-img-frame">
+                                <img src="images/photographie/pro/01_df0bbad5c7c7b2fb74ccff825571f574.jpg" alt="Façades d'Amsterdam" data-caption="Amsterdam • Façades historiques et perspectives urbaines">
+                            </div>
+                            <div class="editorial-img-frame">
+                                <img src="images/photographie/pro/02_ed0458d334d7b700db6bfba25e9f1785.jpg" alt="Flèche gothique de Bruxelles" data-caption="Bruxelles • Flèche gothique de l'Hôtel de Ville">
+                            </div>
+                        </div>
+
+                        <div class="pr-text pr-archi__text fade-in">
+                            <p>Isoler des détails ou bien capturer dans toute sa grandeur, l’architecture est partout un sujet de photo rempli d’histoire et de culture.</p>
+                            <p>J’aime en capturer pour toujours garder une trace des pays où j’ai mit les pieds.</p>
+                        </div>
+                    </div>
+                </div>
+            </article>
+
+            <!-- ================= COUPLE LIFESTYLE ================= -->
+            <article class="pr-card project-bubble" id="couple-lifestyle">
+                <div class="pr-couple">
+                    <div class="pr-head pr-head--spread">
+                        <p class="pr-text fade-in">Retranscrire le sentiment de l’amour dans une image est un défi mais aussi un plaisir.</p>
+                        <h2 class="bubble-main-title blur-reveal">Couple Lifestyle</h2>
+                    </div>
+
+                    <div>
+                        <div class="editorial-img-frame">
+                            <img src="images/photographie/pro/03_5b1a52a008d8b18659ad151a70bb2d2c.jpg" alt="Couple spontané à Montmartre" data-caption="Montmartre • Baiser volé devant la façade rose">
+                        </div>
+                        <p class="pr-caption fade-in">Préparation de l’itinéraire de la journée (différents spots) et direction des sujets</p>
+                    </div>
+
+                    <!-- DÉFILÉ (diapo) : couple de dos face au moulin -->
+                    <div class="editorial-img-frame">
+                        <img src="images/photographie/pro/diapo_couple_moulin.jpg" alt="Couple de dos devant le moulin de la Galette" data-caption="Paris • Complicité face au Moulin de la Galette">
+                    </div>
+                </div>
+            </article>
+
+            <!-- ================= STUDIO ================= -->
+            <article class="pr-card project-bubble" id="studio" data-diapo="images/photographie/pro/06_e7b4feec60531eb8ac8f05a75268972c.jpg">
+                <h2 class="bubble-main-title blur-reveal">Studio - Polaroïd</h2>
+
+                <div class="pr-studio">
+                    <!-- DÉFILÉ (diapo) : polaroïd plein pied -->
+                    <div class="editorial-img-frame">
+                        <img src="images/photographie/pro/diapo_studio_man_white.jpg" alt="Polaroïd de mannequinat plein pied" data-caption="Studio • Polaroïd de mannequinat brut">
+                    </div>
+
+                    <div class="pr-studio__mid">
+                        <div class="fade-in">
+                            <h3 class="pr-subtitle">Polaroïd de mannequinat</h3>
+                            <p class="pr-text">Série de clichés bruts et sans retouche destinés aux castings en agence.</p>
+                        </div>
+                        <div class="editorial-img-frame pr-frame--mid">
+                            <img src="images/photographie/pro/04_13789ca013a1e081339de3ed5aa6687b.jpg" alt="Polaroïd mannequinat gros plan" data-caption="Studio • Gros plan portrait sans retouche">
+                        </div>
+                    </div>
+
+                    <div class="editorial-img-frame">
+                        <img src="images/photographie/pro/06_e7b4feec60531eb8ac8f05a75268972c.jpg" alt="Mannequin en pose studio" data-caption="Studio • Pose casting dynamique et attitude">
+                    </div>
+                </div>
+            </article>
+
+            <!-- ================= PACKSHOT / SHOOTING PRODUIT ================= -->
+            <article class="pr-card project-bubble" id="packshot">
+                <h2 class="bubble-main-title blur-reveal">Studio - Packshot</h2>
+
+                <div class="pr-packshot">
+                    <div class="editorial-img-frame">
+                        <img src="images/photographie/pro/09_4905987e99ac72b3482205275999b0a6.jpg" alt="Shooting studio projet design masque" data-caption="Shooting produit • Modèle portant le masque de design">
+                    </div>
+
+                    <div class="pr-packshot__mid">
+                        <h3 class="pr-subtitle fade-in">Packshot/Shooting produit</h3>
+                        <div class="editorial-img-frame">
+                            <img src="images/photographie/pro/07_e8f108a826dd0779b0245af5b116087e.jpg" alt="Gros plan profil masque design" data-caption="Studio design • Vue de profil et perles">
+                        </div>
+                    </div>
+
+                    <div>
+                        <div class="editorial-img-frame">
+                            <img src="images/photographie/pro/08_81fe2d349f6271cd803de08c8326b3e9.jpg" alt="Gros plan face masque sculpté" data-caption="Studio design • Vue de face et texture du carton découpé">
+                        </div>
+                        <div class="pr-text pr-packshot__text fade-in">
+                            <p>Documentation studio d'un projet de design.</p>
+                            <p>Utilisation d'un éclairage directionnel sur fond noir pour accentuer le relief du volume et sublimer les textures des matériaux.</p>
+                        </div>
+                    </div>
+                </div>
+            </article>
+
+            <!-- ================= PORTRAIT ================= -->
+            <article class="pr-card project-bubble" id="portrait">
+                <h2 class="bubble-main-title blur-reveal pr-title--right">Portrait</h2>
+
+                <div class="pr-portrait">
+                    <div class="pr-stack">
+                        <div class="editorial-img-frame">
+                            <img src="images/photographie/pro/12_8ce26cbf73593c23d30736b0acc6378b.jpg" alt="Portrait Tour Eiffel" data-caption="Paris • Attitude décontractée sous la Tour Eiffel">
+                        </div>
+                        <div class="editorial-img-frame">
+                            <img src="images/photographie/pro/14_ac9a46df51b223b0896c5b929970d9fd.jpg" alt="Portraits spontanés dans l'herbe" data-caption="Parc • Rires et complicité spontanée">
+                        </div>
+                    </div>
+
+                    <div>
+                        <div class="editorial-img-frame">
+                            <img src="images/photographie/pro/11_47100e1238a82b5a19cf5e27335e7a97.jpg" alt="Portrait à la mer avec fleur" data-caption="Bord de mer • Lumière naturelle et fleur dans les cheveux">
+                        </div>
+                        <div class="pr-text pr-portrait__text fade-in">
+                            <p>Photos axés sur le spontané :</p>
+                            <ul class="pr-list">
+                                <li>Sujet non dirigé ou légèrement</li>
+                                <li>Photos prises dans l’élan</li>
+                                <li>Recherche d’un aspect naturel</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="editorial-img-frame">
+                        <img src="images/photographie/pro/10_52846f04b6567ee9301c27025dc6afe6.jpg" alt="Portrait spontané cheveux au vent" data-caption="Golden hour • Cheveux au vent et regard en mouvement">
+                    </div>
+                </div>
+
+            <!-- ================= VIDÉO SEULE (entre portrait et sépia) ================= -->
+                <div class="pr-video">
+                    <video controls poster="images/photographie/pro/video_poster_portrait.jpg" playsinline preload="metadata">
+                        <!-- SOURCE VIDÉO À AJOUTER ICI (screen n° 110144) -->
+                        <source src="" type="video/mp4">
+                        Votre navigateur ne supporte pas la lecture vidéo.
+                    </video>
+                    <p class="pr-video-note">Emplacement de la vidéo — source à intégrer ici.</p>
+                </div>
+
+            <!-- ================= SÉPIA ================= -->
+                <div class="pr-sepia">
+                    <div>
+                        <div class="pr-pair">
+                            <div class="editorial-img-frame">
+                                <img src="images/photographie/pro/16_04eee0b2d4afb981cc2801854f70ffca.jpg" alt="Portrait sépia minutie" data-caption="Tirage sépia • Instant concentré et intimité argentique">
+                            </div>
+                            <div class="editorial-img-frame">
+                                <img src="images/photographie/pro/15_405acdc7fd23f98288e32ca80cff7d86.jpg" alt="Portrait sépia artisanat" data-caption="Tirage sépia • Travail manuel et texture monochrome">
+                            </div>
+                        </div>
+                        <p class="pr-caption pr-caption--center fade-in">J’apprécie l’utiliser dans mes portrait monochromes lorsque je veux représenter un instant chaleureux.</p>
+                    </div>
+
+                    <div class="pr-sepia__right">
+                        <p class="pr-text fade-in">Le sépia, originellement issu d’un pigment tiré de la seiche pour conserver les tirages, est un monochrome qui contrairement au noir&blanc apporte de la chaleur dans l’image.</p>
+                        <div class="editorial-img-frame">
+                            <img src="images/photographie/pro/17_bd7d8e4b831b617622c11a0c0fd66c67.jpg" alt="Accordéoniste de rue en sépia" data-caption="Scène de rue • Accordéoniste et tonalité chaude sépia">
+                        </div>
+                    </div>
+                </div>
+
+            </article>
+
+        </div>
+        <!-- /.pr-ref -->
+
+        <!-- SECTION CONTACT INSTAGRAM -->
+        <div id="instagram-section" class="photo-social">
+            <p>Envie d’un shooting ? Retrouvez mes séries sur <a href="https://www.instagram.com/kkozuu.raw?utm_source=ig_web_button_share_sheet&amp;vrfl=ZDNlZDc0MzIxNw==" target="_blank" rel="noopener noreferrer">Instagram ↗</a></p>
+        </div>
+
+        <!-- CONTINUATION : mêmes boutons que ceux du haut, le premier fait le même glissement -->
+        <div class="domain-subnav domain-continuation">
+            <a href="#domaine-exp" class="subnav-btn" data-bascule>Voir Photos Expressives →</a>
+            <a href="plastique.html" class="subnav-btn">Domaine 03 : Projets Plastiques →</a>
+        </div>
+
+    </main>
+    </div>
+
+    <!-- ================= DOMAINE EXPRESSIF ================= -->
+    <div class="photo-domaine-bloc" id="domaine-exp" hidden data-domaine="exp" data-teinte="rgba(53, 142, 20, 0.12)" data-fond="images/photographie/expressive/08_46f920ee78c7a5399f47f6cbb604d31e.jpg">
+<header class="domain-hero-section">
+        <h1 class="domain-hero-title"><span class="titre-photo">Photographie</span> Expressive</h1>
+        <p class="domain-hero-subtitle">
+            Moments suspendus, matière urbaine, reflets de métro, instantanés de rue, clair-obscur montagnard et jeux d'ombre.
+        </p>
+    
+        <div class="domain-subnav domain-retour">
+            <a href="#choix" class="subnav-btn" data-retour>← Retour au choix d'axe</a>
+        </div>
+
+        <div class="domain-subnav">
+            <a href="#domaine-pro" class="subnav-btn active" data-bascule>← Voir Photos Studio &amp; Pro</a>
+        </div>
+    </header>
+
+    <main class="domain-content">
+
+        <div class="pe">
+
+            <!-- ================= ARCHITECTURE ================= -->
+            <section class="pe-section" id="exp-architecture" data-diapo="images/photographie/expressive/04_79e95828fa3d3924152ec2c93e49a72e.jpg">
+                    <h2 class="pe-title">Architecture</h2>
+
+                    <div class="pe-grid pe-archi">
+                    <div class="editorial-img-frame">
+                        <img src="images/photographie/expressive/02_792fac6616582dc39b44d81c1e275866.jpg" alt="Structure architecturale métallique et miroirs" data-caption="Angle aigu & structure cinétique">
+                    </div>
+                    <div class="editorial-img-frame">
+                        <img src="images/photographie/expressive/01_5eede0429f23da847ed92590e16b9f9f.jpg" alt="Réverbère ancien et briques rouges" data-caption="Dialogue des époques & textures de briques">
+                    </div>
+                    <div class="editorial-img-frame">
+                        <img src="images/photographie/expressive/03_c51fa818ccbf3f38937b2c6b12a4f421.jpg" alt="Béton brut et lampadaire urbain" data-caption="Brutalisme urbain et géométrie verticale">
+                    </div>
+                    <div class="pe-stack">
+                        <div class="editorial-img-frame">
+                            <img src="images/photographie/expressive/04_79e95828fa3d3924152ec2c93e49a72e.jpg" alt="Façades colorées Amsterdam" data-caption="Amsterdam • Rythme chromatique et fenêtres géométriques">
+                        </div>
+                        <div class="editorial-img-frame">
+                            <img src="images/photographie/expressive/05_178ecd8905f10690db37f206ecf90e99.jpg" alt="Fenêtres colorées illuminées" data-caption="Damier lumineux nocturne">
+                        </div>
+                    </div>
+                    </div>
+</section>
+
+            <!-- ================= L'URBAIN VUE DE PRÈS ================= -->
+            <section class="pe-section" id="exp-urbain" data-diapo="images/photographie/expressive/09_ac50e636b6e69fab431a0372bfc2c252.jpg">
+                <h2 class="pe-title pe-title--right">L’Urbain vue de près</h2>
+
+                <div class="pe-grid pe-3">
+                    <div class="editorial-img-frame">
+                        <img src="images/photographie/expressive/06_4e5a874e656ba844650ef5b90190ee4d.jpg" alt="Signalétique urbaine et stickers" data-caption="Signalétique urbaine • Autocollants et croix de pharmacie">
+                    </div>
+                    <div class="editorial-img-frame pe-off-1">
+                        <img src="images/photographie/expressive/09_ac50e636b6e69fab431a0372bfc2c252.jpg" alt="Mur de granite et graffitis" data-caption="Matière brute • Graffitis et traces urbaines">
+                    </div>
+                    <div class="editorial-img-frame pe-off-2">
+                        <img src="images/photographie/expressive/08_46f920ee78c7a5399f47f6cbb604d31e.jpg" alt="Vitre fissurée et stickers urbains" data-caption="Fracture & mémoire de rue">
+                    </div>
+                </div>
+            </section>
+
+            <!-- ================= LES TRANSPORTS ================= -->
+            <section class="pe-section" id="exp-transports">
+                <h2 class="pe-title pe-title--center">Les Transports</h2>
+
+                <div class="pe-grid pe-4">
+                    <div class="editorial-img-frame">
+                        <img src="images/photographie/expressive/14_45d51480a6bacd659128d7cfdf0499f4.jpg" alt="Cargo maritime Sophie Isabell" data-caption="Transport maritime • Remorqueur en navigation">
+                    </div>
+                    <div class="editorial-img-frame">
+                        <img src="images/photographie/expressive/13_30fa324fc7fee01247553285ae32d34c.jpg" alt="Vieux gréement et figure de proue" data-caption="Proue de vieux gréement entre les mats">
+                    </div>
+                    <div class="editorial-img-frame">
+                        <img src="images/photographie/expressive/10_9f2981cb7e610e5406d78f9f71c578e2.jpg" alt="Voie ferrée envahie d'herbe" data-caption="Vestiges ferroviaires & nature reprenant ses droits">
+                    </div>
+                    <div class="editorial-img-frame">
+                        <img src="images/photographie/expressive/12_844c8a7149b324de2ca1bbbfa0f82983.jpg" alt="Train jaune en mouvement cinétique" data-caption="Vitesse cinétique • Train en transit urbain">
+                    </div>
+                </div>
+            </section>
+
+            <!-- ================= PORTRAITS ================= -->
+            <section class="pe-section" id="exp-portraits" data-diapo="images/photographie/expressive/21_f5576325dc0da3731a994c34b34b86f0.jpg">
+                <h2 class="pe-title pe-title--right">Portraits</h2>
+
+                <div class="pe-grid pe-4">
+                    <div class="editorial-img-frame">
+                        <img src="images/photographie/expressive/18_4e70fba48bce98e901fff8f1f75a68b3.jpg" alt="Portrait barman au haut de forme" data-caption="Ambiance bar • Sourire et haut de forme">
+                    </div>
+                    <div class="editorial-img-frame">
+                        <img src="images/photographie/expressive/17_57a8100d9c71e3fce6e50744ffacc252.jpg" alt="Portrait jeune femme maquillage graphique" data-caption="Regard intense & lecture nocturne">
+                    </div>
+                    <div class="editorial-img-frame pe-off-3">
+                        <img src="images/photographie/expressive/16_ebdf7de69cdbeab1717f73b3d99f39f1.jpg" alt="Silhouette concert sous projecteurs bleus" data-caption="Énergie scénique • Silhouette dans la lumière">
+                    </div>
+                    <div class="editorial-img-frame pe-off-3">
+                        <img src="images/photographie/expressive/15_dec98fdccd56c705aa1cac9904c669e0.jpg" alt="Femme dans escalier urbain de pierre" data-caption="Instant suspendu • Déambulation dans les escaliers">
+                    </div>
+                </div>
+
+                <!-- Suite des portraits : scènes vibrantes, même case -->
+                <div class="pe-grid pe-3 pe-vibrantes">
+                    <div class="editorial-img-frame pe-off-4">
+                        <img src="images/photographie/expressive/21_f5576325dc0da3731a994c34b34b86f0.jpg" alt="Enfant coiffé d'un chapeau bicolore" data-caption="Fête de rue • Chapeau coloré et insouciance">
+                    </div>
+                    <div class="editorial-img-frame pe-off-5">
+                        <img src="images/photographie/expressive/19_6348971188f3ebac8a906d819afad00e.jpg" alt="Duo de danseurs sous éclairage dramatique" data-caption="Mouvement passionné • Duo de danse en clair-obscur">
+                    </div>
+                    <div class="editorial-img-frame">
+                        <img src="images/photographie/expressive/20_76ffea63b61e08754e1098086ea070cf.jpg" alt="Jeune homme élégant dans le métro" data-caption="Atmosphère métro • Rétro, lunettes et cravate blanche">
+                    </div>
+                </div>
+            </section>
+
+            <!-- ================= PORTRAITS DE RUE ================= -->
+            <section class="pe-section" id="exp-portraits-rue" data-diapo="images/photographie/expressive/27_53d32c2870ccc92cd129c776ce7e712e.jpg">
+                    <h2 class="pe-title">Portraits de rue</h2>
+
+                    <div class="pe-grid pe-rue">
+                    <div class="editorial-img-frame">
+                        <img src="images/photographie/expressive/23_edffa3766a32d39b908f5ee67196abcc.jpg" alt="Public de concert les mains sur la tête" data-caption="Foule de festival • Émotion et submersion sonore">
+                    </div>
+                    <div class="editorial-img-frame">
+                        <img src="images/photographie/expressive/26_a8071180ca10020e1a912ba8e971579b.jpg" alt="Femme en terrasse avec smartphone" data-caption="Instant volé • Pause cigarette en terrasse">
+                    </div>
+                    <div class="editorial-img-frame">
+                        <img src="images/photographie/expressive/25_ff6ad9a1c322efe44a99fca5d6c72f59.jpg" alt="Préparation cosplay perruque bleue" data-caption="Coulisses & transformation • Perruque bleue">
+                    </div>
+                    <div class="editorial-img-frame">
+                        <img src="images/photographie/expressive/22_7fda89dbe553776138160b3b791ecb14.jpg" alt="Voiture amphibie rouge en ville" data-caption="Surréalisme urbain • Voiture amphibie en pleine rue">
+                    </div>
+                    <div class="editorial-img-frame">
+                        <img src="images/photographie/expressive/27_53d32c2870ccc92cd129c776ce7e712e.jpg" alt="Artisan crêpier préparant la pâte" data-caption="Métier de rue • Générosité et gourmandise artisanale">
+                    </div>
+                    </div>
+</section>
+
+            <!-- ================= À LA MONTAGNE ================= -->
+            <section class="pe-section" id="exp-montagne">
+                    <h2 class="pe-title">À la montagne !</h2>
+
+                    <div class="pe-grid pe-montagne">
+                    <div class="editorial-img-frame">
+                        <img src="images/photographie/expressive/30_ddeb8c511b90306f42724cfc431e9734.jpg" alt="Panorama montagnard enneigé et skieur" data-caption="Immensité alpine • Sommets rocheux et ligne de fuite">
+                    </div>
+                    <div class="editorial-img-frame">
+                        <img src="images/photographie/expressive/29_3aa7df073fa7e503ec026808f70cfbbb.jpg" alt="Skieur veste rose sur piste" data-caption="Contraste vif sur la neige immaculée">
+                    </div>
+                    <div class="editorial-img-frame">
+                        <img src="images/photographie/expressive/28_58bb36c80e6bad40c989cd6a77a5dd8e.jpg" alt="Skieur contemplant la vallée boisée" data-caption="Contemplation alpine face aux versants sauvages">
+                    </div>
+                    </div>
+</section>
+
+            <!-- ================= JOUER AVEC LA LUMIÈRE ================= -->
+            <section class="pe-section" id="exp-lumiere" data-diapo="images/photographie/expressive/31_5a833e67239383b5c1866bc5b8cb83ef.jpg">
+                <h2 class="pe-title">Jouer avec la lumière</h2>
+
+                <div class="pe-grid pe-lumiere">
+                    <div class="editorial-img-frame">
+                        <img src="images/photographie/expressive/32_2c45b34eacefab152fdc7e738e25ab21.jpg" alt="Rayons de soleil traversant la forêt" data-caption="Rayons dorés traversants & mystère sylvestre">
+                    </div>
+                    <div class="editorial-img-frame">
+                        <img src="images/photographie/expressive/31_5a833e67239383b5c1866bc5b8cb83ef.jpg" alt="Portrait en contre-jour solaire éclatant" data-caption="Halo solaire • Texture de la lumière naturelle">
+                    </div>
+                </div>
+            </section>
+
+            <!-- ================= JOUER AVEC L'OBSCURITÉ ================= -->
+            <section class="pe-section" id="exp-obscurite">
+                <h2 class="pe-title pe-title--right">Jouer avec l’obscurité</h2>
+
+                <div class="pe-grid pe-obscurite">
+                    <div class="pe-stack pe-stack--flush">
+                        <div class="editorial-img-frame">
+                            <img src="images/photographie/expressive/36_bad8991350c16d9b97082a4c41923dd9.jpg" alt="Boîte postale jaune isolée dans la nuit" data-caption="Nocturne • Boîte postale jaune sous la pénombre">
+                        </div>
+                        <div class="editorial-img-frame">
+                            <img src="images/photographie/expressive/35_eb9abac6d15962a15ae7a1dc94d71a10.jpg" alt="Gros plan métal usé boîte postale" data-caption="Matière usée & patine du temps dans l'ombre">
+                        </div>
+                    </div>
+
+                    <div class="editorial-img-frame">
+                        <img src="images/photographie/expressive/34_ae37107ed2bca1a6c90e5e8b2dc171e9.jpg" alt="Porte et volet rouge éclairés la nuit" data-caption="Clair-obscur architectural • Ambiance mystérieuse">
+                    </div>
+
+                    <div class="editorial-img-frame">
+                        <img src="images/photographie/expressive/33_70df2e8c967d1158273ddd4768445234.jpg" alt="Sculpture dorée scintillante sur fond noir" data-caption="Sculpture lumineuse émergeant du noir profond">
+                    </div>
+                </div>
+
+            </section>
+
+        </div>
+        <!-- /.pe -->
+
+        <!-- SECTION CONTACT INSTAGRAM -->
+        <div id="instagram-section" class="photo-social">
+            <p>Envie d’un shooting ? Retrouvez mes séries sur <a href="https://www.instagram.com/kkozuu.raw?utm_source=ig_web_button_share_sheet&amp;vrfl=ZDNlZDc0MzIxNw==" target="_blank" rel="noopener noreferrer">Instagram ↗</a></p>
+        </div>
+
+        <!-- CONTINUATION : mêmes boutons que ceux du haut, le premier fait le même glissement -->
+        <div class="domain-subnav domain-continuation">
+            <a href="#domaine-pro" class="subnav-btn" data-bascule>Voir Photos Studio &amp; Pro →</a>
+            <a href="plastique.html" class="subnav-btn">Domaine 03 : Projets Plastiques →</a>
+        </div>
+
+    </main>
+    </div>
+
     <!-- Footer minimaliste -->
-    <footer style="text-align: center; padding: 2rem 1.5rem; font-family: var(--font-body); color: #777; background: #0d0d0f; border-top: 1px solid rgba(255, 255, 255, 0.08);">
+    <footer class="pied-fusion" style="text-align: center; padding: 2rem 1.5rem; font-family: var(--font-body); color: #777; background: #0d0d0f; border-top: 1px solid rgba(255, 255, 255, 0.08);">
         <p style="margin: 0;">© 2026 Ian Bossut‑Gandou – Photographie & Arts Visuels.</p>
     </footer>
 
@@ -87,5 +514,686 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/MotionPathPlugin.min.js"></script>
     <script src="app.js"></script>
+    <script>
+    /* Page photo unique : le domaine choisi s'ouvre sur place, sans rechargement.
+       La photo du côté cliqué prend tout l'écran en gardant son filtre, les textes
+       du choix descendent hors champ, puis le domaine apparaît avec la même photo
+       en fond et sa première case qui remonte physiquement du bas de l'écran. */
+    (function () {
+        var body = document.body;
+        var choix = document.querySelector('.photo-split-screen');
+        var cotes = [].slice.call(document.querySelectorAll('.photo-split-side'));
+        if (!choix || !cotes.length || typeof gsap === 'undefined') return;
+
+        /* retour au choix d'axe suivi d'un rechargement : les volets d'ouverture
+           ne doivent pas rejouer sur le choix qui revient */
+        try {
+            if (sessionStorage.getItem('photo-retour') === '1') {
+                body.classList.add('photo-retour');
+                sessionStorage.removeItem('photo-retour');
+            }
+        } catch (e) { /* stockage indisponible : on garde le comportement normal */ }
+
+        var calme = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        var ouvert = false;
+        var bascule = false;
+
+        /* la barre passe en clair dans un domaine : on garde de quoi la remettre */
+        var barreNav = document.querySelector('.top-bar');
+        var styleBarre = barreNav ? barreNav.getAttribute('style') : null;
+        var liensNav = barreNav ? [].slice.call(barreNav.querySelectorAll('a')) : [];
+        var stylesLiensNav = liensNav.map(function (a) { return a.getAttribute('style'); });
+
+        /* les deux états de la barre : verre sombre sur le choix, verre clair en domaine */
+        var COULEURS_BARRE = {
+            sombre: { fond: 'rgba(20, 20, 25, 0.4)', bordure: 'rgba(255, 255, 255, 0.15)', texte: '#ffffff' },
+            clair: { fond: 'rgba(255, 255, 255, 0.15)', bordure: 'rgba(255, 255, 255, 0.2)', texte: '#000000' }
+        };
+
+        function teinteBarre(mode, duree, retard) {
+            var barre = barreNav || document.querySelector('.top-bar');
+            if (!barre || typeof gsap === 'undefined') return;
+            var c = COULEURS_BARRE[mode];
+            if (!c) return;
+            var d = duree === undefined ? 0.55 : duree;
+            gsap.to(barre, {
+                backgroundColor: c.fond, borderColor: c.bordure,
+                duration: d, delay: retard || 0, ease: 'power1.inOut', overwrite: 'auto'
+            });
+            var textes = barre.querySelectorAll('a, .logo');
+            if (textes.length) {
+                gsap.to(textes, {
+                    color: c.texte,
+                    duration: d, delay: retard || 0, ease: 'power1.inOut', overwrite: 'auto'
+                });
+            }
+        }
+
+        function photoDe(cote) {
+            var fond = cote.querySelector('.photo-split-bg');
+            var url = fond ? getComputedStyle(fond).backgroundImage : 'none';
+            return url.replace(/^url\(["']?/, '').replace(/["']?\)$/, '');
+        }
+
+        function filtreDe(cote) {
+            var p = getComputedStyle(cote, '::before');
+            return p.backgroundImage && p.backgroundImage !== 'none' ? p.backgroundImage : '';
+        }
+
+        function poserTeinte(bloc) {
+            var ancienne = document.querySelector('.photo-teinte');
+            if (ancienne) ancienne.remove();
+            var couleur = bloc.getAttribute('data-teinte');
+            if (!couleur) return;
+            var d = document.createElement('div');
+            d.className = 'photo-teinte';
+            d.style.backgroundColor = couleur;
+            var fond = document.querySelector('.photo-fond');
+            if (fond && fond.nextSibling) body.insertBefore(d, fond.nextSibling);
+            else body.appendChild(d);
+        }
+
+        /* la teinte du domaine ne reste que tant que sa photo est le fond */
+        document.addEventListener('photo-fond:change', function (e) {
+            var teinte = document.querySelector('.photo-teinte');
+            if (!teinte) return;
+            teinte.style.opacity = e.detail.domaine ? '1' : '0';
+        });
+
+        /* ---- passage d'un domaine à l'autre : la page glisse latéralement ---- */
+        function basculer(cible) {
+            var actuel = document.querySelector('.photo-domaine-bloc:not([hidden])');
+            if (!cible || !actuel || actuel === cible || bascule) return;
+            bascule = true;
+
+            /* avant le glissement, la case se remet doucement à plat : l'effet du
+               carrousel ne se fige plus d'un coup au début du swipe */
+            var aplatir = typeof window.aplatirTambour === 'function' ? window.aplatirTambour(actuel, 0.22) : null;
+            if (aplatir) { aplatir.eventCallback('onComplete', function () { glisser(cible, actuel); }); return; }
+            glisser(cible, actuel);
+        }
+
+        function glisser(cible, actuel) {
+            var sens = cible.id === 'domaine-exp' ? 1 : -1;   // 1 : le nouveau arrive par la droite
+            var large = window.innerWidth;
+            /* position à l'écran du domaine qui s'en va, relevée avant tout changement :
+               c'est elle qu'on retrouve après la remise à zéro du défilement */
+            var ecranActuel = actuel.getBoundingClientRect().top;
+
+            /* on bloque le défilement sans faire sauter la largeur de la page
+               (la barre de défilement qui disparaît décalait tout l'écran) */
+            var largeurBarre = window.innerWidth - document.documentElement.clientWidth;
+            document.documentElement.style.overflow = 'hidden';
+            if (largeurBarre > 0) document.body.style.paddingRight = largeurBarre + 'px';
+
+            cible.hidden = false;
+            /* le mot du titre a pu être masqué par un retour au choix : remis visible */
+            var motCible = cible.querySelector('.domain-hero-title .titre-photo');
+            if (motCible) gsap.set(motCible, { opacity: 1 });
+            /* le défilement revient à zéro avant toute mesure : les positions se
+               lisent alors directement sur l'écran, sans correction de défilement */
+            window.scrollTo(0, 0);
+
+            /* point de départ du glissement, relevé sur l'en-tête alors que le domaine
+               est remis en flux : épinglé, l'en-tête est en position fixe et sa place
+               ne dit plus rien, ce qui décalait le bloc vers le haut pendant tout le
+               glissement */
+            cible.classList.remove('pin-hero');
+            var heroCible = cible.querySelector('.domain-hero-section');
+            var hautCible = heroCible ? heroCible.getBoundingClientRect().top : 0;
+
+            /* on épingle tout de suite l'en-tête du domaine qui arrive : sinon son
+               contenu remonte de la hauteur du titre pendant le glissement, puis
+               redescend d'un coup quand l'épingle est posée à la fin */
+            epinglerHero(cible);
+
+            /* afficher l'autre domaine et remettre le défilement à zéro déplacent
+               celui qui s'en va : on annule la différence avec la position relevée
+               avant, sinon il saute au lieu de glisser */
+            var hautActuel = actuel.getBoundingClientRect().top;
+            gsap.set(actuel, { y: ecranActuel - hautActuel });
+            gsap.set(cible, { y: -hautCible, x: 0 });
+            /* calage fin : on relit la première case et on annule l'écart qui reste.
+               La place de l'en-tête varie d'un domaine à l'autre, et un domaine placé
+               quelques dizaines de pixels trop haut arrivait avec une perspective
+               fausse, corrigée seulement à la fin du glissement. */
+            var ecartHero = parseFloat(cible.style.getPropertyValue('--hero-offset')) || 0;
+            var premiereCible = cible.querySelector('.domain-content .pr-card, .domain-content .pe-section');
+            if (premiereCible && ecartHero) {
+                var residu = premiereCible.getBoundingClientRect().top - ecartHero;
+                if (Math.abs(residu) >= 1) {
+                    hautCible += residu;
+                    gsap.set(cible, { y: -hautCible });
+                }
+            }
+            /* les deux blocs sont translatés : un hero fixé se repère alors sur son
+               bloc au lieu de l'écran. On lui redonne sa position relative au bloc
+               pour qu'il reste collé en haut de l'écran pendant le glissement. */
+            [actuel, cible].forEach(function (b) {
+                b.classList.add('slide-hero');
+                b.style.setProperty('--hero-slide-top', (-b.getBoundingClientRect().top) + 'px');
+            });
+
+            /* le carrousel du domaine qui arrive est mesuré ici, une fois le bloc
+               ramené à sa place à l'écran : ses cases glissent déjà avec la bonne
+               perspective */
+            if (typeof window.construireTambour === 'function') window.construireTambour(cible);
+            /* le glissement commence maintenant : le domaine part hors écran */
+            gsap.set(cible, { x: sens * large });
+
+            /* le fond et sa teinte suivent le nouveau domaine */
+            var url = cible.getAttribute('data-fond');
+            if (url && window.photoFond) window.photoFond.poserDomaine(url);
+            poserTeinte(cible);
+
+            var tl = gsap.timeline({
+                defaults: { ease: 'power2.inOut' },
+                onComplete: function () {
+                    actuel.classList.remove('slide-hero');
+                    cible.classList.remove('slide-hero');
+                    actuel.style.removeProperty('--hero-slide-top');
+                    cible.style.removeProperty('--hero-slide-top');
+                    actuel.hidden = true;
+                    gsap.set(actuel, { x: 0, y: 0, opacity: 1 });
+                    gsap.set(cible, { x: 0, y: 0 });
+
+                    document.documentElement.style.overflow = '';
+                    document.body.style.paddingRight = '';
+                    window.scrollTo(0, 0);
+
+                    /* on laisse le navigateur reprendre la mise en page avant de remesurer */
+                    requestAnimationFrame(function () {
+                        if (typeof ScrollTrigger !== 'undefined') ScrollTrigger.refresh();
+                        /* l'épingle décale le contenu de la hauteur du titre : elle doit
+                           être posée avant de remesurer le carrousel, sinon ses cases
+                           sont mesurées 536 px trop haut et penchent de travers */
+                        poserHero(cible);
+                        /* le fond repasse par la photo du domaine : pendant le
+                           glissement, les cases hors écran avaient pu le prendre */
+                        if (url && window.photoFond) window.photoFond.poserDomaine(url);
+                        if (typeof window.construireTambour === 'function') window.construireTambour();
+                        bascule = false;
+                    });
+                }
+            });
+            tl.to(actuel, { x: -sens * large, opacity: 0.3, duration: 0.75 }, 0);
+            tl.to(cible, { x: 0, duration: 0.75 }, 0);
+        }
+
+        /* ---- retour au choix d'axe : la transition d'entrée, à l'envers ---- */
+        var retourEnCours = false;
+        function revenir() {
+            var bloc = document.querySelector('.photo-domaine-bloc:not([hidden])');
+            if (!bloc || retourEnCours || bascule) return;
+            retourEnCours = true;
+
+            /* la transition du bouton est la seule à jouer ici : si des volets de
+               passage traînaient à l'écran, ils se retirent sans se refermer */
+            [].forEach.call(document.querySelectorAll('.sas-photo'), function (s) {
+                s.classList.remove('on');
+            });
+            /* le choix réapparaît : ses animations d'ouverture (volets, pastille,
+               textes) se rejoueraient par-dessus, on les tait pour ce retour */
+            body.classList.add('photo-retour');
+            /* si la page se recharge après ce retour, le choix ne doit pas rejouer
+               ses volets d'ouverture */
+            try { sessionStorage.setItem('photo-retour', '1'); } catch (e) { /* sans stockage, tant pis */ }
+
+            var cote = document.querySelector(bloc.id === 'domaine-pro' ? '.side-pro' : '.side-exp');
+            var url = bloc.getAttribute('data-fond');
+            var y = window.scrollY || window.pageYOffset || 0;
+
+            /* le défilement se bloque sans déformer la largeur de la page */
+            var largeurBarre = window.innerWidth - document.documentElement.clientWidth;
+            document.documentElement.style.overflow = 'hidden';
+            if (largeurBarre > 0) document.body.style.paddingRight = largeurBarre + 'px';
+
+            /* le hero épinglé doit repasser dans le flux avant que le choix revienne */
+            [].forEach.call(document.querySelectorAll('.photo-domaine-bloc'), function (b) {
+                b.classList.remove('pin-hero');
+                var h = b.querySelector('.domain-hero-section');
+                if (h) { h.style.opacity = ''; h.style.visibility = ''; }
+            });
+
+            choix.style.display = '';
+            body.classList.remove('etape-domaine');
+            body.style.color = '#ffffff';
+
+            /* retour au verre sombre, en fondu, pendant que le voile se referme */
+            teinteBarre('sombre', 0.6, 0.05);
+            window.scrollTo(0, 0);
+
+            /* le domaine reste visuellement en place pendant que le choix revient dessous :
+               le choix réapparaît au-dessus de lui et le pousse dans le document, on
+               relit donc sa position réelle pour annuler ce décalage */
+            gsap.set(bloc, { y: -y - bloc.getBoundingClientRect().top });
+
+            /* les textes du choix repartent de leur position de sortie ; le mot
+               « photographie » du choix reste masqué, il arrive par sa copie */
+            gsap.set('.photo-split-side', { opacity: 0 });
+            gsap.set('.photo-split-header', { y: 0 });
+            gsap.set('.photo-split-header .mot, .photo-split-header p', { clearProps: 'opacity,transform' });
+            var motArrivee = document.querySelector('.photo-split-header .mot-photo');
+            var rArrivee = motArrivee ? motArrivee.getBoundingClientRect() : null;
+            gsap.set('.photo-split-header', { y: 70, opacity: 0 });
+            gsap.set('.split-side-badge, .split-side-title, .split-side-desc, .split-side-cta, .split-center-versus',
+                { y: 70, opacity: 0 });
+
+            var resteMot = document.querySelector('.mot-transit');
+            if (resteMot) resteMot.remove();
+            body.classList.remove('photo-etape-en-cours');
+
+            /* ---- le mot « photographie » repart du titre du domaine vers le choix ---- */
+            var motDepart = bloc.querySelector('.domain-hero-title .titre-photo');
+            var cloneMot = null;
+            var echelleMot = 1;
+            var rDepart = null;
+            if (motDepart && motArrivee && rArrivee) {
+                rDepart = motDepart.getBoundingClientRect();
+                var csDepart = getComputedStyle(motDepart);
+                var csArrivee = getComputedStyle(motArrivee);
+                echelleMot = parseFloat(csArrivee.fontSize) / parseFloat(csDepart.fontSize) || 1;
+
+                cloneMot = document.createElement('span');
+                cloneMot.className = 'mot-transit';
+                cloneMot.textContent = motDepart.textContent;
+                cloneMot.style.cssText =
+                    'font-family:' + csDepart.fontFamily + ';font-size:' + csDepart.fontSize +
+                    ';font-weight:' + csDepart.fontWeight + ';letter-spacing:' + csDepart.letterSpacing +
+                    ';text-transform:' + csDepart.textTransform + ';line-height:' + csDepart.lineHeight +
+                    ';color:#000000;text-shadow:none;transform-origin:0 0;' +
+                    'left:' + rDepart.left + 'px;top:' + rDepart.top + 'px;';
+                document.body.appendChild(cloneMot);
+
+                gsap.set(motDepart, { opacity: 0 });
+                gsap.set(motArrivee, { opacity: 0 });
+            }
+
+            /* ---- la photo du domaine, plein écran, se dézoome pour revenir à son côté
+               (sous la barre de navigation, qui reste au-dessus) ---- */
+            var bgReel = cote.querySelector('.photo-split-bg');
+            var csBg = bgReel ? getComputedStyle(bgReel) : null;
+            var csCote = getComputedStyle(cote);
+            var positionReelle = csBg ? csBg.backgroundPosition : '50% 20%';
+            var filtres = [csCote.filter, csBg ? csBg.filter : '']
+                .filter(function (f) { return f && f !== 'none'; }).join(' ') || 'none';
+            var echelleReelle = 1;
+            if (csBg && csBg.transform && csBg.transform !== 'none') {
+                var matrice = csBg.transform.match(/matrix\(([^)]+)\)/);
+                if (matrice) echelleReelle = parseFloat(matrice[1].split(',')[0]) || 1;
+            }
+
+            var voile = document.createElement('div');
+            voile.className = 'photo-etape';
+            voile.style.cssText = 'position:fixed;z-index:900;pointer-events:none;overflow:hidden;background:#F6F4F0;' +
+                'left:0;top:0;width:100vw;height:100vh;';
+            var image = document.createElement('div');
+            image.style.cssText = 'position:absolute;inset:0;background-image:url("' + url + '");' +
+                'background-size:cover;background-position:50% 50%;opacity:0.6;transform-origin:50% 50%;' +
+                /* filtre neutre explicite : sinon GSAP part de « aucun filtre » = noir */
+                'filter:brightness(1) saturate(1) contrast(1);transition:background-position 0.8s ease;';
+            voile.appendChild(image);
+            var couche = null;
+            var filtre = getComputedStyle(cote, '::before').backgroundImage;
+            if (filtre && filtre !== 'none') {
+                couche = document.createElement('div');
+                couche.style.cssText = 'position:absolute;inset:0;background-image:' + filtre + ';opacity:0.12;';
+                voile.appendChild(couche);
+            }
+            body.appendChild(voile);
+
+            var r = cote.getBoundingClientRect();
+
+            var tl = gsap.timeline({
+                defaults: { ease: 'power2.inOut' },
+                onComplete: function () {
+                    if (voile) voile.remove();
+                    bloc.hidden = true;
+                    gsap.set(bloc, { y: 0, clearProps: 'opacity' });
+
+                    document.documentElement.style.overflow = '';
+                    document.body.style.paddingRight = '';
+                    window.scrollTo(0, 0);
+
+                    gsap.set('.photo-split-side', { clearProps: 'opacity' });
+                    gsap.set('.photo-split-header, .split-side-badge, .split-side-title, .split-side-desc, .split-side-cta, .split-center-versus',
+                        { clearProps: 'opacity,transform' });
+                    gsap.set('.photo-split-header .mot, .photo-split-header p', { clearProps: 'opacity,transform' });
+                    var resteMot = document.querySelector('.mot-transit');
+                    if (resteMot) resteMot.remove();
+                    body.classList.remove('photo-etape-en-cours');
+                    cotes.forEach(function (c) { c.classList.remove('cote-actif'); });
+
+                    if (typeof window.__tambourNettoyage === 'function') {
+                        window.__tambourNettoyage();
+                        window.__tambourNettoyage = null;
+                    }
+                    var teinte = document.querySelector('.photo-teinte');
+                    if (teinte) teinte.remove();
+
+                    /* la barre retrouve son verre sombre */
+                    if (barreNav && styleBarre !== null) {
+                        barreNav.setAttribute('style', styleBarre);
+                        liensNav.forEach(function (a, i) {
+                            if (stylesLiensNav[i]) a.setAttribute('style', stylesLiensNav[i]);
+                        });
+                    }
+
+                    if (typeof ScrollTrigger !== 'undefined') ScrollTrigger.refresh();
+                    ouvert = false;
+                    retourEnCours = false;
+                }
+            });
+
+            /* le voile se referme sur son côté, la photo se recadre */
+            tl.to(voile, { left: r.left, top: r.top, width: r.width, height: r.height, duration: 0.7 }, 0);
+            tl.to(image, { opacity: 1, scale: echelleReelle, filter: filtres, duration: 0.62, ease: 'power1.inOut' }, 0.08);
+            tl.call(function () { image.style.backgroundPosition = positionReelle; }, null, 0.08);
+            if (couche) tl.to(couche, { opacity: 1, duration: 0.62 }, 0.08);
+
+            /* le mot revient à sa taille et à sa couleur de départ */
+            if (cloneMot) {
+                tl.to(cloneMot, {
+                    x: rArrivee.left - rDepart.left,
+                    y: rArrivee.top - rDepart.top,
+                    scale: echelleMot,
+                    color: '#ffffff',
+                    textShadow: '0 0 14px rgba(0, 0, 0, 0.4)',
+                    duration: 0.7, ease: 'power2.inOut'
+                }, 0.04);
+                tl.call(function () {
+                    cloneMot.remove();
+                    if (motArrivee) gsap.set(motArrivee, { opacity: 1 });
+                }, null, 0.78);
+            }
+
+            tl.to(bloc, { opacity: 0, duration: 0.35 }, 0);
+            tl.to('.photo-split-side', { opacity: 1, duration: 0.45 }, 0.2);
+            tl.to('.split-side-badge, .split-side-title, .split-side-desc, .split-side-cta, .split-center-versus',
+                { y: 0, opacity: 1, duration: 0.5, stagger: 0.03, ease: 'power2.out' }, 0.25);
+            tl.to('.photo-split-header', { y: 0, opacity: 1, duration: 0.45, ease: 'power2.out' }, 0.3);
+        }
+
+        /* ---- hero épinglé ----
+           Le titre, la description et les boutons restent en place : les cases
+           montent par-dessus et les recouvrent, puis le hero s'efface pour de bon
+           (jusqu'à ce qu'on remonte en haut de la page). */
+        function majerHero() {
+            var bloc = document.querySelector('.photo-domaine-bloc.pin-hero:not([hidden])');
+            if (!bloc) return;
+            var hero = bloc.querySelector('.domain-hero-section');
+            if (!hero) return;
+            if (window.innerWidth < 901) {
+                hero.style.opacity = '';
+                hero.style.visibility = '';
+                return;
+            }
+            /* pas de fondu : l'en-tête reste opaque et passe derrière la case.
+               Il n'est retiré qu'une fois entièrement couvert par elle. */
+            hero.style.opacity = '';
+            var premiere = bloc.querySelector('.domain-content .pr-card, .domain-content .pe-section');
+            var couvert;
+            if (premiere) {
+                couvert = premiere.getBoundingClientRect().top <= 2;
+            } else {
+                var y = window.scrollY || window.pageYOffset || 0;
+                couvert = y >= hero.getBoundingClientRect().height;
+            }
+            hero.style.visibility = couvert ? 'hidden' : '';
+        }
+
+        function poserHero(bloc) {
+            [].forEach.call(document.querySelectorAll('.photo-domaine-bloc'), function (b) {
+                if (b !== bloc) {
+                    b.classList.remove('pin-hero');
+                    var h = b.querySelector('.domain-hero-section');
+                    if (h) { h.style.opacity = ''; h.style.visibility = ''; }
+                }
+            });
+            if (!bloc) return;
+
+            bloc.classList.remove('pin-hero');
+            /* un transform résiduel ferait d'un parent le repère du fixed */
+            gsap.set(bloc, { clearProps: 'transform' });
+            epinglerHero(bloc);
+            majerHero();
+        }
+
+        /* pose l'épingle sur un seul bloc, sans toucher aux autres : le domaine
+           qui s'en va doit garder son en-tête en place pendant qu'il glisse */
+        function epinglerHero(bloc) {
+            var hero = bloc.querySelector('.domain-hero-section');
+            if (!hero) return;
+            bloc.classList.remove('pin-hero');
+            var rect = hero.getBoundingClientRect();
+            bloc.style.setProperty('--hero-top', (rect.top + (window.pageYOffset || 0)) + 'px');
+            bloc.style.setProperty('--hero-offset', rect.height + 'px');
+            bloc.classList.add('pin-hero');
+        }
+
+        window.addEventListener('scroll', majerHero, { passive: true });
+        window.addEventListener('resize', majerHero, { passive: true });
+
+        function installer(bloc, url) {
+            choix.style.display = 'none';
+            bloc.hidden = false;
+            /* le retour au choix laisse un opacity:0 en style inline sur le bloc :
+               sans cette remise à zéro, la 2e ouverture n'affichait plus rien */
+            gsap.set(bloc, { opacity: 1, y: 0 });
+            body.classList.add('etape-domaine');
+            body.style.color = '';
+
+            /* la barre passe du verre sombre au verre clair en fondu */
+            teinteBarre('clair', calme ? 0.01 : 0.55, calme ? 0 : 0.08);
+
+            if (url && window.photoFond) window.photoFond.poserDomaine(url, true);
+            poserTeinte(bloc);
+
+            poserHero(bloc);
+
+            if (typeof ScrollTrigger !== 'undefined') ScrollTrigger.refresh();
+        }
+
+        /* Position d'un élément du domaine telle qu'elle sera à l'arrivée, sans
+           afficher le domaine : on le pose hors flux, invisible, le temps de mesurer. */
+        function mesurerCache(bloc, el) {
+            var etaitCache = bloc.hidden;
+            var avant = bloc.getAttribute('style');
+            bloc.hidden = false;
+            bloc.style.cssText = 'position:absolute;left:0;top:0;width:100%;visibility:hidden;pointer-events:none;';
+            var r = el.getBoundingClientRect();
+            var defilement = window.pageYOffset || 0;
+            bloc.style.cssText = avant || '';
+            bloc.hidden = etaitCache;
+            return { left: r.left, top: r.top + defilement, width: r.width, height: r.height };
+        }
+
+        function ouvrir(cote) {
+            if (ouvert) return;
+            var bloc = document.getElementById((cote.getAttribute('href') || '').replace('#', ''));
+            if (!bloc) return;
+            ouvert = true;
+
+            var url = photoDe(cote);
+            var filtre = filtreDe(cote);
+            var premiere = bloc.querySelector('.pr-card, .pe-section');
+            var titre = bloc.querySelector('.domain-hero-title');
+            var sous = bloc.querySelector('.domain-hero-subtitle');
+
+            if (calme) {
+                installer(bloc, url);
+                /* le domaine est déjà en place : le carrousel se construit tout de suite */
+                if (typeof window.construireTambour === 'function') window.construireTambour();
+                return;
+            }
+
+            var r = cote.getBoundingClientRect();
+            /* on reprend le cadrage et les filtres réellement appliqués à la photo du
+               côté cliqué : sans ça la copie ne tombe pas pile sur l'image d'origine */
+            var bgReel = cote.querySelector('.photo-split-bg');
+            var csBg = bgReel ? getComputedStyle(bgReel) : null;
+            var csCote = getComputedStyle(cote);
+            var positionReelle = csBg ? csBg.backgroundPosition : '50% 20%';
+            var filtres = [csCote.filter, csBg ? csBg.filter : '']
+                .filter(function (f) { return f && f !== 'none'; }).join(' ') || 'none';
+
+            /* ---- le mot « photographie » reste visible au-dessus de la photo et
+               rejoint pile le mot du titre du domaine : on mesure sa place sans
+               afficher le domaine, puis on fait voyager une copie du mot ---- */
+            var motSource = document.querySelector('.photo-split-header .mot-photo');
+            var motCible = bloc.querySelector('.domain-hero-title .titre-photo');
+            var cloneMot = null;
+            var motArrivee = null;
+            if (motSource && motCible) {
+                motArrivee = mesurerCache(bloc, motCible);
+                var rMot = motSource.getBoundingClientRect();
+                var csMot = getComputedStyle(motSource);
+                var csCible = getComputedStyle(motCible);
+                /* la copie grandit par une mise à l'échelle (pas par la taille de
+                   police, qui relance la mise en page à chaque image) */
+                motArrivee.echelle = parseFloat(csCible.fontSize) / parseFloat(csMot.fontSize) || 1;
+
+                cloneMot = document.createElement('span');
+                cloneMot.className = 'mot-transit';
+                cloneMot.textContent = motSource.textContent;
+                cloneMot.style.cssText =
+                    'font-family:' + csMot.fontFamily + ';font-size:' + csMot.fontSize +
+                    ';font-weight:' + csMot.fontWeight + ';letter-spacing:' + csMot.letterSpacing +
+                    ';text-transform:' + csMot.textTransform + ';line-height:' + csMot.lineHeight +
+                    ';color:#ffffff;text-shadow:' + csMot.textShadow + ';transform-origin:0 0;' +
+                    ';left:' + rMot.left + 'px;top:' + rMot.top + 'px;';
+                document.body.appendChild(cloneMot);
+
+                gsap.set(motSource, { opacity: 0 });   /* remplacé par la copie qui voyage */
+                gsap.set(motCible, { opacity: 0 });    /* révélé à l'atterrissage */
+            }
+
+            var voile = document.createElement('div');
+            voile.className = 'photo-etape';
+            /* z-index sous la barre de navigation : elle reste visible pendant la transition */
+            voile.style.cssText = 'position:fixed;z-index:900;pointer-events:none;overflow:hidden;background:#F6F4F0;' +
+                'left:' + r.left + 'px;top:' + r.top + 'px;width:' + r.width + 'px;height:' + r.height + 'px;';
+            var image = document.createElement('div');
+            image.style.cssText = 'position:absolute;inset:0;background-image:url("' + url + '");background-size:cover;' +
+                'background-position:' + positionReelle + ';transform:' + (csBg && csBg.transform !== 'none' ? csBg.transform : 'none') + ';' +
+                'transform-origin:50% 50%;filter:' + filtres + ';opacity:1;transition:background-position 0.8s ease;';
+            voile.appendChild(image);
+            var couche = null;
+            if (filtre) {
+                couche = document.createElement('div');
+                couche.style.cssText = 'position:absolute;inset:0;background-image:' + filtre + ';';
+                voile.appendChild(couche);
+            }
+            body.appendChild(voile);
+
+            var tl = gsap.timeline({
+                onComplete: function () {
+                    installer(bloc, url);
+                    body.classList.remove('photo-etape-en-cours');
+                    cotes.forEach(function (c) { c.classList.remove('cote-actif'); });
+
+                    /* le carrousel inclineur est mis en place tout de suite : la case
+                       monte déjà avec sa perspective, elle ne la prend pas à l'arrivée */
+                    if (typeof ScrollTrigger !== 'undefined') ScrollTrigger.refresh();
+                    if (typeof window.construireTambour === 'function') window.construireTambour();
+
+                    var intro = gsap.timeline({ delay: 0.15 });
+                    /* le titre est là tout de suite : le mot qui a voyagé doit
+                       rester visible au moment où la page le remplace */
+                    if (titre) gsap.set(titre, { opacity: 1 });
+                    /* le mot « photographie » du titre a pu être masqué par un retour
+                       au choix : on le remet visible à chaque ouverture */
+                    var motTitre = bloc.querySelector('.domain-hero-title .titre-photo');
+                    if (motTitre) gsap.set(motTitre, { opacity: 1 });
+                    if (sous) intro.from(sous, { y: -50, opacity: 0, duration: 0.75, ease: 'power3.out' }, 0.1);
+                    /* le bloc des cases monte du bas, un peu moins haut, en gardant
+                       l'inclinaison appliquée par le carrousel */
+                    var corps = bloc.querySelector('.domain-content');
+                    if (corps) intro.from(corps, { y: window.innerHeight * 0.55, duration: 0.95, ease: 'power3.out' }, 0.05);
+
+                    gsap.to(voile, { opacity: 0, duration: 0.45, ease: 'power1.out', delay: 0.05,
+                        onComplete: function () { voile.remove(); } });
+
+                    
+                }
+            });
+
+            /* les textes du choix s'effacent en douceur, sans être coupés par le voile */
+            body.classList.add('photo-etape-en-cours');
+            cote.classList.add('cote-actif');
+            tl.to('.split-side-badge, .split-side-title, .split-side-desc, .split-side-cta, .split-center-versus',
+                { y: 60, opacity: 0, duration: 0.62, stagger: 0.05, ease: 'power1.in' }, 0);
+            /* le titre perd ses autres mots ; « photographie » continue sa route */
+            tl.to('.photo-split-header .mot:not(.mot-photo), .photo-split-header p',
+                { opacity: 0, y: 26, duration: 0.55, stagger: 0.04, ease: 'power1.in' }, 0);
+
+            if (cloneMot && motArrivee) {
+                tl.to(cloneMot, {
+                    x: motArrivee.left - rMot.left,
+                    y: motArrivee.top - rMot.top,
+                    scale: motArrivee.echelle,
+                    color: '#000000', textShadow: 'none',
+                    duration: 0.78, ease: 'power2.inOut'
+                }, 0.12);
+                tl.call(function () {
+                    cloneMot.remove();
+                    if (motCible) gsap.set(motCible, { opacity: 1 });
+                }, null, 0.94);
+            }
+
+            /* la photo choisie prend tout l'écran ; pendant l'ouverture, son cadrage et
+               ses filtres rejoignent ceux du fond de la page d'arrivée */
+            tl.to(voile, { left: 0, top: 0, width: window.innerWidth, height: window.innerHeight,
+                duration: 0.75, ease: 'power2.inOut' }, 0.04);
+            tl.to(image, { opacity: 0.6, scale: 1, filter: 'brightness(1) saturate(1) contrast(1)',
+                duration: 0.75, ease: 'power1.inOut' }, 0.2);
+            tl.call(function () { image.style.backgroundPosition = '50% 50%'; }, null, 0.2);
+            if (couche) tl.to(couche, { opacity: 0.12, duration: 0.55, ease: 'power1.inOut' }, 0.2);
+
+            /* le reste de l'écran s'efface */
+            cotes.forEach(function (c) { if (c !== cote) tl.to(c, { opacity: 0, duration: 0.4 }, 0); });
+            tl.to(cote, { opacity: 0, duration: 0.5 }, 0.18);
+        }
+
+        cotes.forEach(function (cote) {
+            cote.addEventListener('click', function (e) {
+                if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button === 1) return;
+                e.preventDefault();
+                ouvrir(cote);
+                if (window.history && history.replaceState) history.replaceState(null, '', cote.getAttribute('href'));
+            });
+        });
+
+        /* le bouton au-dessus ramène au choix d'axe */
+        [].forEach.call(document.querySelectorAll('[data-retour]'), function (lien) {
+            lien.addEventListener('click', function (e) {
+                e.preventDefault();
+                revenir();
+                if (window.history && history.replaceState) history.replaceState(null, '', 'photographie.html');
+            });
+        });
+
+        /* les boutons sous le titre font glisser la page vers l'autre domaine */
+        [].forEach.call(document.querySelectorAll('[data-bascule]'), function (lien) {
+            lien.addEventListener('click', function (e) {
+                e.preventDefault();
+                var cible = document.getElementById((lien.getAttribute('href') || '').replace('#', ''));
+                if (!cible) return;
+                basculer(cible);
+                if (window.history && history.replaceState) history.replaceState(null, '', lien.getAttribute('href'));
+            });
+        });
+
+        /* lien direct vers un domaine : #domaine-pro ou #domaine-exp */
+        var direct = null;
+        if (location.hash === '#domaine-pro') direct = document.querySelector('.side-pro');
+        if (location.hash === '#domaine-exp') direct = document.querySelector('.side-exp');
+        if (direct) {
+            calme = true;
+            ouvrir(direct);
+        }
+    })();
+    </script>
 </body>
+
 </html>

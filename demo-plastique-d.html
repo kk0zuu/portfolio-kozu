@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Proposition D — Projets plastiques</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Bebas+Neue&family=Bungee&family=Schoolbell&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+<style>
+.pd { background: #0B0B0C; color: #F2F2F2; min-height: 100vh; overflow: hidden; }
+.pd-entete { position: absolute; top: 6.4rem; left: 0; right: 0; text-align: center; z-index: 3; pointer-events: none; }
+.pd-etiquette { display: inline-block; font-family: var(--font-bungee); font-size: .68rem; letter-spacing: .1em; text-transform: uppercase; color: #0B0B0C; background: var(--color-neon-green); padding: .3rem .9rem; transform: rotate(-2deg); }
+.pd-titre { font-family: var(--font-display); font-size: clamp(1.5rem, 3.4vw, 2.5rem); text-transform: uppercase; margin: 1rem 0 .5rem; }
+.pd-sous { max-width: 56ch; margin: 0 auto; font-size: .92rem; line-height: 1.7; color: #A9A9A9; }
+.pd-mur { position: absolute; inset: 0; display: grid; place-items: center; }
+.pd-halo { position: absolute; width: 70vw; height: 70vh; background: radial-gradient(circle, rgba(255,255,255,.14) 0%, rgba(255,255,255,0) 68%); pointer-events: none; }
+.pd-piste { position: relative; width: 100%; height: 62vh; }
+.pd-carte { position: absolute; top: 50%; left: 50%; width: 300px; height: 400px; margin: -200px 0 0 -150px; border: 2px solid rgba(255,255,255,.16); overflow: hidden; background: #111; transform-origin: center center; will-change: transform, opacity; cursor: none; }
+.pd-carte img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.pd-carte-cat { position: absolute; left: 0; right: 0; bottom: 0; padding: .5rem .7rem; font-family: var(--font-bungee); font-size: .55rem; letter-spacing: .06em; text-transform: uppercase; background: rgba(0,0,0,.7); color: #fff; }
+.pd-infos { position: absolute; left: 0; right: 0; bottom: 4.6rem; text-align: center; z-index: 3; }
+.pd-infos-titre { font-family: var(--font-display); font-size: clamp(1.1rem, 2vw, 1.5rem); text-transform: uppercase; }
+.pd-infos-desc { font-size: .85rem; color: #9C9C9C; margin-top: .3rem; }
+.pd-commandes { position: absolute; left: 0; right: 0; bottom: 1.6rem; display: flex; align-items: center; justify-content: center; gap: 1rem; z-index: 4; }
+.pd-fleche { width: 44px; height: 44px; display: grid; place-items: center; background: transparent; border: 2px solid rgba(255,255,255,.35); color: #fff; font-size: 1rem; cursor: none; transition: background .25s ease, color .25s ease, border-color .25s ease; }
+.pd-fleche:hover { background: var(--color-neon-pink); border-color: var(--color-neon-pink); color: #000; }
+.pd-compteur { font-family: var(--font-bungee); font-size: .68rem; letter-spacing: .12em; color: #8C8C8C; }
+.pd-retour { position: absolute; top: 6.4rem; right: 2rem; z-index: 4; font-family: var(--font-bungee); font-size: .66rem; letter-spacing: .07em; text-transform: uppercase; color: #fff; text-decoration: none; border-bottom: 2px solid rgba(255,255,255,.4); padding-bottom: .15rem; }
+.pd-retour:hover { color: var(--color-neon-green); border-color: var(--color-neon-green); }
+.pd-aide { position: absolute; bottom: .7rem; left: 0; right: 0; text-align: center; font-size: .68rem; color: #6E6E6E; z-index: 4; }
+@media (max-width: 760px) {
+    .pd-carte { width: 210px; height: 280px; margin: -140px 0 0 -105px; }
+    .pd-entete { top: 5.6rem; }
+}
+</style>
+</head>
+<body class="pd">
+<nav class="top-bar" style="background: rgba(20,20,25,.55); border-color: rgba(255,255,255,.15);">
+    <div class="logo"><a href="index.html" style="color:#fff;">Ian Bossut‑Gandou</a></div>
+    <div class="nav-links">
+        <a href="numerique.html" style="color:#fff;">Numérique</a>
+        <a href="photographie.html" style="color:#fff;">Photographie</a>
+        <a href="plastique.html" style="color:#fff;">Projets plastiques</a>
+        <a href="contact.html" style="color:#fff;">Contact</a>
+    </div>
+    <div class="nav-bubble"></div>
+</nav>
+
+<div class="custom-cursor">
+    <div class="cursor-dot"></div>
+    <svg class="cursor-spiral" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg">
+        <path d="M 30,30 A 3.5 3.5 0 0 1 30 37 A 7 7 0 0 1 30 23 A 10.5 10.5 0 0 1 30 44 A 14 14 0 0 1 30 16 A 17.5 17.5 0 0 1 30 51 A 21 21 0 0 1 30 9" fill="none" stroke="white" stroke-width="3.2" stroke-linecap="round"/>
+    </svg>
+</div>
+
+<header class="pd-entete">
+    <span class="pd-etiquette">Proposition D</span>
+    <h1 class="pd-titre">La salle</h1>
+    <p class="pd-sous">Une pièce sombre, les œuvres accrochées sur un même mur. On avance d'une œuvre à l'autre : celle du centre s'éclaire et grandit, les autres s'effacent.</p>
+</header>
+
+<main class="pd-mur">
+    <div class="pd-halo"></div>
+    <div class="pd-piste" id="pdPiste">
+        <div class="pd-carte hover-target" data-titre="BoBBY l'hybride" data-desc="Sculpture acier soudé, 2 mètres • Romainville"><img src="images/plastique/02_28d06172a4c479a682aa43bec4ef60c7.png" alt="BoBBY l'hybride"><span class="pd-carte-cat">Sculpture</span></div>
+        <div class="pd-carte hover-target" data-titre="Cœur de BoBBY" data-desc="Résine moulée & papier de soie, luminaire intégré"><img src="images/plastique/03_20669edbc4ac873f2adcf09c9959a374.png" alt="Cœur de BoBBY"><span class="pd-carte-cat">Détail</span></div>
+        <div class="pd-carte hover-target" data-titre="Merchandising" data-desc="Affiches, cartes de visite et sérigraphies magenta & jaune"><img src="images/plastique/09_59c03689fef58f2149bb31096f953455.png" alt="Merchandising"><span class="pd-carte-cat">Édition</span></div>
+        <div class="pd-carte hover-target" data-titre="Prothèse ergonomique" data-desc="Conception paramétrique SolidWorks & Blender"><img src="images/plastique/17_f79010cf20759aa212ec61164427b56e.png" alt="Prothèse ergonomique"><span class="pd-carte-cat">3D</span></div>
+        <div class="pd-carte hover-target" data-titre="Phalanges articulées" data-desc="Ajourage thermoformable et liaisons imprimées"><img src="images/plastique/20_d096b91978ad2b2601f40c4772757edf.png" alt="Phalanges articulées"><span class="pd-carte-cat">Prototype</span></div>
+        <div class="pd-carte hover-target" data-titre="Gant de la Bête" data-desc="Mitaine et griffe en papier gaufré, hommage à Cocteau"><img src="images/plastique/34_45635c69d25f869be00c89f816eec382.png" alt="Gant de la Bête"><span class="pd-carte-cat">Papier</span></div>
+        <div class="pd-carte hover-target" data-titre="Gaufrage écailleux" data-desc="Pliage, superposition et texture organique"><img src="images/plastique/36_6ad399318e058490ba90f626d033ab53.png" alt="Gaufrage écailleux"><span class="pd-carte-cat">Détail</span></div>
+        <div class="pd-carte hover-target" data-titre="Parure de pâtes" data-desc="Plastron de samouraï tressé, fil de nylon"><img src="images/plastique/47_815784672e31edfd8bc3b0766e52e434.jpg" alt="Parure de pâtes"><span class="pd-carte-cat">Détournement</span></div>
+        <div class="pd-carte hover-target" data-titre="Lys du Japon" data-desc="Broche artisanale en pâtes alimentaires"><img src="images/plastique/51_941fd54f69cd78fd9507685657de37f6.png" alt="Lys du Japon"><span class="pd-carte-cat">Broche</span></div>
+        <div class="pd-carte hover-target" data-titre="Cyanotype sur verre" data-desc="Tirage photographique sur verre, chimie bleue"><img src="images/plastique/69_94ab5347ad06838f357973ef666a4530.jpg" alt="Cyanotype"><span class="pd-carte-cat">Matière</span></div>
+        <div class="pd-carte hover-target" data-titre="Pointillisme" data-desc="Dessin au stylo, texture vibrante"><img src="images/plastique/58_f52fcdedd21de6617f60d74b047382e8.jpg" alt="Pointillisme"><span class="pd-carte-cat">Dessin</span></div>
+        <div class="pd-carte hover-target" data-titre="Sérigraphie" data-desc="Passage d'encre à la main"><img src="images/plastique/72_ace719fcc25037b6e21eb1a1779227bf.png" alt="Sérigraphie"><span class="pd-carte-cat">Artisanat</span></div>
+    </div>
+</main>
+
+<div class="pd-infos">
+    <p class="pd-infos-titre" id="pdTitre">BoBBY l'hybride</p>
+    <p class="pd-infos-desc" id="pdDesc">Sculpture acier soudé, 2 mètres • Romainville</p>
+</div>
+
+<div class="pd-commandes">
+    <button class="pd-fleche hover-target" type="button" id="pdPrec" aria-label="Œuvre précédente">←</button>
+    <span class="pd-compteur" id="pdCompteur">01 / 12</span>
+    <button class="pd-fleche hover-target" type="button" id="pdSuiv" aria-label="Œuvre suivante">→</button>
+</div>
+<p class="pd-aide">Flèches ← →, molette ou glisser pour avancer</p>
+<a class="pd-retour hover-target" href="plastique.html">← Page actuelle</a>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+<script src="app.js"></script>
+<script>
+(function () {
+    var cartes = Array.prototype.slice.call(document.querySelectorAll('.pd-carte'));
+    var total = cartes.length;
+    var actif = 0;
+
+    var titreEl = document.getElementById('pdTitre');
+    var descEl = document.getElementById('pdDesc');
+    var compteur = document.getElementById('pdCompteur');
+
+    function placer() {
+        cartes.forEach(function (c, i) {
+            var d = i - actif;
+            var abs = Math.abs(d);
+            gsap.to(c, {
+                x: d * 210,
+                y: abs * 22,
+                scale: d === 0 ? 1.12 : Math.max(0.62, 1 - abs * 0.14),
+                rotationY: d * -8,
+                opacity: abs > 3 ? 0 : 1 - abs * 0.2,
+                filter: d === 0 ? 'brightness(1)' : 'brightness(0.55)',
+                zIndex: 20 - abs,
+                duration: 0.6,
+                ease: 'power2.out',
+                transformPerspective: 1200
+            });
+        });
+        var c = cartes[actif];
+        titreEl.textContent = c.getAttribute('data-titre');
+        descEl.textContent = c.getAttribute('data-desc');
+        compteur.textContent = (actif + 1 < 10 ? '0' : '') + (actif + 1) + ' / ' + total;
+    }
+
+    function aller(n) {
+        actif = Math.max(0, Math.min(total - 1, n));
+        placer();
+    }
+
+    document.getElementById('pdPrec').addEventListener('click', function () { aller(actif - 1); });
+    document.getElementById('pdSuiv').addEventListener('click', function () { aller(actif + 1); });
+    document.addEventListener('keydown', function (e) {
+        if (e.key === 'ArrowLeft') aller(actif - 1);
+        if (e.key === 'ArrowRight') aller(actif + 1);
+    });
+
+    // Molette : avance d'une œuvre à la fois
+    var dernier = 0;
+    window.addEventListener('wheel', function (e) {
+        var maintenant = Date.now();
+        if (maintenant - dernier < 320) return;
+        if (Math.abs(e.deltaY) < 12 && Math.abs(e.deltaX) < 12) return;
+        dernier = maintenant;
+        aller(actif + (e.deltaY > 0 || e.deltaX > 0 ? 1 : -1));
+    }, { passive: true });
+
+    // Glisser à la souris
+    var depart = null;
+    document.querySelector('.pd-mur').addEventListener('pointerdown', function (e) { depart = e.clientX; });
+    window.addEventListener('pointerup', function (e) {
+        if (depart === null) return;
+        var delta = e.clientX - depart;
+        depart = null;
+        if (Math.abs(delta) < 40) return;
+        aller(actif + (delta < 0 ? 1 : -1));
+    });
+
+    // Clic sur une carte : elle devient l'œuvre centrale
+    cartes.forEach(function (c, i) {
+        c.addEventListener('click', function () { aller(i); });
+    });
+
+    placer();
+})();
+</script>
+</body>
+</html>

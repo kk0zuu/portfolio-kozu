@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Proposition B — Projets plastiques</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Bebas+Neue&family=Bungee&family=Schoolbell&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+<style>
+.pb { max-width: 1180px; margin: 0 auto; padding: 7rem 1.5rem 4rem; }
+.pb-entete { text-align: center; margin-bottom: 3.2rem; }
+.pb-etiquette { display: inline-block; font-family: var(--font-bungee); font-size: .7rem; letter-spacing: .1em; text-transform: uppercase; background: var(--color-black); color: var(--color-neon-pink); padding: .32rem .9rem; transform: rotate(2deg); }
+.pb-titre { font-family: var(--font-display); font-size: clamp(1.7rem, 4.2vw, 3rem); text-transform: uppercase; margin: 1.3rem 0 .9rem; }
+.pb-sous { max-width: 60ch; margin: 0 auto 1.2rem; line-height: 1.75; color: #333; }
+.pb-aide { font-family: var(--font-schoolbell); font-size: 1.05rem; color: var(--color-magenta); }
+
+.pb-choix { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 2rem; }
+.pb-booster {
+    position: relative; display: flex; flex-direction: column; align-items: center; justify-content: flex-end;
+    gap: .35rem; aspect-ratio: 3 / 4.2; padding: 1.4rem; border: 3px solid var(--color-black);
+    background: linear-gradient(150deg, #F5E9FF 0%, #FFFFFF 38%, #EAF7E2 100%);
+    box-shadow: 9px 9px 0 var(--color-black); cursor: none;
+    transition: transform .35s cubic-bezier(.22,.61,.36,1), box-shadow .35s cubic-bezier(.22,.61,.36,1);
+    font-family: inherit;
+}
+.pb-booster::before {
+    content: ''; position: absolute; inset: 0;
+    background: repeating-linear-gradient(115deg, rgba(156,29,189,.10) 0 14px, rgba(53,142,20,.10) 14px 28px);
+    mix-blend-mode: multiply; pointer-events: none;
+}
+.pb-booster:hover { transform: translate(-3px, -3px) rotate(-1deg); box-shadow: 14px 14px 0 var(--color-magenta); }
+.pb-booster-serie { position: relative; font-family: var(--font-bungee); font-size: .66rem; letter-spacing: .12em; text-transform: uppercase; color: var(--color-neon-green); }
+.pb-booster-nom { position: relative; text-align: center; font-family: var(--font-display); font-size: 1.25rem; text-transform: uppercase; line-height: 1.15; }
+.pb-booster-cartes { position: relative; font-size: .78rem; color: #666; }
+.pb-booster-ouvrir { position: relative; margin-top: .8rem; font-family: var(--font-bungee); font-size: .64rem; letter-spacing: .08em; text-transform: uppercase; background: var(--color-black); color: #fff; padding: .45rem .9rem; }
+.pb-booster:hover .pb-booster-ouvrir { background: var(--color-neon-green); }
+
+.pb-overlay { position: fixed; inset: 0; z-index: 1500; display: none; background: rgba(9,9,10,.93); backdrop-filter: blur(4px); }
+.pb-overlay.ouvert { display: block; }
+.pb-fermer { position: absolute; top: 1.4rem; right: 1.6rem; z-index: 5; font-family: var(--font-bungee); font-size: .7rem; letter-spacing: .07em; text-transform: uppercase; background: #fff; color: #000; border: 2px solid #fff; padding: .5rem 1rem; cursor: none; }
+.pb-fermer:hover { background: var(--color-neon-pink); border-color: var(--color-neon-pink); }
+.pb-scene { position: absolute; inset: 0; display: grid; place-items: center; }
+.pb-pack { position: absolute; width: 210px; height: 300px; border: 3px solid #111; background: linear-gradient(150deg, #F5E9FF, #fff 40%, #EAF7E2); box-shadow: 0 24px 60px rgba(0,0,0,.55); overflow: hidden; }
+.pb-pack-haut, .pb-pack-bas { position: absolute; left: 0; right: 0; height: 50%; background: linear-gradient(150deg, #F5E9FF, #fff 45%, #EAF7E2); border-bottom: 2px dashed #999; }
+.pb-pack-texte { position: absolute; inset: 0; display: grid; place-items: center; font-family: var(--font-display); font-size: 1.1rem; text-transform: uppercase; text-align: center; padding: 1rem; color: #111; }
+.pb-carte { position: absolute; width: 190px; height: 260px; border: 3px solid #111; background: #fff; overflow: hidden; box-shadow: 0 18px 40px rgba(0,0,0,.5); cursor: none; }
+.pb-carte img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.pb-carte-badge { position: absolute; left: 0; right: 0; bottom: 0; padding: .5rem .6rem; font-family: var(--font-bungee); font-size: .58rem; letter-spacing: .05em; text-transform: uppercase; color: #fff; background: rgba(0,0,0,.75); }
+.pb-legende { position: absolute; left: 0; right: 0; bottom: 2.2rem; text-align: center; color: #fff; font-family: var(--font-schoolbell); font-size: 1.1rem; opacity: 0; }
+.pb-indication { position: absolute; left: 0; right: 0; bottom: 1.1rem; text-align: center; color: #8b8b8b; font-size: .72rem; font-family: var(--font-bungee); letter-spacing: .08em; text-transform: uppercase; }
+.pb-retour { display: block; width: max-content; margin: 3.5rem auto 0; font-family: var(--font-bungee); font-size: .72rem; letter-spacing: .07em; text-transform: uppercase; color: var(--color-black); text-decoration: none; border-bottom: 2px solid var(--color-black); padding-bottom: .2rem; }
+</style>
+</head>
+<body style="background-color: var(--color-bg-end);">
+<nav class="top-bar">
+    <div class="logo"><a href="index.html">Ian Bossut‑Gandou</a></div>
+    <div class="nav-links">
+        <a href="numerique.html">Numérique</a>
+        <a href="photographie.html">Photographie</a>
+        <a href="plastique.html">Projets plastiques</a>
+        <a href="contact.html">Contact</a>
+    </div>
+    <div class="nav-bubble"></div>
+</nav>
+
+<div class="custom-cursor">
+    <div class="cursor-dot"></div>
+    <svg class="cursor-spiral" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg">
+        <path d="M 30,30 A 3.5 3.5 0 0 1 30 37 A 7 7 0 0 1 30 23 A 10.5 10.5 0 0 1 30 44 A 14 14 0 0 1 30 16 A 17.5 17.5 0 0 1 30 51 A 21 21 0 0 1 30 9" fill="none" stroke="white" stroke-width="3.2" stroke-linecap="round"/>
+    </svg>
+</div>
+
+<main class="pb">
+    <header class="pb-entete">
+        <span class="pb-etiquette">Proposition B</span>
+        <h1 class="pb-titre">Ouvre ton booster</h1>
+        <p class="pb-sous">Chaque projet est un paquet scellé. Tu le crèves, les cartes jaillissent en éventail, et tu peux en choisir une pour l'agrandir.</p>
+        <p class="pb-aide">Cliquez sur un booster pour le déchirer ↗</p>
+    </header>
+
+    <div class="pb-choix" id="pbChoix">
+        <button class="pb-booster hover-target" type="button" data-projet="bobby">
+            <span class="pb-booster-serie">Série 01</span>
+            <span class="pb-booster-nom">BoBBY<br>l'hybride</span>
+            <span class="pb-booster-cartes">5 cartes • Sculpture</span>
+            <span class="pb-booster-ouvrir">Déchirer le paquet</span>
+        </button>
+        <button class="pb-booster hover-target" type="button" data-projet="prothese">
+            <span class="pb-booster-serie">Série 02</span>
+            <span class="pb-booster-nom">Prothèse<br>3D</span>
+            <span class="pb-booster-cartes">4 cartes • Impression</span>
+            <span class="pb-booster-ouvrir">Déchirer le paquet</span>
+        </button>
+        <button class="pb-booster hover-target" type="button" data-projet="matieres">
+            <span class="pb-booster-serie">Série 03</span>
+            <span class="pb-booster-nom">Papier<br>& matière</span>
+            <span class="pb-booster-cartes">5 cartes • Artisanat</span>
+            <span class="pb-booster-ouvrir">Déchirer le paquet</span>
+        </button>
+    </div>
+
+    <a class="pb-retour hover-target" href="plastique.html">← Revenir à la page actuelle</a>
+</main>
+
+<div class="pb-overlay" id="pbOverlay" aria-hidden="true">
+    <button class="pb-fermer hover-target" type="button" id="pbFermer">Fermer ✕</button>
+    <div class="pb-scene" id="pbScene"></div>
+    <p class="pb-legende" id="pbLegende"></p>
+    <p class="pb-indication">Cliquez une carte pour l'agrandir • Échap pour fermer</p>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+<script src="app.js"></script>
+<script>
+(function () {
+    var PROJETS = {
+        bobby: {
+            nom: "BoBBY l'hybride",
+            cartes: [
+                { src: 'images/plastique/02_28d06172a4c479a682aa43bec4ef60c7.png', cap: 'Vue complète, 2 m' },
+                { src: 'images/plastique/03_20669edbc4ac873f2adcf09c9959a374.png', cap: 'Cœur en résine' },
+                { src: 'images/plastique/04_fffd9b57d692bd8f4db605b7572ac6d5.png', cap: 'Tête & matériaux' },
+                { src: 'images/plastique/09_59c03689fef58f2149bb31096f953455.png', cap: 'Affiches dérivées' },
+                { src: 'images/plastique/11_2aceb0e1a45ceb0b51fa3bf7ad421477.jpg', cap: 'T-shirts sérigraphiés' }
+            ]
+        },
+        prothese: {
+            nom: 'Prothèse ergonomique',
+            cartes: [
+                { src: 'images/plastique/17_f79010cf20759aa212ec61164427b56e.png', cap: 'Modélisation CAO' },
+                { src: 'images/plastique/19_bcdebaa647b163b29e2fba618e07a3c2.png', cap: 'Thermoformage' },
+                { src: 'images/plastique/20_d096b91978ad2b2601f40c4772757edf.png', cap: 'Phalanges' },
+                { src: 'images/plastique/21_b262f60691af01dd3a19e8a94a89713a.png', cap: 'Prototype porté' }
+            ]
+        },
+        matieres: {
+            nom: 'Papier & matière',
+            cartes: [
+                { src: 'images/plastique/34_45635c69d25f869be00c89f816eec382.png', cap: "Gant de la Bête" },
+                { src: 'images/plastique/36_6ad399318e058490ba90f626d033ab53.png', cap: 'Gaufrage écailleux' },
+                { src: 'images/plastique/47_815784672e31edfd8bc3b0766e52e434.jpg', cap: 'Parure de pâtes' },
+                { src: 'images/plastique/69_94ab5347ad06838f357973ef666a4530.jpg', cap: 'Cyanotype sur verre' },
+                { src: 'images/plastique/72_ace719fcc25037b6e21eb1a1779227bf.png', cap: 'Sérigraphie' }
+            ]
+        }
+    };
+
+    var overlay = document.getElementById('pbOverlay');
+    var scene = document.getElementById('pbScene');
+    var legende = document.getElementById('pbLegende');
+    var cartes = [];
+
+    function fermer() {
+        gsap.to(overlay, {
+            opacity: 0, duration: 0.35, ease: 'power2.in', onComplete: function () {
+                overlay.classList.remove('ouvert');
+                overlay.style.opacity = 1;
+                overlay.setAttribute('aria-hidden', 'true');
+                scene.innerHTML = '';
+                cartes = [];
+                legende.style.opacity = 0;
+            }
+        });
+    }
+
+    function agrandir(carte, cap) {
+        cartes.forEach(function (c) {
+            if (c !== carte) gsap.to(c, { scale: 0.86, opacity: 0.25, duration: 0.4, ease: 'power2.out' });
+        });
+        gsap.to(carte, { scale: 1.55, y: -24, duration: 0.5, ease: 'power3.out', zIndex: 20 });
+        legende.textContent = cap;
+        gsap.to(legende, { opacity: 1, duration: 0.3 });
+    }
+
+    function ouvrir(cle) {
+        var projet = PROJETS[cle];
+        if (!projet) return;
+        overlay.classList.add('ouvert');
+        overlay.setAttribute('aria-hidden', 'false');
+        scene.innerHTML = '';
+        cartes = [];
+
+        var pack = document.createElement('div');
+        pack.className = 'pb-pack';
+        pack.innerHTML = '<div class="pb-pack-haut"></div><div class="pb-pack-bas"></div>' +
+            '<div class="pb-pack-texte">' + projet.nom + '<br><small>' + projet.cartes.length + ' cartes</small></div>';
+        scene.appendChild(pack);
+
+        var haut = pack.querySelector('.pb-pack-haut');
+        var bas = pack.querySelector('.pb-pack-bas');
+
+        // Les cartes existent tout de suite, invisibles : la déchirure les révèle
+        var n = projet.cartes.length;
+        var milieu = (n - 1) / 2;
+        projet.cartes.forEach(function (c, i) {
+            var el = document.createElement('div');
+            el.className = 'pb-carte hover-target';
+            el.innerHTML = '<img src="' + c.src + '" alt="' + c.cap + '"><span class="pb-carte-badge">' + c.cap + '</span>';
+            scene.appendChild(el);
+            cartes.push(el);
+
+            var decalage = i - milieu;
+            el.addEventListener('click', function () { agrandir(el, c.cap); });
+            gsap.set(el, { x: 0, y: 40, rotation: 0, scale: 0.5, opacity: 0 });
+        });
+
+        var tl = gsap.timeline();
+        tl.fromTo(pack, { scale: 0.4, rotate: -6, opacity: 0 }, { scale: 1, rotate: 0, opacity: 1, duration: 0.5, ease: 'back.out(1.6)' })
+          .to(pack, { x: 'random(-9,9)', duration: 0.06, repeat: 7, yoyo: true, ease: 'none' }, '+=0.05')
+          .to(haut, { y: -190, rotate: -22, opacity: 0, duration: 0.6, ease: 'power3.out' }, '-=0.1')
+          .to(bas, { y: 190, rotate: 18, opacity: 0, duration: 0.6, ease: 'power3.out' }, '<')
+          .to(pack.querySelector('.pb-pack-texte'), { opacity: 0, duration: 0.25 }, '<')
+          .add(function () {
+              cartes.forEach(function (el, i) {
+                  var decalage = i - milieu;
+                  gsap.to(el, {
+                      x: decalage * 118, y: Math.abs(decalage) * 26, rotation: decalage * 7,
+                      scale: 1, opacity: 1, duration: 0.7, delay: i * 0.07, ease: 'power3.out',
+                      onStart: function () { el.style.zIndex = 10 - Math.round(Math.abs(decalage)); }
+                  });
+              });
+              gsap.to(pack, { opacity: 0, duration: 0.3, onComplete: function () { pack.remove(); } });
+          });
+    }
+
+    document.querySelectorAll('.pb-booster').forEach(function (b) {
+        b.addEventListener('click', function () { ouvrir(b.getAttribute('data-projet')); });
+    });
+
+    document.getElementById('pbFermer').addEventListener('click', fermer);
+    document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && overlay.classList.contains('ouvert')) fermer(); });
+
+    gsap.from('.pb-booster', {
+        y: 50, opacity: 0, duration: 0.8, stagger: 0.1, ease: 'power2.out',
+        scrollTrigger: { trigger: '.pb-choix', start: 'top 85%' }
+    });
+})();
+</script>
+</body>
+</html>

@@ -52,39 +52,390 @@ if (cursor) {
     const logoEl = topBar.querySelector('.logo');
     const navItems = [logoEl, ...topBar.querySelectorAll('.nav-links a')].filter(Boolean);
 
-    function moveBubbleTo(el) {
+    let cible = null;
+    let largeurNeutre = 150; // largeur de croisière entre deux textes
+
+    function mesurerNeutre() {
+        const l = navItems
+            .map(function (el) { return el.getBoundingClientRect().width; })
+            .filter(function (v) { return v > 20; })
+            .sort(function (a, b) { return a - b; });
+        if (!l.length) return;
+        const med = l[Math.floor(l.length / 2)] + 16;
+        if (med > 60 && med < 400) largeurNeutre = med;
+    }
+
+    // --- Bulle liquide : position et largeur lissées, étirement selon la vitesse ---
+    let cx = null;        // centre courant
+    let w = null;         // largeur de base courante
+    let cibleCx = null;
+    let cibleW = null;
+    let boucle = 0;
+    let tPrec = 0;
+
+    function poser(centre, largeur) {
+        cibleCx = centre;
+        cibleW = largeur;
+        if (!boucle) {
+            // premier pas calculé tout de suite, la suite au fil des images
+            tPrec = performance.now();
+            animer(tPrec);
+        }
+    }
+
+    function animer(t) {
+        if (!tPrec) tPrec = t;
+        const dt = Math.min(0.05, (t - tPrec) / 1000) || 0.016;
+        tPrec = t;
+
+        if (cx === null) { cx = cibleCx; w = cibleW; }
+
+        const aP = 1 - Math.exp(-dt / 0.05);
+        const aW = 1 - Math.exp(-dt / 0.07);
+
+        const ecart = cibleCx - cx;
+        cx += ecart * aP;
+        w += (cibleW - w) * aW;
+
+        // étirement proportionnel à la vitesse de rapprochement
+        const etire = Math.min(46, Math.abs(ecart) * 2.2);
+        const centre = cx + Math.sign(ecart) * etire * 0.18;
+        const largeur = Math.min(w + etire, topBar.clientWidth - 12);
+
+        const bar = topBar.getBoundingClientRect();
+        const gauche = Math.max(6, Math.min(bar.width - largeur - 6, centre - largeur / 2));
+
+        navBubble.style.left = gauche + 'px';
+        navBubble.style.width = largeur + 'px';
+        navBubble.style.transform = 'scaleY(' + (1 - etire * 0.0022).toFixed(3) + ')';
+
+        if (Math.abs(ecart) < 0.4 && Math.abs(cibleW - w) < 0.4) {
+            cx = cibleCx;
+            w = cibleW;
+            navBubble.style.transform = '';
+            boucle = 0;
+            return;
+        }
+        boucle = requestAnimationFrame(animer);
+    }
+
+    function moveBubbleTo(el, instantane) {
         if (!el) return;
+        cible = el;
         const barRect = topBar.getBoundingClientRect();
         const elRect = el.getBoundingClientRect();
         const padding = 8; // px de marge intérieure autour du texte
-        navBubble.style.left = (elRect.left - barRect.left - padding) + 'px';
-        navBubble.style.width = (elRect.width + padding * 2) + 'px';
+        const largeur = elRect.width + padding * 2;
+        const centre = elRect.left - barRect.left + elRect.width / 2;
+        if (instantane) { cx = centre; w = largeur; }
+        poser(centre, largeur);
     }
 
-    // Position initiale : sur le logo
-    // On attend que le layout soit prêt
-    function initBubble() {
-        if (logoEl) moveBubbleTo(logoEl);
+    // Élément par défaut : le lien de la page courante, sinon le logo
+    function elPageCourante() {
+        const ici = (location.pathname.split('/').pop() || 'index.html').toLowerCase();
+        const lien = navItems.filter(a => {
+            if (a === logoEl) return false;
+            const cible = (a.getAttribute('href') || '').split('/').pop().toLowerCase();
+            return cible === ici;
+        })[0];
+        return lien || logoEl;
     }
 
-    // Désactiver la transition au chargement pour un positionnement instantané
+    const elDefaut = elPageCourante();
+    cible = elDefaut;
+
+    // Placement instantané (la bulle est animée par la boucle, pas par une transition CSS)
     navBubble.style.transition = 'none';
-    requestAnimationFrame(() => {
-        initBubble();
-        // Réactiver la transition après le positionnement initial
-        requestAnimationFrame(() => {
-            navBubble.style.transition = '';
-        });
+    function initBubble() {
+        mesurerNeutre();
+        moveBubbleTo(elDefaut, true);
+    }
+    initBubble();
+
+    // La mise en page bouge quand les polices arrivent : on replace la bulle,
+    // instantanément (sans transition) pour qu'aucun décalage ne subsiste.
+    function replacer() {
+        mesurerNeutre();
+        if (!cible || dedans) return; // pendant le suivi, c'est la souris qui commande
+        moveBubbleTo(cible, true);
+    }
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(replacer);
+    if (document.fonts && document.fonts.addEventListener) document.fonts.addEventListener('loadingdone', replacer);
+    window.addEventListener('load', replacer);
+    window.addEventListener('resize', replacer);
+    /* La bulle ne se montre qu'une fois les polices arrivées et sa place mesurée :
+       sinon elle apparaît minuscule puis saute à sa position définitive. */
+    function montrerBulle() {
+        replacer();
+        /* la position reste pilotée image par image ; seule l'apparition est fondue */
+        navBubble.style.transition = 'opacity 0.35s ease';
+        /* sur l'accueil, c'est l'animation de la barre qui fait naître la pastille,
+           en même temps que les textes : on ne la montre pas avant */
+        if (window.__introBarre) return;
+        requestAnimationFrame(() => navBubble.classList.add('vue'));
+    }
+    if (document.fonts && document.fonts.ready) {
+        document.fonts.ready.then(montrerBulle);
+        setTimeout(montrerBulle, 700);   // filet de sécurité si la police traîne
+    } else {
+        montrerBulle();
+    }
+
+    // Veille de 4 s après le chargement : la police peut s'appliquer sans prévenir
+    let battements = 0;
+    const veille = setInterval(() => {
+        replacer();
+        if (++battements >= 16) clearInterval(veille);
+    }, 250);
+
+    // Toute variation de largeur (police, zoom, fenêtre) replace la bulle
+    if (window.ResizeObserver) {
+        const ro = new ResizeObserver(replacer);
+        ro.observe(topBar);
+        navItems.forEach(el => ro.observe(el));
+    }
+
+    // --- Suivi de la souris ---
+    const MARGE = 14;      // quelques pixels de suivi hors de la barre
+    const EXTENSION = 10;  // dépassement autour d'un texte où la bulle s'arrête dessus
+    let dedans = false;
+
+    function suivre(e) {
+        const bar = topBar.getBoundingClientRect();
+        const x = e.clientX;
+        const y = e.clientY;
+        const dansZone = x > bar.left - MARGE && x < bar.right + MARGE &&
+                         y > bar.top - MARGE && y < bar.bottom + MARGE;
+
+        if (!dansZone) {
+            if (dedans) {
+                dedans = false;
+                moveBubbleTo(elDefaut);
+            }
+            return;
+        }
+
+        dedans = true;
+
+        // sur un texte : la bulle s'y arrête net
+        const dessus = navItems.filter(function (el) {
+            const r = el.getBoundingClientRect();
+            return x >= r.left - EXTENSION && x <= r.right + EXTENSION;
+        })[0];
+
+        if (dessus) {
+            moveBubbleTo(dessus);
+            return;
+        }
+
+        // entre deux textes : la bulle suit la souris à une largeur de croisière,
+        // la même dans les deux sens (médiane des textes de la barre)
+        poser(x - bar.left, largeurNeutre);
+    }
+
+    window.addEventListener('pointermove', suivre, { passive: true });
+})();
+
+// --- TOP BAR D'ACCUEIL : petite bulle qui s'ouvre, puis texte tapé ---
+(function () {
+    if (typeof gsap === 'undefined') return;
+
+    const page = (location.pathname.split('/').pop() || 'index.html').toLowerCase();
+    if (page !== 'index.html') return; // uniquement à l'accueil
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+    const bar = document.querySelector('.top-bar');
+    if (!bar) return;
+
+    /* la page masque la barre dès sa première image : on la garde cachée un
+       instant, puis l'animation démarre vraiment */
+    const racine = document.documentElement;
+    const enAttente = racine.classList.contains('barre-attente');
+
+    const pastille = bar.querySelector('.nav-bubble');
+    // éléments animés : le bloc du logo (flex item, donc transformable) et les liens
+    const cibles = [bar.querySelector('.logo')]
+        .concat([...bar.querySelectorAll('.nav-links a')])
+        .filter(Boolean);
+    if (!cibles.length) return;
+
+    /* la pastille naît avec les textes, un peu après le début de l'animation :
+       la boucle de la barre ne doit pas la montrer avant */
+    window.__introBarre = true;
+
+    // géométrie finale, mesurée avant de toucher à la barre
+    const r0 = bar.getBoundingClientRect();
+    const finT = r0.top;
+    const finW = r0.width;
+
+    // état de départ : petite bulle ronde au-dessus de la page, textes encore effacés
+    bar.classList.add('barre-intro');
+    bar.style.top = (finT - 96) + 'px';
+    bar.style.opacity = '0';
+    bar.style.setProperty('--fb-w', '52px');
+    bar.style.setProperty('--fb-r', '26px');
+    if (pastille) pastille.classList.remove('vue');
+    gsap.set(cibles, { opacity: 0 });
+
+    // la barre tombe, puis sa forme s'ouvre pendant que les textes apparaissent par-dessus
+    const tl = gsap.timeline({ delay: 0.05, paused: true });
+    tl.to(bar, { top: finT, opacity: 1, duration: 0.45, ease: 'power3.out' }, 0)
+      .to(bar, {
+          '--fb-w': finW + 'px',
+          '--fb-r': '16px',
+          duration: 0.7,
+          ease: 'power3.inOut'
+      }, 0.5)
+      .add(() => {
+          // la pastille de navigation naît en même temps que le texte
+          window.__introBarre = false;
+          if (pastille) {
+              pastille.classList.add('vue');
+              pastille.classList.add('bulle-apparait');
+              setTimeout(() => pastille.classList.remove('bulle-apparait'), 900);
+          }
+
+          // les textes apparaissent en fondu à leur place, au-dessus de la barre
+          gsap.to(cibles, {
+              opacity: 1,
+              duration: 0.6,
+              ease: 'power2.out',
+              onComplete: () => gsap.set(cibles, { clearProps: 'opacity' })
+          });
+      }, 0.62)
+      .add(() => {
+          bar.classList.remove('barre-intro');
+          gsap.set(bar, { clearProps: 'top,opacity' });
+          bar.style.removeProperty('--fb-w');
+          bar.style.removeProperty('--fb-r');
+      }, 1.2);
+
+    if (enAttente) {
+        /* quelques millisecondes sur la page seule avant que la barre n'entre */
+        setTimeout(() => {
+            racine.classList.remove('barre-attente');
+            tl.play();
+        }, 140);
+    } else {
+        tl.play();
+    }
+})();
+
+// --- BANDEAU DES LOGICIELS : DÉFILEMENT AU SCROLL + GLISSER À LA MAIN ---
+(function () {
+    const bande = document.querySelector('.logiciels');
+    if (!bande || typeof gsap === 'undefined') return;
+
+    const glisse = bande.querySelector('.logiciels-glisse');
+    const piste = bande.querySelector('.logiciels-piste');
+    const groupe = piste && piste.querySelector('.logiciels-groupe');
+    if (!glisse || !piste || !groupe) return;
+
+    const base = groupe.innerHTML;
+    let largeurGroupe = 0;
+    let decalage = 0; // px, toujours ramené dans ]-largeurGroupe ; 0]
+
+    function ramener() {
+        if (!largeurGroupe) return;
+        decalage = decalage % largeurGroupe;
+        if (decalage > 0) decalage -= largeurGroupe;
+    }
+
+    function appliquer() {
+        glisse.style.transform = 'translate3d(' + decalage + 'px, 0, 0)';
+    }
+
+    // La première moitié couvre la largeur de l'écran, la seconde assure la boucle
+    function construire() {
+        groupe.innerHTML = base;
+        piste.innerHTML = '';
+        piste.appendChild(groupe);
+
+        let garde = 0;
+        while (groupe.getBoundingClientRect().width < window.innerWidth && garde++ < 20) {
+            groupe.insertAdjacentHTML('beforeend', base);
+        }
+
+        // Trois motifs identiques : la fenêtre visible reste toujours couverte,
+        // même poussée à fond par le glisser pendant que le scroll est en fin de course.
+        for (let i = 0; i < 2; i++) {
+            const clone = groupe.cloneNode(true);
+            clone.setAttribute('aria-hidden', 'true');
+            piste.appendChild(clone);
+        }
+
+        largeurGroupe = groupe.getBoundingClientRect().width;
+        decalage = 0;
+        appliquer();
+    }
+
+    construire();
+
+    // Défilement au scroll : les logos glissent vers la droite, lentement — un peu
+    // moins d'un demi-motif parcouru sur toute la traversée de la bande.
+    // Valeurs en pourcentage de la piste (3 motifs) : le trajet vaut 0,4 motif,
+    // indépendamment de la largeur mesurée à l'écran.
+    gsap.fromTo(piste, { xPercent: -30 }, {
+        xPercent: -16.67,
+        ease: 'none',
+        scrollTrigger: {
+            trigger: bande,
+            start: 'top bottom',
+            end: 'bottom top',
+            scrub: 0.8,
+            invalidateOnRefresh: true
+        }
     });
 
-    // Hover : déplacer la bulle sur l'élément survolé
-    navItems.forEach(item => {
-        item.addEventListener('mouseenter', () => moveBubbleTo(item));
+    // Glisser à la main : on maintient la ligne et on la déplace de gauche à droite
+    let actif = false;
+    let pointeur = null;
+    let departX = 0;
+    let departDecalage = 0;
+
+    bande.addEventListener('pointerdown', function (e) {
+        if (e.pointerType === 'mouse' && e.button !== 0) return;
+        actif = true;
+        pointeur = e.pointerId;
+        departX = e.clientX;
+        departDecalage = decalage;
+        bande.classList.add('glisse-active');
+        try { bande.setPointerCapture(pointeur); } catch (err) {}
     });
 
-    // Quitter la barre : revenir au logo
-    topBar.addEventListener('mouseleave', () => {
-        if (logoEl) moveBubbleTo(logoEl);
+    bande.addEventListener('pointermove', function (e) {
+        if (!actif || e.pointerId !== pointeur) return;
+        decalage = departDecalage + (e.clientX - departX);
+        ramener();
+        appliquer();
+    });
+
+    function relacher(e) {
+        if (!actif) return;
+        if (e && e.pointerId !== undefined && e.pointerId !== pointeur) return;
+        actif = false;
+        bande.classList.remove('glisse-active');
+        try { if (pointeur !== null) bande.releasePointerCapture(pointeur); } catch (err) {}
+        pointeur = null;
+    }
+
+    bande.addEventListener('pointerup', relacher);
+    bande.addEventListener('pointercancel', relacher);
+    window.addEventListener('blur', function () { relacher(); });
+
+    window.addEventListener('load', function () {
+        construire();
+        if (window.ScrollTrigger) ScrollTrigger.refresh();
+    });
+
+    let minuteur = null;
+    window.addEventListener('resize', function () {
+        clearTimeout(minuteur);
+        minuteur = setTimeout(function () {
+            construire();
+            if (window.ScrollTrigger) ScrollTrigger.refresh();
+        }, 250);
     });
 })();
 
@@ -197,9 +548,16 @@ const manuscriptText = document.querySelector('.hero-manuscript-text');
 const portfolioBadge = document.querySelector('.portfolio-badge');
 const heroSection = document.querySelector('.hero-section');
 
+// Référence à l'explosion au scroll (utilisée par le module des lettres manipulables)
+let tlExplodeRef = null;
+
 // --- 1. APPARITION CLASSIQUE & ÉLÉGANTE DU HERO ---
 if (introLine && heroSection) {
-    const tlHero = gsap.timeline({ delay: 0.1 });
+    const tlHero = gsap.timeline({
+        delay: 0.1,
+        // Les lettres ne deviennent manipulables qu'une fois l'apparition terminée
+        onComplete: () => document.dispatchEvent(new Event('hero:intro-done'))
+    });
 
     // Apparition simple et fluide de la ligne d'intro ("et voici mon PORTFOLIO")
     tlHero.from([manuscriptText, portfolioBadge], {
@@ -226,7 +584,7 @@ if (introLine && heroSection) {
 
 // --- 2. SCROLLTRIGGER : ÉPARPILLEMENT / EXPLOSION DU TITRE AU SCROLL VERS LE BAS ---
 if (ransomWrappers.length > 0 && heroSection) {
-    const tlExplode = gsap.timeline({
+    tlExplodeRef = gsap.timeline({
         scrollTrigger: {
             trigger: ".hero-section",
             start: "top top",      // Commence dès qu'on commence à scroller depuis le haut
@@ -247,7 +605,7 @@ if (ransomWrappers.length > 0 && heroSection) {
         const dirRot = finalRot + gsap.utils.random(-260, 260);
         const dirScale = gsap.utils.random(0.3, 1.8);
 
-        tlExplode.to(wrapper, {
+        tlExplodeRef.to(wrapper, {
             x: dirX,
             y: dirY,
             rotation: dirRot,
@@ -258,7 +616,7 @@ if (ransomWrappers.length > 0 && heroSection) {
     });
 
     // Évanouissement vers le haut de la ligne d'intro ("et voici mon PORTFOLIO")
-    tlExplode.to(".hero-intro-line", {
+    tlExplodeRef.to(".hero-intro-line", {
         y: -90,
         opacity: 0,
         ease: "power1.in"
@@ -278,6 +636,21 @@ if (document.querySelector('.domain-selection')) {
     });
 }
 
+// --- 3 bis. FOND PHOTOGRAPHIQUE : s'efface au fil du scroll, le vert prend le relais ---
+if (document.querySelector('.fond-image')) {
+    gsap.to('.fond-image', {
+        opacity: 0,
+        ease: 'none',
+        scrollTrigger: {
+            trigger: '.hero-section',
+            start: 'top top',
+            endTrigger: '.domain-selection',
+            end: 'top 75%',
+            scrub: true
+        }
+    });
+}
+
 
 // --- 4. SCROLLTRIGGER : SPIRALE DES BULLES (DESCENDUES SOUS LE TITRE) ---
 const mm = gsap.matchMedia();
@@ -287,6 +660,9 @@ mm.add({
     isMobile: "(max-width: 900px)"
 }, (context) => {
     const { isDesktop } = context.conditions;
+
+    // Rien à animer sur les pages sans bulles de domaine (ex. contact)
+    if (!document.querySelector('.bubble-card')) return;
 
     gsap.set(".bubble-card", {
         xPercent: -50,
@@ -356,15 +732,16 @@ mm.add({
             ease: "power1.inOut"
         }, 0);
 
-        // PLASTIQUE : Descend plus bas (atterrit à y: 340)
+        // PLASTIQUE : descend, mais s'arrête plus haut pour laisser
+        // la place aux deux lignes de texte sous les bulles (atterrit à y: 250)
         tlSpiral.to(".bubble-plastique", {
             motionPath: {
                 path: [
                     { x: 0, y: 0 },
-                    { x: -130, y: 100 },
-                    { x: -180, y: 200 },
-                    { x: -90, y: 280 },
-                    { x: 0, y: 340 }
+                    { x: -130, y: 74 },
+                    { x: -180, y: 148 },
+                    { x: -90, y: 206 },
+                    { x: 0, y: 250 }
                 ],
                 curviness: 1.5
             },
@@ -412,10 +789,325 @@ mm.add({
             ease: "power1.inOut"
         }, 0);
     }
+
+    // Le titre « Où on va ? » se dévoile tôt : il est posé au-dessus des bulles,
+    // il n'a plus besoin d'attendre qu'elles s'écartent
+    tlSpiral.fromTo(".titre-centre", {
+        opacity: 0,
+        scale: 0.88
+    }, {
+        opacity: 1,
+        scale: 1,
+        duration: 0.2,
+        ease: "power2.out"
+    }, 0.12);
+
+    // la flèche rouge naît avec le titre et se met à tourner autour
+    tlSpiral.fromTo(".fleche-orbitale", {
+        opacity: 0
+    }, {
+        opacity: 1,
+        duration: 0.2,
+        ease: "power2.out"
+    }, 0.12);
+
+    // la phrase sous les bulles apparaît d'elle-même quand elle entre à l'écran
+    gsap.fromTo(".domain-note", {
+        opacity: 0,
+        y: 14
+    }, {
+        opacity: 1,
+        y: 0,
+        duration: 0.55,
+        ease: "power2.out",
+        scrollTrigger: {
+            trigger: ".domain-note",
+            /* la phrase est posée au plancher de la page : elle n'atteint jamais
+               92 % de la hauteur d'écran, on la révèle dès qu'elle entre */
+            start: "top bottom",
+            once: true
+        }
+    });
 });
+
+// --- FLÈCHE ROUGE : elle orbite autour du « Où on va ? » et pointe le curseur ---
+(function initFlecheOrbitale() {
+    const fleche = document.querySelector('.fleche-orbitale');
+    const titre = document.querySelector('.titre-centre');
+    if (!fleche || !titre) return;
+
+    let centre = { x: 0, y: 0 };
+    let ancre = { x: 0, y: 0 };
+    let rayon = 150;
+    let rayonActuel = 150;
+    let distanceCurseur = 9999;
+    // au repos la flèche se pose à droite du titre, bien visible
+    let angle = 0;
+    let angleVise = angle;
+
+    // le curseur repousse la flèche : elle recule vers le titre puis s'efface
+    const MARGE = 54;        // écart minimum gardé entre le curseur et la flèche
+    const DEDANS = 26;       // rayon où la flèche est rangée dans le titre
+    const SORTIE = 96;       // rayon à partir duquel elle est de nouveau pleine
+
+    function mesurer() {
+        const r = titre.getBoundingClientRect();
+        centre.x = r.left + r.width / 2;
+        centre.y = r.top + r.height / 2;
+        // la flèche est ancrée au centre de son conteneur : on retranche ce point
+        const boite = fleche.offsetParent ? fleche.offsetParent.getBoundingClientRect() : null;
+        if (boite) {
+            ancre.x = boite.left + boite.width / 2;
+            ancre.y = boite.top + boite.height / 2;
+        } else {
+            ancre.x = centre.x;
+            ancre.y = centre.y;
+        }
+        // l'anneau passe autour du titre, à l'écart de ses bords
+        rayon = Math.max(r.width / 2 + 52, r.height / 2 + 58);
+    }
+    mesurer();
+
+    function viser(e) {
+        if (e.pointerType === 'touch') return;
+        mesurer();
+        angleVise = Math.atan2(e.clientY - centre.y, e.clientX - centre.x);
+        distanceCurseur = Math.hypot(e.clientX - centre.x, e.clientY - centre.y);
+    }
+    document.addEventListener('pointermove', viser, { passive: true });
+    document.addEventListener('mousemove', viser, { passive: true });
+
+    window.addEventListener('scroll', mesurer, { passive: true });
+    window.addEventListener('resize', mesurer);
+
+    function tourner() {
+        // on rattrape l'angle visé par le chemin le plus court : sans ça, un
+        // passage par la gauche (de +180° à −180°) la faisait tourner à l'envers
+        const ecart = Math.atan2(Math.sin(angleVise - angle), Math.cos(angleVise - angle));
+        angle += ecart * 0.14;
+
+        // quand le curseur approche, il la repousse vers le titre
+        const vise = Math.min(rayon, Math.max(0, distanceCurseur - MARGE));
+        rayonActuel += (vise - rayonActuel) * 0.22;
+
+        const x = centre.x + Math.cos(angle) * rayonActuel - ancre.x;
+        const y = centre.y + Math.sin(angle) * rayonActuel - ancre.y;
+        fleche.style.transform = 'translate3d(' + x + 'px,' + y + 'px,0) rotate(' +
+            (angle * 180 / Math.PI) + 'deg)';
+
+        // entierement rangee dans le titre, elle s'efface ; elle revient dès
+        // que le curseur s'eloigne assez (le fondu suit la repousse)
+        const fondu = Math.max(0, Math.min(1, (rayonActuel - DEDANS) / (SORTIE - DEDANS)));
+        const dessin = fleche.firstElementChild;
+        if (dessin) dessin.style.opacity = fondu;
+
+        requestAnimationFrame(tourner);
+    }
+    tourner();
+})();
+
+// --- SAS PHOTO : les deux volets se referment avant d'ouvrir la page photo ---
+// Le même passage sert depuis n'importe quelle page (barre de navigation, portes
+// du numérique, liens de contact) : on garde l'animation de l'accueil.
+(function initSasPhoto() {
+    /* sur la page photographie elle-même, les volets n'ont rien à fermer : le
+       choix d'axe et le retour au choix ont leurs propres transitions */
+    if (/photographie\.html$/.test(location.pathname)) return;
+    if (document.querySelector('.photo-split-screen')) return;
+
+    let sas = document.querySelector('.sas-photo');
+    if (!sas) {
+        sas = document.createElement('div');
+        sas.className = 'sas-photo';
+        sas.setAttribute('aria-hidden', 'true');
+        sas.innerHTML = '<div class="sas-photo-volet sas-photo-gauche"></div><div class="sas-photo-volet sas-photo-droite"></div>';
+        document.body.appendChild(sas);
+    }
+
+    const calme = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    let enCours = false;
+
+    document.addEventListener('click', (e) => {
+        if (enCours || calme) return;
+        if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button === 1) return;
+        const lien = e.target && e.target.closest ? e.target.closest('a[href]') : null;
+        if (!lien) return;
+        if (lien.target && lien.target !== '_self') return;
+        /* le retour au choix d'axe des pages de domaine a sa propre transition :
+           les volets ne doivent jamais se refermer par-dessus */
+        if (lien.hasAttribute('data-retour') || lien.closest('[data-retour]')) return;
+        const href = lien.getAttribute('href') || '';
+        if (!/^photographie\.html(#.*)?$/.test(href)) return;
+
+        enCours = true;
+        e.preventDefault();
+        sas.classList.add('on');
+        /* 560 ms de fermeture, puis on charge la page qui rouvrira les volets */
+        setTimeout(() => { window.location.href = href; }, 620);
+    }, true);
+
+    /* retour arrière : les volets ne doivent pas rester fermés */
+    window.addEventListener('pageshow', (e) => {
+        if (!e.persisted) return;
+        sas.classList.remove('on');
+        enCours = false;
+    });
+})();
+
+// --- SAS ACCUEIL : la barre rejoue son apparition de l'accueil, à l'envers ---
+// Depuis n'importe quelle page, un retour à l'accueil fait d'abord se vider la
+// barre, se réduire en pastille puis remonter hors champ, comme sur l'accueil.
+(function initSasAccueil() {
+    const chemin = location.pathname;
+    if (/\/$/.test(chemin) || /index\.html$/.test(chemin)) return;   // déjà sur l'accueil
+
+    const bar = document.querySelector('.top-bar');
+    if (!bar) return;
+
+    const cibles = [bar.querySelector('.logo')]
+        .concat([].slice.call(bar.querySelectorAll('.nav-links a')))
+        .filter(Boolean);
+    const pastille = bar.querySelector('.nav-bubble');
+    const calme = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    let enCours = false;
+
+    function remettreBarre() {
+        bar.classList.remove('barre-intro');
+        bar.style.removeProperty('--fb-w');
+        bar.style.removeProperty('--fb-r');
+        if (typeof gsap !== 'undefined') {
+            gsap.set(bar, { clearProps: 'top,opacity' });
+            gsap.set(cibles, { clearProps: 'opacity' });
+        }
+        if (pastille) { pastille.style.opacity = ''; pastille.classList.add('vue'); }
+        enCours = false;
+    }
+
+    document.addEventListener('click', (e) => {
+        if (enCours || calme || typeof gsap === 'undefined') return;
+        if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button === 1) return;
+        const lien = e.target && e.target.closest ? e.target.closest('a[href]') : null;
+        if (!lien) return;
+        if (lien.target && lien.target !== '_self') return;
+        const href = lien.getAttribute('href') || '';
+        const net = href.split('#')[0];
+        if (net !== 'index.html' && net !== './' && net !== '/') return;
+
+        enCours = true;
+        e.preventDefault();
+
+        /* même chronologie que sur l'accueil, jouée dans l'autre sens */
+        const r0 = bar.getBoundingClientRect();
+        const haut = r0.top;
+        bar.classList.add('barre-intro');
+        bar.style.setProperty('--fb-w', r0.width + 'px');
+        bar.style.setProperty('--fb-r', '16px');
+
+        const tl = gsap.timeline({
+            onComplete: () => { window.location.href = href; }
+        });
+        tl.to(cibles, { opacity: 0, duration: 0.26, ease: 'power2.in' }, 0.04)
+          .to(pastille, { opacity: 0, duration: 0.2, ease: 'power2.in' }, 0.04)
+          .to(bar, { '--fb-w': '52px', '--fb-r': '26px', duration: 0.46, ease: 'power3.inOut' }, 0.16)
+          .to(bar, { top: (haut - 96) + 'px', opacity: 0, duration: 0.4, ease: 'power3.in' }, 0.44);
+    }, true);
+
+    window.addEventListener('pageshow', (e) => {
+        if (!e.persisted) return;
+        remettreBarre();
+    });
+})();
+
+// --- SAS NUMÉRIQUE : un voile vert recouvre la page avant d'ouvrir numerique.html ---
+// Depuis l'accueil la transition existe déjà (la fente du rideau vert) ; sur les
+// autres pages, un bloc du même vert que le rideau de numerique.html monte en
+// fondu par-dessus tout, barre de navigation comprise, puis la page se charge.
+(function initSasNum() {
+    const chemin = location.pathname;
+    if (/numerique\.html$/.test(chemin)) return;          // déjà sur la page
+    if (/\/$/.test(chemin) || /index\.html$/.test(chemin)) return; // l'accueil a sa transition
+
+    let voile = document.querySelector('.sas-num-voile');
+    if (!voile) {
+        voile = document.createElement('div');
+        voile.className = 'sas-num-voile';
+        voile.setAttribute('aria-hidden', 'true');
+        document.body.appendChild(voile);
+    }
+
+    const calme = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    let enCours = false;
+
+    document.addEventListener('click', (e) => {
+        if (enCours || calme) return;
+        if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button === 1) return;
+        const lien = e.target && e.target.closest ? e.target.closest('a[href]') : null;
+        if (!lien) return;
+        if (lien.target && lien.target !== '_self') return;
+        const href = lien.getAttribute('href') || '';
+        if (!/^numerique\.html(#.*)?$/.test(href)) return;
+
+        enCours = true;
+        e.preventDefault();
+        voile.classList.add('on');
+        /* fondu court : la page s'ouvre sur le même vert le plus tôt possible */
+        setTimeout(() => { window.location.href = href; }, 260);
+    }, true);
+
+    window.addEventListener('pageshow', (e) => {
+        if (!e.persisted) return;
+        voile.classList.remove('on');
+        enCours = false;
+    });
+})();
+
+// --- SAS CONTACT : le bleu de la page contact monte en fondu ---
+// Un bloc du bleu du fond de contact recouvre tout, barre comprise, puis la page
+// s'ouvre sur ce même bleu où les pois et les textes éclosent. La barre, elle, se
+// fond depuis le sombre dans la page contact elle-même, après son chargement.
+(function initSasContact() {
+    if (/contact\.html$/.test(location.pathname)) return;
+
+    let voile = document.querySelector('.sas-contact-voile');
+    if (!voile) {
+        voile = document.createElement('div');
+        voile.className = 'sas-contact-voile';
+        voile.setAttribute('aria-hidden', 'true');
+        document.body.appendChild(voile);
+    }
+
+    const calme = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    let enCours = false;
+
+    document.addEventListener('click', (e) => {
+        if (enCours || calme) return;
+        if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button === 1) return;
+        const lien = e.target && e.target.closest ? e.target.closest('a[href]') : null;
+        if (!lien) return;
+        if (lien.target && lien.target !== '_self') return;
+        const href = lien.getAttribute('href') || '';
+        if (!/^contact\.html(#.*)?$/.test(href)) return;
+
+        enCours = true;
+        e.preventDefault();
+        voile.classList.add('on');
+        /* le bleu est opaque en 220 ms : la page s'ouvre juste après */
+        setTimeout(() => { window.location.href = href; }, 260);
+    }, true);
+
+    window.addEventListener('pageshow', (e) => {
+        if (!e.persisted) return;
+        voile.classList.remove('on');
+        enCours = false;
+    });
+})();
 
 // --- VISIONNEUSE PHOTO : LIGHTBOX AVEC NAVIGATION ---
 (function initLightbox() {
+    // Pages qui désactivent la visionneuse plein écran (ex. la page Numérique,
+    // où les images servent de vignettes et ne doivent pas s'ouvrir au clic).
+    if (document.body.classList.contains('sans-lightbox')) return;
+
     let lightbox = document.querySelector('.portfolio-lightbox');
     if (!lightbox) {
         lightbox = document.createElement('div');
@@ -484,11 +1176,11 @@ mm.add({
         }, { passive: false });
     }
 
-    // Toutes les photos cliquables de la page, dans l'ordre du document
-    function collectGallery() {
+    // Toutes les photos cliquables d'une portée (une case photo par défaut), dans l'ordre du document
+    function collectGallery(portee) {
         const seen = new Set();
         gallery = [];
-        document.querySelectorAll('.bubble-img-card, .lightbox-trigger, .editorial-img-frame').forEach(card => {
+        (portee || document).querySelectorAll('.bubble-img-card, .lightbox-trigger, .editorial-img-frame').forEach(card => {
             const img = card.tagName === 'IMG' ? card : card.querySelector('img');
             if (!img || !img.src) return;
             if (seen.has(img.src)) return;
@@ -552,7 +1244,11 @@ mm.add({
     }
 
     function openWith(img) {
-        collectGallery();
+        /* La visionneuse reste dans la case d'où l'on part : sur la page photo,
+           une case d'un domaine ne propose que ses propres images, pas celles
+           des autres cases ni de l'autre domaine. */
+        const casePhoto = img.closest('.pr-card, .pe-section, .photo-domaine-bloc') || document;
+        collectGallery(casePhoto);
         const index = gallery.findIndex(photo => photo.el === img);
         if (typeof gsap !== 'undefined' && imgEl) gsap.set(imgEl, { clearProps: 'transform,opacity' });
         show(index === -1 ? 0 : index, 1);
@@ -721,6 +1417,7 @@ mm.add({
 // --- HERO ÉPINGLÉ (PAGES PHOTOGRAPHIE) ---
 // Le titre de la page reste en place et les cases défilent par-dessus lui.
 (function initPinnedHero() {
+    if (document.body.classList.contains('photo-fusion')) return;
     const hero = document.querySelector('.domain-hero-section');
     const content = hero && hero.nextElementSibling;
     if (!hero || !content || !content.classList.contains('domain-content')) return;
@@ -765,11 +1462,16 @@ mm.add({
 // Les cartes (et non les photos) pivotent sur l'axe X selon la position de leur
 // portion visible par rapport au centre du viewport : plates au centre, inclinées
 // en haut et en bas. Une zone centrale les garde nettes plus longtemps.
-(function initDrumCarousel() {
+function construireTambour(scope) {
+    /* une seule instance à la fois : on démonte la précédente (changement de domaine) */
+    if (window.__tambourNettoyage) { window.__tambourNettoyage(); window.__tambourNettoyage = null; }
     if (typeof gsap === 'undefined') return;
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
 
-    const items = Array.from(document.querySelectorAll('.pr-card, .pe-section'));
+    // on peut limiter la mesure à un domaine (pendant un glissement, l'autre
+    // bloc est encore figé dans la page) et on ignore les cases masquées
+    const racine = scope || document;
+    const items = Array.from(racine.querySelectorAll('.pr-card, .pe-section')).filter(el => el.offsetParent);
     if (!items.length) return;
 
     function params() {
@@ -929,8 +1631,11 @@ mm.add({
         measure();
     }
 
+    var declencheur = null;
+    function surDefilement() { render(); }
+
     if (typeof ScrollTrigger !== 'undefined') {
-        ScrollTrigger.create({
+        declencheur = ScrollTrigger.create({
             trigger: document.body,
             start: 0,
             end: 'max',
@@ -938,12 +1643,395 @@ mm.add({
             onRefresh: measure
         });
     } else {
-        document.addEventListener('scroll', render, { passive: true });
+        document.addEventListener('scroll', surDefilement, { passive: true });
     }
 
     window.addEventListener('resize', refreshParams);
     window.addEventListener('load', measure);
-    setTimeout(measure, 1200);
+    var minuteurMesure = setTimeout(measure, 1200);
+
+    window.__tambourNettoyage = function () {
+        if (declencheur) declencheur.kill();
+        else document.removeEventListener('scroll', surDefilement);
+        window.removeEventListener('resize', refreshParams);
+        window.removeEventListener('load', measure);
+        clearTimeout(minuteurMesure);
+        /* on rend les cases de ce domaine à leur état neutre */
+        entries.forEach(function (entry) {
+            gsap.set(entry.el, { rotateX: 0, z: 0, scaleX: 1, scaleY: 1, opacity: 1, filter: 'none' });
+        });
+    };
 
     measure();
+    render();          // état appliqué tout de suite, sans attendre un défilement
+}
+window.construireTambour = construireTambour;
+
+/* Remet les cases d'un domaine à plat (sans perspective ni échelle) avant un
+   glissement : l'effet du carrousel s'efface doucement au lieu de se figer
+   d'un coup au moment où le swipe démarre. */
+window.aplatirTambour = function (portee, duree) {
+    if (typeof gsap === 'undefined') return null;
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return null;
+    var racine = portee || document;
+    var cases = Array.from(racine.querySelectorAll('.pr-card, .pe-section')).filter(function (el) { return el.offsetParent; });
+    if (!cases.length) return null;
+    gsap.killTweensOf(cases);
+    return gsap.to(cases, {
+        rotateX: 0, z: 0, scaleX: 1, scaleY: 1, opacity: 1, filter: 'none',
+        transformOrigin: '50% 50%',
+        duration: duree === undefined ? 0.22 : duree,
+        ease: 'power2.out'
+    });
+};
+
+if (!document.body.classList.contains('photo-fusion')) construireTambour();
+// --- 5. TITRE MANIPULABLE : GRAVITÉ, INERTIE ET SOUFFLE DE SOURIS ---
+(function () {
+    if (!ransomWrappers.length || !heroSection || !window.PointerEvent) return;
+
+    var AIR = 0.975;           // résistance de l'air (immobilise vite)
+    var REBOND_MUR = 0.55;
+
+    var actif = false;
+    var pret = false;
+    var sourisVue = false;     // on n'active qu'une fois une vraie souris repérée
+    var prise = null;
+    var decal = { x: 0, y: 0 };
+    var monde = { g: 0, h: 0, d: 0, b: 0 };
+    var dernier = 0;
+    var raf = 0;
+
+    var corps = Array.prototype.map.call(ransomWrappers, function (el) {
+        return {
+            el: el,
+            x: 0, y: 0, vx: 0, vy: 0, a: 0, va: 0,
+            hx: 0, hy: 0, w: 0, h: 0,
+            rot0: parseFloat(el.getAttribute('data-rot')) || 0,
+            libre: false,
+            z: 0
+        };
+    });
+
+    var souris = { t: 0 };
+
+    function mesurerMonde() {
+        var r = heroSection.getBoundingClientRect();
+        monde = { g: r.left, h: r.top, d: r.right, b: r.bottom };
+    }
+
+    function mesurerLettres() {
+        corps.forEach(function (c) {
+            var r = c.el.getBoundingClientRect();
+            c.w = r.width;
+            c.h = r.height;
+            if (!c.hx && !c.hy) {
+                c.hx = r.left + r.width / 2;
+                c.hy = r.top + r.height / 2;
+            }
+            if (!c.libre) { c.x = c.hx; c.y = c.hy; }
+        });
+    }
+
+    function pas(dt) {
+        corps.forEach(function (c) {
+            if (c === prise || !c.libre) return;
+
+            var f = Math.pow(AIR, dt * 60);
+            c.vx *= f;
+            c.vy *= f;
+            c.va *= Math.pow(0.965, dt * 60);
+
+            c.x += c.vx * dt;
+            c.y += c.vy * dt;
+            c.a += c.va * dt;
+
+            var dw = c.w / 2, dh = c.h / 2;
+            if (c.x - dw < monde.g) { c.x = monde.g + dw; c.vx = Math.abs(c.vx) * REBOND_MUR; }
+            if (c.x + dw > monde.d) { c.x = monde.d - dw; c.vx = -Math.abs(c.vx) * REBOND_MUR; }
+            if (c.y - dh < monde.h) { c.y = monde.h + dh; c.vy = Math.abs(c.vy) * REBOND_MUR; }
+            if (c.y + dh > monde.b) { c.y = monde.b - dh; c.vy = -Math.abs(c.vy) * REBOND_MUR; }
+        });
+
+        // chocs entre lettres
+        for (var i = 0; i < corps.length; i++) {
+            var A = corps[i];
+            if (!A.libre) continue;
+            for (var j = i + 1; j < corps.length; j++) {
+                var B = corps[j];
+                if (!B.libre) continue;
+                var dx2 = B.x - A.x, dy2 = B.y - A.y;
+                var ox = (A.w + B.w) / 2 - Math.abs(dx2);
+                var oy = (A.h + B.h) / 2 - Math.abs(dy2);
+                if (ox <= 0 || oy <= 0) continue;
+                if (ox < oy) {
+                    var sx = dx2 >= 0 ? 1 : -1;
+                    A.x -= sx * ox / 2;
+                    B.x += sx * ox / 2;
+                    var e1 = (A.vx - B.vx) * 0.4;
+                    A.vx -= e1;
+                    B.vx += e1;
+                } else {
+                    var sy = dy2 >= 0 ? 1 : -1;
+                    A.y -= sy * oy / 2;
+                    B.y += sy * oy / 2;
+                    var e2 = (A.vy - B.vy) * 0.4;
+                    A.vy -= e2;
+                    B.vy += e2;
+                }
+            }
+        }
+
+        // rendu
+        corps.forEach(function (c) {
+            if (!c.libre) return;
+            gsap.set(c.el, { x: c.x - c.hx, y: c.y - c.hy, rotation: c.rot0 + c.a });
+            if (c === prise) return;
+            var z = 100 + Math.round(c.y / 10);
+            if (z !== c.z) { c.z = z; c.el.style.zIndex = z; }
+        });
+    }
+
+    function boucle(t) {
+        if (!actif) { raf = 0; return; }
+        raf = requestAnimationFrame(boucle);
+        if (!dernier) { dernier = t; return; }
+        var dt = (t - dernier) / 1000;
+        dernier = t;
+        if (dt <= 0) return;
+        if (dt > 0.05) dt = 0.05;
+        pas(dt);
+    }
+
+    function activer() {
+        if (actif || !pret || !sourisVue || window.scrollY > 12) return;
+        mesurerMonde();
+        mesurerLettres();
+        actif = true;
+        heroSection.classList.add('titre-libre');
+        dernier = 0;
+        if (!raf) raf = requestAnimationFrame(boucle);
+    }
+
+    function desactiver() {
+        if (!actif) return;
+        actif = false;
+        if (prise) { prise.el.classList.remove('saisie'); prise = null; }
+        heroSection.classList.remove('titre-libre');
+        // l'explosion au scroll repart des positions actuelles
+        if (tlExplodeRef) tlExplodeRef.invalidate();
+    }
+
+    // saisir une lettre
+    corps.forEach(function (c) {
+        c.el.addEventListener('pointerdown', function (e) {
+            if (!actif || e.button !== 0) return;
+            e.preventDefault();
+            c.libre = true;
+            prise = c;
+            c.el.classList.add('saisie');
+            c.vx = 0;
+            c.vy = 0;
+            c.va = 0;
+            decal.x = e.clientX - c.x;
+            decal.y = e.clientY - c.y;
+            c.el.style.zIndex = 5000;
+            try { c.el.setPointerCapture(e.pointerId); } catch (err) {}
+        });
+    });
+
+    window.addEventListener('pointermove', function (e) {
+        if (e.pointerType === 'mouse' || e.pointerType === '') sourisVue = true;
+        if (!actif) activer();
+
+        var now = performance.now();
+        var dt = Math.max(8, now - souris.t) / 1000;
+        souris.t = now;
+
+        if (!prise) return;
+        var nx = e.clientX - decal.x;
+        var ny = e.clientY - decal.y;
+        prise.vx = gsap.utils.clamp(-3000, 3000, (nx - prise.x) / dt);
+        prise.vy = gsap.utils.clamp(-3000, 3000, (ny - prise.y) / dt);
+        prise.x = nx;
+        prise.y = ny;
+    }, { passive: true });
+
+    window.addEventListener('pointerup', function () {
+        if (!prise) return;
+        prise.el.classList.remove('saisie');
+        prise.z = -1;
+        prise = null;
+    });
+
+    window.addEventListener('scroll', function () {
+        if (window.scrollY > 12) desactiver();
+        else activer();
+    }, { passive: true });
+
+    window.addEventListener('resize', function () {
+        if (!actif) return;
+        mesurerMonde();
+        mesurerLettres();
+    });
+
+    document.addEventListener('hero:intro-done', function () {
+        pret = true;
+        activer();
+    });
+})();
+
+// --- FOND PHOTOGRAPHIQUE DES PAGES PHOTO (PRO & EXPRESSIVE) ---
+// La photo d'ouverture de chaque case devient le fond de la page, à 60 %,
+// et change en fondu quand on passe d'une case à l'autre.
+(function () {
+    var cartes = Array.prototype.slice.call(document.querySelectorAll('.pr-card, .pe-section'));
+    if (!cartes.length) return;
+
+    var OPACITE = '0.6';
+
+    var fond = document.createElement('div');
+    fond.className = 'photo-fond';
+    fond.setAttribute('aria-hidden', 'true');
+
+    var couches = [document.createElement('div'), document.createElement('div')];
+    couches.forEach(function (c) { c.className = 'photo-fond-couche'; });
+    fond.appendChild(couches[0]);
+    fond.appendChild(couches[1]);
+    document.body.insertBefore(fond, document.body.firstChild);
+    // le conteneur vert des pages se retire pour laisser voir la photo
+    document.body.classList.add('photo-fond-actif');
+
+    var actif = 0;
+    var courant = '';
+
+    function imageDe(carte) {
+        if (!carte) return '';
+        /* une case peut imposer sa propre photo de fond sans changer celle
+           qui est affichée dans la case (attribut data-diapo) */
+        var force = carte.getAttribute('data-diapo');
+        if (force) {
+            try { return new URL(force, location.href).href; } catch (e) { return force; }
+        }
+        var img = carte.querySelector('img');
+        return img ? (img.currentSrc || img.src) : '';
+    }
+
+    function poser(url, immediat) {
+        if (!url || url === courant) return;
+        courant = url;
+
+        var suivant = couches[1 - actif];
+        var precedent = couches[actif];
+
+        if (immediat) {
+            suivant.style.transition = 'none';
+            precedent.style.transition = 'none';
+        }
+
+        suivant.style.backgroundImage = 'url("' + url + '")';
+        void suivant.offsetWidth;            // la couche part bien de 0
+        suivant.style.opacity = OPACITE;
+        precedent.style.opacity = '0';
+
+        if (immediat) {
+            requestAnimationFrame(function () {
+                suivant.style.transition = '';
+                precedent.style.transition = '';
+            });
+        }
+
+        actif = 1 - actif;
+
+        document.dispatchEvent(new CustomEvent('photo-fond:change', {
+            detail: { url: url, domaine: url === photoDomaine }
+        }));
+    }
+
+    // la case qui occupe le milieu de l'écran : c'est elle qui prend le fond.
+    // Tant qu'aucune case n'est au centre, on garde la photo du domaine.
+    function carteAuCentre() {
+        var milieu = window.innerHeight / 2;
+        for (var i = 0; i < cartes.length; i++) {
+            var carte = cartes[i];
+            if (!carte.offsetParent) continue;     // case d'un domaine masqué
+            var r = carte.getBoundingClientRect();
+            /* pendant un glissement, le domaine qui part et celui qui arrive sont
+               hors écran sur le côté : ils ne doivent pas prendre le fond */
+            if (r.right < 0 || r.left > window.innerWidth) continue;
+            if (r.top <= milieu && r.bottom >= milieu) return carte;
+        }
+        return null;
+    }
+
+    var prevu = false;
+    var photoDomaine = '';       // photo affichée en haut de page, avant la première case
+    var derniereCarte = null;    // dernière case passée au centre
+
+    function maj() {
+        prevu = false;
+
+        var carte = carteAuCentre();
+        if (carte) {
+            derniereCarte = carte;
+            poser(imageDe(carte));
+            return;
+        }
+
+        /* aucune case pile au centre : en haut de page on montre la photo du
+           domaine, plus bas on garde celle de la dernière case traversée */
+        var premiere = null;
+        for (var i = 0; i < cartes.length; i++) {
+            if (cartes[i].offsetParent) { premiere = cartes[i]; break; }
+        }
+        var enHaut = premiere && premiere.getBoundingClientRect().top > window.innerHeight / 2;
+
+        if (enHaut && photoDomaine) poser(photoDomaine);
+        else if (derniereCarte) poser(imageDe(derniereCarte));
+        else if (photoDomaine) poser(photoDomaine);
+    }
+    function planifier() {
+        if (prevu) return;
+        prevu = true;
+        requestAnimationFrame(maj);
+    }
+
+    // rien au chargement : la première photo arrive quand la première case entre à l'écran
+    window.addEventListener('scroll', planifier, { passive: true });
+    window.addEventListener('resize', planifier);
+    window.addEventListener('load', planifier);
+
+    // utilisable depuis la page de choix pour poser la photo du domaine
+    window.photoFond = {
+        poser: poser,
+        /* photo du domaine : affichée tant qu'aucune case n'est au centre */
+        poserDomaine: function (url, immediat) {
+            photoDomaine = url || '';
+            derniereCarte = null;          // on change de domaine : on repart de sa photo
+            if (photoDomaine) poser(photoDomaine, immediat);
+            planifier();
+        }
+    };
+
+    // à l'arrivée, la photo du domaine est déjà en place : continuité avec la transition
+    var hero = document.body.getAttribute('data-fond-hero');
+    if (hero) { photoDomaine = hero; poser(hero, true); }
+})();
+
+// --- TITRE DU DOMAINE PHOTO : ARRIVÉE EN ROULANT VERS LE BAS ---
+(function () {
+    if (!document.body.classList.contains('photo-domaine')) return;
+    if (document.body.classList.contains('photo-fusion')) return;
+    if (typeof gsap === 'undefined') return;
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+    var titre = document.querySelector('.domain-hero-title');
+    var sous = document.querySelector('.domain-hero-subtitle');
+    var nav = document.querySelector('.domain-subnav');
+    if (!titre) return;
+
+    var tl = gsap.timeline({ delay: 0.1 });
+    tl.from(titre, { y: -70, opacity: 0, duration: 0.8, ease: 'power3.out' }, 0);
+    if (sous) tl.from(sous, { y: -50, opacity: 0, duration: 0.8, ease: 'power3.out' }, 0.12);
+    if (nav) tl.from(nav, { y: -30, opacity: 0, duration: 0.6, ease: 'power2.out' }, 0.24);
 })();

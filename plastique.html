@@ -1,349 +1,1030 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ian – Scénographies & Projets Plastiques</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Bebas+Neue&family=Bungee&family=Cinzel:wght@900&family=Playfair+Display:ital,wght@1,900&family=Schoolbell&family=Space+Grotesk:wght@500;700&family=Special+Elite&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles.css">
+    <script>document.documentElement.classList.add('js');</script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ian Bossut‑Gandou – Scénographies & Projets Plastiques</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Bebas+Neue&family=Bungee&family=Schoolbell&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+<style>
+body.pm-page{background:var(--color-bg-end);color:#0B0B0C;overflow:hidden;height:100vh;}
+
+
+/* ---------- entête ---------- */
+/* caché au premier rendu : GSAP le fait apparaître, sinon il flashe avant de disparaître */
+html:not(.js) .pm-entete{opacity:1;}
+.pm-entete{position:absolute;top:5.2rem;left:0;right:0;text-align:center;z-index:4;pointer-events:none;
+  opacity:0;}
+.pm-titre{font-family:var(--font-display);font-size:clamp(1.3rem,2.7vw,2.1rem);text-transform:uppercase;letter-spacing:-.01em;margin:.9rem 0 .45rem;line-height:1;}
+.pm-sous{max-width:52ch;margin:0 auto;font-size:.84rem;line-height:1.65;color:rgba(11,11,12,.62);}
+body.pm-focus .pm-entete{opacity:0 !important;}
+
+/* ---------- rail ---------- */
+.pm-rail{position:absolute;inset:0;}
+.pm-halo{position:absolute;left:50%;top:48%;width:82vw;height:74vh;transform:translate(-50%,-50%);pointer-events:none;
+  background:radial-gradient(ellipse 52% 50% at 50% 50%,rgba(53,142,20,.22) 0%,rgba(53,142,20,.13) 38%,rgba(53,142,20,.05) 68%,rgba(53,142,20,0) 100%);transition:opacity .4s ease;}
+body.pm-focus .pm-halo{opacity:.2;}
+.pm-piste{position:absolute;inset:0;}
+
+.pm-voile{position:fixed;inset:0;z-index:30;background:rgba(5,5,6,.86);
+  opacity:0;visibility:hidden;transition:opacity .45s ease,visibility .45s;}
+.pm-voile.on{opacity:1;visibility:visible;}
+
+.pm-flou{position:fixed;inset:0;z-index:55;pointer-events:none;
+  background:rgba(7,7,8,.66);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
+  opacity:0;visibility:hidden;transition:opacity .6s ease,visibility .6s;}
+.pm-flou.on{opacity:1;visibility:visible;}
+
+.pm-booster{position:absolute;left:50%;top:52%;width:300px;margin-left:-150px;margin-top:-215px;text-align:center;}
+.pm-pack{position:relative;width:300px;height:400px;border:3px solid #0B0B0C;outline:2px solid rgba(255,255,255,.55);
+  background:linear-gradient(152deg,#F6EBFF 0%,#FFFFFF 42%,#E9F7E1 100%);overflow:hidden;
+  --relief:#0B0B0C;
+  --sx:8px;--sy:8px;
+  box-shadow:
+    inset 0 2px 0 rgba(255,255,255,.95),
+    inset 3px 0 0 rgba(255,255,255,.4),
+    inset -3px 0 0 rgba(11,11,12,.07),
+    inset 0 -12px 18px rgba(11,11,12,.12),
+    calc(var(--sx) * 0.25) calc(var(--sy) * 0.25) 0 var(--relief),
+    calc(var(--sx) * 0.5) calc(var(--sy) * 0.5) 0 var(--relief),
+    calc(var(--sx) * 0.75) calc(var(--sy) * 0.75) 0 var(--relief),
+    var(--sx) var(--sy) 0 var(--relief),
+    11px 16px 30px rgba(11,11,12,.34);
+  cursor:none;z-index:2;}
+.pm-pack::before{content:'';position:absolute;inset:0;pointer-events:none;
+  background:repeating-linear-gradient(115deg,rgba(156,29,189,.09) 0 14px,rgba(53,142,20,.09) 14px 28px);}
+.pm-booster.focus .pm-pack{--relief:var(--color-magenta);}
+
+/* ombre portée au sol sous chaque booster */
+.pm-booster::after{content:'';position:absolute;left:50%;top:calc(100% + 170px);width:300px;height:32px;margin-left:-150px;
+  border-radius:50%;pointer-events:none;z-index:-1;
+  background:radial-gradient(ellipse 50% 50% at 50% 50%,rgba(11,11,12,.62) 0%,rgba(11,11,12,.46) 32%,rgba(11,11,12,.22) 60%,rgba(11,11,12,.06) 80%,rgba(11,11,12,0) 92%);
+  filter:blur(9px);transition:opacity .3s ease,transform .3s ease;}
+.pm-booster.focus::after{opacity:.7;transform:scale(.9);}
+
+.pm-serie{position:absolute;top:.75rem;left:.78rem;font-family:var(--font-bungee);font-size:.56rem;letter-spacing:.12em;text-transform:uppercase;color:var(--color-neon-green);}
+.pm-num{position:absolute;top:.5rem;right:.72rem;font-family:var(--font-display);font-size:1.4rem;color:#0B0B0C;opacity:.9;}
+.pm-pack-nom{position:absolute;left:1rem;right:1rem;top:60%;transform:translateY(-50%);font-family:var(--font-display);font-size:1.14rem;line-height:1.12;text-transform:uppercase;color:#0B0B0C;}
+.pm-pack-count{position:absolute;left:0;right:0;top:72%;font-size:.7rem;color:#5b5b5b;}
+.pm-pack-ico{position:absolute;left:50%;bottom:1.6rem;transform:translateX(-50%);width:38px;height:38px;opacity:.2;
+  background:radial-gradient(circle,#0B0B0C 34%,transparent 35%),conic-gradient(from 0deg,#0B0B0C 0 25%,transparent 0 50%,#0B0B0C 0 75%,transparent 0);border-radius:50%;}
+
+/* ---------- scellé : poignée visible seulement à la mise au point ---------- */
+.pm-scelle{position:absolute;left:0;right:0;top:56px;height:0;border-top:2px dashed rgba(11,11,12,.45);z-index:7;}
+.pm-fente{position:absolute;left:0;top:55px;height:4px;width:0;z-index:6;pointer-events:none;
+  background:linear-gradient(90deg,rgba(255,0,255,.95),rgba(53,142,20,.95));
+  box-shadow:0 0 12px rgba(255,0,255,.7);}
+.pm-poignee{position:absolute;left:4px;top:-17px;width:34px;height:34px;border-radius:50%;
+  background:#0B0B0C;border:2px solid #fff;display:grid;place-items:center;cursor:grab;touch-action:none;z-index:9;
+  opacity:0;pointer-events:none;transform-origin:center;
+  animation:pm-pulse 1.9s ease-out infinite;}
+.pm-poignee::before{content:'';position:absolute;inset:-13px;border-radius:50%;}
+.pm-poignee::after{content:'';width:9px;height:9px;border-radius:50%;background:var(--color-neon-pink);}
+@keyframes pm-pulse{0%{box-shadow:0 0 0 0 rgba(255,0,255,.55)}70%{box-shadow:0 0 0 15px rgba(255,0,255,0)}100%{box-shadow:0 0 0 0 rgba(255,0,255,0)}}
+.pm-booster.focus .pm-poignee{opacity:1;pointer-events:auto;}
+.pm-booster.tire .pm-poignee{cursor:grabbing;animation:none;box-shadow:0 0 0 6px rgba(255,255,255,.18);}
+.pm-indice{position:absolute;left:46px;top:42px;z-index:8;font-family:var(--font-bungee);font-size:.48rem;
+  letter-spacing:.09em;text-transform:uppercase;color:#0B0B0C;opacity:0;transform:translateX(-6px);
+  transition:opacity .35s ease,transform .35s ease;white-space:nowrap;}
+.pm-booster.focus .pm-indice{opacity:.75;transform:none;}
+.pm-booster.tire .pm-indice{opacity:0;}
+
+/* ---------- paquet ouvert : haut arraché + cartes qui dépassent ---------- */
+.pm-pack.ouverte{overflow:visible;
+  clip-path:polygon(0 24.6%,7% 23.9%,14% 25%,21% 24%,28% 24.9%,35% 23.9%,42% 25%,50% 24%,57% 24.9%,64% 23.9%,71% 25%,78% 24%,85% 24.9%,92% 23.9%,100% 24.8%,100% 100%,0 100%);}
+.pm-pack.ouverte .pm-scelle,
+.pm-pack.ouverte .pm-poignee,
+.pm-pack.ouverte .pm-indice,
+.pm-pack.ouverte .pm-serie,
+.pm-pack.ouverte .pm-num{display:none;}
+
+/* tranche noire derrière un booster ouvert : le clip-path du pack masque son ombre */
+.pm-slab{position:absolute;left:0;top:0;width:300px;height:400px;background:#0B0B0C;z-index:1;
+  pointer-events:none;opacity:0;transition:opacity .25s ease;}
+.pm-booster.ouverte .pm-slab{opacity:1;
+  clip-path:polygon(0 24.6%,7% 23.9%,14% 25%,21% 24%,28% 24.9%,35% 23.9%,42% 25%,50% 24%,57% 24.9%,64% 23.9%,71% 25%,78% 24%,85% 24.9%,92% 23.9%,100% 24.8%,100% 100%,0 100%);}
+
+.pm-pile{position:absolute;left:50%;bottom:300px;margin-left:-162px;width:324px;height:82px;z-index:1;
+  overflow:hidden;opacity:0;pointer-events:none;}
+.pm-booster.ouverte .pm-pile{opacity:1;}
+.pm-booster.cartes-sorties .pm-pile{opacity:0;}
+.pm-pile i{position:absolute;left:50%;top:12px;display:block;width:280px;height:373px;margin-left:-140px;
+  background:#fff center/cover no-repeat;border:2px solid #0B0B0C;border-radius:3px;
+  box-shadow:0 -2px 8px rgba(0,0,0,.4);transform-origin:top center;}
+.pm-pile i:nth-child(1){transform:translateX(-8px) rotate(-4deg);}
+.pm-pile i:nth-child(2){transform:rotate(0deg);}
+.pm-pile i:nth-child(3){transform:translateX(8px) rotate(4deg);}
+
+.pm-def{position:absolute;left:50%;top:calc(100% + 1.2rem);width:340px;margin-left:-170px;
+  font-family:var(--font-schoolbell);font-size:1rem;line-height:1.35;color:#D8D8D8;
+  opacity:0;transform:translateY(22px);transition:opacity .45s ease,transform .55s cubic-bezier(.22,.61,.36,1);pointer-events:none;}
+.pm-def::before{content:'';display:block;width:34px;height:2px;background:var(--color-neon-pink);margin:0 auto .6rem;}
+.pm-booster.focus .pm-def{opacity:1;transform:none;color:#EDEDEF;font-size:1.05rem;}
+
+/* ---------- le morceau de paquet qui s'envole ---------- */
+.pm-foil{position:fixed;z-index:900;pointer-events:none;
+  background:linear-gradient(152deg,#F6EBFF 0%,#FFFFFF 42%,#E9F7E1 100%);
+  border:3px solid #0B0B0C;
+  clip-path:polygon(0 0,100% 0,100% 100%,93% 91%,86% 99%,79% 90%,72% 98%,65% 89%,58% 99%,51% 90%,44% 98%,37% 89%,30% 99%,24% 90%,18% 98%,11% 89%,5% 99%,0 91%);
+  box-shadow:0 24px 60px rgba(0,0,0,.55);transform-origin:50% 100%;}
+.pm-foil::after{content:'';position:absolute;inset:0;pointer-events:none;
+  background:linear-gradient(115deg,rgba(255,255,255,0) 30%,rgba(255,255,255,.85) 46%,rgba(255,255,255,0) 58%,rgba(255,255,255,.55) 70%,rgba(255,255,255,0) 82%),
+             repeating-linear-gradient(78deg,rgba(0,0,0,.06) 0 3px,rgba(255,255,255,.12) 3px 7px);
+  mix-blend-mode:screen;}
+
+/* ---------- commandes ---------- */
+.pm-commandes{position:absolute;left:0;right:0;bottom:1.5rem;display:flex;align-items:center;justify-content:center;gap:1rem;z-index:6;transition:opacity .3s ease;}
+body.pm-focus .pm-commandes,body.pm-focus .pm-aide{opacity:0;pointer-events:none;}
+.pm-fleche{width:44px;height:44px;display:grid;place-items:center;background:transparent;border:2px solid rgba(11,11,12,.3);
+  color:#0B0B0C;font-size:1rem;cursor:none;transition:background .25s ease,color .25s ease,border-color .25s ease;}
+.pm-fleche:hover{background:var(--color-neon-pink);border-color:var(--color-neon-pink);color:#0B0B0C;}
+.pm-compteur{font-family:var(--font-bungee);font-size:.66rem;letter-spacing:.14em;color:rgba(11,11,12,.55);}
+.pm-aide{position:absolute;left:0;right:0;bottom:.6rem;text-align:center;font-size:.64rem;letter-spacing:.06em;color:rgba(11,11,12,.5);z-index:6;transition:opacity .3s ease;}
+
+.pm-retour-focus{position:fixed;top:1rem;left:clamp(1rem,3vw,2.4rem);z-index:70;
+  background:rgba(11,11,12,.85);border:1px solid rgba(255,255,255,.34);color:#fff;
+  font-size:.62rem;letter-spacing:.16em;text-transform:uppercase;padding:.62rem 1rem;cursor:none;
+  opacity:0;visibility:hidden;transition:opacity .3s ease,visibility .3s;}
+.pm-retour-focus:hover{background:var(--color-neon-pink);border-color:var(--color-neon-pink);color:#0B0B0C;}
+body.pm-focus .pm-retour-focus{opacity:1;visibility:visible;}
+
+/* ---------- cartes sorties du booster ---------- */
+.pm-cartes{position:fixed;inset:0;z-index:60;overflow-y:auto;overflow-x:hidden;
+  visibility:hidden;opacity:0;transition:opacity .3s ease,visibility .3s;}
+.pm-cartes.on{visibility:visible;opacity:1;}
+.pm-cartes-tete{position:sticky;top:0;z-index:5;display:flex;align-items:center;justify-content:flex-start;gap:1.1rem;
+  padding:1rem clamp(1rem,3vw,2.4rem);background:rgba(11,11,12,.72);backdrop-filter:blur(14px);
+  border-bottom:1px solid rgba(255,255,255,.12);flex-wrap:nowrap;transition:opacity .45s ease;}
+.pm-cartes.en-attente .pm-cartes-tete,
+.pm-cartes.en-attente .pm-cartes-note{opacity:0;pointer-events:none;}
+.pm-cartes-id{display:flex;align-items:baseline;gap:.8rem;min-width:0;}
+.pm-cartes-num{font-size:.64rem;letter-spacing:.16em;color:var(--color-neon-pink);}
+.pm-cartes-nom{font-family:var(--font-display);font-size:clamp(.9rem,1.6vw,1.25rem);text-transform:uppercase;line-height:1;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.pm-btn{background:none;border:1px solid rgba(255,255,255,.32);color:inherit;font:inherit;font-size:.62rem;
+  letter-spacing:.16em;text-transform:uppercase;padding:.6rem .95rem;cursor:none;white-space:nowrap;}
+.pm-btn:hover{border-color:var(--color-neon-pink);color:var(--color-neon-pink);}
+.pm-retour-cartes{background:rgba(11,11,12,.85);border:1px solid rgba(255,255,255,.34);color:#fff;
+  font-size:.62rem;letter-spacing:.16em;text-transform:uppercase;padding:.62rem 1rem;cursor:none;}
+.pm-retour-cartes:hover{background:var(--color-neon-pink);border-color:var(--color-neon-pink);color:#0B0B0C;}
+.pm-cartes-note{padding:1.1rem clamp(1rem,3vw,2.4rem) 0;max-width:60ch;font-family:var(--font-schoolbell);font-size:1.05rem;color:#E2E2E2;line-height:1.4;transition:opacity .45s ease;}
+
+.pm-grille{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,300px));justify-content:center;gap:2rem;
+  padding:clamp(3rem,11vh,8rem) clamp(1rem,3vw,2.4rem) 3rem;max-width:1180px;margin:0 auto;}
+.pm-item{perspective:1200px;}
+.pm-tilt{transform-style:preserve-3d;}
+.pm-carte{position:relative;width:100%;aspect-ratio:3/4;transform-style:preserve-3d;
+  transition:transform .72s cubic-bezier(.22,.61,.36,1);cursor:none;}
+.pm-carte.retournee{transform:rotateY(180deg);}
+.pm-face{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;
+  border:3px solid #000;box-shadow:10px 10px 0 rgba(0,0,0,.9);overflow:hidden;background:#fff;}
+.pm-face img{width:100%;height:100%;object-fit:cover;display:block;}
+.pm-badge{position:absolute;top:.75rem;left:.75rem;font-family:var(--font-bungee);font-size:.55rem;letter-spacing:.08em;
+  text-transform:uppercase;background:#0B0B0C;color:#fff;padding:.24rem .55rem;}
+.pm-pied{position:absolute;left:0;right:0;bottom:0;padding:1.5rem .85rem .75rem;color:#fff;
+  background:linear-gradient(180deg,rgba(0,0,0,0),rgba(0,0,0,.85));}
+.pm-nom{display:block;font-family:var(--font-display);font-size:1rem;text-transform:uppercase;line-height:1.14;}
+.pm-meta{font-size:.72rem;opacity:.85;}
+.pm-face--dos{transform:rotateY(180deg);background:#0B0B0C;color:#EDEDED;padding:1.15rem;display:flex;flex-direction:column;gap:.55rem;}
+.pm-dos-titre{font-family:var(--font-display);font-size:.92rem;text-transform:uppercase;color:var(--color-neon-pink);line-height:1.15;}
+.pm-dos-txt{font-size:.8rem;line-height:1.5;color:#CFCFCF;}
+.pm-dos-meta{font-size:.66rem;letter-spacing:.08em;text-transform:uppercase;color:#8A8A8A;margin-top:auto;}
+.pm-voir{margin-top:.5rem;display:inline-block;font-family:var(--font-bungee);font-size:.6rem;letter-spacing:.08em;
+  text-transform:uppercase;background:var(--color-neon-green);color:#0B0B0C;border:2px solid var(--color-neon-green);
+  padding:.45rem .8rem;cursor:none;text-align:center;}
+.pm-voir:hover{background:var(--color-neon-pink);border-color:var(--color-neon-pink);}
+.pm-cartes-aide{padding:0 clamp(1rem,3vw,2.4rem) 2.4rem;text-align:center;font-size:.68rem;letter-spacing:.1em;text-transform:uppercase;color:#D6D6D6;text-shadow:0 1px 10px rgba(0,0,0,.55);}
+
+/* ---------- fenêtre projet (seul slide-up) ---------- */
+.pm-fenetre{position:fixed;inset:0;z-index:1600;background:#0B0B0C;overflow-y:auto;
+  transform:translateY(100%);visibility:hidden;
+  transition:transform .8s cubic-bezier(.76,0,.24,1),visibility .8s;}
+.pm-fenetre.on{transform:none;visibility:visible;}
+.pm-retour{position:fixed;top:1rem;left:clamp(1rem,3vw,2.4rem);z-index:1610;
+  background:rgba(11,11,12,.85);border:1px solid rgba(255,255,255,.34);color:#fff;
+  font-size:.62rem;letter-spacing:.16em;text-transform:uppercase;padding:.62rem 1rem;cursor:none;
+  backdrop-filter:blur(12px);}
+.pm-retour:hover{background:var(--color-neon-pink);border-color:var(--color-neon-pink);color:#0B0B0C;}
+
+.pm-f-hero{position:relative;height:78vh;background:#151517;overflow:hidden;}
+.pm-f-hero img{width:100%;height:100%;object-fit:cover;display:block;}
+.pm-f-voile{position:absolute;inset:0;background:linear-gradient(180deg,rgba(11,11,12,.15) 0%,rgba(11,11,12,0) 35%,rgba(11,11,12,.92) 100%);}
+.pm-f-titres{position:absolute;left:0;right:0;bottom:2.2rem;padding:0 clamp(1.2rem,4vw,3.4rem);}
+.pm-f-cat{font-family:var(--font-bungee);font-size:.6rem;letter-spacing:.14em;text-transform:uppercase;color:var(--color-neon-pink);}
+.pm-f-titre{font-family:var(--font-display);font-size:clamp(1.7rem,4.6vw,3.6rem);text-transform:uppercase;line-height:.98;margin:.6rem 0 .4rem;letter-spacing:-.01em;}
+.pm-f-meta{font-size:.66rem;letter-spacing:.14em;text-transform:uppercase;color:#A5A5A5;}
+
+.pm-f-corps{padding:clamp(1.8rem,4vw,3.4rem) clamp(1.2rem,4vw,3.4rem) 5rem;max-width:1180px;}
+.pm-f-foot{padding:0 clamp(1.2rem,4vw,3.4rem) 3.2rem;max-width:1180px;font-size:.64rem;letter-spacing:.14em;
+  text-transform:uppercase;color:#6F6F6F;}
+.pm-f-lead{max-width:64ch;font-size:1rem;line-height:1.8;color:#C6C6C6;}
+.pm-f-notes{display:flex;flex-wrap:wrap;gap:.8rem;margin:1.6rem 0 0;}
+.pm-f-note{font-family:var(--font-schoolbell);font-size:1rem;color:#0B0B0C;background:#FFFDF0;border:1.5px solid #222;
+  padding:.35rem .85rem;box-shadow:3px 3px 0 rgba(0,0,0,.6);transform:rotate(-1.4deg);}
+.pm-f-note.magenta{background:#FDF2FF;border-color:var(--color-magenta);color:var(--color-magenta);box-shadow:3px 3px 0 var(--color-magenta);}
+.pm-f-note.verte{background:#F3FBF0;border-color:var(--color-neon-green);color:var(--color-neon-green);box-shadow:3px 3px 0 var(--color-neon-green);}
+.pm-f-gal{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:2.2rem;}
+.pm-f-gal figure{background:#151517;overflow:hidden;border:1px solid rgba(255,255,255,.12);}
+.pm-f-gal img{width:100%;height:270px;object-fit:cover;display:block;transition:transform .5s ease;}
+.pm-f-gal figure:hover img{transform:scale(1.04);}
+.pm-f-gal figure.large{grid-column:span 2;}
+@media (max-width:900px){
+  .pm-f-gal{grid-template-columns:repeat(2,1fr);}
+  .pm-f-gal figure.large{grid-column:span 2;}
+  .pm-f-gal img{height:200px;}
+  .pm-f-hero{height:56vh;}
+}
+
+/* ==========================================================
+   ARRIVÉE — les boosters surgissent de devant l'écran :
+   ils sont posés très près, flous, puis reculent à leur place.
+   Invisibles tant que GSAP ne les a pas amenés au premier plan.
+   ========================================================== */
+.pm-pack{opacity:0;}
+
+@media (prefers-reduced-motion:reduce){
+  .pm-pack{opacity:1;}
+}
+</style>
 </head>
-<body style="background-color: var(--color-bg-end);">
-    <!-- Top Bar Navigation avec Bulle Liquid Glass -->
-    <nav class="top-bar">
-        <div class="logo"><a href="index.html">Ian Bossut‑Gandou</a></div>
-        <div class="nav-links">
-            <a href="numerique.html">Numérique</a>
-            <a href="photographie.html">Photographie</a>
-            <a href="plastique.html">Projets plastiques</a>
-        </div>
-        <div class="nav-bubble"></div>
-    </nav>
-
-    <!-- Curseur personnalisé avec spirale au hover -->
-    <div class="custom-cursor">
-        <div class="cursor-dot"></div>
-        <svg class="cursor-spiral" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg">
-            <path d="M 30,30 A 3.5 3.5 0 0 1 30 37 A 7 7 0 0 1 30 23 A 10.5 10.5 0 0 1 30 44 A 14 14 0 0 1 30 16 A 17.5 17.5 0 0 1 30 51 A 21 21 0 0 1 30 9" fill="none" stroke="white" stroke-width="3.2" stroke-linecap="round"/>
-        </svg>
+<body class="pm-page sans-lightbox">
+<nav class="top-bar">
+    <div class="logo"><a href="index.html">Ian Bossut‑Gandou</a></div>
+    <div class="nav-links">
+        <a href="numerique.html">Numérique</a>
+        <a href="photographie.html">Photographie</a>
+        <a href="plastique.html">Projets plastiques</a>
+        <a href="contact.html">Contact</a>
     </div>
+    <div class="nav-bubble"></div>
+</nav>
 
-    <!-- Hero du Domaine Plastique -->
-    <header class="domain-hero-section">
-        <div class="domain-pill-badge">Domaine 03 • Scénographie & Plastique</div>
-        <h1 class="domain-hero-title">Scénographies & Projets Plastiques</h1>
-        <p class="domain-hero-subtitle">
-            Sculptures d’envergure, prothèses 3D, costumes, travail de la matière et techniques artisanales. 
-            L'exploration des volumes, des textures organiques et des contrastes matériels.
-        </p>
-        
-        <!-- Navigation d'accès rapide -->
-        <div class="domain-subnav">
-            <a href="#bobby" class="subnav-btn">BoBBY l'hybride</a>
-            <a href="#prothese" class="subnav-btn">Prothèse 3D</a>
-            <a href="#gant" class="subnav-btn">Gant de la Bête</a>
-            <a href="#pates" class="subnav-btn">Parure de Pâtes</a>
-            <a href="#dessins" class="subnav-btn">Dessins & Croquis</a>
-            <a href="#materiaux" class="subnav-btn">Matériaux & Artisanat</a>
+<div class="custom-cursor">
+    <div class="cursor-dot"></div>
+    <svg class="cursor-spiral" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg">
+        <path d="M 30,30 A 3.5 3.5 0 0 1 30 37 A 7 7 0 0 1 30 23 A 10.5 10.5 0 0 1 30 44 A 14 14 0 0 1 30 16 A 17.5 17.5 0 0 1 30 51 A 21 21 0 0 1 30 9" fill="none" stroke="white" stroke-width="3.2" stroke-linecap="round"/>
+    </svg>
+</div>
+
+<header class="pm-entete">
+    <h1 class="pm-titre">Scénographies &amp; Projets Plastiques</h1>
+    <p class="pm-sous">Quatre familles de travail, quatre boosters. Choisis une famille, ouvre le paquet à la main, puis retourne les cartes des projets.</p>
+</header>
+
+<main class="pm-rail" id="pmRail">
+    <div class="pm-halo"></div>
+    <div class="pm-piste" id="pmPiste"></div>
+    <div class="pm-commandes">
+        <button class="pm-fleche" type="button" id="pmPrec" aria-label="Famille précédente">←</button>
+        <span class="pm-compteur" id="pmCompteur">01 / 04</span>
+        <button class="pm-fleche" type="button" id="pmSuiv" aria-label="Famille suivante">→</button>
+    </div>
+    <p class="pm-aide">Clique une famille pour l'ouvrir · flèches ou molette pour naviguer</p>
+</main>
+
+<div class="pm-voile" id="pmVoile"></div>
+<div class="pm-flou" id="pmFlou"></div>
+<button class="pm-retour-focus" type="button" id="pmRetourFocus">← Familles</button>
+
+<section class="pm-cartes" id="pmCartes" aria-hidden="true">
+    <div class="pm-cartes-tete">
+        <button class="pm-btn pm-retour-cartes" type="button" id="pmCartesRetour">← Familles</button>
+        <div class="pm-cartes-id">
+            <span class="pm-cartes-num" id="pmCartesNum">01</span>
+            <span class="pm-cartes-nom" id="pmCartesNom">Famille</span>
         </div>
-    </header>
+    </div>
+    <p class="pm-cartes-note" id="pmCartesNote"></p>
+    <div class="pm-grille" id="pmGrille"></div>
+    <p class="pm-cartes-aide">Survole une carte pour l'incliner · clique pour la retourner · double-clique pour ouvrir le projet</p>
+</section>
 
-    <main class="domain-content">
-
-        <!-- BULLE 1 : BOBBY L'HYBRIDE -->
-        <article class="project-bubble" id="bobby">
-            <div class="bubble-top-bar">
-                <span class="bubble-category-pill">Sculpture Monumentale & Scénographie</span>
-                <span class="bubble-metadata">Statue 2m • Acier Soudé • Cœur Résine & Soie • Romainville</span>
-            </div>
-
-            <h2 class="bubble-main-title">BoBBY l'Hybride (Statue 2m)</h2>
-            <p class="bubble-quote">“Statue monumentale de 2 mètres inspirée de « Xenogenesis » d’Octavia E. Butler.”</p>
-            <p class="bubble-description">
-                Dans le cadre de l’événement « Les portes ouvertes des ateliers d’artistes » de Romainville. 
-                Réalisation d'une scénographie immersive avec comme pièce maîtresse une statue « d'hybride », créature exogène et composite. 
-                Fusion entre biologie extraterrestre et carcasse industrielle. Armature en acier soudé, modelage organique, 
-                cœur lumineux rétroéclairé en résine et papier de soie, matériaux de récupération (métal, caoutchouc, polystyrène, papier, bois, mousse, tissu). 
-                Conception et vente d'objets dérivés (t-shirts, affiches, cartes de visite aux couleurs magenta et jaune de l'expo).
-            </p>
-
-            <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
-                <div class="scrapbook-note highlight-magenta">
-                    <span>Le cœur s’éclaire grâce à un luminaire relié à son torse ↙</span>
-                </div>
-                <div class="scrapbook-note rotate-right">
-                    <span>Hauteur : 2 mètres • Soudure & moulage ↗</span>
-                </div>
-            </div>
-
-            <!-- Galerie Bobby -->
-            <div class="gallery-showcase-split" style="margin-top: 1.5rem;">
-                <div class="bubble-img-card fixed-height-520">
-                    <img src="images/plastique/02_28d06172a4c479a682aa43bec4ef60c7.png" alt="BoBBY l'hybride - Vue globale">
-                    <div class="img-caption">BoBBY l'hybride • Vue complète (2m d'envergure)</div>
-                </div>
-                <div style="display: flex; flex-direction: column; gap: 1.5rem;">
-                    <div class="bubble-img-card fixed-height-240">
-                        <img src="images/plastique/03_20669edbc4ac873f2adcf09c9959a374.png" alt="BoBBY l'hybride - Détail torse et cœur lumineux">
-                        <div class="img-caption">Cœur en résine moulée rétroéclairé</div>
-                    </div>
-                    <div class="bubble-img-card fixed-height-240">
-                        <img src="images/plastique/04_fffd9b57d692bd8f4db605b7572ac6d5.png" alt="BoBBY l'hybride - Détail tête et matériaux">
-                        <div class="img-caption">Modelage organique & armature industrielle</div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Merchandising -->
-            <div class="scrapbook-note highlight-green" style="margin-top: 2rem;">
-                <span>Merchandising satellite, affiches & cartes de visite (magenta & jaune) ↘</span>
-            </div>
-            <div class="bubble-gallery gallery-grid-3">
-                <div class="bubble-img-card fixed-height-320">
-                    <img src="images/plastique/09_59c03689fef58f2149bb31096f953455.png" alt="Objets dérivés expo BoBBY">
-                    <div class="img-caption">Affiches & visuels dérivés de l'exposition</div>
-                </div>
-                <div class="bubble-img-card fixed-height-320">
-                    <img src="images/plastique/10_e9ba94837ee049afbf351c8d145f5a2e.jpg" alt="Cartes de visite magenta et jaune">
-                    <div class="img-caption">Design des cartes de visite de l'événement</div>
-                </div>
-                <div class="bubble-img-card fixed-height-320">
-                    <img src="images/plastique/11_2aceb0e1a45ceb0b51fa3bf7ad421477.jpg" alt="T-shirts & goodies BoBBY">
-                    <div class="img-caption">T-shirts et sérigraphies satellites</div>
-                </div>
-            </div>
-        </article>
-
-        <!-- BULLE 2 : PROTHÈSE ERGONOMIQUE -->
-        <article class="project-bubble" id="prothese">
-            <div class="bubble-top-bar">
-                <span class="bubble-category-pill green-accent">Impression 3D & Conception Paramétrique</span>
-                <span class="bubble-metadata">SolidWorks • Blender • UNYQ QuickFit • Ergonomie</span>
-            </div>
-
-            <h2 class="bubble-main-title">Prothèse Ergonomique 3D</h2>
-            <p class="bubble-quote green-accent">“Prothèse de poignet et main fonctionnelle inspirée du concept UNYQ QuickFit.”</p>
-            <p class="bubble-description">
-                Conception paramétrique sous SolidWorks et Blender, liant esthétique avant-gardiste, légèreté et faisabilité mécanique pour redonner confiance à l'utilisateur. 
-                Ajourage de la paume originellement droite pour permettre de la courber en la plongeant dans l'eau chaude. 
-                Phalanges articulées et prototype complet avec poignet et pouce.
-            </p>
-
-            <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
-                <div class="scrapbook-note">
-                    <span>Ajourage de la paume thermoformable dans l'eau chaude ↙</span>
-                </div>
-                <div class="scrapbook-note highlight-green rotate-right">
-                    <span>Objectif : Rendre accessible les prothèses ↗</span>
-                </div>
-            </div>
-
-            <div class="bubble-gallery gallery-grid-4">
-                <div class="bubble-img-card fixed-height-320">
-                    <img src="images/plastique/17_f79010cf20759aa212ec61164427b56e.png" alt="Prothèse 3D - Modélisation CAO">
-                    <div class="img-caption">Modélisation CAO sous SolidWorks</div>
-                </div>
-                <div class="bubble-img-card fixed-height-320">
-                    <img src="images/plastique/19_bcdebaa647b163b29e2fba618e07a3c2.png" alt="Prothèse 3D - Impression et thermoformage">
-                    <div class="img-caption">Ajourage et courbure thermoformée</div>
-                </div>
-                <div class="bubble-img-card fixed-height-320">
-                    <img src="images/plastique/20_d096b91978ad2b2601f40c4772757edf.png" alt="Prothèse 3D - Articulations des doigts">
-                    <div class="img-caption">Phalanges et liaisons articulées</div>
-                </div>
-                <div class="bubble-img-card fixed-height-320">
-                    <img src="images/plastique/21_b262f60691af01dd3a19e8a94a89713a.png" alt="Prothèse 3D - Prototype porté">
-                    <div class="img-caption">Test ergonomique porté avec poignet</div>
-                </div>
-            </div>
-        </article>
-
-        <!-- BULLE 3 : GANT DE LA BÊTE -->
-        <article class="project-bubble" id="gant">
-            <div class="bubble-top-bar">
-                <span class="bubble-category-pill dark-accent">Gaufrage & Sculpture Papier</span>
-                <span class="bubble-metadata">Hommage Jean Cocteau 1946 • Peau d'Âne • Façonnage Artisanal</span>
-            </div>
-
-            <h2 class="bubble-main-title">Gant de la Bête</h2>
-            <p class="bubble-quote">“Sculpture et gaufrage sur papier pour « Le Manège de Peau d'Âne ».”</p>
-            <p class="bubble-description">
-                Hommage au chef-d'œuvre cinématographique de Jean Cocteau (1946). 
-                Mitaine / griffe articulée entièrement façonnée en différents types de papier transformé (gaufrage, pliage, superposition), 
-                combinant la finesse du textile et l’aspect organique écailleux d’une créature fantastique.
-            </p>
-
-            <div class="scrapbook-note highlight-magenta">
-                <span>Inspiré du chef d’œuvre de 1946 de Jean Cocteau ↘</span>
-            </div>
-
-            <div class="bubble-gallery gallery-grid-3">
-                <div class="bubble-img-card fixed-height-420">
-                    <img src="images/plastique/34_45635c69d25f869be00c89f816eec382.png" alt="Gant de la Bête - Vue d'ensemble">
-                    <div class="img-caption">Mitaine / griffe articulée en papier</div>
-                </div>
-                <div class="bubble-img-card fixed-height-420">
-                    <img src="images/plastique/36_6ad399318e058490ba90f626d033ab53.png" alt="Gant de la Bête - Détail des écailles">
-                    <div class="img-caption">Détail du gaufrage écailleux</div>
-                </div>
-                <div class="bubble-img-card fixed-height-420">
-                    <img src="images/plastique/38_11e277786db0763578f93714d72eab01.png" alt="Gant de la Bête - Articulations des doigts">
-                    <div class="img-caption">Flexibilité et plis du papier</div>
-                </div>
-            </div>
-        </article>
-
-        <!-- BULLE 4 : PARURE DE PÂTES -->
-        <article class="project-bubble" id="pates">
-            <div class="bubble-top-bar">
-                <span class="bubble-category-pill">Détournement Culinaire & Tressage</span>
-                <span class="bubble-metadata">Pâtes Alimentaires • Fil Nylon • Plastron Samouraï • Lys du Japon</span>
-            </div>
-
-            <h2 class="bubble-main-title">Parure de Pâtes</h2>
-            <p class="bubble-quote">“Plastron de samouraï et broche japonaise entièrement confectionnés en pâtes alimentaires.”</p>
-            <p class="bubble-description">
-                Détournement total d’un matériau culinaire du quotidien pour l’élever au rang de costume d’apparat. 
-                Motifs modulaires, consolidation et laquage pour un rendu sculptural d'armure ornementale. 
-                L'ensemble comprend un plastron inspiré des armures de samouraï ainsi qu'une broche minutieuse représentant un Lys du Japon.
-            </p>
-
-            <div class="scrapbook-note">
-                <span>Parure en pâtes alimentaires, colle & fil de nylon ↙</span>
-            </div>
-
-            <div class="bubble-gallery gallery-grid-3">
-                <div class="bubble-img-card fixed-height-420">
-                    <img src="images/plastique/47_815784672e31edfd8bc3b0766e52e434.jpg" alt="Parure de Pâtes - Plastron complet">
-                    <div class="img-caption">Plastron de samouraï en pâtes tressées</div>
-                </div>
-                <div class="bubble-img-card fixed-height-420">
-                    <img src="images/plastique/49_3686ebd67c3bfaa2678d54254237c479.jpg" alt="Parure de Pâtes - Détail texture et tressage">
-                    <div class="img-caption">Détail du maillage et de la consolidation</div>
-                </div>
-                <div class="bubble-img-card fixed-height-420">
-                    <img src="images/plastique/51_941fd54f69cd78fd9507685657de37f6.png" alt="Broche Lys du Japon en pâtes">
-                    <div class="img-caption">Broche artisanale • Lys du Japon</div>
-                </div>
-            </div>
-        </article>
-
-        <!-- BULLE 5 : DESSINS & TECHNIQUES -->
-        <article class="project-bubble" id="dessins">
-            <div class="bubble-top-bar">
-                <span class="bubble-category-pill dark-accent">Arts Graphiques & Croquis</span>
-                <span class="bubble-metadata">Pointillisme • Hachures • Feutre • Aquarelle • Études Anatomiques</span>
-            </div>
-
-            <h2 class="bubble-main-title">Dessins & Techniques Variées</h2>
-            <p class="bubble-quote">“Carnets de croquis sur le vif, caricatures, feutre, lavis et études anatomiques.”</p>
-            <p class="bubble-description">
-                Du trait vif au feutre noir à la minutie du pointillisme, chaque technique explore une facette du rendu graphique et de la spontanéité. 
-                Études anatomiques, volumes sculptés par hachures et carnets de croquis sur le vif.
-            </p>
-
-            <div class="scrapbook-note highlight-green">
-                <span>Croquis sur le vif, hachures au stylo & pointillisme ↘</span>
-            </div>
-
-            <div class="bubble-gallery gallery-grid-3">
-                <div class="bubble-img-card fixed-height-320">
-                    <img src="images/plastique/56_b78a87349c4c6bc1afecc823932f47de.jpg" alt="Dessin - Croquis anatomique sur le vif">
-                    <div class="img-caption">Croquis anatomique sur le vif</div>
-                </div>
-                <div class="bubble-img-card fixed-height-320">
-                    <img src="images/plastique/57_734d16edbc01e0b59a6b91f810d408fa.png" alt="Dessin - Hachures au stylo">
-                    <div class="img-caption">Hachures au stylo & clair-obscur</div>
-                </div>
-                <div class="bubble-img-card fixed-height-320">
-                    <img src="images/plastique/58_f52fcdedd21de6617f60d74b047382e8.jpg" alt="Dessin - Pointillisme minutieux">
-                    <div class="img-caption">Pointillisme & texture vibrante</div>
-                </div>
-                <div class="bubble-img-card fixed-height-320">
-                    <img src="images/plastique/60_dbeedfd80e1717044178bceb12649842.jpg" alt="Dessin - Aquarelle et lavis">
-                    <div class="img-caption">Aquarelle & lavis fluide</div>
-                </div>
-                <div class="bubble-img-card fixed-height-320">
-                    <img src="images/plastique/61_3bd850bc428f42d2b590fe7792c54ccc.png" alt="Dessin - Caricature et feutre">
-                    <div class="img-caption">Caricature & trait spontané au feutre</div>
-                </div>
-                <div class="bubble-img-card fixed-height-320">
-                    <img src="images/plastique/62_20e020d9f7a22505387a9b04b5383f2d.png" alt="Dessin - Carnet de voyage">
-                    <div class="img-caption">Étude d'attitude en carnet</div>
-                </div>
-            </div>
-        </article>
-
-        <!-- BULLE 6 : PERSONNALISATION MATÉRIAUX -->
-        <article class="project-bubble" id="materiaux">
-            <div class="bubble-top-bar">
-                <span class="bubble-category-pill green-accent">Techniques Artisanales & Procédés Anciens</span>
-                <span class="bubble-metadata">Cyanotype sur Verre • Sashiko • Tataki-Zomé • Sérigraphie</span>
-            </div>
-
-            <h2 class="bubble-main-title">Personnalisation Matériaux & Savoir-Faire</h2>
-            <p class="bubble-quote green-accent">“Exploration de procédés anciens et techniques d'impression artisanales.”</p>
-            <p class="bubble-description">
-                Sérigraphie artisanale, broderie japonaise <em>Sashiko</em>, feutrage de laine, flocage, 
-                empreintes botaniques <em>Tataki-zomé</em>, vitrail et tirages photographiques au <em>Cyanotype sur verre</em>. 
-                L'expérimentation constante de la matière et du dialogue entre les supports.
-            </p>
-
-            <div style="display:flex;gap:1rem;flex-wrap:wrap;">
-                <div class="scrapbook-note rotate-right highlight-magenta">
-                    <span>Cyanotype sur verre & broderie japonaise Sashiko ↗</span>
-                </div>
-            </div>
-
-            <div class="bubble-gallery gallery-grid-3">
-                <div class="bubble-img-card fixed-height-320">
-                    <img src="images/plastique/69_94ab5347ad06838f357973ef666a4530.jpg" alt="Cyanotype sur verre">
-                    <div class="img-caption">Cyanotype sur verre • Chimie bleue & transparence</div>
-                </div>
-                <div class="bubble-img-card fixed-height-320">
-                    <img src="images/plastique/70_2137c299188046eafd1bf63be0222832.png" alt="Broderie Sashiko">
-                    <div class="img-caption">Broderie japonaise traditionnelle Sashiko</div>
-                </div>
-                <div class="bubble-img-card fixed-height-320">
-                    <img src="images/plastique/72_ace719fcc25037b6e21eb1a1779227bf.png" alt="Sérigraphie manuelle">
-                    <div class="img-caption">Sérigraphie manuelle & passage d'encre</div>
-                </div>
-                <div class="bubble-img-card fixed-height-320">
-                    <img src="images/plastique/73_32d69283160c23bb78a1b9b85d1d0e4f.png" alt="Empreintes végétales Tataki-Zomé">
-                    <div class="img-caption">Tataki-Zomé • Empreinte végétale frappée</div>
-                </div>
-                <div class="bubble-img-card fixed-height-320">
-                    <img src="images/plastique/74_5b35156c92645623b0e7ebab2dfb912e.png" alt="Vitrail artisanal">
-                    <div class="img-caption">Vitrail & assemblage au plomb</div>
-                </div>
-                <div class="bubble-img-card fixed-height-320">
-                    <img src="images/plastique/75_cee81defe328870e7545fedddcbcf009.png" alt="Feutrage de laine">
-                    <div class="img-caption">Feutrage de matière organique</div>
-                </div>
-            </div>
-        </article>
-
-        <!-- BANNIÈRE DE CONTINUATION VERS CV / ACCUEIL -->
-        <a href="cv.html" class="next-domain-flow">
-            <div>
-                <span class="next-flow-label">En savoir plus sur mes compétences ↘</span>
-                <span class="next-flow-title">Consulter mon CV complet & Parcours</span>
-            </div>
-            <div class="next-flow-arrow">→</div>
-        </a>
-
-    </main>
-
-    <!-- Footer -->
-    <footer style="text-align:center;padding:3rem 1.5rem;font-family:var(--font-body);color:#666;">
+<div class="pm-fenetre" id="pmFenetre" aria-hidden="true">
+    <button class="pm-retour" type="button" id="pmFRetour">← Cartes</button>
+    <div class="pm-f-hero">
+        <img id="pmFImg" src="" alt="">
+        <div class="pm-f-voile"></div>
+        <div class="pm-f-titres">
+            <p class="pm-f-cat" id="pmFCat"></p>
+            <h2 class="pm-f-titre" id="pmFTitre"></h2>
+            <p class="pm-f-meta" id="pmFMeta"></p>
+        </div>
+    </div>
+    <div class="pm-f-corps">
+        <p class="pm-f-lead" id="pmFLead"></p>
+        <div class="pm-f-notes" id="pmFNotes"></div>
+        <div class="pm-f-gal" id="pmFGal"></div>
+    </div>
+    <footer class="pm-f-foot">
         <p>© 2026 Ian Bossut‑Gandou – Tous droits réservés.</p>
     </footer>
+</div>
 
-    <!-- GSAP & App Scripts -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/MotionPathPlugin.min.js"></script>
-    <script src="app.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+<script src="app.js"></script>
+<script>
+(function () {
+    var IMG = 'images/plastique/';
+
+    var CATS = [
+        {
+            id: 'sceno', num: '01', nom: "Conceptions scénographiques",
+            def: "Des pièces pensées pour l'espace : sculptures, costumes et volumes qui transforment un lieu en récit.",
+            projets: [
+                {
+                    id: 'bobby', nom: "BoBBY l'Hybride", meta: 'Sculpture · acier soudé · 2 m',
+                    court: "Statue hybride de 2 mètres, armature d'acier soudé et cœur de résine rétroéclairé.",
+                    texte: "Pièce maîtresse de la scénographie présentée aux portes ouvertes des ateliers d'artistes de Romainville. Une créature exogène et composite, tirée de l'univers de « Xenogenesis » d'Octavia E. Butler : fusion entre biologie extraterrestre et carcasse industrielle. L'armature est en acier soudé, le modelage organique, et le cœur s'éclaire grâce à un luminaire relié de la tête au torse, dans une coque de résine recouverte de papier de soie. Métal, caoutchouc, polystyrène, bois, mousse et tissu de récupération composent l'ensemble.",
+                    img: IMG + '02_28d06172a4c479a682aa43bec4ef60c7.png',
+                    gal: ['03_20669edbc4ac873f2adcf09c9959a374.png', '04_fffd9b57d692bd8f4db605b7572ac6d5.png', '09_59c03689fef58f2149bb31096f953455.png', '10_e9ba94837ee049afbf351c8d145f5a2e.jpg', '11_2aceb0e1a45ceb0b51fa3bf7ad421477.jpg'],
+                    notes: [{ t: 'Le cœur s’éclaire de la tête au torse', c: 'magenta' }, { t: '2 m · soudure & moulage', c: '' }]
+                },
+                {
+                    id: 'gant', nom: 'Gant de la Bête', meta: 'Papier gaufré · sculpture',
+                    court: "Griffe articulée entièrement façonnée en papier, hommage au film de Cocteau.",
+                    texte: "Mitaine et griffe articulée réalisées pour « Le Manège de Peau d'Âne », entièrement façonnées en différents types de papier transformé : gaufrage, pliage, superposition. Le travail combine la finesse du textile et l'aspect organique écailleux d'une créature fantastique, en hommage au gant de la Bête dans l'adaptation cinématographique de 1946 de Jean Cocteau.",
+                    img: IMG + '34_45635c69d25f869be00c89f816eec382.png',
+                    gal: ['36_6ad399318e058490ba90f626d033ab53.png', '38_11e277786db0763578f93714d72eab01.png'],
+                    notes: [{ t: 'Gaufrage, pliage, superposition', c: 'verte' }]
+                }
+            ]
+        },
+        {
+            id: 'produit', num: '02', nom: 'Design produit',
+            def: "Des objets et des prothèses pensés pour le corps : conception paramétrique, impression 3D et ergonomie.",
+            projets: [
+                {
+                    id: 'prothese', nom: 'Prothèse Ergonomique', meta: 'SolidWorks · Blender · impression 3D',
+                    court: "Main imprimée en 3D, paume thermoformable et phalanges articulées.",
+                    texte: "Prothèse de poignet et de main fonctionnelle inspirée du concept UNYQ QuickFit, conçue sous SolidWorks et Blender pour lier esthétique avant-gardiste, légèreté et faisabilité mécanique. La paume, originellement droite, est ajourée afin de pouvoir être courbée en la plongeant dans l'eau chaude. Phalanges articulées, prototype complet avec poignet et pouce, testé porté. L'objectif : rendre les prothèses accessibles.",
+                    img: IMG + '17_f79010cf20759aa212ec61164427b56e.png',
+                    gal: ['19_bcdebaa647b163b29e2fba618e07a3c2.png', '20_d096b91978ad2b2601f40c4772757edf.png', '21_b262f60691af01dd3a19e8a94a89713a.png'],
+                    notes: [{ t: 'Paume thermoformable dans l’eau chaude', c: '' }, { t: 'Rendre accessible les prothèses', c: 'verte' }]
+                },
+                {
+                    id: 'pates', nom: 'Parure de Pâtes', meta: 'Tressage · plastron & broche',
+                    court: "Plastron de samouraï et broche Lys du Japon tressés en pâtes alimentaires.",
+                    texte: "Un matériau culinaire du quotidien élevé au rang de costume d'apparat. Le plastron s'inspire des armures de samouraï : motifs modulaires tressés, consolidation et laquage pour un rendu sculptural. L'ensemble est complété par une broche minutieuse représentant un Lys du Japon, entièrement en pâtes, colle et fil de nylon.",
+                    img: IMG + '47_815784672e31edfd8bc3b0766e52e434.jpg',
+                    gal: ['49_3686ebd67c3bfaa2678d54254237c479.jpg', '51_941fd54f69cd78fd9507685657de37f6.png'],
+                    notes: [{ t: 'Pâtes, colle & fil de nylon', c: 'magenta' }]
+                }
+            ]
+        },
+        {
+            id: 'couture', num: '03', nom: 'Couture & Flocages',
+            def: "La matière détournée : broderie, flocage, feutrage et teintures pour personnaliser un support.",
+            projets: [
+                {
+                    id: 'materiaux', nom: 'Personnalisation Matériaux', meta: 'Sérigraphie · Sashiko · cyanotype',
+                    court: "Sérigraphie, broderie Sashiko, feutrage, Tataki-zomé et cyanotype sur verre.",
+                    texte: "Exploration de procédés anciens et de techniques d'impression artisanales : sérigraphie manuelle, broderie japonaise Sashiko, feutrage de laine, flocage, empreintes botaniques Tataki-zomé, vitrail et tirages photographiques au cyanotype sur verre. Une recherche constante sur la matière et le dialogue entre les supports.",
+                    img: IMG + '69_94ab5347ad06838f357973ef666a4530.jpg',
+                    gal: ['70_2137c299188046eafd1bf63be0222832.png', '72_ace719fcc25037b6e21eb1a1779227bf.png', '73_32d69283160c23bb78a1b9b85d1d0e4f.png', '74_5b35156c92645623b0e7ebab2dfb912e.png', '75_cee81defe328870e7545fedddcbcf009.png'],
+                    notes: [{ t: 'Cyanotype sur verre & Sashiko', c: 'magenta' }, { t: 'Vitrail & empreintes frappées', c: '' }]
+                }
+            ]
+        },
+        {
+            id: 'dessins', num: '04', nom: 'Dessins & Techniques',
+            def: "Le dessin comme terrain d'exploration : techniques sèches, encres, lavis et étude du vivant.",
+            projets: [
+                {
+                    id: 'dessins', nom: 'Dessins & Techniques', meta: 'Feutre · stylo · aquarelle',
+                    court: "Croquis sur le vif, hachures, pointillisme, caricatures et lavis.",
+                    texte: "Du trait vif au feutre noir à la minutie du pointillisme, chaque technique explore une facette du rendu graphique et de la spontanéité. Études anatomiques, volumes sculptés par hachures, caricatures et carnets de croquis sur le vif, jusqu'aux lavis d'aquarelle.",
+                    img: IMG + '58_f52fcdedd21de6617f60d74b047382e8.jpg',
+                    gal: ['56_b78a87349c4c6bc1afecc823932f47de.jpg', '57_734d16edbc01e0b59a6b91f810d408fa.png', '60_dbeedfd80e1717044178bceb12649842.jpg', '61_3bd850bc428f42d2b590fe7792c54ccc.png', '62_20e020d9f7a22505387a9b04b5383f2d.png'],
+                    notes: [{ t: 'Croquis sur le vif & pointillisme', c: 'verte' }]
+                }
+            ]
+        }
+    ];
+
+    var etat = { actif: 0, focus: -1, ouvertes: {} };
+    var piste = document.getElementById('pmPiste');
+    var compteur = document.getElementById('pmCompteur');
+    var cartesEl = document.getElementById('pmCartes');
+    var grille = document.getElementById('pmGrille');
+    var fenetre = document.getElementById('pmFenetre');
+    var voile = document.getElementById('pmVoile');
+    var flou = document.getElementById('pmFlou');
+    var boosters = [];
+    var catCourante = null;
+
+    function deux(n) { return (n < 10 ? '0' : '') + n; }
+
+    /* ---------- construction du rail ---------- */
+    CATS.forEach(function (cat, i) {
+        var b = document.createElement('div');
+        b.className = 'pm-booster';
+        b.setAttribute('data-i', i);
+        b.innerHTML =
+            '<div class="pm-pack">' +
+                '<span class="pm-serie">Série ' + cat.num + '</span>' +
+                '<span class="pm-num">' + cat.num + '</span>' +
+                '<div class="pm-pack-nom">' + cat.nom + '</div>' +
+                '<div class="pm-pack-count">' + cat.projets.length + ' projet' + (cat.projets.length > 1 ? 's' : '') + '</div>' +
+                '<div class="pm-scelle">' +
+                    '<span class="pm-fente"></span>' +
+                    '<span class="pm-poignee" role="button" aria-label="Glisser pour ouvrir le paquet"></span>' +
+                '</div>' +
+                '<span class="pm-indice">attrape et glisse jusqu\'à l\'autre bord</span>' +
+            '</div>' +
+            '<div class="pm-pile">' +
+                '<i style="background-image:url(' + cat.projets[0].img + ')"></i>' +
+                '<i style="background-image:url(' + (cat.projets[1] || cat.projets[0]).img + ')"></i>' +
+                '<i style="background-image:url(' + cat.projets[cat.projets.length - 1].img + ')"></i>' +
+            '</div>' +
+            '<p class="pm-def">' + cat.def + '</p>';
+        piste.appendChild(b);
+        boosters.push(b);
+        brancher(b, cat, i);
+    });
+
+    function placer() {
+        var total = CATS.length;
+        var demi = Math.floor(total / 2);
+        // rayon borné pour que la roue tienne dans la fenêtre
+        var rayon = Math.max(300, Math.min(520, window.innerWidth * 0.33));
+
+        boosters.forEach(function (b, i) {
+            // position circulaire : 0 devant, ±1 aux quarts, le reste derrière
+            var d = i - etat.actif;
+            if (d > demi) d -= total;
+            if (d < -demi) d += total;
+
+            var angle = (d * 360 / total) * Math.PI / 180;
+            var x = Math.sin(angle) * rayon;
+            var z = -(1 - Math.cos(angle)) * rayon;
+            var abs = Math.abs(d);
+            var derriere = abs >= demi && total > 2;
+
+            b.classList.toggle('actif', d === 0);
+            b.classList.remove('focus');
+            gsap.to(b, {
+                x: x,
+                z: z,
+                y: 0,
+                transformPerspective: 1050,
+                rotationY: -d * 34,
+                scale: 1,
+                opacity: derriere ? 0 : (d === 0 ? 1 : 0.92),
+                zIndex: 20 - abs,
+                duration: 0.68,
+                ease: 'power2.out',
+                overwrite: 'auto'
+            });
+            b.style.pointerEvents = derriere ? 'none' : 'auto';
+        });
+        compteur.textContent = deux(etat.actif + 1) + ' / ' + deux(total);
+    }
+
+    function aller(n) {
+        if (etat.focus >= 0) return;
+        var total = CATS.length;
+        etat.actif = ((n % total) + total) % total;
+        placer();
+    }
+
+    /* ---------- mise au point ---------- */
+    function entrerFocus(i) {
+        etat.focus = i;
+        etat.actif = i;
+        document.body.classList.add('pm-focus');
+        voile.classList.add('on');
+
+        boosters.forEach(function (b, k) {
+            var c = (k === i);
+            b.classList.toggle('actif', c);
+            b.classList.toggle('focus', c);
+            b.style.pointerEvents = c ? 'auto' : 'none';
+            gsap.set(b.querySelector('.pm-poignee'), { opacity: c ? 1 : 0, pointerEvents: c ? 'auto' : 'none' });
+            gsap.to(b.querySelectorAll('.pm-pack, .pm-pile, .pm-slab'), { rotationX: 0, rotationY: 0, duration: 0.45, ease: 'power2.out', overwrite: true });
+            gsap.to(b, {
+                x: c ? 0 : (k - i) * 620,
+                y: 0,
+                z: c ? 0 : -520,
+                transformPerspective: 1050,
+                rotationY: c ? 0 : (k - i) * 18,
+                scale: c ? 1.3 : 0.7,
+                opacity: c ? 1 : 0,
+                zIndex: c ? 50 : 10,
+                duration: 0.65,
+                ease: 'power3.out',
+                overwrite: 'auto'
+            });
+        });
+        compteur.textContent = deux(i + 1) + ' / ' + deux(CATS.length);
+    }
+
+    function sortirFocus() {
+        etat.focus = -1;
+        document.body.classList.remove('pm-focus');
+        voile.classList.remove('on');
+        boosters.forEach(function (b) {
+            b.classList.remove('focus', 'tire');
+            b.style.pointerEvents = 'auto';
+            gsap.set(b.querySelector('.pm-poignee'), { opacity: 0, pointerEvents: 'none' });
+            reinit(b);
+        });
+        placer();
+    }
+
+    function reinit(b) {
+        var p = b.querySelector('.pm-poignee');
+        var f = b.querySelector('.pm-fente');
+        if (p) gsap.set(p, { x: 0 });
+        if (f) f.style.width = '0px';
+    }
+
+    /* ---------- interaction booster ---------- */
+    function brancher(b, cat, i) {
+        var pack = b.querySelector('.pm-pack');
+        var poignee = b.querySelector('.pm-poignee');
+        var fente = b.querySelector('.pm-fente');
+        var pile = b.querySelector('.pm-pile');
+        var attrape = false;
+        var course = 0;
+
+        // tranche noire commune au pack ouvert, insérée derrière lui
+        var slab = document.createElement('div');
+        slab.className = 'pm-slab';
+        b.insertBefore(slab, b.firstChild);
+        // la pile de cartes tourne autour du centre du pack : même axe que lui
+        if (pile) gsap.set(pile, { transformOrigin: '50% 222%' });
+
+        // l'épaisseur noire suit l'inclinaison : elle part toujours du côté opposé
+        var inclinaison = { rx: 0, ry: 0 };
+        function majRelief() {
+            var ry = inclinaison.ry * Math.PI / 180;
+            var rx = inclinaison.rx * Math.PI / 180;
+            var sx = 8 - Math.sin(ry) * 62;
+            var sy = 8 + Math.sin(rx) * 62;
+            pack.style.setProperty('--sx', sx.toFixed(2) + 'px');
+            pack.style.setProperty('--sy', sy.toFixed(2) + 'px');
+            gsap.set(slab, { x: sx, y: sy });
+        }
+
+        // tout ce qui compose le pack tourne ensemble quand il est ouvert
+        function bloc() {
+            var l = [pack];
+            if (b.classList.contains('ouverte')) {
+                if (pile) l.push(pile);
+                l.push(slab);
+            }
+            return l;
+        }
+
+        // même perspective au survol que les cartes projets, en plus marqué
+        b.addEventListener('pointermove', function (e) {
+            if (etat.focus >= 0) return;
+            var r = pack.getBoundingClientRect();
+            var px = (e.clientX - r.left) / r.width - 0.5;
+            var py = (e.clientY - r.top) / r.height - 0.5;
+            var cy = Math.max(-0.5, Math.min(0.5, px)) * 46;
+            var cx = Math.max(-0.5, Math.min(0.5, py)) * -46;
+            gsap.to(bloc(), {
+                rotationY: cy,
+                rotationX: cx,
+                transformPerspective: 780,
+                duration: 0.35,
+                ease: 'power2.out',
+                overwrite: 'auto'
+            });
+            gsap.to(inclinaison, {
+                ry: cy,
+                rx: cx,
+                duration: 0.35,
+                ease: 'power2.out',
+                overwrite: 'auto',
+                onUpdate: majRelief
+            });
+        });
+
+        b.addEventListener('pointerleave', function () {
+            gsap.to(bloc(), { rotationY: 0, rotationX: 0, duration: 0.5, ease: 'power2.out', overwrite: 'auto' });
+            gsap.to(inclinaison, { ry: 0, rx: 0, duration: 0.5, ease: 'power2.out', overwrite: 'auto', onUpdate: majRelief });
+        });
+
+        b.addEventListener('click', function (e) {
+            if (b.getAttribute('data-tire') === '1') return;
+            if (e.target.closest('.pm-poignee')) return;
+            if (etat.ouvertes[cat.id]) { ouvrirCartes(cat, b); return; }
+            if (etat.focus === i) return;
+            if (etat.focus >= 0) return;
+            entrerFocus(i);
+        });
+
+        function debut(e) {
+            if (etat.ouvertes[cat.id]) { ouvrirCartes(cat, b); return; }
+            e.preventDefault();
+            e.stopPropagation();
+            if (etat.focus !== i) entrerFocus(i);
+            attrape = true;
+            course = Math.max(60, pack.clientWidth - 46);
+            b.setAttribute('data-tire', '1');
+            b.classList.add('tire');
+            try { poignee.setPointerCapture(e.pointerId); } catch (err) {}
+        }
+
+        function suivre(e) {
+            if (!attrape) return;
+            var r = pack.getBoundingClientRect();
+            var prog = Math.max(0, Math.min(1, (e.clientX - r.left) / r.width));
+            var d = prog * course;
+            gsap.set(poignee, { x: d });
+            fente.style.width = d + 'px';
+            if (prog >= 0.9) {
+                attrape = false;
+                b.removeAttribute('data-tire');
+                b.classList.remove('tire');
+                dechirer(b, cat);
+            }
+        }
+
+        function fin() {
+            if (!attrape) return;
+            attrape = false;
+            var prog = (parseFloat(fente.style.width) || 0) / course;
+            b.removeAttribute('data-tire');
+            setTimeout(function () { b.removeAttribute('data-tire'); }, 60);
+            b.classList.remove('tire');
+            if (prog >= 0.72) {
+                dechirer(b, cat);
+            } else {
+                gsap.to(poignee, { x: 0, duration: 0.45, ease: 'back.out(1.6)' });
+                gsap.to(fente, { width: 0, duration: 0.35, ease: 'power2.out' });
+            }
+        }
+
+        poignee.addEventListener('pointerdown', debut);
+        poignee.addEventListener('pointermove', suivre);
+        poignee.addEventListener('pointerup', fin);
+        poignee.addEventListener('pointercancel', fin);
+        window.addEventListener('pointermove', function (e) { if (attrape) suivre(e); }, { passive: true });
+        window.addEventListener('pointerup', function () { if (attrape) fin(); });
+    }
+
+    /* ---------- déchirure : le haut part, les cartes sortent ---------- */
+    function dechirer(b, cat) {
+        var pack = b.querySelector('.pm-pack');
+        var poignee = b.querySelector('.pm-poignee');
+        var fente = b.querySelector('.pm-fente');
+
+        etat.ouvertes[cat.id] = true;
+        b.classList.add('ouverte');
+        b.setAttribute('data-tire', '1');
+
+        var r = pack.getBoundingClientRect();
+        var haut = 96 * (r.height / 400);
+
+        var foil = document.createElement('div');
+        foil.className = 'pm-foil';
+        foil.style.left = r.left + 'px';
+        foil.style.top = r.top + 'px';
+        foil.style.width = r.width + 'px';
+        foil.style.height = haut + 'px';
+        foil.innerHTML = '<span class="pm-serie">Série ' + cat.num + '</span>' +
+                         '<span class="pm-num">' + cat.num + '</span>';
+        document.body.appendChild(foil);
+
+        pack.classList.add('ouverte');
+        gsap.set(poignee, { x: 0 });
+        fente.style.width = '0px';
+
+        gsap.timeline()
+            .to(foil, { y: -16, duration: 0.14, ease: 'power1.out' })
+            .to(foil, {
+                y: -(window.innerHeight * 0.95),
+                x: -46,
+                rotation: -17,
+                skewX: -6,
+                duration: 0.95,
+                ease: 'power3.in'
+            }, 0.06)
+            .to(foil, { opacity: 0, duration: 0.28 }, 0.8)
+            .add(function () { foil.remove(); }, 1.15);
+
+        // filet de sécurité si les animations sont suspendues
+        setTimeout(function () { if (foil.parentNode) foil.remove(); }, 1600);
+
+        b.removeAttribute('data-tire');
+        setTimeout(function () { ouvrirCartes(cat, b); }, 260);
+    }
+
+    /* ---------- cartes qui sortent du paquet ---------- */
+    function constructionsCartes(cat) {
+        grille.innerHTML = cat.projets.map(function (p, k) {
+            return '<div class="pm-item" data-k="' + k + '">' +
+                '<div class="pm-tilt">' +
+                    '<div class="pm-carte">' +
+                        '<div class="pm-face">' +
+                            '<img src="' + p.img + '" alt="' + p.nom + '">' +
+                            '<span class="pm-badge">' + cat.nom + '</span>' +
+                            '<div class="pm-pied"><span class="pm-nom">' + p.nom + '</span><span class="pm-meta">' + p.meta + '</span></div>' +
+                        '</div>' +
+                        '<div class="pm-face pm-face--dos">' +
+                            '<span class="pm-dos-titre">' + p.nom + '</span>' +
+                            '<p class="pm-dos-txt">' + p.court + '</p>' +
+                            '<span class="pm-dos-meta">' + p.meta + '</span>' +
+                            '<button class="pm-voir" type="button">Voir le projet →</button>' +
+                        '</div>' +
+                    '</div>' +
+                '</div>' +
+            '</div>';
+        }).join('');
+    }
+
+    function brancherCartes(cat) {
+        Array.prototype.forEach.call(grille.querySelectorAll('.pm-item'), function (item) {
+            var k = +item.getAttribute('data-k');
+            var projet = cat.projets[k];
+            var tilt = item.querySelector('.pm-tilt');
+            var carte = item.querySelector('.pm-carte');
+            var voir = item.querySelector('.pm-voir');
+            var timer = null;
+
+            item.addEventListener('pointermove', function (e) {
+                if (carte.classList.contains('retournee')) return;
+                var r = item.getBoundingClientRect();
+                var px = (e.clientX - r.left) / r.width - 0.5;
+                var py = (e.clientY - r.top) / r.height - 0.5;
+                gsap.to(tilt, { rotationY: px * 15, rotationX: -py * 15, duration: 0.35, ease: 'power2.out', transformPerspective: 1000, overwrite: 'auto' });
+            });
+            item.addEventListener('pointerleave', function () {
+                gsap.to(tilt, { rotationY: 0, rotationX: 0, duration: 0.5, ease: 'power2.out', overwrite: 'auto' });
+            });
+
+            item.addEventListener('click', function (e) {
+                if (e.target.closest('.pm-voir')) return;
+                if (timer) return;
+                timer = setTimeout(function () {
+                    timer = null;
+                    carte.classList.toggle('retournee');
+                }, 240);
+            });
+
+            item.addEventListener('dblclick', function (e) {
+                if (e.target.closest('.pm-voir')) return;
+                if (timer) { clearTimeout(timer); timer = null; }
+                carte.classList.remove('retournee');
+                ouvrirProjet(cat, projet);
+            });
+
+            voir.addEventListener('click', function (e) {
+                e.stopPropagation();
+                ouvrirProjet(cat, projet);
+            });
+        });
+    }
+
+    function ouvrirCartes(cat, b) {
+        var pack = b.querySelector('.pm-pack');
+        catCourante = cat;
+
+        document.getElementById('pmCartesNum').textContent = cat.num;
+        document.getElementById('pmCartesNom').textContent = cat.nom;
+        document.getElementById('pmCartesNote').textContent = cat.def;
+
+        constructionsCartes(cat);
+        brancherCartes(cat);
+
+        cartesEl.classList.add('on');
+        cartesEl.setAttribute('aria-hidden', 'false');
+        cartesEl.classList.add('en-attente');
+        cartesEl.scrollTop = 0;
+        b.classList.add('cartes-sorties');
+
+        var items = Array.prototype.slice.call(grille.querySelectorAll('.pm-item'));
+        var pile = b.querySelector('.pm-pile i:nth-child(2)') || pack;
+        var pr = pile.getBoundingClientRect();
+
+        // le paquet passe devant : les cartes montent derrière lui, comme tirées de l'intérieur
+        gsap.set(b, { zIndex: 70 });
+
+        var tl = gsap.timeline();
+        var finMontee = 0;
+
+        items.forEach(function (item, i) {
+            var r = item.getBoundingClientRect();
+            var dx = (pr.left + pr.width / 2) - (r.left + r.width / 2);
+            var dy = pr.top - r.top;
+            var sc = pr.width / r.width;
+            var place = { x: dx, y: dy, scale: sc, rotation: (i % 2 ? 2 : -2) };
+            item.__pile = place;
+            gsap.set(item, place);
+            // course : juste de quoi sortir entièrement par le haut de l'écran
+            var course = pr.top + r.height * sc + 80;
+            tl.to(item, { y: dy - course, duration: 0.5, ease: 'power2.inOut' }, i * 0.07);
+            finMontee = Math.max(finMontee, i * 0.07 + 0.5);
+        });
+
+        // cartes hors champ : le fond se floute lentement, le paquet repasse derrière
+        tl.add(function () {
+            gsap.set(b, { zIndex: 45 });
+            cartesEl.classList.remove('en-attente');
+            flou.classList.add('on');
+        }, finMontee);
+
+        items.forEach(function (item, i) {
+            tl.to(item, { x: 0, y: 0, scale: 1, rotation: 0, duration: 0.7, ease: 'power3.out' }, finMontee + 0.22 + i * 0.06);
+        });
+    }
+
+    function fermerCartes() {
+        var b = boosters[CATS.indexOf(catCourante)];
+        var pack = b ? b.querySelector('.pm-pack') : null;
+        var items = Array.prototype.slice.call(grille.querySelectorAll('.pm-item'));
+
+        if (!items.length || !pack) { terminerFermeture(); return; }
+
+        var pile = b.querySelector('.pm-pile i:nth-child(2)') || pack;
+        var pr = pile.getBoundingClientRect();
+        var tl = gsap.timeline({ onComplete: terminerFermeture });
+        var finMontee = 0;
+
+        cartesEl.classList.add('en-attente');
+
+        // les cartes remontent au premier plan, hors écran par le haut
+        items.forEach(function (item, i) {
+            var r = item.getBoundingClientRect();
+            var dx = (pr.left + pr.width / 2) - (r.left + r.width / 2);
+            var dy = pr.top - r.top;
+            var sc = pr.width / r.width;
+            item.__pile = { x: dx, y: dy, scale: sc, rotation: (i % 2 ? 2 : -2) };
+            var course = r.top + r.height + 80;
+            tl.to(item, { x: dx, y: -course, scale: sc, duration: 0.45, ease: 'power2.inOut' }, i * 0.06);
+            finMontee = Math.max(finMontee, i * 0.06 + 0.45);
+        });
+
+        // hors écran : le fond se nettoie doucement, puis le paquet repasse devant
+        tl.add(function () { flou.classList.remove('on'); }, finMontee);
+        tl.add(function () { gsap.set(b, { zIndex: 70 }); }, finMontee + 0.5);
+        items.forEach(function (item, i) {
+            tl.to(item, {
+                x: item.__pile.x, y: item.__pile.y, scale: item.__pile.scale, rotation: item.__pile.rotation,
+                duration: 0.55, ease: 'power2.out'
+            }, finMontee + 0.56 + i * 0.06);
+        });
+
+        setTimeout(terminerFermeture, 3200);
+    }
+
+    function terminerFermeture() {
+        cartesEl.classList.add('en-attente');
+        cartesEl.classList.remove('on');
+        cartesEl.setAttribute('aria-hidden', 'true');
+        flou.classList.remove('on');
+        grille.innerHTML = '';
+        if (catCourante) {
+            var b = boosters[CATS.indexOf(catCourante)];
+            if (b) {
+                b.classList.remove('cartes-sorties');
+                gsap.set(b, { zIndex: 50 });
+            }
+        }
+    }
+
+    document.getElementById('pmCartesRetour').addEventListener('click', fermerCartes);
+
+    // clic dans le vide : retour aux familles
+    cartesEl.addEventListener('click', function (e) {
+        if (e.target.closest('.pm-item')) return;
+        if (e.target.closest('button')) return;
+        fermerCartes();
+    });
+
+    /* ---------- fenêtre projet ---------- */
+    function ouvrirProjet(cat, p) {
+        document.getElementById('pmFImg').src = p.img;
+        document.getElementById('pmFImg').alt = p.nom;
+        document.getElementById('pmFCat').textContent = cat.num + ' · ' + cat.nom;
+        document.getElementById('pmFTitre').textContent = p.nom;
+        document.getElementById('pmFMeta').textContent = p.meta;
+        document.getElementById('pmFLead').textContent = p.texte;
+
+        document.getElementById('pmFNotes').innerHTML = (p.notes || []).map(function (n) {
+            return '<span class="pm-f-note ' + (n.c || '') + '">' + n.t + '</span>';
+        }).join('');
+
+        document.getElementById('pmFGal').innerHTML = (p.gal || []).map(function (f, i) {
+            return '<figure' + (i === 0 ? ' class="large"' : '') + '><img src="' + IMG + f + '" alt="' + p.nom + ' — vue ' + (i + 1) + '" loading="lazy"></figure>';
+        }).join('');
+
+        fenetre.classList.add('on');
+        fenetre.setAttribute('aria-hidden', 'false');
+        fenetre.scrollTop = 0;
+    }
+
+    function fermerProjet() {
+        fenetre.classList.remove('on');
+        fenetre.setAttribute('aria-hidden', 'true');
+    }
+
+    document.getElementById('pmFRetour').addEventListener('click', fermerProjet);
+
+    /* ---------- navigation ---------- */
+    document.getElementById('pmPrec').addEventListener('click', function () { aller(etat.actif - 1); });
+    document.getElementById('pmSuiv').addEventListener('click', function () { aller(etat.actif + 1); });
+    document.getElementById('pmRetourFocus').addEventListener('click', sortirFocus);
+    voile.addEventListener('click', sortirFocus);
+
+    var dernier = 0;
+    window.addEventListener('wheel', function (e) {
+        if (cartesEl.classList.contains('on') || fenetre.classList.contains('on')) return;
+        if (etat.focus >= 0) return;
+        var t = Date.now();
+        if (t - dernier < 340) return;
+        if (Math.abs(e.deltaY) < 14 && Math.abs(e.deltaX) < 14) return;
+        dernier = t;
+        aller(etat.actif + (e.deltaY > 0 || e.deltaX > 0 ? 1 : -1));
+    }, { passive: true });
+
+    document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape') {
+            if (fenetre.classList.contains('on')) { fermerProjet(); return; }
+            if (cartesEl.classList.contains('on')) { fermerCartes(); return; }
+            if (etat.focus >= 0) { sortirFocus(); return; }
+        }
+        if (cartesEl.classList.contains('on') || fenetre.classList.contains('on') || etat.focus >= 0) return;
+        if (e.key === 'ArrowLeft') aller(etat.actif - 1);
+        if (e.key === 'ArrowRight') aller(etat.actif + 1);
+    });
+
+    var depart = null;
+    piste.addEventListener('pointerdown', function (e) {
+        if (e.target.closest('.pm-poignee')) return;
+        if (etat.focus >= 0) return;
+        depart = e.clientX;
+    });
+    window.addEventListener('pointerup', function (e) {
+        if (depart === null) return;
+        var delta = e.clientX - depart;
+        depart = null;
+        if (Math.abs(delta) < 60) return;
+        aller(etat.actif + (delta < 0 ? 1 : -1));
+    });
+
+    placer();
+
+    /* ---------- arrivée : les boosters surgissent de devant l'écran ---------- */
+    var calme = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    var packs = boosters.map(function (b) { return b.querySelector('.pm-pack'); });
+
+    if (calme) {
+        gsap.set(packs, { opacity: 1 });
+    } else {
+        /* On n'anime que le paquet lui-même : la position dans la roue
+           appartient à placer(), on n'y touche pas. */
+        var entree = gsap.timeline({ delay: 0.05 });
+        var total = boosters.length;
+        var demi = Math.floor(total / 2);
+
+        /* Ordre d'arrivée : le paquet du fond d'abord, puis les deux côtés,
+           et le paquet de devant en dernier vient se poser par-dessus. */
+        function retardDe(d) {
+            if (d === demi) return 0;          // celui du fond
+            if (d === 1) return 0.14;          // côté droit
+            if (d === -1) return 0.22;         // côté gauche
+            return 0.38;                       // celui de devant
+        }
+
+        packs.forEach(function (pack, i) {
+            /* sens de l'arrivée : 0 pour le paquet de devant, ±1 pour les côtés */
+            var d = i - etat.actif;
+            if (d > demi) d -= total;
+            if (d < -demi) d += total;
+            var dir = d === 0 ? 0 : (d > 0 ? 1 : -1);
+            var retard = retardDe(d);
+
+            entree.fromTo(pack, { opacity: 0 }, { opacity: 1, duration: 0.22, ease: 'power1.out' }, retard);
+            entree.fromTo(pack,
+                { scale: 1.5, x: dir * 84, y: 46, rotationZ: dir * 5, filter: 'blur(9px)' },
+                { scale: 1, x: 0, y: 0, rotationZ: 0, filter: 'blur(0px)', duration: 0.55,
+                  ease: 'back.out(1.15)', clearProps: 'filter' },
+                retard);
+
+            /* le paquet du fond est invisible dans la roue : on le montre
+               le temps de l'arrivée, puis il se retire sous celui de devant */
+            if (d === demi) {
+                entree.fromTo(boosters[i], { opacity: 0 },
+                    { opacity: 0.55, duration: 0.3, ease: 'power1.out', overwrite: 'auto' }, 0);
+                entree.to(boosters[i], { opacity: 0, duration: 0.35, ease: 'power1.in' }, 0.98);
+            }
+        });
+        /* le halo s'allume pendant la manœuvre */
+        gsap.fromTo('.pm-halo', { opacity: 0, scale: 0.78 },
+            { opacity: 1, scale: 1, duration: 1.35, ease: 'power2.out', clearProps: 'opacity,transform', delay: 0.1 });
+    }
+
+    gsap.fromTo('.pm-entete', { y: -18 },
+        { y: 0, opacity: 1, duration: 0.55, ease: 'power2.out', delay: calme ? 0 : 0.9 });
+})();
+</script>
 </body>
 </html>

@@ -1,0 +1,434 @@
+/* ---------- mini-jeux du portfolio ---------- */
+.jeu-hote {
+    display: grid;
+    gap: 0.9rem;
+    padding-top: clamp(1rem, 2.4vw, 2rem);
+}
+
+.jeu {
+    display: grid;
+    gap: clamp(0.8rem, 1.6vw, 1.2rem);
+}
+
+.jeu-tete {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 0.8rem 1.4rem;
+}
+
+.jeu-titre {
+    margin: 0;
+    font-family: 'Archivo Black', sans-serif;
+    font-size: clamp(1rem, 1.7vw, 1.4rem);
+    line-height: 1.1;
+    text-transform: uppercase;
+    color: var(--blanc);
+}
+
+.jeu-sous {
+    margin: 0.4rem 0 0;
+    max-width: 46ch;
+    font-size: 0.62rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: #7d7d7d;
+}
+
+.jeu-hud {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem 0.8rem;
+}
+
+.jeu-infos {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+}
+
+.jeu-infos span {
+    padding: 0.32rem 0.55rem;
+    border: 1px solid rgba(239, 239, 239, 0.16);
+    font-size: 0.56rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: #c4c4c4;
+    white-space: nowrap;
+}
+
+.jeu-infos span:empty {
+    display: none;
+}
+
+.jeu-son {
+    padding: 0.32rem 0.6rem;
+    background: transparent;
+    border: 1px solid rgba(239, 239, 239, 0.28);
+    color: var(--blanc);
+    font: inherit;
+    font-size: 0.56rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    cursor: none;
+    transition: background 0.25s ease, color 0.25s ease, border-color 0.25s ease;
+}
+
+.jeu-son:hover,
+.jeu-son[aria-pressed="true"]:hover {
+    background: var(--neon);
+    border-color: var(--neon);
+    color: var(--noir);
+}
+
+.jeu-son[aria-pressed="false"] {
+    color: #8a8a8a;
+    border-color: rgba(239, 239, 239, 0.14);
+}
+
+.jeu-scene {
+    position: relative;
+    background: #0b0b0c;
+    border: 1px solid var(--ligne);
+    overflow: hidden;
+    line-height: 0;
+}
+
+.jeu-canvas {
+    display: block;
+    width: 100%;
+    height: auto;
+    background: #0e0e10;
+    touch-action: none;
+}
+
+.jeu-hote[data-jeu="desktop"] .jeu-scene {
+    max-width: 860px;
+}
+
+.jeu-hote[data-jeu="mobile"] .jeu-scene {
+    max-width: 330px;
+    margin: 0 auto;
+    box-shadow: 0 0 0 8px #16161a, 0 0 0 9px rgba(239, 239, 239, 0.1);
+}
+
+.jeu-aide {
+    margin: 0;
+    max-width: 60ch;
+    font-size: 0.7rem;
+    line-height: 1.6;
+    color: #7a7a7a;
+}
+
+.jeu-voile {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    padding: 1.2rem;
+    background: rgba(8, 8, 10, 0.93);
+    z-index: 3;
+}
+
+.jeu-voile-boite {
+    max-width: 30rem;
+    text-align: center;
+}
+
+.jeu-voile-boite h5 {
+    margin: 0 0 0.6rem;
+    font-family: 'Archivo Black', sans-serif;
+    font-size: clamp(0.95rem, 1.6vw, 1.25rem);
+    line-height: 1.15;
+    text-transform: uppercase;
+    color: var(--blanc);
+}
+
+.jeu-voile-boite p {
+    margin: 0 auto 1rem;
+    max-width: 34ch;
+    font-size: 0.78rem;
+    line-height: 1.6;
+    color: #b4b4b4;
+}
+
+.jeu-bouton {
+    padding: 0.6rem 1.1rem;
+    background: var(--blanc);
+    border: 2px solid var(--blanc);
+    color: var(--noir);
+    font: inherit;
+    font-size: 0.6rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    cursor: none;
+    transition: background 0.25s ease, color 0.25s ease, border-color 0.25s ease, transform 0.25s ease;
+}
+
+.jeu-bouton:hover {
+    background: var(--neon);
+    border-color: var(--neon);
+    color: var(--noir);
+    transform: translateY(-2px);
+}
+
+/* ---------- carnet de conception, sous la fenêtre de jeu ---------- */
+.gd {
+    display: grid;
+    gap: clamp(1.4rem, 2.6vw, 2.2rem);
+    margin-top: clamp(1.6rem, 3vw, 2.6rem);
+    padding-top: clamp(1.4rem, 2.6vw, 2rem);
+    border-top: 1px solid rgba(239, 239, 239, 0.14);
+}
+
+.gd-tete {
+    display: grid;
+    gap: 0.55rem;
+    max-width: 70ch;
+}
+
+.gd-kicker {
+    margin: 0;
+    font-size: 0.58rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--neon);
+}
+
+.gd-titre {
+    margin: 0;
+    font-family: 'Archivo Black', sans-serif;
+    font-size: clamp(1.05rem, 1.9vw, 1.5rem);
+    line-height: 1.1;
+    text-transform: uppercase;
+    color: var(--blanc);
+}
+
+.gd-intro {
+    margin: 0;
+    font-size: 0.86rem;
+    line-height: 1.6;
+    color: #a9a9a9;
+}
+
+.gd-sous-titre {
+    margin: 0 0 0.9rem;
+    padding-bottom: 0.4rem;
+    border-bottom: 1px solid rgba(239, 239, 239, 0.14);
+    font-family: 'Archivo Black', sans-serif;
+    font-size: 0.66rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--blanc);
+}
+
+.gd-bloc {
+    min-width: 0;
+}
+
+/* planches de sprites */
+.gd-planches {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: 0.7rem;
+}
+
+.gd-planche {
+    margin: 0;
+    display: grid;
+    gap: 0.5rem;
+    justify-items: center;
+    padding: 0.9rem 0.6rem 0.7rem;
+    background: #111114;
+    border: 1px solid var(--ligne);
+}
+
+.gd-planche canvas {
+    image-rendering: pixelated;
+    display: block;
+}
+
+.gd-planche figcaption {
+    display: grid;
+    gap: 0.15rem;
+    text-align: center;
+}
+
+.gd-planche strong {
+    font-size: 0.6rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: #dcdcdc;
+    font-weight: 700;
+}
+
+.gd-planche span {
+    font-size: 0.54rem;
+    letter-spacing: 0.08em;
+    color: #6d6d6d;
+}
+
+/* objets */
+.gd-objets {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+    gap: 0.6rem;
+}
+
+.gd-objets li {
+    display: grid;
+    grid-template-columns: 84px minmax(0, 1fr);
+    gap: 0.6rem;
+    align-items: center;
+    padding: 0.5rem;
+    background: #111114;
+    border: 1px solid var(--ligne);
+}
+
+.gd-objet-vue {
+    display: grid;
+    place-items: center;
+    line-height: 0;
+}
+
+.gd-objet-vue canvas {
+    image-rendering: pixelated;
+    display: block;
+}
+
+.gd-objet-nom {
+    font-size: 0.68rem;
+    line-height: 1.4;
+    color: #b9b9b9;
+}
+
+/* palette */
+.gd-palette {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 0.35rem;
+}
+
+.gd-palette li {
+    display: grid;
+    grid-template-columns: 22px minmax(0, 1fr) auto;
+    gap: 0.55rem;
+    align-items: center;
+}
+
+.gd-palette i {
+    width: 22px;
+    height: 14px;
+    border: 1px solid rgba(255, 255, 255, 0.22);
+}
+
+.gd-palette-nom {
+    font-size: 0.62rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: #b9b9b9;
+}
+
+.gd-palette-hex {
+    font-size: 0.56rem;
+    letter-spacing: 0.08em;
+    color: #6d6d6d;
+}
+
+/* cartes */
+.gd-deux {
+    display: grid;
+    grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr);
+    gap: clamp(1.2rem, 2.6vw, 2.4rem);
+    align-items: start;
+}
+
+.gd-cartes {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0.7rem;
+}
+
+.gd-carte {
+    margin: 0;
+    display: grid;
+    gap: 0.45rem;
+}
+
+.gd-carte canvas {
+    display: block;
+    width: 100%;
+    height: auto;
+    border: 1px solid var(--ligne);
+    image-rendering: pixelated;
+}
+
+.gd-carte figcaption {
+    display: flex;
+    justify-content: space-between;
+    gap: 0.4rem;
+    font-size: 0.54rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #7d7d7d;
+}
+
+.gd-carte strong {
+    color: #cfcfcf;
+    font-weight: 700;
+}
+
+/* règles */
+.gd-regles {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    display: grid;
+    gap: 0.55rem;
+    max-width: 74ch;
+}
+
+.gd-regles li {
+    position: relative;
+    padding-left: 1.1rem;
+    font-size: 0.76rem;
+    line-height: 1.55;
+    color: #a9a9a9;
+}
+
+.gd-regles li::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0.5em;
+    width: 6px;
+    height: 6px;
+    background: var(--neon);
+}
+
+@media (max-width: 900px) {
+    .gd-deux {
+        grid-template-columns: 1fr;
+    }
+
+    .gd-cartes {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 600px) {
+    .jeu-aide {
+        font-size: 0.68rem;
+    }
+
+    .jeu-infos span {
+        font-size: 0.52rem;
+    }
+}

@@ -1,27 +1,667 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ian – Numérique : Graphisme & Animation</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Bebas+Neue&family=Bungee&family=Cinzel:wght@900&family=Playfair+Display:ital,wght@1,900&family=Schoolbell&family=Space+Grotesk:wght@500;700&family=Special+Elite&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles.css">
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Ian Bossut‑Gandou – Numérique</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Schoolbell&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="styles.css" />
+<link rel="stylesheet" href="jeux.css" />
+<style>
+:root{
+  --noir:#0B0B0C;
+  --blanc:#EFEFEF;
+  --gris:#8a8a8a;
+  --neon:#FF00FF;
+  --ligne:rgba(255,255,255,.14);
+  --pad:clamp(1.1rem,3vw,2.8rem);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{
+  background:var(--noir);color:var(--blanc);
+  font-family:'Space Grotesk',sans-serif;-webkit-font-smoothing:antialiased;
+  padding-top:4.6rem;
+}
+body.gele{overflow:hidden}
+/* la top bar du site sur fond sombre */
+.top-bar,.top-bar a,.top-bar .logo a{color:var(--blanc)}
+.top-bar a:hover{color:var(--neon)}
+.wrap{max-width:1680px;margin:0 auto;padding:0 var(--pad) 1rem}
+
+/* ---------- accueil ---------- */
+.split{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.02fr);gap:clamp(1.4rem,4vw,4.5rem);align-items:start}
+.list{padding:clamp(1.6rem,4vw,3.4rem) 0 2rem}
+.kicker{font-size:.66rem;letter-spacing:.24em;text-transform:uppercase;color:#7d7d7d}
+h1{font-family:'Archivo Black',sans-serif;font-size:clamp(2.1rem,4.4vw,4rem);line-height:.92;text-transform:uppercase;letter-spacing:-.02em;margin:1rem 0 0;color:var(--blanc)}
+h1 em{font-style:normal;color:var(--neon)}
+#liste{margin-top:clamp(1.6rem,3.4vw,2.6rem)}
+.cat-row{
+  width:100%;display:grid;grid-template-columns:56px 1fr auto;align-items:center;gap:1.1rem;
+  background:none;border:0;border-top:1px solid var(--ligne);color:inherit;font:inherit;text-align:left;cursor:none;
+  padding:1.8rem .2rem;transition:padding-left .4s ease;
+}
+.cat-row:last-child{border-bottom:1px solid var(--ligne)}
+.cat-row:hover,.cat-row:focus-visible{padding-left:18px;outline:none}
+.cn{font-family:'Archivo Black',sans-serif;font-size:clamp(1.15rem,2.6vw,2.1rem);line-height:1;text-transform:uppercase;transition:color .3s ease}
+.cat-row:hover .cn,.cat-row:focus-visible .cn{color:var(--neon)}
+.idx{font-size:.66rem;letter-spacing:.16em;text-transform:uppercase;color:var(--gris)}
+.cc{font-size:.62rem;letter-spacing:.16em;text-transform:uppercase;color:#6d6d6d;white-space:nowrap}
+.hint{margin-top:1.6rem;font-size:.66rem;letter-spacing:.14em;text-transform:uppercase;color:#6d6d6d;line-height:1.8;max-width:40ch}
+.hint b{color:#bdbdbd;font-weight:500}
+
+.preview{position:sticky;top:4.9rem;padding:clamp(1.6rem,4vw,3.4rem) 0 2rem}
+.frame{position:relative;aspect-ratio:4/3;background:#151517;border:1px solid var(--ligne);overflow:hidden}
+#apercu{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transform:scale(1.03);transition:opacity .5s ease,transform 1.1s ease}
+#apercu.on{opacity:1;transform:none}
+.ghost{
+  position:absolute;left:.9rem;bottom:.3rem;font-family:'Archivo Black',sans-serif;
+  font-size:clamp(2.4rem,6vw,5rem);line-height:1;color:#fff;mix-blend-mode:difference;opacity:.92;pointer-events:none;
+}
+.vide{
+  position:absolute;inset:0;display:grid;place-content:center;gap:.7rem;text-align:center;padding:1.6rem;
+  opacity:0;pointer-events:none;transition:opacity .4s ease;
+  background:repeating-linear-gradient(45deg,#121214 0 11px,#16161a 11px 22px);
+}
+.vide.on{opacity:1}
+.vide strong{font-family:'Archivo Black',sans-serif;text-transform:uppercase;font-size:clamp(1rem,2.1vw,1.6rem);line-height:1.05;color:#c9c9c9}
+.vide span{font-size:.62rem;letter-spacing:.2em;text-transform:uppercase;color:#6b6b6b}
+.cap{display:flex;justify-content:space-between;gap:1rem;margin-top:.85rem;align-items:flex-end}
+.cap .gauche{display:flex;flex-direction:column;gap:.35rem;min-width:0}
+#capNom{font-size:.68rem;letter-spacing:.14em;text-transform:uppercase;color:#dcdcdc}
+#capMeta{font-size:.6rem;letter-spacing:.13em;text-transform:uppercase;color:#666;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.cap .droit{font-size:.66rem;letter-spacing:.14em;text-transform:uppercase;color:#c9c9c9;white-space:nowrap}
+
+/* ---------- rayon ---------- */
+.rayon{
+  position:fixed;inset:0;z-index:1100;background:var(--noir);
+  display:flex;flex-direction:column;
+  transform:translateY(100%);visibility:hidden;
+  transition:transform .8s cubic-bezier(.76,0,.24,1),visibility .8s;
+}
+.rayon.on{transform:none;visibility:visible}
+.rayon-head{display:flex;justify-content:flex-start;align-items:center;gap:1.2rem;flex-wrap:wrap;padding:1rem var(--pad);position:relative;z-index:2}
+.rayon-head .btn{order:-1}
+.rayon-id{display:flex;align-items:baseline;gap:.9rem;min-width:0}
+.rayon-num{font-size:.66rem;letter-spacing:.16em;color:var(--neon)}
+.rayon-titre{font-family:'Archivo Black',sans-serif;font-size:clamp(.95rem,1.8vw,1.35rem);text-transform:uppercase;line-height:1}
+.rayon-note{font-size:.62rem;letter-spacing:.14em;text-transform:uppercase;color:#6d6d6d;max-width:46ch;line-height:1.6}
+.btn{
+  background:none;border:1px solid var(--ligne);color:inherit;font:inherit;
+  font-size:.62rem;letter-spacing:.16em;text-transform:uppercase;
+  padding:.6rem .9rem;cursor:none;white-space:nowrap;
+}
+.btn:hover{border-color:var(--neon);color:var(--neon)}
+
+.bande{
+  flex:1;display:flex;gap:9px;align-items:center;justify-content:center;
+  padding:0 clamp(1rem,6vw,7rem) 2rem;overflow-x:auto;overflow-y:hidden;scrollbar-width:none;
+}
+.bande::-webkit-scrollbar{display:none}
+
+.vignette{
+  flex:1 1 0;min-width:76px;max-width:330px;height:56vh;
+  display:flex;flex-direction:column;gap:.6rem;
+  background:none;border:0;padding:0;cursor:none;
+  transition:flex-grow .65s cubic-bezier(.2,.8,.2,1),max-width .65s cubic-bezier(.2,.8,.2,1);
+}
+.vignette:hover,.vignette:focus-visible{flex-grow:1.75;max-width:430px;outline:none}
+.v-img{position:relative;display:block;flex:1;overflow:hidden;background:#151517;transform:translateZ(0)}
+.v-img img,.v-img video{
+  position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block;
+  filter:brightness(.72) saturate(.9);
+  transition:filter .5s ease,transform 1.2s cubic-bezier(.2,.8,.2,1);
+}
+.vignette:hover .v-img img,.vignette:hover .v-img video,
+.vignette:focus-visible .v-img img,.vignette:focus-visible .v-img video{filter:none;transform:scale(1.03)}
+.v-titre{
+  font-size:.6rem;letter-spacing:.15em;text-transform:uppercase;color:#a9a9a9;
+  text-align:left;line-height:1.4;opacity:0;transform:translateY(-3px);
+  transition:opacity .3s ease,transform .3s ease;
+}
+.vignette:hover .v-titre,.vignette:focus-visible .v-titre{opacity:1;transform:none;color:var(--blanc)}
+.v-img.v-vide{
+  background:repeating-linear-gradient(45deg,#121214 0 9px,#16161a 9px 18px);
+  display:grid;place-content:center;gap:.5rem;padding:1rem;text-align:center;
+}
+.v-nom{font-family:'Archivo Black',sans-serif;text-transform:uppercase;font-size:.72rem;line-height:1.15;color:#b5b5b5}
+.v-att{font-size:.55rem;letter-spacing:.2em;text-transform:uppercase;color:#666}
+
+/* ---------- page projet ---------- */
+.projet{
+  position:fixed;inset:0;z-index:1200;background:var(--noir);overflow:auto;
+  visibility:hidden;-webkit-overflow-scrolling:touch;
+}
+.projet.on{visibility:visible}
+.hero{position:relative;height:100vh;background:#151517;overflow:hidden}
+.hero img,.hero video{width:100%;height:100%;object-fit:cover;display:block}
+.hero .v-vide{
+  position:absolute;inset:0;display:grid;place-content:center;gap:.7rem;text-align:center;padding:2rem;
+  background:repeating-linear-gradient(45deg,#121214 0 11px,#16161a 11px 22px);
+}
+.hero .v-nom{font-size:clamp(1rem,2vw,1.6rem)}
+
+.hero-titre{
+  position:absolute;inset:0;z-index:2;margin:0;
+  display:grid;grid-template-columns:repeat(3,1fr);grid-template-rows:repeat(2,1fr);
+  padding:clamp(.8rem,2.6vw,2.6rem);pointer-events:none;mix-blend-mode:difference;
+}
+.chunk{overflow:hidden;display:flex;align-items:center;max-width:100%}
+.chunk-in{
+  display:block;font-family:'Archivo Black',sans-serif;text-transform:uppercase;
+  line-height:.82;letter-spacing:-.02em;color:#EFEFEF;
+  transform:translateY(118%) rotate(4deg);
+  animation:montee 1.05s cubic-bezier(.16,1,.3,1) var(--d,0s) forwards;
+}
+@keyframes montee{
+  0%{transform:translateY(118%) rotate(4deg)}
+  58%{transform:translateY(-3%) rotate(-.6deg)}
+  100%{transform:translateY(0) rotate(0)}
+}
+.retour{
+  position:fixed;top:1rem;left:var(--pad);z-index:1210;
+  background:rgba(11,11,12,.82);border:1px solid rgba(255,255,255,.34);color:#fff;
+  backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
+  box-shadow:0 8px 26px rgba(0,0,0,.45);
+}
+.retour:hover{background:var(--neon);border-color:var(--neon);color:var(--noir)}
+
+.descendre{
+  position:fixed;left:50%;bottom:1.5rem;z-index:1210;
+  width:2.9rem;height:2.9rem;padding:0;display:grid;place-items:center;border-radius:0;
+  background:rgba(11,11,12,.82);border:1px solid rgba(255,255,255,.34);color:#fff;
+  backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
+  box-shadow:0 8px 26px rgba(0,0,0,.45);
+  transform:translate(-50%,0);
+  animation:monte .62s cubic-bezier(.16,.84,.3,1) both,sautille 2.1s ease-in-out .62s infinite;
+  transition:background .3s ease,border-color .3s ease,color .3s ease,opacity .4s ease,transform .4s ease;
+}
+.descendre svg{width:1.05rem;height:1.05rem;display:block}
+.descendre:hover{background:var(--neon);border-color:var(--neon);color:var(--noir)}
+.descendre.cache{opacity:0;transform:translate(-50%,1.6rem);pointer-events:none;animation:none}
+.descendre.off{display:none}
+@keyframes monte{
+  from{opacity:0;transform:translate(-50%,2.4rem)}
+  to{opacity:1;transform:translate(-50%,0)}
+}
+@keyframes sautille{
+  0%,100%{transform:translate(-50%,0)}
+  50%{transform:translate(-50%,6px)}
+}
+@media (prefers-reduced-motion:reduce){.descendre{animation:none}}
+.projet-corps{padding:clamp(2rem,5vw,4.6rem) var(--pad) 5rem;max-width:1500px}
+.projet-cat{font-size:.62rem;letter-spacing:.18em;text-transform:uppercase;color:var(--neon);margin-bottom:.9rem}
+.lead{max-width:62ch;color:#bdbdbd;line-height:1.75;margin-top:.6rem;font-size:.95rem}
+.lead.attente{color:#6b6b6b;font-style:italic}
+.meta{margin-top:1rem;font-size:.62rem;letter-spacing:.16em;text-transform:uppercase;color:#6b6b6b}
+.gal{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:2rem}
+.gal figure{background:#151517;overflow:hidden}
+.gal img,.gal video{width:100%;height:280px;object-fit:cover;display:block;background:#000}
+.slots{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:2rem}
+.slot{border:1px dashed rgba(255,255,255,.2);background:#101012;min-height:150px;display:grid;place-content:center;gap:.5rem;text-align:center;padding:1.3rem 1rem}
+.slot b{font-size:.66rem;letter-spacing:.16em;text-transform:uppercase;color:#c9c9c9;font-weight:500}
+.slot span{font-size:.66rem;color:#5f5f5f;line-height:1.6}
+.game-wrap{position:relative;margin:2rem auto 1rem;border:1px solid rgba(255,255,255,.18);background:#101012}
+.game-wrap.wide{aspect-ratio:16/9;width:100%;max-width:1100px}
+.game-wrap.tall{aspect-ratio:4/5;width:min(420px,100%)}
+.game-wrap .monte{position:absolute;inset:0;display:grid;place-content:center;gap:.6rem;text-align:center;padding:1.4rem}
+.game-wrap .monte b{font-family:'Archivo Black',sans-serif;text-transform:uppercase;font-size:clamp(.9rem,1.8vw,1.25rem);line-height:1.1;color:#bdbdbd}
+.game-wrap .monte span{font-size:.62rem;letter-spacing:.18em;text-transform:uppercase;color:#5f5f5f}
+.game-wrap .monte em{justify-self:center;font-style:normal;font-size:.58rem;letter-spacing:.2em;text-transform:uppercase;border:1px solid rgba(255,0,255,.5);color:var(--neon);padding:.35rem .6rem}
+.note-slot{max-width:60ch;color:#6b6b6b;font-size:.76rem;line-height:1.7}
+
+/* ---------- galerie de concept arts ---------- */
+.galerie{display:grid;gap:clamp(1rem,2vw,1.8rem)}
+.galerie-tete{display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:.5rem 1.5rem}
+.galerie-titre{margin:0;font-family:'Archivo Black',sans-serif;font-size:clamp(1rem,1.8vw,1.5rem);text-transform:uppercase;color:var(--blanc)}
+.galerie-note{margin:0;font-size:.62rem;letter-spacing:.14em;text-transform:uppercase;color:#6d6d6d}
+.galerie-grille{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.galerie-item{
+  display:block;padding:8px;background:#101012;border:1px solid var(--ligne);
+  color:inherit;font:inherit;text-align:left;cursor:none;appearance:none;
+  transition:border-color .3s ease,transform .3s ease,background .3s ease;
+}
+.galerie-item img{display:block;width:100%;aspect-ratio:4/3;object-fit:contain;background:#0B0B0C}
+.galerie-item:hover,.galerie-item:focus-visible{border-color:var(--neon);background:#15151a;transform:translateY(-3px);outline:none}
+.galerie-legende{display:block;margin-top:.55rem;font-size:.6rem;letter-spacing:.1em;text-transform:uppercase;color:#7d7d7d;line-height:1.4}
+.galerie-item:hover .galerie-legende{color:var(--blanc)}
+.galerie-item:nth-child(7n+1),
+.galerie-item:nth-child(7n+5){grid-column:span 2}
+
+/* lecteur façon plateforme vidéo */
+.yt{
+  display:grid;grid-template-columns:minmax(0,1.95fr) minmax(0,1fr);
+  gap:clamp(1rem,2.4vw,2.6rem);align-items:start;padding-top:clamp(1.6rem,3.4vw,2.8rem);
+}
+.yt-tete{grid-column:1/-1;display:grid;gap:.45rem}
+.yt-nom{
+  margin:0;font-family:'Archivo Black',sans-serif;font-size:clamp(1.1rem,2.4vw,2.1rem);
+  line-height:1.05;text-transform:uppercase;color:var(--blanc);text-shadow:3px 3px 0 rgba(255,0,255,.55);
+}
+.yt-sous{margin:0;max-width:52ch;font-size:clamp(.82rem,1.05vw,.98rem);line-height:1.45;color:#b9b9b9}
+.yt-principal{min-width:0}
+.yt-image{
+  position:relative;aspect-ratio:16/9;background:#0e0e10;border:1px solid var(--ligne);
+  overflow:hidden;display:grid;place-items:center;
+}
+.yt-image img,.yt-image video{display:block;width:100%;height:100%;object-fit:cover}
+.yt-slot{
+  width:100%;height:100%;display:grid;place-items:center;gap:.7rem;align-content:center;
+  border:1px dashed rgba(239,239,239,.22);
+  background:radial-gradient(120% 120% at 30% 10%,#16161a 0%,#0b0b0c 70%);
+}
+.yt-play{
+  width:clamp(2.4rem,4vw,3.4rem);height:clamp(2.4rem,4vw,3.4rem);border-radius:50%;
+  display:grid;place-items:center;border:1px solid rgba(239,239,239,.7);color:var(--blanc);
+  font-size:.85rem;padding-left:.15rem;
+}
+.yt-image > .yt-play{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);background:rgba(11,11,12,.6)}
+.yt-slot-txt{font-size:.6rem;letter-spacing:.18em;text-transform:uppercase;color:#7a7a7a}
+.yt-titre{
+  margin:clamp(.9rem,1.8vw,1.3rem) 0 0;font-family:'Archivo Black',sans-serif;
+  font-size:clamp(1rem,1.75vw,1.45rem);line-height:1.15;color:var(--blanc);
+}
+.yt-meta{display:flex;flex-wrap:wrap;gap:.4rem 1rem;margin-top:.5rem;font-size:.6rem;letter-spacing:.16em;text-transform:uppercase;color:#7a7a7a}
+.yt-meta span + span::before{content:'·';margin-right:1rem;color:#4d4d4d}
+.yt-desc{margin:.85rem 0 0;max-width:60ch;font-size:clamp(.85rem,1.12vw,1rem);line-height:1.6;color:#b9b9b9}
+.yt-reco{display:grid;gap:.85rem;min-width:0}
+.yt-reco-titre{margin:0;font-size:.6rem;letter-spacing:.2em;text-transform:uppercase;color:#6d6d6d;font-weight:400}
+.yt-reco-vide{margin:0;font-size:.72rem;line-height:1.5;color:#5d5d5d;border:1px dashed rgba(239,239,239,.14);padding:.9rem}
+.yt-liste{display:grid;gap:.7rem}
+.yt-carte{
+  display:grid;grid-template-columns:minmax(0,132px) minmax(0,1fr);gap:.7rem;align-items:start;
+  padding:.35rem;border:1px solid transparent;background:none;color:inherit;font:inherit;
+  text-align:left;cursor:none;transition:border-color .25s ease,background .25s ease;
+}
+.yt-carte:hover,.yt-carte:focus-visible{border-color:rgba(255,0,255,.55);background:#131316;outline:none}
+.yt-carte.on{border-color:rgba(239,239,239,.22);background:#111114}
+.yt-vignette{aspect-ratio:16/9;display:grid;place-items:center;overflow:hidden;border:1px solid var(--ligne);background:#0b0b0c}
+.yt-vignette img{display:block;width:100%;height:100%;object-fit:cover}
+.yt-vignette-vide{font-size:.5rem;letter-spacing:.12em;text-transform:uppercase;color:#5d5d5d;text-align:center;padding:0 .3rem;line-height:1.4}
+.yt-carte-txt{display:grid;gap:.3rem;min-width:0}
+.yt-carte-txt strong{font-size:.74rem;line-height:1.3;letter-spacing:.04em;text-transform:uppercase;color:#dcdcdc;font-weight:700}
+.yt-carte.on .yt-carte-txt strong{color:var(--blanc)}
+.yt-carte-txt small{font-size:.58rem;letter-spacing:.12em;text-transform:uppercase;color:#6d6d6d}
+@media (max-width:980px){
+  .yt{grid-template-columns:1fr}
+  .yt-carte{grid-template-columns:minmax(0,110px) minmax(0,1fr)}
+}
+
+/* model sheets et roughs */
+.ms{display:grid;gap:clamp(1rem,2.2vw,1.8rem);padding-top:clamp(1.8rem,3.4vw,2.8rem)}
+.ms-titre{
+  margin:0;font-family:'Archivo Black',sans-serif;font-size:clamp(1.05rem,2.5vw,2.3rem);
+  line-height:1.02;text-transform:uppercase;color:var(--blanc);text-shadow:3px 3px 0 rgba(255,0,255,.6);
+}
+.ms-grille{display:grid;grid-template-columns:minmax(0,1.08fr) minmax(0,1fr);gap:clamp(.8rem,2vw,2rem);align-items:start}
+.ms-gauche{display:grid;gap:clamp(.6rem,1.6vw,1.4rem);min-width:0}
+.ms-bas{display:grid;grid-template-columns:minmax(0,1.32fr) minmax(0,1fr);gap:clamp(.6rem,1.6vw,1.4rem);align-items:center}
+.ms-img{margin:0;background:#101012;border:1px solid var(--ligne);overflow:hidden}
+.ms-img img{display:block;width:100%;height:auto}
+.ms-legende{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:.4rem;color:var(--blanc)}
+.ms-fort{margin:0;font-family:'Archivo Black',sans-serif;font-size:clamp(.72rem,1.1vw,.95rem);text-transform:uppercase}
+.ms-note{margin:.15rem 0 0;font-size:clamp(.62rem,1vw,.84rem);color:#bdbdbd}
+.ms-fleches{width:clamp(36px,4vw,58px);height:auto;color:var(--blanc)}
+.ms-droite{display:grid;grid-template-columns:minmax(0,.95fr) minmax(0,1fr);gap:clamp(.7rem,1.6vw,1.4rem);align-items:start;min-width:0}
+.ms-drop{display:grid;gap:clamp(1rem,3vw,2.4rem);justify-items:end;padding-top:.2rem}
+.ms-boite{
+  margin:0;padding:.7rem .85rem;border:2px solid var(--blanc);background:rgba(11,11,12,.86);
+  font-family:'Archivo Black',sans-serif;font-size:clamp(.6rem,.95vw,.84rem);line-height:1.28;
+  text-transform:uppercase;color:var(--blanc);text-align:center;transform:rotate(-1.2deg);
+}
+.ms-label{
+  font-family:'Archivo Black',sans-serif;font-size:clamp(.66rem,1vw,.9rem);text-transform:uppercase;
+  color:var(--blanc);border-bottom:2px solid var(--blanc);padding-bottom:.15rem;
+}
+@media (max-width:900px){
+  .ms-grille{grid-template-columns:1fr}
+  .ms-droite{grid-template-columns:minmax(0,1fr) minmax(0,.9fr)}
+  .ms-drop{justify-items:start}
+  .ms-bas{grid-template-columns:1fr}
+}
+
+/* line-tests */
+.lt{display:grid;gap:clamp(1rem,2.4vw,2.6rem);margin-top:clamp(2rem,5vw,4.5rem)}
+.lt-haut{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.28fr);gap:clamp(.8rem,2vw,2rem);align-items:start}
+.lt-img{margin:0;background:#101012;border:1px solid var(--ligne);overflow:hidden}
+.lt-img img{display:block;width:100%;height:auto}
+.lt-croquis{display:grid;grid-template-columns:auto minmax(0,1fr);gap:clamp(.4rem,1.2vw,1rem);align-items:start}
+.lt-reperes{display:flex;flex-direction:column;align-items:flex-start;gap:.6rem;padding-top:.4rem;color:var(--blanc)}
+.lt-tag{
+  display:inline-block;padding:.4rem .75rem;border:2px solid var(--blanc);background:var(--noir);
+  font-family:'Archivo Black',sans-serif;font-size:clamp(.55rem,.85vw,.72rem);letter-spacing:.06em;
+  text-transform:uppercase;color:var(--blanc);transform:rotate(-2deg);white-space:nowrap;
+}
+.lt-fleche{width:clamp(52px,6vw,84px);height:auto;margin-left:.3rem}
+.lt-bas{display:grid;grid-template-columns:minmax(0,.92fr) minmax(0,.86fr) minmax(0,1.2fr);gap:clamp(.8rem,2vw,2rem);align-items:end}
+.lt-vide{
+  aspect-ratio:4/3;display:grid;place-items:center;background:transparent;
+  border:1px dashed rgba(239,239,239,.28);
+}
+.lt-vide span{font-size:.6rem;letter-spacing:.16em;text-transform:uppercase;color:#6d6d6d}
+@media (max-width:900px){
+  .lt-haut{grid-template-columns:1fr}
+  .lt-bas{grid-template-columns:1fr}
+  .lt-croquis{grid-template-columns:1fr}
+  .lt-reperes{flex-direction:row;align-items:center}
+}
+
+/* visionneuse */
+.galerie-vue{
+  position:fixed;inset:0;z-index:1500;background:rgba(6,6,8,.96);
+  display:grid;place-items:center;padding:clamp(1.4rem,4vw,3rem);
+  opacity:0;visibility:hidden;transition:opacity .3s ease,visibility .3s ease;
+}
+.galerie-vue.on{opacity:1;visibility:visible}
+.galerie-vue figure{margin:0;display:flex;flex-direction:column;align-items:center;gap:.9rem;max-width:100%}
+.galerie-vue img{max-width:min(1100px,92vw);max-height:78vh;object-fit:contain;background:#0B0B0C;border:1px solid var(--ligne)}
+.galerie-vue figcaption{font-size:.64rem;letter-spacing:.14em;text-transform:uppercase;color:#bdbdbd;text-align:center}
+.galerie-cpt{position:absolute;bottom:1.2rem;left:50%;transform:translateX(-50%);font-size:.6rem;letter-spacing:.2em;color:#6d6d6d}
+.galerie-x,.galerie-prec,.galerie-suiv{
+  position:absolute;width:2.9rem;height:2.9rem;display:grid;place-items:center;
+  background:rgba(11,11,12,.82);border:1px solid rgba(255,255,255,.3);color:var(--blanc);
+  font:inherit;font-size:.9rem;cursor:none;
+}
+.galerie-x{top:1.2rem;right:1.2rem}
+.galerie-prec{left:1.2rem;top:50%;transform:translateY(-50%)}
+.galerie-suiv{right:1.2rem;top:50%;transform:translateY(-50%)}
+.galerie-x:hover,.galerie-prec:hover,.galerie-suiv:hover{background:var(--neon);border-color:var(--neon);color:var(--noir)}
+@media (max-width:1000px){.galerie-grille{grid-template-columns:repeat(2,1fr)}}
+@media (max-width:600px){
+  .galerie-grille{grid-template-columns:1fr}
+  .galerie-item:nth-child(n){grid-column:auto}
+}
+
+/* ---------- retouches expérimentales ---------- */
+.mr{
+  display:grid;grid-template-columns:minmax(0,1.5fr) minmax(0,1.2fr);
+  gap:clamp(1rem,2.4vw,2.6rem);align-items:start;
+}
+.mr-g{display:flex;flex-direction:column;gap:clamp(1rem,2.4vw,2.4rem);min-width:0}
+.mr-duo{display:grid;grid-template-columns:1fr 1fr;gap:clamp(.6rem,1.4vw,1.2rem);align-items:start}
+.mr-duo .mr-img:nth-child(2){margin-top:clamp(.8rem,2vw,2.4rem)}
+.mr-img{margin:0;overflow:hidden;background:#151517}
+.mr-img img{display:block;width:100%;height:auto}
+.mr-texte{display:flex;flex-direction:column;gap:clamp(.9rem,1.6vw,1.6rem)}
+.mr-texte p{margin:0;font-size:clamp(.92rem,1.25vw,1.15rem);font-weight:700;line-height:1.45;color:var(--blanc);max-width:34ch}
+.mr-d{display:flex;flex-direction:column;gap:clamp(1rem,2vw,1.8rem);min-width:0}
+.mr-haut{display:grid;grid-template-columns:minmax(0,.85fr) minmax(0,1.15fr);gap:clamp(.8rem,1.8vw,1.6rem);align-items:start}
+.mr-tete{display:flex;flex-direction:column;gap:clamp(.7rem,1.4vw,1.1rem);text-align:right;min-width:0}
+.mr-titre{
+  margin:0;font-family:'Archivo Black',sans-serif;
+  font-size:clamp(1.05rem,2.1vw,1.9rem);line-height:.95;text-transform:uppercase;
+  color:var(--blanc);text-shadow:4px 4px 0 rgba(255,0,255,.55);
+}
+.mr-sous{margin:0;font-size:clamp(.78rem,1.05vw,.98rem);font-weight:700;line-height:1.35;color:var(--blanc)}
+@media (max-width:900px){
+  .mr{grid-template-columns:1fr}
+  .mr-haut{grid-template-columns:1fr}
+  .mr-tete{text-align:left}
+}
+
+/* ---------- mise en page kozu™ ---------- */
+.kozu{display:grid;gap:clamp(1.8rem,3.4vw,3.2rem)}
+.kozu-haut{
+  display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,.8fr) minmax(0,.95fr);
+  gap:clamp(1rem,2.4vw,2.6rem);align-items:stretch;
+}
+.kozu-logo{margin:0;align-self:center}
+.kozu-logo img{display:block;width:100%;height:auto}
+.kozu-droite{display:flex;flex-direction:column;align-items:flex-end;gap:clamp(.7rem,1.4vw,1.1rem);text-align:right;min-width:0}
+.kozu-marque{margin:0;font-family:'Archivo Black',sans-serif;font-size:clamp(1.05rem,1.7vw,1.5rem);line-height:1;color:var(--neon);letter-spacing:.01em}
+.kozu-accroche{
+  margin:0;padding:.55rem .8rem;border:2px solid var(--blanc);
+  font-size:clamp(.76rem,1vw,.95rem);font-weight:700;line-height:1.3;color:var(--blanc);
+}
+.kozu-tee{margin:0;width:100%}
+.kozu-tee img{display:block;width:100%;height:auto}
+.kozu-legende{margin:0;font-size:clamp(.72rem,.95vw,.9rem);font-weight:700;line-height:1.35;color:var(--blanc)}
+.kozu-legende--centre{text-align:center}
+.kozu-bas{display:grid;gap:clamp(.8rem,1.6vw,1.2rem)}
+
+/* emplacements vidéo */
+.kozu-video{
+  position:relative;display:grid;place-content:center;gap:.55rem;text-align:center;
+  padding:1rem;min-height:clamp(220px,34vw,430px);align-self:stretch;
+  border:1px dashed rgba(255,255,255,.24);background:#101012;
+}
+.kozu-video b{font-size:.66rem;letter-spacing:.16em;text-transform:uppercase;color:#c9c9c9;font-weight:500}
+.kozu-video span{font-size:.62rem;letter-spacing:.06em;color:#5f5f5f;line-height:1.6}
+.kozu-video--plein{
+  display:block;padding:0;overflow:hidden;min-height:0;aspect-ratio:4/3;
+  background:#151517;
+}
+.kozu-poster{position:absolute;inset:0;margin:0}
+.kozu-poster img{display:block;width:100%;height:100%;object-fit:contain;opacity:.92}
+.kozu-badge{
+  position:absolute;right:.9rem;bottom:.9rem;padding:.3rem .65rem;
+  border:1px solid rgba(255,0,255,.55);background:rgba(11,11,12,.72);
+  color:var(--neon);font-size:.58rem;letter-spacing:.18em;text-transform:uppercase;
+}
+
+@media (max-width:900px){
+  .kozu-haut{grid-template-columns:1fr}
+  .kozu-droite{align-items:flex-start;text-align:left}
+  .kozu-video{min-height:240px}
+  .kozu-video--plein{aspect-ratio:3/2}
+}
+
+/* ---------- collage « Les moches sont de sortie » ---------- */
+.moches{
+  display:grid;grid-template-columns:minmax(0,.72fr) minmax(0,1.15fr) minmax(0,1fr);
+  gap:clamp(1rem,2.2vw,2.4rem);align-items:stretch;
+}
+.moches{
+  grid-template-rows:auto 1fr;
+}
+.moches-titre{
+  grid-column:1/3;grid-row:1;align-self:start;margin:0 0 clamp(.5rem,1.2vw,1.2rem);
+  font-family:'Archivo Black',sans-serif;font-size:clamp(1.3rem,3vw,2.5rem);
+  line-height:.98;text-transform:uppercase;letter-spacing:-.01em;
+  color:var(--neon);text-shadow:3px 3px 0 rgba(53,142,20,.6);
+}
+.moches-col{display:flex;flex-direction:column;gap:clamp(.7rem,1.4vw,1.2rem);min-width:0;grid-row:2}
+.moches-g{grid-column:1}
+.moches-m{grid-column:2;gap:clamp(.4rem,1vw,.9rem)}
+.moches-m .moches-img{margin-left:30%;flex:1}
+.moches-m .moches-img img{height:100%;object-fit:cover}
+.moches-d{grid-column:3}
+.moches-img{margin:0;overflow:hidden;background:#151517;display:flex}
+.moches-img img{display:block;width:100%;height:auto}
+.moches-d .moches-img{flex:1}
+.moches-d .moches-img img{height:100%;object-fit:cover}
+.moches-texte{margin:0;font-size:clamp(.9rem,1.15vw,1.05rem);font-weight:700;line-height:1.5;color:var(--blanc)}
+.moches-texte em{font-style:italic}
+.moches-accroche{margin:0;max-width:24ch;font-size:clamp(1rem,1.5vw,1.35rem);font-weight:700;line-height:1.25;color:var(--blanc)}
+.moches-fleche{width:clamp(64px,7vw,110px);margin:.3rem 0 .5rem 18%;color:var(--blanc)}
+.moches-palette{display:flex;align-items:center;flex-wrap:wrap;gap:.5rem .55rem;margin-top:.2rem}
+.moches-palette span{width:clamp(20px,2vw,30px);aspect-ratio:1;border-radius:50%;background:var(--p)}
+.moches-trait{width:clamp(30px,3.6vw,52px);height:3px;margin:0 .5rem;background:var(--blanc);transform:rotate(-42deg)}
+@media (max-width:900px){
+  .moches{grid-template-columns:1fr;grid-template-rows:auto}
+  .moches-titre,
+  .moches-col{grid-column:1;grid-row:auto}
+  .moches-d .moches-img img{height:auto}
+  .moches-m .moches-img{margin-left:0;flex:0 0 auto}
+  .moches-m .moches-img img{height:auto}
+}
+
+/* ---------- volet ---------- */
+.volet{
+  position:fixed;z-index:1300;overflow:hidden;pointer-events:none;
+  background:#151517 center/cover no-repeat;
+  display:grid;place-items:center;will-change:width,height,left,top,transform;
+}
+.volet video{width:100%;height:100%;object-fit:cover}
+.volet .v-vide{position:absolute;inset:0;display:grid;place-content:center;gap:.6rem;text-align:center;padding:1.5rem}
+
+/* ---------- bas de page : bouton des pages ---------- */
+.portes-zone{max-width:1100px;margin:2.2rem auto .5rem;padding:0 1.5rem;display:flex;justify-content:center}
+.portes-btn{
+  display:inline-flex;align-items:center;gap:.85rem;
+  background:transparent;border:1px solid rgba(255,255,255,.16);color:#c4c4c4;
+  padding:.68rem 1.05rem;border-radius:99px;font:inherit;cursor:none;
+  transition:border-color .3s ease,color .3s ease,background .3s ease;
+}
+.portes-btn:hover{border-color:rgba(255,255,255,.45);color:#fff;background:rgba(255,255,255,.05)}
+.portes-label{font-size:.55rem;letter-spacing:.2em;text-transform:uppercase;color:#757575}
+.portes-titre{font-family:'Archivo Black',sans-serif;font-size:.8rem;text-transform:uppercase;letter-spacing:.02em}
+.portes-fleche{color:var(--neon);font-size:.78rem;line-height:1}
+
+/* ---------- panneau de toutes les pages ---------- */
+.portes{position:fixed;inset:0;z-index:1150;visibility:hidden}
+.portes.on{visibility:visible}
+.portes-fond{position:absolute;inset:0;background:rgba(0,0,0,.6);opacity:0;transition:opacity .45s ease}
+.portes.on .portes-fond{opacity:1}
+.portes-panneau{
+  position:absolute;left:0;right:0;bottom:0;background:var(--noir);
+  border-top:1px solid var(--ligne);
+  padding:1.2rem var(--pad) 2rem;max-height:78vh;overflow:auto;
+  transform:translateY(100%);transition:transform .75s cubic-bezier(.76,0,.24,1);
+}
+.portes.on .portes-panneau{transform:none}
+.portes-tete{position:relative;display:flex;justify-content:center;align-items:center;min-height:2.4rem;margin-bottom:1.1rem}
+.portes-kicker{font-family:'Schoolbell',cursive;font-size:1.05rem;color:var(--blanc);text-align:center}
+#fermerPortes{position:absolute;right:0;top:50%;transform:translateY(-50%)}
+.portes-bande{display:flex;gap:10px;overflow-x:auto;padding-bottom:.5rem;scrollbar-width:none}
+.portes-bande::-webkit-scrollbar{display:none}
+.porte:first-child{margin-left:auto}
+.porte:last-child{margin-right:auto}
+.porte{
+  flex:1 1 0;min-width:96px;max-width:250px;text-decoration:none;color:inherit;cursor:none;
+  display:flex;flex-direction:column;
+}
+.porte:hover,.porte:focus-visible{outline:none}
+.porte-img{
+  display:block;width:100%;height:clamp(140px,26vh,250px);overflow:hidden;
+  background:#151517;border:1px solid var(--ligne);border-radius:0;
+  transition:border-radius .65s cubic-bezier(.2,.8,.2,1),width .65s cubic-bezier(.2,.8,.2,1);
+}
+.porte:hover .porte-img,.porte:focus-visible .porte-img{
+  width:clamp(140px,26vh,250px);border-radius:50%;align-self:center;
+}
+.porte-img img{
+  width:100%;height:100%;object-fit:cover;display:block;
+  filter:brightness(.72) saturate(.9);
+  transition:filter .5s ease;
+}
+.porte:hover .porte-img img,.porte:focus-visible .porte-img img{filter:none}
+.porte-nom{
+  margin-top:.6rem;font-size:.6rem;letter-spacing:.15em;text-transform:uppercase;color:#c9c9c9;
+  text-align:center;transition:color .3s ease;
+}
+.porte:hover .porte-nom,.porte:focus-visible .porte-nom{color:#fff}
+@media (max-width:700px){
+  .portes-bande{gap:9px}
+  .porte{min-width:120px;max-width:none}
+}
+.num-foot{text-align:center;padding:1.5rem 1.5rem 3rem;font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;color:#6b6b6b}
+.projet-foot{text-align:center;padding:1.4rem 1.5rem 3.2rem;font-size:.68rem;letter-spacing:.12em;text-transform:uppercase;color:#6b6b6b}
+
+/* ---------- sas d'entrée ---------- */
+body.sas-actif{overflow:hidden}
+.wrap,.portes-zone,.num-foot{transition:opacity .95s ease,transform 1.2s cubic-bezier(.2,.8,.2,1)}
+body.sas-actif .wrap,body.sas-actif .portes-zone,body.sas-actif .num-foot{opacity:0;transform:scale(1.025)}
+
+.sas{position:fixed;inset:0;z-index:2000;pointer-events:none}
+.sas-panneau{
+  position:absolute;top:0;bottom:0;width:50.5%;background:var(--noir);
+  transition:transform 1.05s cubic-bezier(.76,0,.24,1);
+}
+.sas-gauche{left:0}
+.sas-droite{right:0}
+.sas-gauche::after,.sas-droite::after{
+  content:"";position:absolute;top:0;bottom:0;width:1px;background:rgba(255,0,255,.5);
+}
+.sas-gauche::after{right:0}
+.sas-droite::after{left:0}
+.sas.ouvert .sas-gauche{transform:translateX(-100%)}
+.sas.ouvert .sas-droite{transform:translateX(100%)}
+
+/* premier volet : vert du site, fente horizontale */
+.sas-vert{position:fixed;inset:0;z-index:2100;pointer-events:none}
+.sas-vert-panneau{
+  position:absolute;left:0;right:0;height:50.5%;background:var(--color-bg-end,#E4F6D0);
+  transition:transform .85s cubic-bezier(.76,0,.24,1);
+}
+.sv-haut{top:0;box-shadow:0 1px 0 rgba(11,11,12,.14)}
+.sv-bas{bottom:0;box-shadow:0 -1px 0 rgba(11,11,12,.14)}
+.sas-vert.ouvert .sv-haut{transform:translateY(-101%)}
+.sas-vert.ouvert .sv-bas{transform:translateY(101%)}
+.sas-texte{
+  position:absolute;inset:0;display:grid;place-content:center;justify-items:center;gap:1rem;
+  transition:opacity .45s ease,transform .7s ease;
+}
+.sas.ouvert .sas-texte{opacity:0;transform:translateY(-10px)}
+.sas-num{font-size:.6rem;letter-spacing:.26em;color:var(--neon)}
+.sas-nom{font-family:'Archivo Black',sans-serif;font-size:clamp(1.5rem,3.6vw,2.8rem);text-transform:uppercase;letter-spacing:-.01em;color:#EFEFEF}
+.sas-barre{display:block;width:120px;height:1px;background:rgba(255,255,255,.18);overflow:hidden}
+.sas-barre i{display:block;height:100%;width:0;background:var(--neon);animation:sascharge 1.15s ease forwards}
+@keyframes sascharge{to{width:100%}}
+
+@media (max-width:1000px){
+  .split{grid-template-columns:1fr}
+  .preview{position:relative;top:auto;order:-1;padding-top:1.2rem}
+  .frame{aspect-ratio:16/10}
+  .rayon-note{display:none}
+  .gal{grid-template-columns:repeat(2,1fr)}
+  .gal img,.gal video{height:180px}
+  .slots{grid-template-columns:1fr}
+  .vignette{height:44vh;flex:0 0 22vw;min-width:110px;max-width:none}
+  .vignette:hover,.vignette:focus-visible{flex-grow:0;max-width:none}
+  .v-titre{opacity:1;transform:none}
+  .bande{justify-content:flex-start}
+}
+@media (max-width:600px){
+  .cat-row{grid-template-columns:34px 1fr}
+  .cc{display:none}
+  .rayon-head{padding:.8rem var(--pad)}
+  .vignette{flex:0 0 34vw;height:40vh}
+  body{padding-top:4.2rem}
+}
+</style>
 </head>
-<body style="background-color: var(--color-bg-end);">
-    <!-- Top Bar Navigation avec Bulle Liquid Glass -->
+<body class="sans-lightbox">
+    <script>
+    (function () {
+      var vert = document.createElement('div');
+      vert.className = 'sas-vert';
+      vert.id = 'sasVert';
+      vert.setAttribute('aria-hidden', 'true');
+      vert.innerHTML =
+        '<div class="sas-vert-panneau sv-haut"></div>' +
+        '<div class="sas-vert-panneau sv-bas"></div>';
+
+      var sas = document.createElement('div');
+      sas.className = 'sas';
+      sas.id = 'sas';
+      sas.setAttribute('aria-hidden', 'true');
+      sas.innerHTML =
+        '<div class="sas-panneau sas-gauche"></div>' +
+        '<div class="sas-panneau sas-droite"></div>' +
+        '<div class="sas-texte">' +
+          '<span class="sas-num">01</span>' +
+          '<span class="sas-nom">Numérique</span>' +
+          '<span class="sas-barre"><i></i></span>' +
+        '</div>';
+      document.body.insertBefore(vert, document.body.firstChild);
+      document.body.insertBefore(sas, vert.nextSibling);
+      document.body.classList.add('sas-actif');
+    })();
+    </script>
+
     <nav class="top-bar">
         <div class="logo"><a href="index.html">Ian Bossut‑Gandou</a></div>
         <div class="nav-links">
             <a href="numerique.html">Numérique</a>
             <a href="photographie.html">Photographie</a>
             <a href="plastique.html">Projets plastiques</a>
+            <a href="contact.html">Contact</a>
         </div>
         <div class="nav-bubble"></div>
     </nav>
 
-    <!-- Curseur personnalisé avec spirale au hover -->
     <div class="custom-cursor">
         <div class="cursor-dot"></div>
         <svg class="cursor-spiral" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg">
@@ -29,258 +669,949 @@
         </svg>
     </div>
 
-    <!-- Hero du Domaine Numérique -->
-    <header class="domain-hero-section">
-        <div class="domain-pill-badge">Domaine 01 • Numérique</div>
-        <h1 class="domain-hero-title">Graphisme, Animation & Motion Design</h1>
-        <p class="domain-hero-subtitle">Conceptions graphiques, identité visuelle, 3D, animation 2D et expérimentations décomplexées.</p>
-        
-        <!-- Navigation d'accès rapide aux projets -->
-        <div class="domain-subnav">
-            <a href="#moches" class="subnav-btn">Les Moches</a>
-            <a href="#kozu" class="subnav-btn">kozu™</a>
-            <a href="#retouches" class="subnav-btn">Retouches</a>
-            <a href="#okoyo-niko" class="subnav-btn">Okoyo & Niko</a>
-            <a href="#animations" class="subnav-btn">Animations</a>
+    <div class="wrap">
+      <main class="split">
+        <div class="list">
+          <p class="kicker">Trois catégories · neuf projets</p>
+          <h1>Le numérique<br><em>en rayons</em></h1>
+          <div id="liste"></div>
+          <p class="hint"><b>Survolez</b> une catégorie pour en voir une image clé, <b>cliquez</b> pour ouvrir le rayon et choisir un projet.</p>
         </div>
-    </header>
 
-    <!-- MAIN CONTENT : BULLES DE PROJETS -->
-    <main class="domain-content">
-
-        <!-- BULLE 1 : LES MOCHES SONT DE SORTIE -->
-        <article class="project-bubble" id="moches">
-            <div class="bubble-top-bar">
-                <span class="bubble-category-pill">Affiche & Anti-Design</span>
-                <span class="bubble-metadata">Anti-Design • Saturation chromatique • Typographie éclatée</span>
+        <aside class="preview">
+          <div class="frame">
+            <img id="apercu" alt="" />
+            <div class="vide" id="vide"><strong id="videNom"></strong><span>visuels à venir</span></div>
+            <span class="ghost" id="ghost">01</span>
+          </div>
+          <div class="cap">
+            <div class="gauche">
+              <span id="capNom">—</span>
+              <span id="capMeta"></span>
             </div>
-            
-            <h2 class="bubble-main-title blur-reveal">“Les Moches sont de sortie”</h2>
-            <p class="bubble-quote">“Concept d'affiche explorant l'anti-design et la saturation chromatique décomplexée.”</p>
-            <p class="bubble-description fade-in">
-                Un exercice stylistique délibérément brut et provocateur qui joue sur le contre-pied des canons graphiques traditionnels. 
-                Typographies éclatées, contrastes stridents et composition en collage pour marquer les esprits et susciter une réaction immédiate. 
-                Création d'une identité visuelle saisissante à travers un jeu intense de contraste et saturation.
-            </p>
+            <span class="droit" id="capPiece">—</span>
+          </div>
+        </aside>
+      </main>
+    </div>
 
-            <div class="scrapbook-note">
-                <span>Concept d’affiches évènement populaire fictif ↙</span>
-            </div>
+    <div class="portes-zone">
+        <button class="portes-btn" type="button" id="ouvrirPortes">
+            <span class="portes-label">Le site</span>
+            <span class="portes-titre">Toutes les pages</span>
+            <span class="portes-fleche">↑</span>
+        </button>
+    </div>
 
-            <div class="bubble-gallery gallery-grid-2">
-                <div class="bubble-img-card fixed-height-520">
-                    <img src="images/numerique/01_d49d9e546c0a86773aaaadc543f2b410.jpg" alt="Affiche Les Moches sont de sortie - Déclinaison 1">
-                    <div class="img-caption">Affiche 01 • Composition brute & anti-design</div>
-                </div>
-                <div class="bubble-img-card fixed-height-520">
-                    <img src="images/numerique/02_a989ddcdd7e09faefe73458099171daf.jpg" alt="Affiche Les Moches sont de sortie - Déclinaison 2">
-                    <div class="img-caption">Affiche 02 • Typographie éclatée et saturation</div>
-                </div>
-            </div>
-        </article>
-
-        <!-- BULLE 2 : KOZU™ -->
-        <article class="project-bubble" id="kozu">
-            <div class="bubble-top-bar">
-                <span class="bubble-category-pill dark-accent">Identité Visuelle & Motion 3D</span>
-                <span class="bubble-metadata">Branding • After Effects • Flocage Textile • Mockup 3D</span>
-            </div>
-
-            <h2 class="bubble-main-title blur-reveal">kozu™</h2>
-            <p class="bubble-quote">“Création de logotype, boucle motion design et déclinaisons textiles / 3D.”</p>
-            <p class="bubble-description fade-in">
-                Développement de l'univers visuel de la marque <strong>kozu™</strong>. Du logotype vectoriel aux animations typographiques en boucle, 
-                en passant par le flockage textile sur t-shirt et la mise en situation via un mock-up 3D photoréaliste animé sur After Effects.
-            </p>
-
-            <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
-                <div class="scrapbook-note rotate-right highlight-magenta">
-                    <span>Flocage textile & mock-up produit After Effects ↗</span>
-                </div>
-            </div>
-
-            <div class="bubble-gallery gallery-grid-3">
-                <div class="bubble-img-card fixed-height-320">
-                    <img src="images/numerique/05_1e365268da58e8032271a4e990033a76.png" alt="kozu™ - Logo et Typographie">
-                    <div class="img-caption">Logo vectoriel & identité typographique kozu™</div>
-                </div>
-                <div class="bubble-img-card fixed-height-320">
-                    <img src="images/numerique/06_9e58fb5af1259c036b72a99efca7edfd.png" alt="kozu™ - T-Shirt Flocage">
-                    <div class="img-caption">Production textile • Technique du flocage</div>
-                </div>
-                <div class="bubble-img-card fixed-height-320">
-                    <img src="images/numerique/08_a74f477b7b70f109cf2ee40047f3db60.png" alt="kozu™ - Mock-up Publicitaire 3D">
-                    <div class="img-caption">Mock-up 3D & contenu publicitaire After Effects</div>
-                </div>
-            </div>
-        </article>
-
-        <!-- BULLE 3 : RETOUCHES EXPÉRIMENTALES -->
-        <article class="project-bubble" id="retouches">
-            <div class="bubble-top-bar">
-                <span class="bubble-category-pill green-accent">Édition d'Art & Post-Production</span>
-                <span class="bubble-metadata">Lightroom • Photoshop • Étalonnage Non-Conventionnel</span>
-            </div>
-
-            <h2 class="bubble-main-title blur-reveal">Retouches Expérimentales</h2>
-            <p class="bubble-quote green-accent">“Pousser les outils de développement dans leurs derniers retranchements.”</p>
-            <p class="bubble-description fade-in">
-                Lorsque je retouche mes photos, j’apprécie parfois me tenter à autre chose, sortir de ma zone de confort. 
-                J’aime explorer et pousser les outils que j’utilise à leurs extrêmes plutôt que de m’enfermer dans des limites établies. 
-                En détournant les courbes de tonalité et l’étalonnage de Lightroom et Photoshop, chaque cliché devient une toile numérique à l’ambiance singulière.
-            </p>
-
-            <div class="scrapbook-note highlight-green">
-                <span>Détournement des courbes & manipulation des textures ↘</span>
-            </div>
-
-            <div class="bubble-gallery gallery-grid-3">
-                <div class="bubble-img-card fixed-height-420">
-                    <img src="images/numerique/10_4a9b52a1b7d5fca22259fb7739f55070.jpg" alt="Retouche expérimentale 01">
-                    <div class="img-caption">Retouche expérimentale • Tonalités solaires</div>
-                </div>
-                <div class="bubble-img-card fixed-height-420">
-                    <img src="images/numerique/11_bada61941b265902d7e718db9c03b481.jpg" alt="Retouche expérimentale 02">
-                    <div class="img-caption">Retouche expérimentale • Contraste & ambiance crépusculaire</div>
-                </div>
-                <div class="bubble-img-card fixed-height-420">
-                    <img src="images/numerique/12_d163c6f4b27cf615b240947bd0329ded.jpg" alt="Retouche expérimentale 03">
-                    <div class="img-caption">Retouche expérimentale • Saturation texturée</div>
-                </div>
-            </div>
-        </article>
-
-        <!-- BULLE 4 : OKOYO & NIKO (INSPIRATION DIRECTE DES DEUX IMAGES) -->
-        <article class="project-bubble" id="okoyo-niko">
-            <div class="bubble-top-bar">
-                <span class="bubble-category-pill">Animation 2D & Concept Sci-Fi</span>
-                <span class="bubble-metadata">Model Sheet • Roughs • Recherche Graphique • Guidelines</span>
-            </div>
-
-            <h2 class="bubble-main-title blur-reveal">Okoyo & Niko : Cinéma d’Animation 2D</h2>
-            <p class="bubble-quote">“Bible graphique et conception de personnages pour un univers sci-fi animé.”</p>
-            <p class="bubble-description fade-in">
-                Conception complète de la galerie de personnages : model sheets avec lignes directrices, expressions faciales, attitudes clés et roughs préparatoires. 
-                Une recherche méticuleuse sur l’anatomie, les proportions en rotation et le character design pour la pré-production d'une série animée de science-fiction.
-            </p>
-
-            <!-- Accents Scrapbook fidèles à la référence -->
-            <div style="display: flex; gap: 1rem; flex-wrap: wrap; margin-bottom: 1.5rem;">
-                <div class="scrapbook-note">
-                    <span>Model Sheets ( Utilisation de guidelines ) ↙</span>
-                </div>
-                <div class="scrapbook-note rotate-right highlight-magenta">
-                    <span>Conception et pré-production d’une série de science-fiction ↗</span>
-                </div>
-            </div>
-
-            <!-- Vitrine principale : Model Sheet & Roughs -->
-            <div class="gallery-showcase-split" style="margin-bottom: 2rem;">
-                <div class="bubble-img-card fixed-height-420">
-                    <img src="images/numerique/15_735a455c85f4169a19e1dd3f406c8b4b.png" alt="Okoyo - Model Sheet et tour de personnage">
-                    <div class="img-caption">Okoyo • Model Sheet sous 3 angles & proportions</div>
-                </div>
-                <div class="bubble-img-card fixed-height-420">
-                    <img src="images/numerique/16_e31dfbf98e4d486652a458baeca373b7.png" alt="Okoyo & Niko - Expressions et gros plans">
-                    <div class="img-caption">Expressions faciales & regards des protagonistes</div>
-                </div>
-            </div>
-
-            <!-- Galerie des roughs et recherches de personnages -->
-            <div class="scrapbook-note">
-                <span>Roughs, fiches personnages & concept art ↘</span>
-            </div>
-
-            <div class="bubble-gallery gallery-grid-4">
-                <div class="bubble-img-card fixed-height-320">
-                    <img src="images/numerique/17_1f7f222a355086b2e2ec2cd5871f4ff1.jpg" alt="Okoyo & Niko - Roughs anatomie et cheveux">
-                    <div class="img-caption">Rough préliminaire & repères morphologiques</div>
-                </div>
-                <div class="bubble-img-card fixed-height-320">
-                    <img src="images/numerique/18_1ba4f9180334c64e750ef27e469e5fd0.jpg" alt="Fiche personnage 01">
-                    <div class="img-caption">Recherche de posture & gestuelle</div>
-                </div>
-                <div class="bubble-img-card fixed-height-320">
-                    <img src="images/numerique/19_de0c81f3d80deadfd482d8a215283de4.jpg" alt="Fiche personnage 02">
-                    <div class="img-caption">Attitudes dynamiques</div>
-                </div>
-                <div class="bubble-img-card fixed-height-320">
-                    <img src="images/numerique/20_390c468e5c9cc3fb472118838d9da45d.jpg" alt="Fiche personnage 03">
-                    <div class="img-caption">Costume & accessoires sci-fi</div>
-                </div>
-                <div class="bubble-img-card fixed-height-320">
-                    <img src="images/numerique/21_a9eacbf095aef4a652028863f9f91ca5.jpg" alt="Fiche personnage 04">
-                    <div class="img-caption">Silhouette & ombres</div>
-                </div>
-                <div class="bubble-img-card fixed-height-320">
-                    <img src="images/numerique/22_03cd516d256e4a804789008a87a110ba.jpg" alt="Fiche personnage 05">
-                    <div class="img-caption">Étude d'expression dramatique</div>
-                </div>
-                <div class="bubble-img-card fixed-height-320">
-                    <img src="images/numerique/23_f1a996ef7063a1c60d3dd7f8e3827c15.jpg" alt="Artwork scène">
-                    <div class="img-caption">Mise en scène narrative</div>
-                </div>
-                <div class="bubble-img-card fixed-height-320">
-                    <img src="images/numerique/24_84531fccee09c070a69e36a727099ab7.jpg" alt="Color Script">
-                    <div class="img-caption">Color script & palette d'ambiance</div>
-                </div>
-            </div>
-        </article>
-
-        <!-- BULLE 5 : ANIMATIONS EN VRAC -->
-        <article class="project-bubble" id="animations">
-            <div class="bubble-top-bar">
-                <span class="bubble-category-pill dark-accent">Recherches de Mouvement</span>
-                <span class="bubble-metadata">Line-Tests • Squash & Stretch • Timing • Exercices 2D</span>
-            </div>
-
-            <h2 class="bubble-main-title blur-reveal">Animations en Vrac</h2>
-            <p class="bubble-quote">“Recherches de timing, d'espacement et de déformations au service du mouvement.”</p>
-            <p class="bubble-description fade-in">
-                Courtes séquences animées, line-tests et boucles d'exercices : anticipation, squash & stretch, pesanteur et fluidité de la ligne. 
-                Différents extraits d'animations menés à terme pour affûter le sens du rythme visuel.
-            </p>
-
-            <div class="scrapbook-note">
-                <span>Line-tests & déformations au service du mouvement ↘</span>
-            </div>
-
-            <div class="bubble-gallery gallery-grid-3">
-                <div class="bubble-img-card fixed-height-320">
-                    <img src="images/numerique/32_2ad66dc051c87aea06566413ec09ec8c.jpg" alt="Animation - Line Test Mouvement">
-                    <div class="img-caption">Line-test • Décomposition de pas</div>
-                </div>
-                <div class="bubble-img-card fixed-height-320">
-                    <img src="images/numerique/33_3d00f28f6fb5ad6588728d8a201aee2c.png" alt="Animation - Timing et Stretch">
-                    <div class="img-caption">Étude d'impact & déformation</div>
-                </div>
-                <div class="bubble-img-card fixed-height-320">
-                    <img src="images/numerique/34_61f4d04131de4741de0b71abbf140ca8.png" alt="Animation - Boucle fluide">
-                    <div class="img-caption">Boucle d'action continue</div>
-                </div>
-            </div>
-        </article>
-
-        <!-- BANNIÈRE DE CONTINUATION VERS PHOTOGRAPHIE -->
-        <a href="photographie.html" class="next-domain-flow">
-            <div>
-                <span class="next-flow-label">Continuer le voyage ↘</span>
-                <span class="next-flow-title">Domaine 02 : Photographie (Studio & Expressive)</span>
-            </div>
-            <div class="next-flow-arrow">→</div>
-        </a>
-
-    </main>
-
-    <!-- Footer -->
-    <footer style="text-align:center;padding:3rem 1.5rem;font-family:var(--font-body);color:#666;">
+    <footer class="num-foot">
         <p>© 2026 Ian Bossut‑Gandou – Tous droits réservés.</p>
     </footer>
 
-    <!-- GSAP & App Scripts -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/MotionPathPlugin.min.js"></script>
-    <script src="app.js"></script>
+    <section class="rayon" id="rayon" aria-hidden="true">
+      <header class="rayon-head">
+        <div class="rayon-id">
+          <span class="rayon-num" id="rNum">01</span>
+          <span class="rayon-titre" id="rNom">Animation</span>
+          <span class="rayon-note" id="rNote"></span>
+        </div>
+        <button class="btn" type="button" id="fermerRayon">Fermer ✕</button>
+      </header>
+      <div class="bande" id="bande"></div>
+    </section>
+
+    <section class="projet" id="projet" aria-hidden="true">
+      <button class="btn retour" type="button" id="retour">← Rayon</button>
+      <div class="hero" id="hero"></div>
+      <div class="projet-corps" id="projetCorps"></div>
+      <footer class="projet-foot">
+        <p>© 2026 Ian Bossut‑Gandou – Tous droits réservés.</p>
+      </footer>
+      <button class="descendre cache" type="button" id="descendre" aria-label="Faire défiler vers le bas">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v15"/><path d="M5.5 12.5 12 19l6.5-6.5"/></svg>
+      </button>
+    </section>
+
+    <section class="portes" id="portes" aria-hidden="true">
+      <div class="portes-fond"></div>
+      <div class="portes-panneau" role="dialog" aria-label="Toutes les pages du site">
+        <div class="portes-tete">
+          <span class="portes-kicker">on va où maintenant ?</span>
+          <button class="btn" type="button" id="fermerPortes">Fermer ✕</button>
+        </div>
+        <div class="portes-bande" id="portesBande"></div>
+      </div>
+    </section>
+
+<script>
+(function () {
+  /* ------------------------------------------------------------------
+     Un projet : {id, nom, discipline, annee, texte, media:[{t:'image'|'video',src,alt}], game}
+     La 1re image est la vignette du rayon et l'image pleine page.
+  ------------------------------------------------------------------ */
+  var CATS = [
+    {
+      num: '01', nom: 'Animation',
+      note: 'Personnages, décors et mouvement — de la pré-production aux line-tests.',
+      projets: [
+        { id:'chris-soleil', nom:'Chris & Soleil', discipline:'Série animée', annee:'', texte:'', media:[] },
+        {
+          id:'oko', nom:'O.K.O.', discipline:'Character design · Pré-production', annee:'2025', layout:'galerie', lineTests:true,
+          texte:"Bible graphique et conception de personnages pour une série de science-fiction animée : model sheets avec lignes directrices, expressions faciales, attitudes clés et roughs préparatoires. Une recherche sur l'anatomie, les proportions en rotation et le character design.",
+          media:[
+            { t:'image', src:'images/numerique/18_1ba4f9180334c64e750ef27e469e5fd0.jpg', alt:'O.K.O. — recherche de posture' },
+            { t:'image', src:'images/numerique/19_de0c81f3d80deadfd482d8a215283de4.jpg', alt:'O.K.O. — attitudes dynamiques' },
+            { t:'image', src:'images/numerique/20_390c468e5c9cc3fb472118838d9da45d.jpg', alt:'O.K.O. — costume et accessoires' },
+            { t:'image', src:'images/numerique/21_a9eacbf095aef4a652028863f9f91ca5.jpg', alt:'O.K.O. — silhouette et ombres' },
+            { t:'image', src:'images/numerique/22_03cd516d256e4a804789008a87a110ba.jpg', alt:'O.K.O. — expression dramatique' },
+            { t:'image', src:'images/numerique/23_f1a996ef7063a1c60d3dd7f8e3827c15.jpg', alt:'O.K.O. — mise en scène narrative' },
+            { t:'image', src:'images/numerique/24_84531fccee09c070a69e36a727099ab7.jpg', alt:'O.K.O. — color script' }
+          ]
+        },
+        {
+          id:'2d-en-vrac', nom:'2D en vrac', discipline:'Line-tests · Timing', annee:'2025-26', layout:'lecteur',
+          sousTitre:'Différents extraits d’animations menés à terme',
+          videos:[
+            { titre:'Extrait 01', src:null, poster:null, duree:'' },
+            { titre:'Extrait 02', src:null, poster:null, duree:'' },
+            { titre:'Extrait 03', src:null, poster:null, duree:'' },
+            { titre:'Extrait 04', src:null, poster:null, duree:'' }
+          ],
+          texte:"Courtes séquences animées, line-tests et boucles d'exercices : anticipation, squash &amp; stretch, pesanteur et fluidité de la ligne. Des extraits menés à terme pour affûter le sens du rythme visuel.",
+          media:[
+          ]
+        },
+        {
+          id:'3d-en-vrac', nom:'3D en vrac', discipline:'3D · Recherches', annee:'', layout:'lecteur', videos:[],
+          sousTitre:'Extraits et rendus à venir',
+          texte:"Extraits d’exercices 3D : modélisation, éclairage et rendus de recherche.",
+          media:[]
+        }
+      ]
+    },
+    {
+      num: '02', nom: 'Communication visuelle',
+      note: 'Identité, affiche, édition — l’image comme outil de communication.',
+      projets: [
+        {
+          id:'branding', nom:'Design de marque / branding', discipline:'Branding · Motion · Textile', annee:'2025', layout:'kozu',
+          texte:"Développement de l'univers visuel de la marque <strong>kozu™</strong>. Du logotype vectoriel aux animations typographiques en boucle, en passant par le flocage textile sur t-shirt et la mise en situation via un mock-up 3D photoréaliste animé sur After Effects.",
+          media:[
+            { t:'image', src:'images/numerique/05_1e365268da58e8032271a4e990033a76.png', alt:'kozu™ — logotype' },
+            { t:'image', src:'images/numerique/06_9e58fb5af1259c036b72a99efca7edfd.png', alt:'kozu™ — flocage textile' },
+            { t:'image', src:'images/numerique/07_8f9b74c1f1891a91be3dda10353c6812.png', alt:'kozu™ — mock-up produit' },
+            { t:'image', src:'images/numerique/08_a74f477b7b70f109cf2ee40047f3db60.png', alt:'kozu™ — contenu publicitaire' },
+            { t:'image', src:'images/numerique/09_40afe9e7bdfe374919fc4c8155ff17c1.png', alt:'kozu™ — déclinaison' }
+          ]
+        },
+        {
+          id:'prints', nom:'Les moches sont de sortie', discipline:'Affiche · Édition', annee:'2024', layout:'moches',
+          texte:"Un exercice stylistique délibérément brut et provocateur qui joue le contre-pied des canons graphiques : typographies éclatées, contrastes stridents et composition en collage pour un évènement populaire fictif. Les Moches sont de sortie, et elles ne demandent pas la permission.",
+          media:[
+            { t:'image', src:'images/numerique/01_d49d9e546c0a86773aaaadc543f2b410.jpg', alt:'Affiche 01 — composition brute' },
+            { t:'image', src:'images/numerique/02_a989ddcdd7e09faefe73458099171daf.jpg', alt:'Affiche 02 — typographie éclatée' },
+            { t:'image', src:'images/numerique/03_9984c527724fbcce6e014031c6a30863.jpg', alt:'Affiche 03 — déclinaison' },
+            { t:'image', src:'images/numerique/04_e2c94755da7ad6435fd65261a801418b.jpg', alt:'Affiche 04 — déclinaison' }
+          ]
+        },
+        {
+          id:'retouches', nom:'Retouches expérimentales', discipline:'Lightroom · Photoshop', annee:'2024', layout:'retouches',
+          texte:"Lorsque je retouche mes photos, j’apprécie parfois me tenter à autre chose, sortir de ma zone de confort. En détournant les courbes de tonalité et l’étalonnage de Lightroom et Photoshop, chaque cliché devient une toile numérique à l’ambiance singulière.",
+          media:[
+            { t:'image', src:'images/numerique/10_4a9b52a1b7d5fca22259fb7739f55070.jpg', alt:'Retouche — tonalités solaires' },
+            { t:'image', src:'images/numerique/11_bada61941b265902d7e718db9c03b481.jpg', alt:'Retouche — contraste crépusculaire' },
+            { t:'image', src:'images/numerique/12_d163c6f4b27cf615b240947bd0329ded.jpg', alt:'Retouche — saturation texturée' },
+            { t:'image', src:'images/numerique/13_4d039d1b15cb5a334292ea93a2985a95.jpg', alt:'Retouche — étalonnage libre' },
+            { t:'image', src:'images/numerique/14_d4fea54dc4d1ea632185bf760aa5d286.jpg', alt:'Retouche — expérimentation' }
+          ]
+        }
+      ]
+    },
+    {
+      num: '03', nom: 'Site web',
+      note: 'Ce site est lui-même un projet : structure, typographie, interactions, code. Et parce qu’un site peut aussi se jouer, deux mini-jeux y sont intégrés — un pour la souris, un pour le tactile.',
+      projets: [
+        {
+          id:'jeu-ordinateur', nom:'Mini-jeu · Ordinateur', discipline:'Souris & clavier', annee:'',
+          texte:"Le rayon perdu : un pixel RPG à parcourir aux ZQSD pour retrouver les coffres cachés, puis à ouvrir avec E ou Entrée. Chaque trésor est un clin d’œil aux projets du site, et la porte du fond ne s’ouvre qu’une fois le rayon fouillé.",
+          media:[], game:'desktop'
+        },
+        {
+          id:'jeu-mobile', nom:'Mini-jeu · Mobile & tablette', discipline:'Tactile', annee:'',
+          texte:"Cadrage : le téléphone devient l’appareil photo. On incline l’appareil pour balayer la scène et garder le sujet dans le viseur, le temps que la mise au point se fasse.",
+          media:[], game:'mobile'
+        }
+      ]
+    }
+  ];
+
+  var liste = document.getElementById('liste');
+  var apercu = document.getElementById('apercu');
+  var vide = document.getElementById('vide');
+  var videNom = document.getElementById('videNom');
+  var ghost = document.getElementById('ghost');
+  var capNom = document.getElementById('capNom');
+  var capMeta = document.getElementById('capMeta');
+  var capPiece = document.getElementById('capPiece');
+
+  function deux(n) { return (n < 10 ? '0' : '') + n; }
+
+  function pieces(cat) {
+    return cat.projets.reduce(function (n, p) { return n + p.media.length; }, 0);
+  }
+
+  function premiereImage(cat) {
+    for (var i = 0; i < cat.projets.length; i++) {
+      for (var j = 0; j < cat.projets[i].media.length; j++) {
+        if (cat.projets[i].media[j].t === 'image') return cat.projets[i].media[j];
+      }
+    }
+    return null;
+  }
+
+  function afficherApercu(src) {
+    if (apercu.getAttribute('src') === src) { apercu.classList.add('on'); return; }
+    apercu.classList.remove('on');
+    apercu.onload = function () { apercu.classList.add('on'); };
+    apercu.src = src;
+    if (apercu.complete && apercu.naturalWidth) apercu.classList.add('on');
+  }
+
+  function apercuCat(i) {
+    var cat = CATS[i];
+    ghost.textContent = cat.num;
+    capNom.textContent = cat.num + ' · ' + cat.nom;
+    capMeta.textContent = cat.note;
+    capPiece.textContent = cat.projets.length + ' projets' +
+      (pieces(cat) ? ' · ' + deux(pieces(cat)) + ' pièces' : ' · jeux à venir');
+    var m = premiereImage(cat);
+    if (m) {
+      afficherApercu(m.src);
+      vide.classList.remove('on');
+    } else {
+      apercu.classList.remove('on');
+      videNom.innerHTML = cat.nom;
+      vide.classList.add('on');
+    }
+  }
+
+  CATS.forEach(function (cat, i) {
+    var b = document.createElement('button');
+    b.type = 'button';
+    b.className = 'cat-row';
+    b.innerHTML = '<span class="idx">' + cat.num + '</span>' +
+                  '<span class="cn">' + cat.nom + '</span>' +
+                  '<span class="cc">' + cat.projets.length + ' projets</span>';
+    b.addEventListener('mouseenter', function () { apercuCat(i); });
+    b.addEventListener('focus', function () { apercuCat(i); });
+    b.addEventListener('click', function () { ouvrirRayon(i); });
+    liste.appendChild(b);
+  });
+
+  apercuCat(0);
+
+  /* ---------------- rayon ---------------- */
+  var rayon = document.getElementById('rayon');
+  var bande = document.getElementById('bande');
+  var rNum = document.getElementById('rNum');
+  var rNom = document.getElementById('rNom');
+  var rNote = document.getElementById('rNote');
+
+  function vignetteHtml(p, i) {
+    var m = p.media[0];
+    var titre = '<span class="v-titre">' + p.nom + '</span>';
+    if (m && m.t === 'video') {
+      return '<button class="vignette" type="button" data-i="' + i + '">' +
+        '<span class="v-img"><video src="' + m.src + '" autoplay muted loop playsinline></video></span>' +
+        titre + '</button>';
+    }
+    if (m && m.t === 'image') {
+      return '<button class="vignette" type="button" data-i="' + i + '">' +
+        '<span class="v-img"><img src="' + m.src + '" alt="' + (m.alt || '') + '" loading="lazy" /></span>' +
+        titre + '</button>';
+    }
+    return '<button class="vignette" type="button" data-i="' + i + '">' +
+      '<span class="v-img v-vide"><span class="v-nom">' + p.nom + '</span>' +
+      '<span class="v-att">' + (p.game ? 'jeu à intégrer' : 'à venir') + '</span></span>' +
+      titre + '</button>';
+  }
+
+  function ouvrirRayon(i) {
+    var cat = CATS[i];
+    rNum.textContent = cat.num;
+    rNom.textContent = cat.nom;
+    rNote.innerHTML = cat.note;
+
+    bande.innerHTML = cat.projets.map(vignetteHtml).join('');
+    Array.prototype.forEach.call(bande.querySelectorAll('.vignette'), function (v) {
+      var p = cat.projets[+v.getAttribute('data-i')];
+      p.catNum = cat.num;
+      p.catNom = cat.nom;
+      v.addEventListener('click', function () { entrer(p, v); });
+    });
+
+    bande.scrollLeft = 0;
+    rayon.classList.add('on');
+    rayon.setAttribute('aria-hidden', 'false');
+    document.body.classList.add('gele');
+  }
+
+  function fermerRayon() {
+    if (projetCourant) {
+      projet.classList.remove('on');
+      projet.setAttribute('aria-hidden', 'true');
+      projetCourant = null;
+    }
+    rayon.classList.remove('on');
+    rayon.setAttribute('aria-hidden', 'true');
+    document.body.classList.remove('gele');
+    bande.innerHTML = '';
+  }
+
+  document.getElementById('fermerRayon').addEventListener('click', fermerRayon);
+
+  /* ---------------- page projet ---------------- */
+  var projet = document.getElementById('projet');
+  var hero = document.getElementById('hero');
+  var projetCorps = document.getElementById('projetCorps');
+  var retour = document.getElementById('retour');
+  var descendre = document.getElementById('descendre');
+  var projetCourant = null;
+  var rectVignette = null;
+
+  function plein() { return { left: 0, top: 0, width: innerWidth, height: innerHeight }; }
+
+  function appliquer(el, r) {
+    el.style.left = r.left + 'px';
+    el.style.top = r.top + 'px';
+    el.style.width = r.width + 'px';
+    el.style.height = r.height + 'px';
+  }
+
+  function contenuVide(p, sansNom) {
+    return '<div class="v-vide">' +
+      (sansNom ? '' : '<span class="v-nom">' + p.nom + '</span>') +
+      '<span class="v-att">' + (p.game ? 'jeu à intégrer' : 'contenu à venir') + '</span></div>';
+  }
+
+  function titreHtml(nom) {
+    var parts = nom.split(/\s+/).filter(Boolean);
+    var morceaux = [];
+    parts.forEach(function (mot) {
+      if (mot === '&' || mot === '/' || mot === '·' || mot === '—') return;
+      if (mot.length <= 9) { morceaux.push(mot); return; }
+      var n = Math.ceil(mot.length / 6);
+      var t = Math.ceil(mot.length / n);
+      for (var i = 0; i < mot.length; i += t) morceaux.push(mot.slice(i, i + t));
+    });
+    morceaux = morceaux.slice(0, 6);
+
+    var facteurs = [1, 0.72, 0.88, 0.78, 0.62, 0.92];
+    var just = ['start', 'center', 'end'];
+    var html = '';
+    morceaux.forEach(function (m, i) {
+      html += '<span class="chunk" style="grid-column:' + ((i % 3) + 1) + ';grid-row:' + (Math.floor(i / 3) + 1) +
+        ';justify-self:' + just[i % 3] + ';align-self:' + just[(i + 1) % 3] + '">' +
+        '<span class="chunk-in" style="font-size:calc(clamp(1.3rem,7.2vw,7.6rem) * ' + facteurs[i % 6] +
+        ');--d:' + (0.07 * i).toFixed(2) + 's">' + m + '</span></span>';
+    });
+    return '<h2 class="hero-titre" aria-label="' + nom + '">' + html + '</h2>';
+  }
+
+  function voletAnime(p, de, vers, fin) {
+    var w = document.createElement('div');
+    w.className = 'volet';
+    var m = p.media[0];
+    if (m && m.t === 'image') {
+      w.style.backgroundImage = 'url("' + m.src + '")';
+    } else if (m && m.t === 'video') {
+      var v = document.createElement('video');
+      v.src = m.src; v.autoplay = true; v.muted = true; v.loop = true; v.playsInline = true;
+      v.setAttribute('playsinline', '');
+      w.appendChild(v);
+    } else {
+      w.innerHTML = contenuVide(p);
+    }
+    appliquer(w, de);
+    document.body.appendChild(w);
+
+    var anim = null;
+    try {
+      anim = w.animate([
+        { left: de.left + 'px', top: de.top + 'px', width: de.width + 'px', height: de.height + 'px' },
+        { left: vers.left + 'px', top: vers.top + 'px', width: vers.width + 'px', height: vers.height + 'px' }
+      ], { duration: 760, easing: 'cubic-bezier(.76,0,.24,1)', fill: 'forwards' });
+    } catch (err) { /* pas d'API Animations */ }
+
+    var fait = false;
+    function suite() {
+      if (fait) return;
+      fait = true;
+      appliquer(w, vers);
+      if (fin) fin(w);
+    }
+    if (anim) anim.onfinish = suite;
+    setTimeout(suite, anim ? 840 : 0);
+    return w;
+  }
+
+  function entrer(p, v) {
+    var cible = v.querySelector('img, video') || v;
+    var r = cible.getBoundingClientRect();
+    rectVignette = { left: r.left, top: r.top, width: r.width, height: r.height };
+
+    voletAnime(p, rectVignette, plein(), function (w) {
+      ouvrirProjet(p);
+      if (w.parentNode) w.remove();
+    });
+  }
+
+  function cellule(m) {
+    if (m.t === 'video') {
+      return '<figure><video src="' + m.src + '" controls muted loop playsinline preload="metadata"></video></figure>';
+    }
+    return '<figure><img src="' + m.src + '" alt="' + (m.alt || '') + '" loading="lazy" /></figure>';
+  }
+
+  function caseJeu(p) {
+    var large = p.game === 'desktop';
+    return '<div class="jeu-hote" data-jeu="' + p.game + '" role="application" aria-label="Mini-jeu ' +
+      (large ? 'ordinateur' : 'mobile et tablette') + '"></div>';
+  }
+
+  /* Mise en page collage du projet « Les moches sont de sortie » :
+     titre en haut, photo d'origine + texte + palette à gauche,
+     accroche + flèche + affiche violette au centre, affiche verte à droite. */
+  function collageMoches(p) {
+    var m = p.media;
+    function figure(i, cls) {
+      var v = m[i];
+      if (!v) return '';
+      return '<figure class="moches-img ' + (cls || '') + '">' +
+        '<img src="' + v.src + '" alt="' + (v.alt || '') + '" loading="lazy" />' +
+      '</figure>';
+    }
+    function pastilles(liste) {
+      return liste.map(function (c) {
+        return '<span style="--p:' + c + '"></span>';
+      }).join('');
+    }
+    var haut = ['#E4007C', '#F5811F', '#3B0BA8', '#F4746E'];
+    var bas = ['#8D8AF2', '#0D5C22', '#F2519B', '#C8D93C'];
+
+    return '<div class="moches">' +
+      '<h3 class="moches-titre">« Les moches sont de sortie »</h3>' +
+      '<div class="moches-col moches-g">' +
+        figure(0) +
+        '<p class="moches-texte">Création de son identité visuelle à travers un jeu intense de contraste et saturation. <em>(anti‑design ; design « moche »)</em></p>' +
+        '<div class="moches-palette">' + pastilles(haut) +
+          '<i class="moches-trait"></i>' + pastilles(bas) +
+        '</div>' +
+      '</div>' +
+      '<div class="moches-col moches-m">' +
+        '<p class="moches-accroche">Concept d’affiches promouvant un événement populaire fictif</p>' +
+        '<svg class="moches-fleche" viewBox="0 0 130 100" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' +
+          '<path d="M8 14 C 18 60, 62 84, 104 66" />' +
+          '<path d="M88 50 L 110 64 L 92 86" />' +
+        '</svg>' +
+        figure(3) +
+      '</div>' +
+      '<div class="moches-col moches-d">' + figure(1) + '</div>' +
+    '</div>';
+  }
+
+  /* Mise en page du projet kozu™ : logotype à gauche, emplacement vidéo
+     au centre, marque + accroche + t-shirt à droite, contenu produit dessous. */
+  function collageKozu(p) {
+    var m = p.media;
+    function figure(i, cls, altForce) {
+      var v = m[i];
+      if (!v) return '';
+      return '<figure class="' + cls + '"><img src="' + v.src + '" alt="' +
+        (altForce || v.alt || '') + '" loading="lazy" /></figure>';
+    }
+    /* emplacement de vidéo : on y mettra le <video> à la place du cadre */
+    function video(id, grand, poster) {
+      if (poster) {
+        return '<div class="kozu-video kozu-video--plein" data-video="' + id + '">' +
+          figure(poster, 'kozu-poster', 'Mock-up produit kozu™') +
+          '<span class="kozu-badge">Vidéo à venir</span>' +
+        '</div>';
+      }
+      return '<div class="kozu-video" data-video="' + id + '">' +
+        '<b>Vidéo à venir</b>' +
+        '<span>' + (grand ? 'contenu publicitaire · mp4 ou webm' : 'motion design du logotype · mp4 ou webm') + '</span>' +
+      '</div>';
+    }
+
+    return '<div class="kozu">' +
+      '<div class="kozu-haut">' +
+        figure(0, 'kozu-logo', 'kozu™ — logotype') +
+        video('motion', false) +
+        '<div class="kozu-droite">' +
+          '<p class="kozu-marque">kozu™</p>' +
+          '<p class="kozu-accroche">Création d’un logo et déclinaison de ce dernier en motion design et application concrète sur textile</p>' +
+          figure(1, 'kozu-tee', 'kozu™ — t-shirt floqué') +
+          '<p class="kozu-legende">Production d’un t-shirt avec la technique du flocage</p>' +
+        '</div>' +
+      '</div>' +
+      '<div class="kozu-bas">' +
+        '<p class="kozu-legende kozu-legende--centre">Mock-up et contenu publicitaire fictif de produit (AE)</p>' +
+        video('pub', true, 2) +
+      '</div>' +
+    '</div>';
+  }
+
+  /* Mise en page des retouches : deux tirages à gauche puis le texte,
+     carré magenta + titre à droite, tirage vert en large dessous. */
+  function collageRetouches(p) {
+    var m = p.media;
+    function figure(i, cls) {
+      var v = m[i];
+      if (!v) return '';
+      return '<figure class="mr-img ' + (cls || '') + '">' +
+        '<img src="' + v.src + '" alt="' + (v.alt || '') + '" loading="lazy" />' +
+      '</figure>';
+    }
+
+    return '<div class="mr">' +
+      '<div class="mr-g">' +
+        '<div class="mr-duo">' + figure(3) + figure(4) + '</div>' +
+        '<div class="mr-texte">' +
+          '<p>Lorsque je retouche mes photos, j’apprécie parfois me tenter à autre chose, sortir de sa zone de confort.</p>' +
+          '<p>J’aime explorer et pousser les outils que j’utilise à leur extrêmes plutôt que de m’enfermer dans des limites établies.</p>' +
+        '</div>' +
+      '</div>' +
+      '<div class="mr-d">' +
+        '<div class="mr-haut">' +
+          figure(0) +
+          '<div class="mr-tete">' +
+            '<h3 class="mr-titre">Retouches expérimentales</h3>' +
+            '<p class="mr-sous">Édition d’art &amp; post‑production créative avec l’utilisation de Lightroom et Photoshop</p>' +
+          '</div>' +
+        '</div>' +
+        figure(1) +
+      '</div>' +
+    '</div>';
+  }
+
+  /* Lecteur vidéo façon plateforme : média à gauche, recommandations à droite */
+  function lecteurMedia(v) {
+    if (v && v.src) {
+      return '<video controls playsinline preload="metadata"' + (v.poster ? ' poster="' + v.poster + '"' : '') + '>' +
+        '<source src="' + v.src + '" type="video/mp4" />' +
+      '</video>';
+    }
+    if (v && v.poster) {
+      return '<img src="' + v.poster + '" alt="' + (v.titre || '') + '" /><span class="yt-play">▶</span>';
+    }
+    return '<div class="yt-slot"><span class="yt-play">▶</span><span class="yt-slot-txt">Vidéo à venir</span></div>';
+  }
+
+  function lecteurHtml(p) {
+    var vids = p.videos || [];
+    var premier = vids.length ? vids[0] : null;
+
+    var cartes = vids.map(function (v, i) {
+      return '<button class="yt-carte' + (i === 0 ? ' on' : '') + '" type="button" data-index="' + i + '">' +
+        '<span class="yt-vignette">' +
+          (v.poster ? '<img src="' + v.poster + '" alt="" loading="lazy" />' : '<span class="yt-vignette-vide">Extrait à venir</span>') +
+        '</span>' +
+        '<span class="yt-carte-txt">' +
+          '<strong>' + (v.titre || 'Extrait à venir') + '</strong>' +
+          '<small>' + (v.duree || 'Durée à préciser') + '</small>' +
+        '</span>' +
+      '</button>';
+    }).join('');
+
+    return '<section class="yt">' +
+      (p.sousTitre ? '<header class="yt-tete"><p class="yt-sous">' + p.sousTitre + '</p></header>' : '') +
+      '<div class="yt-principal">' +
+        '<div class="yt-image" id="ytImage">' + lecteurMedia(premier) + '</div>' +
+        '<h3 class="yt-titre" id="ytTitre">' + (premier ? (premier.titre || 'Extrait à venir') : 'Vidéo à venir') + '</h3>' +
+        '<div class="yt-meta">' +
+          '<span>' + p.nom + '</span>' +
+          (p.annee ? '<span>' + p.annee + '</span>' : '') +
+          '<span>' + p.discipline + '</span>' +
+        '</div>' +
+        (p.texte ? '<p class="yt-desc">' + p.texte + '</p>' : '') +
+      '</div>' +
+      '<aside class="yt-reco">' +
+        '<h4 class="yt-reco-titre">Recommandations</h4>' +
+        (cartes ? '<div class="yt-liste">' + cartes + '</div>' : '<p class="yt-reco-vide">Aucun extrait pour l’instant.</p>') +
+      '</aside>' +
+    '</section>';
+  }
+
+  function brancherLecteur(p) {
+    var vids = p.videos || [];
+    var cartes = document.querySelectorAll('.yt-carte');
+    if (!cartes.length) return;
+    Array.prototype.forEach.call(cartes, function (b) {
+      b.addEventListener('click', function () {
+        var i = parseInt(b.getAttribute('data-index'), 10) || 0;
+        var v = vids[i] || {};
+        var zone = document.getElementById('ytImage');
+        if (zone) zone.innerHTML = lecteurMedia(v);
+        var t = document.getElementById('ytTitre');
+        if (t) t.textContent = v.titre || 'Extrait à venir';
+        Array.prototype.forEach.call(cartes, function (c) { c.classList.remove('on'); });
+        b.classList.add('on');
+      });
+    });
+  }
+
+  /* Model sheets et roughs : le dessus du projet */
+  function sectionModelSheets() {
+    return '<section class="ms">' +
+      '<h3 class="ms-titre">Okoyo &amp; Niko :<br>Cinéma d’animation 2D</h3>' +
+      '<div class="ms-grille">' +
+        '<div class="ms-gauche">' +
+          '<figure class="ms-img">' +
+            '<img src="images/numerique/16_e31dfbf98e4d486652a458baeca373b7.png" alt="Model sheets — trois angles du personnage" loading="lazy" />' +
+          '</figure>' +
+          '<div class="ms-bas">' +
+            '<figure class="ms-img">' +
+              '<img src="images/numerique/15_735a455c85f4169a19e1dd3f406c8b4b.png" alt="Portraits — face et profil" loading="lazy" />' +
+            '</figure>' +
+            '<div class="ms-legende">' +
+              '<div>' +
+                '<p class="ms-fort">Model Sheets</p>' +
+                '<p class="ms-note">( Utilisation de guidelines )</p>' +
+              '</div>' +
+              '<svg class="ms-fleches" viewBox="0 0 70 96" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' +
+                '<path d="M40 84C46 62 48 44 44 24" />' +
+                '<path d="M44 24l-9 12M44 24l9 11" />' +
+                '<path d="M30 12C20 26 18 44 26 62" />' +
+                '<path d="M26 62l-9-10M26 62l10-8" />' +
+              '</svg>' +
+            '</div>' +
+          '</div>' +
+        '</div>' +
+        '<div class="ms-droite">' +
+          '<figure class="ms-img">' +
+            '<img src="images/numerique/17_1f7f222a355086b2e2ec2cd5871f4ff1.jpg" alt="Rough — visage au crayon et baskets" loading="lazy" />' +
+          '</figure>' +
+          '<aside class="ms-drop">' +
+            '<p class="ms-boite">Conception et pré-production d’une série de science-fiction</p>' +
+            '<span class="ms-label">Rough</span>' +
+          '</aside>' +
+        '</div>' +
+      '</div>' +
+    '</section>';
+  }
+
+  /* Galerie de concept arts : planches cliquables + visionneuse plein écran */
+  function galerieHtml(p) {
+    var items = p.media.map(function (m, i) {
+      return '<button class="galerie-item" type="button" data-index="' + i + '">' +
+        '<img src="' + m.src + '" alt="' + (m.alt || '') + '" loading="lazy" />' +
+        '<span class="galerie-legende">' + (m.alt || '') + '</span>' +
+      '</button>';
+    }).join('');
+
+    return '<div class="galerie">' +
+      '<div class="galerie-tete">' +
+        '<h3 class="galerie-titre">Concept art &amp; fiches personnages</h3>' +
+        '<p class="galerie-note">Clique une planche pour l’ouvrir · flèches pour circuler · Échap pour fermer</p>' +
+      '</div>' +
+      '<div class="galerie-grille">' + items + '</div>' +
+    '</div>';
+  }
+
+  /* Passage du trait à la couleur : planche de line-tests */
+  function sectionLineTests() {
+    return '<section class="lt">' +
+      '<div class="lt-haut">' +
+        '<figure class="lt-img">' +
+          '<img src="images/numerique/34_61f4d04131de4741de0b71abbf140ca8.png" alt="Étude de visage — cheveux mauves, iris cyan" loading="lazy" />' +
+        '</figure>' +
+        '<div class="lt-croquis">' +
+          '<div class="lt-reperes">' +
+            '<span class="lt-tag">Line-tests</span>' +
+            '<svg class="lt-fleche" viewBox="0 0 90 150" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' +
+              '<path d="M52 12C38 44 26 74 14 108" />' +
+              '<path d="M14 108l2-20M14 108l18-9" />' +
+              '<path d="M58 16c10 34 6 74-2 112" />' +
+              '<path d="M56 128l-4-18M56 128l14-14" />' +
+            '</svg>' +
+          '</div>' +
+          '<figure class="lt-img lt-crayon">' +
+            '<img src="images/numerique/28_0a39c2fea73aa4a973d01025c40ad3e3.jpg" alt="Planche de recherches au crayon" loading="lazy" />' +
+          '</figure>' +
+        '</div>' +
+      '</div>' +
+      '<div class="lt-bas">' +
+        '<figure class="lt-img lt-vide"><span>Line-test à venir</span></figure>' +
+        '<figure class="lt-img">' +
+          '<img src="images/numerique/33_3d00f28f6fb5ad6588728d8a201aee2c.png" alt="Yuniko — pose encrée et mise en couleur" loading="lazy" />' +
+        '</figure>' +
+        '<figure class="lt-img">' +
+          '<img src="images/numerique/32_2ad66dc051c87aea06566413ec09ec8c.jpg" alt="Yuniko — planche finalisée avec décor" loading="lazy" />' +
+        '</figure>' +
+      '</div>' +
+    '</section>';
+  }
+
+  function brancherGalerie(p) {
+    var ancienne = document.getElementById('galerieVue');
+    if (ancienne) ancienne.remove();
+
+    var vue = document.createElement('div');
+    vue.className = 'galerie-vue';
+    vue.id = 'galerieVue';
+    vue.tabIndex = -1;
+    vue.innerHTML =
+      '<button class="galerie-x" type="button" aria-label="Fermer">✕</button>' +
+      '<button class="galerie-prec" type="button" aria-label="Planche précédente">←</button>' +
+      '<button class="galerie-suiv" type="button" aria-label="Planche suivante">→</button>' +
+      '<figure><img alt=""><figcaption></figcaption></figure>' +
+      '<span class="galerie-cpt"></span>';
+
+    var img = vue.querySelector('img');
+    var cap = vue.querySelector('figcaption');
+    var cpt = vue.querySelector('.galerie-cpt');
+    var courant = 0;
+
+    function montrer(k) {
+      var n = p.media.length;
+      courant = (k + n) % n;
+      var m = p.media[courant];
+      img.src = m.src;
+      img.alt = m.alt || '';
+      cap.textContent = m.alt || '';
+      cpt.textContent = (courant + 1 < 10 ? '0' : '') + (courant + 1) + ' / ' + n;
+    }
+
+    function fermer() {
+      vue.classList.remove('on');
+      document.removeEventListener('keydown', clavier);
+    }
+
+    function clavier(e) {
+      if (e.key === 'Escape') fermer();
+      else if (e.key === 'ArrowLeft') montrer(courant - 1);
+      else if (e.key === 'ArrowRight') montrer(courant + 1);
+    }
+
+    vue.querySelector('.galerie-x').addEventListener('click', fermer);
+    vue.querySelector('.galerie-prec').addEventListener('click', function (e) { e.stopPropagation(); montrer(courant - 1); });
+    vue.querySelector('.galerie-suiv').addEventListener('click', function (e) { e.stopPropagation(); montrer(courant + 1); });
+    vue.addEventListener('click', function (e) { if (e.target === vue) fermer(); });
+    document.body.appendChild(vue);
+
+    Array.prototype.forEach.call(document.querySelectorAll('.galerie-item'), function (b) {
+      b.addEventListener('click', function () {
+        montrer(parseInt(b.getAttribute('data-index'), 10) || 0);
+        vue.classList.add('on');
+        document.addEventListener('keydown', clavier);
+        vue.focus();
+      });
+    });
+  }
+
+  function caseVide() {
+    return '<div class="slots">' +
+      '<div class="slot"><b>Images</b><span>visuels, planches, captures</span></div>' +
+      '<div class="slot"><b>Vidéos</b><span>mp4 ou webm, en boucle</span></div>' +
+      '<div class="slot"><b>Texte</b><span>présentation du projet</span></div>' +
+    '</div>' +
+    '<p class="note-slot">Emplacements réservés : dès que les éléments arrivent, ils se posent ici.</p>';
+  }
+
+  function ouvrirProjet(p) {
+    projetCourant = p;
+
+    var m = p.media[0];
+    if (m && m.t === 'image') {
+      hero.innerHTML = '<img src="' + m.src + '" alt="' + (m.alt || '') + '" />';
+    } else if (m && m.t === 'video') {
+      hero.innerHTML = '<video src="' + m.src + '" autoplay muted loop playsinline></video>';
+    } else {
+      hero.innerHTML = contenuVide(p, true);
+    }
+    /* le titre du projet s'affiche sur l'image d'ouverture, quelle que soit la
+       mise en page (les collages kozu / moches / retouches ne l'avaient pas) */
+    if (!p.game) hero.insertAdjacentHTML('beforeend', titreHtml(p.nom));
+    hero.style.display = p.game ? 'none' : '';
+
+    var meta = [p.discipline, p.annee].filter(Boolean).join(' · ');
+    var corps =
+      '<p class="projet-cat">' + p.catNum + ' · ' + p.catNom + '</p>' +
+      (p.texte ? '<p class="lead">' + p.texte + '</p>' : '<p class="lead attente">Texte de présentation à venir.</p>') +
+      (meta ? '<p class="meta">' + meta + '</p>' : '');
+
+    if (p.layout === 'moches') {
+      corps = collageMoches(p);
+    } else if (p.layout === 'kozu') {
+      corps = collageKozu(p);
+    } else if (p.layout === 'retouches') {
+      corps = collageRetouches(p);
+    } else if (p.layout === 'galerie') {
+      corps = sectionModelSheets() + galerieHtml(p) + (p.lineTests ? sectionLineTests(p) : '');
+    } else if (p.layout === 'lecteur') {
+      corps = lecteurHtml(p);
+    } else if (p.game) corps += caseJeu(p);
+    else if (p.media.length > 1) corps += '<div class="gal">' + p.media.slice(1).map(cellule).join('') + '</div>';
+    else if (!p.media.length) corps += caseVide();
+
+    projetCorps.innerHTML = corps;
+    if (p.layout === 'galerie') brancherGalerie(p);
+    if (p.layout === 'lecteur') brancherLecteur(p);
+    if (p.game && window.MiniJeux) {
+      var hote = projetCorps.querySelector('.jeu-hote');
+      if (hote) window.MiniJeux.monter(hote, p.game);
+    }
+    projet.scrollTop = 0;
+    descendre.classList.toggle('off', !!p.game);
+    descendre.classList.add('cache');
+    void descendre.offsetWidth;
+    descendre.classList.remove('cache');
+    projet.classList.add('on');
+    projet.setAttribute('aria-hidden', 'false');
+  }
+
+  function sortir() {
+    if (!projetCourant) return;
+    var p = projetCourant;
+    projetCourant = null;
+    projet.classList.remove('on');
+    projet.setAttribute('aria-hidden', 'true');
+
+    var retourVers = rectVignette || { left: innerWidth / 2 - 60, top: innerHeight / 2 - 100, width: 120, height: 200 };
+    voletAnime(p, plein(), retourVers, function (w) {
+      if (w.parentNode) w.remove();
+    });
+  }
+
+  retour.addEventListener('click', function () {
+    var gv = document.getElementById('galerieVue');
+    if (gv) gv.remove();
+    sortir();
+  });
+
+  descendre.addEventListener('click', function () {
+    var cible = projet.scrollTop + projetCorps.getBoundingClientRect().top - projet.getBoundingClientRect().top - 8;
+    descendre.classList.add('cache');
+    projet.scrollTo({ top: Math.max(0, cible), behavior: 'smooth' });
+  });
+
+  projet.addEventListener('scroll', function () {
+    descendre.classList.toggle('cache', projet.scrollTop > 40);
+  }, { passive: true });
+
+  document.addEventListener('keydown', function (e) {
+    if (e.key !== 'Escape') return;
+    if (projetCourant) sortir();
+    else if (rayon.classList.contains('on')) fermerRayon();
+  });
+})();
+</script>
+<script>
+(function () {
+  var vert = document.getElementById('sasVert');
+  var noir = document.getElementById('sas');
+  if (!noir) return;
+
+  var reduit = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var vertOuvert = false;
+  var pageRevelee = false;
+
+  function retirer(el, delai) {
+    setTimeout(function () { if (el && el.parentNode) el.remove(); }, delai);
+  }
+
+  function ouvrirVert() {
+    if (vertOuvert || !vert) return;
+    vertOuvert = true;
+    vert.classList.add('ouvert');
+    retirer(vert, 980);
+  }
+
+  function ouvrirNoir() {
+    if (pageRevelee) return;
+    pageRevelee = true;
+    noir.classList.add('ouvert');
+    document.body.classList.remove('sas-actif');
+    retirer(noir, 1400);
+  }
+
+  function toutOuvrir() {
+    ouvrirVert();
+    setTimeout(ouvrirNoir, 160);
+  }
+
+  if (reduit) {
+    Array.prototype.forEach.call(document.querySelectorAll('.wrap, .portes-zone, .num-foot'), function (el) {
+      el.style.transition = 'none';
+    });
+    if (vert && vert.parentNode) vert.remove();
+    noir.remove();
+    document.body.classList.remove('sas-actif');
+    return;
+  }
+
+  setTimeout(ouvrirVert, 300);
+  setTimeout(ouvrirNoir, 1300);
+
+  ['click', 'keydown', 'wheel', 'touchstart'].forEach(function (ev) {
+    window.addEventListener(ev, toutOuvrir, {
+      once: true,
+      passive: ev === 'wheel' || ev === 'touchstart'
+    });
+  });
+})();
+</script>
+<script>
+(function () {
+  var PAGES = [
+    { nom: 'Accueil', lien: 'index.html', img: 'images/accueil/25_ddacc5d5faefcad7851ce776a8c7b294.jpg' },
+    { nom: 'Photographie', lien: 'photographie.html', img: 'images/photographie/01_b35768227e74191c86b1985b17349a9f.jpg' },
+    { nom: 'Projets plastiques', lien: 'plastique.html', img: 'images/plastique/01_3ef2e9a610b41c771511f92e592a0e7c.png' }
+  ];
+
+  var panneau = document.getElementById('portes');
+  var bande = document.getElementById('portesBande');
+  var fermer = document.getElementById('fermerPortes');
+  var ouvrir = document.getElementById('ouvrirPortes');
+  if (!panneau || !bande || !ouvrir) return;
+
+  bande.innerHTML = PAGES.map(function (p) {
+    return '<a class="porte" href="' + p.lien + '">' +
+      '<span class="porte-img"><img src="' + p.img + '" alt="" loading="lazy" /></span>' +
+      '<span class="porte-nom">' + p.nom + '</span>' +
+    '</a>';
+  }).join('');
+
+  function afficher() {
+    panneau.classList.add('on');
+    panneau.setAttribute('aria-hidden', 'false');
+    document.body.classList.add('gele');
+    var premier = bande.querySelector('.porte');
+    if (premier) setTimeout(function () { premier.focus({ preventScroll: true }); }, 500);
+  }
+
+  function cacher() {
+    if (!panneau.classList.contains('on')) return;
+    panneau.classList.remove('on');
+    panneau.setAttribute('aria-hidden', 'true');
+    document.body.classList.remove('gele');
+  }
+
+  ouvrir.addEventListener('click', afficher);
+  fermer.addEventListener('click', cacher);
+  panneau.addEventListener('click', function (e) {
+    if (e.target === panneau || e.target.classList.contains('portes-fond')) cacher();
+  });
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape') cacher();
+  });
+})();
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/MotionPathPlugin.min.js"></script>
+<script src="jeux-assets.js"></script>
+<script src="jeux.js"></script>
+<script src="app.js"></script>
 </body>
 </html>
