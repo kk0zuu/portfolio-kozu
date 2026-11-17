@@ -82,7 +82,7 @@
     <!-- ================= DOMAINE STUDIO & PRO ================= -->
     <div class="photo-domaine-bloc" id="domaine-pro" hidden data-domaine="pro" data-teinte="rgba(156, 29, 189, 0.12)" data-fond="images/photographie/pro/10_52846f04b6567ee9301c27025dc6afe6.jpg">
 <header class="domain-hero-section">
-        <h1 class="domain-hero-title"><span class="titre-photo">Photographie</span> Studio &amp; Pro</h1>
+        <h1 class="domain-hero-title"><span class="titre-photo">Photographie</span> <span class="titre-suite">Studio &amp; Pro</span></h1>
         <p class="domain-hero-subtitle">
             Rigueur de composition, architecture précise, éclairages directionnels studio et portraits lifestyle.
         </p>
@@ -295,7 +295,7 @@
     <!-- ================= DOMAINE EXPRESSIF ================= -->
     <div class="photo-domaine-bloc" id="domaine-exp" hidden data-domaine="exp" data-teinte="rgba(53, 142, 20, 0.12)" data-fond="images/photographie/expressive/08_46f920ee78c7a5399f47f6cbb604d31e.jpg">
 <header class="domain-hero-section">
-        <h1 class="domain-hero-title"><span class="titre-photo">Photographie</span> Expressive</h1>
+        <h1 class="domain-hero-title"><span class="titre-photo">Photographie</span> <span class="titre-suite">Expressive</span></h1>
         <p class="domain-hero-subtitle">
             Moments suspendus, matière urbaine, reflets de métro, instantanés de rue, clair-obscur montagnard et jeux d'ombre.
         </p>
@@ -865,6 +865,8 @@
                     gsap.set('.photo-split-header, .split-side-badge, .split-side-title, .split-side-desc, .split-side-cta, .split-center-versus',
                         { clearProps: 'opacity,transform' });
                     gsap.set('.photo-split-header .mot, .photo-split-header p', { clearProps: 'opacity,transform' });
+                    /* la suite du titre retrouve sa place, prête pour la prochaine ouverture */
+                    gsap.set(bloc.querySelectorAll('.domain-hero-title .titre-suite'), { clearProps: 'opacity,transform' });
                     var resteMot = document.querySelector('.mot-transit');
                     if (resteMot) resteMot.remove();
                     body.classList.remove('photo-etape-en-cours');
@@ -1025,6 +1027,9 @@
             var premiere = bloc.querySelector('.pr-card, .pe-section');
             var titre = bloc.querySelector('.domain-hero-title');
             var sous = bloc.querySelector('.domain-hero-subtitle');
+            /* la fin du titre (« Studio & Pro », « Expressive ») n'arrive qu'une
+               fois le mot « photographie » posé : elle glisse depuis la droite */
+            var suite = bloc.querySelector('.domain-hero-title .titre-suite');
 
             if (calme) {
                 installer(bloc, url);
@@ -1032,6 +1037,9 @@
                 if (typeof window.construireTambour === 'function') window.construireTambour();
                 return;
             }
+
+            /* la suite du titre attend, décalée à droite, que le mot soit arrivé */
+            if (suite) gsap.set(suite, { x: 90, opacity: 0 });
 
             var r = cote.getBoundingClientRect();
             /* on reprend le cadrage et les filtres réellement appliqués à la photo du
@@ -1120,6 +1128,9 @@
                        au choix : on le remet visible à chaque ouverture */
                     var motTitre = bloc.querySelector('.domain-hero-title .titre-photo');
                     if (motTitre) gsap.set(motTitre, { opacity: 1 });
+                    /* le mot est posé : la suite du titre glisse depuis sa droite
+                       pour le compléter, pendant que le voile se lève */
+                    if (suite) intro.to(suite, { x: 0, opacity: 1, duration: 0.7, ease: 'power3.out' }, 0.02);
                     if (sous) intro.from(sous, { y: -50, opacity: 0, duration: 0.75, ease: 'power3.out' }, 0.1);
                     /* le bloc des cases monte du bas, un peu moins haut, en gardant
                        l'inclinaison appliquée par le carrousel */

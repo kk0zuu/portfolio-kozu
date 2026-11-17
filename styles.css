@@ -1224,6 +1224,12 @@ body.contact-page .logiciels-aide-point {
     color: var(--color-black);
 }
 
+/* la fin du titre a besoin d'être un bloc en ligne pour glisser à l'arrivée
+   du mot « photographie » */
+.domain-hero-title .titre-suite {
+    display: inline-block;
+}
+
 .domain-hero-subtitle {
     font-family: var(--font-body);
     font-size: clamp(1.1rem, 1.8vw, 1.4rem);
