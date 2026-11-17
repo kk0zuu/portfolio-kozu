@@ -2184,7 +2184,7 @@ if (!document.body.classList.contains('photo-fusion')) construireTambour();
 
     /* Fait apparaître une lettre de plus, posée hors du flux au-dessus du
        titre, et l'inscrit dans la physique : elle se saisit et se range dans
-       la case comme les autres. Sert au second T de TOUT et TUTO. */
+       la case comme les autres. Sert au second T de TOUT. */
     window.lettresTitre = {
         ajouter: function (modele, cx, cy) {
             if (!modele || !modele.parentNode) return false;
@@ -2644,7 +2644,6 @@ if (!document.body.classList.contains('photo-fusion')) construireTambour();
         'TG': { texte: 'pas très gentil ça' },
         '-': { texte: '" +", lol' },
         'SOS': { texte: 'tous les cris les' },
-        'TUTO': { texte: "besoin d'un", signe: '?' },
         'NON': { texte: "non c'est" },
         'GO': { texte: '1, 2, 3...' },
         'SUD': { texte: 'Nord ou' },
@@ -2674,7 +2673,7 @@ if (!document.body.classList.contains('photo-fusion')) construireTambour();
     place.appendChild(boite);
     place.appendChild(badge);
 
-    /* le signe qui peut apparaître à droite de la case (le « ? » de TUTO) */
+    /* le signe qui peut apparaître à droite de la case (le « ? » d'AUTO) */
     var signe = document.createElement('span');
     signe.className = 'case-signe';
     signe.setAttribute('aria-hidden', 'true');
