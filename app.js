@@ -2539,11 +2539,21 @@ if (!document.body.classList.contains('photo-fusion')) construireTambour();
     var GLYPHES = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789?!&%@';
     var PLACES = 4;                       // quatre lettres au maximum
     var SECRETS = {
-        'IAN': "et oui c'est mon nom",
-        'BOSS': "et oui, c'est moi le",
-        'NOUS': "la république, c'est",
-        'TG': 'pas très gentil ça',
-        '-': ', lol'
+        'IAN': { texte: "et oui c'est mon nom" },
+        'BOSS': { texte: "et oui, c'est moi le" },
+        'NOUS': { texte: "la république, c'est" },
+        'TG': { texte: 'pas très gentil ça' },
+        '-': { texte: ', lol' },
+        'SOS': { texte: 'tous les cris les' },
+        'TUTO': { texte: "besoin d'un", signe: '?' },
+        'NON': { texte: "non c'est" },
+        'GO': { texte: '1, 2, 3...' },
+        'SUD': { texte: 'Nord ou' },
+        'TOUT': { texte: "un point c'est" },
+        'OUI': { texte: "c'est un grand" },
+        'GOUT': { texte: 'vous avez bon' },
+        'AUTO': { texte: "fan d'", signe: '?' },
+        'DOS': { texte: "j'ai mal au" }
     };
     var DEFAUT = 'secret ?!';
     var ETALEMENT = 0.028;                // décalage du rouleau, colonne par colonne
@@ -2562,6 +2572,13 @@ if (!document.body.classList.contains('photo-fusion')) construireTambour();
     boite.setAttribute('aria-hidden', 'true');
     place.appendChild(boite);
     place.appendChild(badge);
+
+    /* le signe qui peut apparaître à droite de la case (le « ? » de TUTO) */
+    var signe = document.createElement('span');
+    signe.className = 'case-signe';
+    signe.setAttribute('aria-hidden', 'true');
+    ligne.appendChild(signe);
+    var signeActuel = '';
 
     var revelee = false;
     var texteActuel = '';
@@ -2607,7 +2624,8 @@ if (!document.body.classList.contains('photo-fusion')) construireTambour();
     function ajuster(l) {
         sousTitre.style.letterSpacing = '';
         if (!l) return;
-        var dispo = conteneur.getBoundingClientRect().width - badge.getBoundingClientRect().width - 56;
+        var placeSigne = (signeActuel && signe.offsetWidth) ? signe.offsetWidth + 24 : 0;
+        var dispo = conteneur.getBoundingClientRect().width - badge.getBoundingClientRect().width - 56 - placeSigne;
         var largeur = l.getBoundingClientRect().width;
         if (!dispo || !largeur || largeur <= dispo) return;
         var n = Math.max(1, l.children.length - 1);
@@ -2625,8 +2643,9 @@ if (!document.body.classList.contains('photo-fusion')) construireTambour();
         ajuster(l);
     }
 
-    function ecrire(texte) {
-        if (texte === texteActuel) return;
+    function ecrire(texte, marque) {
+        marque = marque || '';
+        if (texte === texteActuel && marque === signeActuel) return;
         texteActuel = texte;
 
         /* Tout ce qui va bouger est mesuré avant : le texte, la case et le
@@ -2635,6 +2654,19 @@ if (!document.body.classList.contains('photo-fusion')) construireTambour();
         var avantTexte = sousTitre.getBoundingClientRect();
         var avantCase = boite.getBoundingClientRect();
         var avantBadge = badge.getBoundingClientRect();
+
+        /* le signe de droite entre dans la ligne : il décale la case, et le
+           glissement plus bas s'en charge comme du reste du texte */
+        signeActuel = marque;
+        if (marque) {
+            signe.textContent = marque;
+            gsap.set(signe, { display: 'inline-block', opacity: 0, y: -10, scale: 0.7 });
+            gsap.to(signe, { opacity: 1, y: 0, scale: 1, duration: 0.35, delay: 0.22, ease: 'back.out(1.6)' });
+        } else if (signe.textContent && signe.style.display !== 'none') {
+            // il sort tout de suite : la ligne se rétrécit, et c'est le
+            // glissement plus bas qui accompagne ce décalage
+            gsap.set(signe, { display: 'none', opacity: 0 });
+        }
 
         var ancienne = sousTitre.firstElementChild;
         if (ancienne) {
@@ -2667,8 +2699,8 @@ if (!document.body.classList.contains('photo-fusion')) construireTambour();
             var dxBadge = avantBadge.left - apresBadge.left;
             var dyBadge = avantBadge.top - apresBadge.top;
             if (Math.abs(dxBadge) > 1 || Math.abs(dyBadge) > 1) {
-                var bx = Number(gsap.getProperty(badge, 'x')) || 0;
-                var by = Number(gsap.getProperty(badge, 'y')) || 0;
+                var bx = parseFloat(gsap.getProperty(badge, 'x')) || 0;
+                var by = parseFloat(gsap.getProperty(badge, 'y')) || 0;
                 gsap.fromTo(badge, { x: bx + dxBadge, y: by + dyBadge }, { x: bx, y: by, duration: 0.5, ease: 'power3.out', overwrite: 'auto' });
             }
         }
@@ -2703,7 +2735,7 @@ if (!document.body.classList.contains('photo-fusion')) construireTambour();
         gsap.to(boite, { opacity: 1, duration: 0.18, ease: 'power1.out' });
         gsap.to(boite, { height: hauteurLettres, duration: 0.5, ease: 'power3.out' });
 
-        ecrire(DEFAUT);
+        ecrire(DEFAUT, '');
     }
 
     /* ---------- le badge qu'on peut tirer, sans l'annoncer ---------- */
@@ -2711,8 +2743,8 @@ if (!document.body.classList.contains('photo-fusion')) construireTambour();
         if (!pret || priseBadge || e.button !== 0) return;
         e.preventDefault();
         priseBadge = {
-            x: Number(gsap.getProperty(badge, 'x')) || 0,
-            y: Number(gsap.getProperty(badge, 'y')) || 0,
+            x: parseFloat(gsap.getProperty(badge, 'x')) || 0,
+            y: parseFloat(gsap.getProperty(badge, 'y')) || 0,
             px: e.clientX,
             py: e.clientY,
             bouge: false
@@ -2759,9 +2791,23 @@ if (!document.body.classList.contains('photo-fusion')) construireTambour();
         return -1;
     }
 
+    // le rectangle de la case sans son déplacement de glissement : c'est lui
+    // qui donne la vraie place des lettres, y compris pendant qu'elle glisse
+    function rectBoite() {
+        /* On part de la place (le parent, qui ne glisse jamais) et des mesures
+           de la case, insensibles aux transformations : on obtient ainsi la
+           vraie position de la case même pendant qu'elle glisse. */
+        var p = place.getBoundingClientRect();
+        var w = boite.offsetWidth;
+        var h = boite.offsetHeight;
+        var l = p.left + (p.width - w) / 2;
+        var t = p.top + (p.height - h) / 2;
+        return { left: l, top: t, right: l + w, bottom: t + h, width: w, height: h };
+    }
+
     function placer(duree) {
         var d = duree || 0.32;
-        var r = boite.getBoundingClientRect();
+        var r = rectBoite();
         var largeur = r.width / PLACES;
         posees.forEach(function (c) {
             var i = c.slotCase;
@@ -2791,11 +2837,13 @@ if (!document.body.classList.contains('photo-fusion')) construireTambour();
             var carte = c.el.querySelector('.ransom-card');
             return (carte ? carte.textContent : '').trim();
         }).join('');
-        ecrire(SECRETS[mot] || DEFAUT);
+        var secret = SECRETS[mot];
+        ecrire(secret ? secret.texte : DEFAUT, secret ? secret.signe : '');
     }
 
     function deposer(c) {
         if (!revelee || !c || posees.indexOf(c) >= 0) return false;
+        // on accepte la lettre là où la case est *vue* (même en plein glissement)…
         var r = boite.getBoundingClientRect();
         if (!r.width || !r.height) return false;
         if (c.x < r.left || c.x > r.right || c.y < r.top || c.y > r.bottom) return false;

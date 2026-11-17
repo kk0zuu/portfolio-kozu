@@ -422,6 +422,15 @@ body.hovering .cursor-spiral {
     pointer-events: none;
 }
 
+/* le signe qui apparaît à droite de la case (le « ? » de TUTO ou d'AUTO) */
+.case-signe {
+    display: none;
+    font-family: var(--font-schoolbell);
+    font-size: clamp(1.8rem, 3.2vw, 3rem);
+    color: var(--color-black);
+    user-select: none;
+}
+
 /* --- ROULEAU DE MACHINE À SOUS DU SOUS-TITRE --------------------------
    Chaque caractère est une colonne qui défile puis se pose, un peu après
    sa voisine : c'est la transition « jackpot ». */
