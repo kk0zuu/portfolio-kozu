@@ -34,18 +34,23 @@ body.pm-focus .pm-halo{opacity:.2;}
 .pm-etoile{position:absolute;left:0;top:0;height:2px;border-radius:2px;
   width:var(--long,90px);
   background:linear-gradient(90deg,rgba(18,50,180,0) 0%,rgba(18,50,180,.32) 55%,rgba(18,50,180,.9) 100%);
-  rotate:45deg;opacity:0;will-change:translate,opacity;
+  /* 135° : la pointe dense du trait file vers le bas-gauche */
+  rotate:135deg;opacity:0;will-change:translate,opacity;
   animation:pm-file var(--duree,6s) linear var(--retard,0s) infinite;}
-/* la tête, plus dense, mène la course */
-.pm-etoile::after{content:'';position:absolute;right:-1px;top:50%;width:3px;height:3px;margin-top:-1.5px;border-radius:50%;
-  background:rgba(18,50,180,.95);box-shadow:0 0 6px rgba(18,50,180,.55);}
-/* le trajet est un vrai 45° : autant de pixels en x qu'en y (vmax des deux côtés) */
+/* la tête : une étoile à quatre branches, géométrique, dans l'axe du trajet */
+.pm-etoile::after{content:'';position:absolute;top:50%;right:calc(var(--tete,12px) / -2);
+  width:var(--tete,12px);height:var(--tete,12px);margin-top:calc(var(--tete,12px) / -2);
+  background:#1232B4;
+  clip-path:polygon(50% 0%,61% 39%,100% 50%,61% 61%,50% 100%,39% 61%,0% 50%,39% 39%);
+  filter:drop-shadow(0 0 7px rgba(18,50,180,.5));}
+/* le trajet est un vrai 45° : autant de pixels en x qu'en y (vmax des deux côtés),
+   vers le bas et vers la gauche */
 @keyframes pm-file{
   0%{translate:var(--x) var(--y);opacity:0;}
   9%{opacity:var(--op,.6);}
   62%{opacity:var(--op,.6);}
-  80%{translate:calc(var(--x) + 115vmax) calc(var(--y) + 115vmax);opacity:0;}
-  100%{translate:calc(var(--x) + 115vmax) calc(var(--y) + 115vmax);opacity:0;}
+  80%{translate:calc(var(--x) - 115vmax) calc(var(--y) + 115vmax);opacity:0;}
+  100%{translate:calc(var(--x) - 115vmax) calc(var(--y) + 115vmax);opacity:0;}
 }
 
 .pm-voile{position:fixed;inset:0;z-index:30;background:rgba(5,5,6,.86);
@@ -1061,9 +1066,10 @@ body.pm-focus .pm-retour-focus{opacity:1;visibility:visible;}
     for (var i = 0; i < TOTAL; i++) {
         var etoile = document.createElement('span');
         etoile.className = 'pm-etoile';
-        etoile.style.setProperty('--x', hasard(-30, 100).toFixed(2) + 'vw');
-        etoile.style.setProperty('--y', hasard(-40, 95).toFixed(2) + 'vh');
+        etoile.style.setProperty('--x', hasard(15, 115).toFixed(2) + 'vw');
+        etoile.style.setProperty('--y', hasard(-45, 75).toFixed(2) + 'vh');
         etoile.style.setProperty('--long', Math.round(hasard(55, 155)) + 'px');
+        etoile.style.setProperty('--tete', Math.round(hasard(10, 16)) + 'px');
         etoile.style.setProperty('--duree', hasard(3.4, 7.2).toFixed(2) + 's');
         etoile.style.setProperty('--retard', hasard(-7.2, 9).toFixed(2) + 's');
         etoile.style.setProperty('--op', hasard(0.28, 0.78).toFixed(2));
