@@ -1063,26 +1063,23 @@ body.contact-page .logiciels-aide-point {
 .bubble-photo .handwritten-label { transform: rotate(4deg); }
 .bubble-plastique .handwritten-label { transform: rotate(-2deg); }
 
-/* L'étiquette du domaine survolé se berce doucement de gauche à droite, avec
-   des temps d'arrêt pour rester lisible. On anime la propriété `rotate` et non
-   `transform` : le scale du survol et la rotation de départ de GSAP restent donc
-   intacts, sans `!important` supplémentaire. */
-/* Le côté droit se penche un peu plus que le gauche : le tilt de repos de
-   l'étiquette mange une partie du bercement vers la droite */
+/* L'étiquette du domaine survolé se berce d'un bord à l'autre comme un
+   pendule : elle passe par sa pose de repos à pleine vitesse, sans jamais
+   s'y arrêter. On anime la propriété `rotate` et non `transform` : le scale
+   du survol et la rotation de départ restent donc intacts.
+   Le côté droit se penche un peu plus que le gauche : le tilt de repos de
+   l'étiquette mange une partie du bercement vers la droite. */
 @keyframes etiquette-bercement {
-    0%   { rotate: 0deg; }
-    10%  { rotate: -6deg; }
-    26%  { rotate: -6deg; }
-    40%  { rotate: 7.5deg; }
-    56%  { rotate: 7.5deg; }
-    70%  { rotate: 0deg; }
-    84%  { rotate: 0deg; }
-    100% { rotate: 0deg; }
+    from { rotate: -6deg; }
+    to   { rotate: 7.5deg; }
 }
 
 .bubble-card:hover .handwritten-label {
     transform: scale(1.08) rotate(0deg);
-    animation: etiquette-bercement 2.2s ease-in-out infinite;
+    /* le bercement démarre au milieu de sa course : l'étiquette part de sa
+       pose de repos, puis prend son élan sans à-coup */
+    animation: etiquette-bercement 1s cubic-bezier(0.42, 0, 0.58, 1) infinite alternate;
+    animation-delay: -0.52s;
 }
 
 /* RESPONSIVE */
