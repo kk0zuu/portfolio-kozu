@@ -703,16 +703,25 @@ body.hovering .cursor-spiral {
 
 .intro-grid {
     display: grid;
-    grid-template-columns: 1fr;
-    gap: 3.5rem;
+    grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+    gap: clamp(1.4rem, 2.6vw, 3.2rem);
     align-items: center;
     justify-items: center;
 }
 
-.intro-text {
-    text-align: center;
-    max-width: 78ch;
-    margin: 0 auto;
+/* un paragraphe de chaque côté de l'image : le premier vient buter contre
+   elle par la droite, le second repart vers la droite */
+.intro-paragraphe {
+    margin: 0;
+    max-width: 32ch;
+    font-size: clamp(1rem, 1.32vw, 1.32rem);
+    font-weight: 700;
+    line-height: 1.45;
+    text-align: right;
+}
+
+.intro-grid > .intro-paragraphe:last-child {
+    text-align: left;
 }
 
 /* --- BANDEAU DES LOGICIELS (marquee au scroll) --- */
@@ -846,17 +855,12 @@ body.contact-page .logiciels-aide-point {
     background: #FFFFFF;
 }
 
-.intro-text p {
-    font-size: clamp(1.2rem, 2vw, 1.8rem);
-    font-weight: 700;
-    margin-bottom: 1.5rem;
-    line-height: 1.4;
-}
-
 .intro-image-container {
     position: relative;
-    width: min(520px, 78%);
-    margin: 0 auto;
+    width: min(430px, 30vw);
+    /* centrée entre les deux textes, et remontée par rapport à eux */
+    align-self: center;
+    margin: 0 0 5vh;
 }
 
 .clip-hex {
@@ -1136,6 +1140,16 @@ body.contact-page .logiciels-aide-point {
     }
     .intro-grid {
         grid-template-columns: 1fr;
+        gap: 1.6rem;
+    }
+    .intro-paragraphe,
+    .intro-grid > .intro-paragraphe:last-child {
+        text-align: center;
+        max-width: 60ch;
+    }
+    .intro-image-container {
+        width: min(360px, 78%);
+        margin: 0;
     }
     .custom-cursor {
         display: none;
