@@ -1979,6 +1979,104 @@ if (!document.body.classList.contains('photo-fusion')) construireTambour();
     });
 })();
 
+// --- INVITE À SAISIR LES LETTRES DU TITRE ---
+// Même logique que l'indice de la barre des logiciels : un point parcourt une
+// ligne courbe en bas à gauche du « I » et la lettre tire doucement avec lui.
+// Le tracé et le rythme sont en CSS (aucune écriture inline, donc la physique
+// GSAP des lettres reste maîtresse de leur transform) ; ici on ne gère que
+// l'apparition, les arrêts et la main du curseur.
+(function () {
+    var titre = document.querySelector('.ransom-title-wrapper');
+    var premiere = document.querySelector('#hero-title > .ransom-wrapper');
+    if (!titre || !premiere || !heroSection) return;
+
+    var aide = document.createElement('div');
+    aide.className = 'titre-saisie';
+    aide.setAttribute('aria-hidden', 'true');
+    aide.innerHTML =
+        '<svg viewBox="0 0 70 46" xmlns="http://www.w3.org/2000/svg">' +
+        '<path class="titre-saisie-trait" d="M 64 40 C 46 43 22 36 10 12"/></svg>' +
+        '<span class="titre-saisie-point"></span>';
+    titre.appendChild(aide);
+
+    // le coin inférieur gauche du « I » : le point part de là et s'en éloigne
+    function placer() {
+        var r = premiere.getBoundingClientRect();
+        var t = titre.getBoundingClientRect();
+        aide.style.left = Math.round(r.left - t.left - 66) + 'px';
+        aide.style.top = Math.round(r.bottom - t.top - 44) + 'px';
+    }
+
+    var minuteur = null;
+    var saisie = false;
+
+    function possible() {
+        if (saisie || window.scrollY > 12) return false;
+        var r = heroSection.getBoundingClientRect();
+        return r.bottom > 160 && r.top < window.innerHeight - 80;
+    }
+
+    function montrer() {
+        if (!possible()) { cacher(); return; }
+        placer();
+        heroSection.classList.add('titre-invite');
+    }
+
+    function cacher() {
+        heroSection.classList.remove('titre-invite');
+    }
+
+    // le scroll rend la main aux lettres (elles s'envolent) : on efface l'invite
+    window.addEventListener('scroll', function () {
+        cacher();
+        document.body.classList.remove('lettre-survolee');
+        clearTimeout(minuteur);
+        minuteur = setTimeout(montrer, 300);
+    }, { passive: true });
+
+    window.addEventListener('resize', function () {
+        if (heroSection.classList.contains('titre-invite')) placer();
+    });
+
+    // pendant qu'on tient une lettre, l'invite s'efface et revient après
+    document.addEventListener('pointerdown', function (e) {
+        if (!e.target || !e.target.closest || !e.target.closest('.ransom-wrapper')) return;
+        saisie = true;
+        clearTimeout(minuteur);
+        cacher();
+        document.body.classList.add('lettre-saisie');
+    });
+
+    window.addEventListener('pointerup', function () {
+        if (!saisie) return;
+        saisie = false;
+        document.body.classList.remove('lettre-saisie');
+        clearTimeout(minuteur);
+        minuteur = setTimeout(montrer, 700);
+    });
+
+    // curseur : la main « à saisir » apparaît sur les lettres du titre
+    Array.prototype.forEach.call(document.querySelectorAll('#hero-title .ransom-wrapper'), function (el) {
+        el.addEventListener('pointerenter', function (e) {
+            if (e.pointerType && e.pointerType !== 'mouse') return;
+            document.body.classList.add('lettre-survolee');
+        });
+        el.addEventListener('pointerleave', function () {
+            document.body.classList.remove('lettre-survolee');
+        });
+    });
+
+    document.addEventListener('hero:intro-done', function () {
+        clearTimeout(minuteur);
+        minuteur = setTimeout(montrer, 900);
+    });
+
+    window.addEventListener('load', function () {
+        clearTimeout(minuteur);
+        minuteur = setTimeout(montrer, 900);
+    });
+})();
+
 // --- FOND PHOTOGRAPHIQUE DES PAGES PHOTO (PRO & EXPRESSIVE) ---
 // La photo d'ouverture de chaque case devient le fond de la page, à 60 %,
 // et change en fondu quand on passe d'une case à l'autre.

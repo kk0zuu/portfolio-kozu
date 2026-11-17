@@ -244,6 +244,36 @@ a {
     stroke: var(--color-white);
 }
 
+/* Main « à saisir » : elle remplace le rond quand le curseur est sur une lettre
+   du titre, pour que l'on comprenne tout de suite qu'on peut l'attraper. */
+.cursor-grab {
+    width: 26px;
+    height: 26px;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0.6);
+    opacity: 0;
+    color: var(--color-white);
+    pointer-events: none;
+    transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+body.lettre-survolee .cursor-dot {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0);
+}
+
+body.lettre-survolee .cursor-grab {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+}
+
+/* la main se referme pendant la saisie */
+body.lettre-saisie .cursor-grab {
+    transform: translate(-50%, -44%) scale(0.84);
+}
+
 /* État Hover du curseur */
 body.hovering .cursor-dot {
     opacity: 0;
@@ -355,6 +385,7 @@ body.hovering .cursor-spiral {
     justify-content: center;
     align-items: center;
     overflow: visible;
+    position: relative; /* ancre l'indice de saisie placé à gauche du « I » */
 }
 
 .ransom-title {
@@ -391,6 +422,83 @@ body.hovering .cursor-spiral {
 }
 /* Lettres libres : un léger relief au survol, sans casser leur transformation */
 .titre-libre .ransom-wrapper:hover { filter: drop-shadow(0 6px 6px rgba(0,0,0,.7)); }
+
+/* --- INVITE À SAISIR LES LETTRES -----------------------------------------
+   Même principe que l'indice de la barre des logiciels : la première lettre
+   tire légèrement vers la gauche, un point parcourt une ligne courbe, pause,
+   puis on recommence. On anime la propriété `translate` (et non `transform`) :
+   la rotation et la descente posées en style inline sur chaque lettre, comme
+   le scale du survol, restent intactes. */
+@keyframes titre-invite-lettre {
+    0%   { translate: 0 0; }
+    28%  { translate: -8px 0; }
+    47%  { translate: -8px 0; }
+    75%  { translate: 0 0; }
+    100% { translate: 0 0; }
+}
+
+@keyframes titre-invite-point {
+    0%   { offset-distance: 0%; }
+    28%  { offset-distance: 100%; }
+    47%  { offset-distance: 100%; }
+    75%  { offset-distance: 0%; }
+    100% { offset-distance: 0%; }
+}
+
+.hero-section.titre-invite #hero-title > .ransom-wrapper:first-of-type .ransom-card {
+    animation: titre-invite-lettre 3.2s ease-in-out infinite;
+}
+
+.titre-saisie {
+    position: absolute;
+    width: 70px;
+    height: 46px;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.45s ease;
+    z-index: 2;
+}
+
+.hero-section.titre-invite .titre-saisie {
+    opacity: 1;
+}
+
+.titre-saisie svg {
+    display: block;
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+    fill: none;
+}
+
+.titre-saisie-trait {
+    stroke: rgba(255, 255, 255, 0.92);
+    stroke-width: 2.6;
+    stroke-linecap: round;
+    filter: drop-shadow(0 0 3px rgba(0, 0, 0, 0.5));
+}
+
+/* le point suit le tracé courbe ; s'il n'y a pas de offset-path, on le cache
+   plutôt que de le laisser figé dans un coin */
+.titre-saisie-point {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: var(--color-white);
+    border: 2px solid var(--color-black);
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.45);
+    offset-path: path('M 64 40 C 46 43 22 36 10 12');
+    offset-rotate: 0deg;
+    will-change: offset-distance;
+    animation: titre-invite-point 3.2s ease-in-out infinite;
+}
+
+@supports not (offset-path: path('M 0 0 L 10 10')) {
+    .titre-saisie-point { display: none; }
+}
 
 /* CARTES DÉCOUPÉES IRRÉGULIÈRES FAÇON MAGAZINE */
 .ransom-card {
