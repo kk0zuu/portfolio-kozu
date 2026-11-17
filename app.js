@@ -2542,26 +2542,32 @@ if (!document.body.classList.contains('photo-fusion')) construireTambour();
     var DEFAUT = 'secret ?!';
     var ETALEMENT = 0.028;                // décalage du rouleau, colonne par colonne
     var ITEMS = 6;                        // cases parcourues par le rouleau
+    var ARRIVEE = -((ITEMS - 1) / ITEMS) * 100; // position de la case finale du rouleau
 
-    /* la case blanche : dans .hero-content, sous la ligne d'intro (donc
-       derrière le badge) et sous le titre (donc sous les lettres). Elle est
-       ancrée là et non dans la ligne d'intro, dont la largeur change avec le
-       texte du sous-titre : la case ne doit pas se déplacer. */
+    /* Une place dans la ligne : la case blanche dessous, le badge dessus.
+       La case reste ainsi DANS le flux de la ligne — elle ne peut donc jamais
+       passer sous le texte, et elle suit les changements de longueur. */
+    var place = document.createElement('span');
+    place.className = 'portfolio-slot';
+    ligne.insertBefore(place, badge);
+
     var boite = document.createElement('div');
     boite.className = 'case-secrete';
     boite.setAttribute('aria-hidden', 'true');
-    conteneur.insertBefore(boite, conteneur.firstChild);
+    place.appendChild(boite);
+    place.appendChild(badge);
 
     var revelee = false;
     var texteActuel = '';
     var posees = [];
     var pret = false;
     var priseBadge = null;
+    var hauteurLettres = 66;
 
     document.addEventListener('hero:intro-done', function () { pret = true; });
 
     /* ---------- le rouleau du sous-titre ---------- */
-    function colonne(ch) {
+    function colonne(ch, posee) {
         var col = document.createElement('span');
         col.className = 'slot-case';
         if (ch === ' ') {
@@ -2578,19 +2584,39 @@ if (!document.body.classList.contains('photo-fusion')) construireTambour();
         }
         col.appendChild(pile);
         col._pile = pile;
+        // « et voici mon » se lit tout de suite, sans traverser de glyphes
+        if (posee) gsap.set(pile, { yPercent: ARRIVEE });
         return col;
     }
 
-    // le texte d'origine est emballé dans les mêmes colonnes : il peut donc
-    // s'en aller comme les suivants
-    function emballer() {
-        var texte = (sousTitre.textContent || '').trim();
+    function construire(texte, posee) {
         var l = document.createElement('span');
         l.className = 'slot-ligne';
-        for (var i = 0; i < texte.length; i++) l.appendChild(colonne(texte.charAt(i)));
+        for (var i = 0; i < texte.length; i++) l.appendChild(colonne(texte.charAt(i), posee));
+        return l;
+    }
+
+    // si la phrase ne tient pas à côté de la case, on resserre l'espacement
+    // des lettres au lieu de la laisser déborder
+    function ajuster(l) {
+        sousTitre.style.letterSpacing = '';
+        if (!l) return;
+        var dispo = conteneur.getBoundingClientRect().width - badge.getBoundingClientRect().width - 56;
+        var largeur = l.getBoundingClientRect().width;
+        if (!dispo || !largeur || largeur <= dispo) return;
+        var n = Math.max(1, l.children.length - 1);
+        var ecart = -(largeur - dispo) / n;
+        if (ecart < -8) ecart = -8;
+        sousTitre.style.letterSpacing = ecart.toFixed(2) + 'px';
+    }
+
+    function emballer() {
+        var texte = (sousTitre.textContent || '').trim();
+        var l = construire(texte, true);
         sousTitre.textContent = '';
         sousTitre.appendChild(l);
         texteActuel = texte;
+        ajuster(l);
     }
 
     function ecrire(texte) {
@@ -2606,51 +2632,36 @@ if (!document.body.classList.contains('photo-fusion')) construireTambour();
             });
         }
 
-        var neuve = document.createElement('span');
-        neuve.className = 'slot-ligne';
-        var piles = [];
-        for (var i = 0; i < texte.length; i++) {
-            var col = colonne(texte.charAt(i));
-            neuve.appendChild(col);
-            if (col._pile) piles.push(col._pile);
-        }
+        var neuve = construire(texte, false);
         sousTitre.appendChild(neuve);
+        ajuster(neuve);
 
-        if (!piles.length) return;
-        gsap.fromTo(piles, { yPercent: 0 }, {
-            yPercent: -((ITEMS - 1) / ITEMS) * 100,
-            duration: 0.62,
-            ease: 'back.out(1.2)',
-            stagger: ETALEMENT
-        });
+        var piles = [];
+        Array.prototype.forEach.call(neuve.children, function (col) { if (col._pile) piles.push(col._pile); });
+        if (piles.length) {
+            gsap.fromTo(piles, { yPercent: 0 }, {
+                yPercent: ARRIVEE,
+                duration: 0.62,
+                ease: 'back.out(1.2)',
+                stagger: ETALEMENT
+            });
+        }
+
+        // la case a pu se décaler avec la nouvelle longueur : on y replace les lettres
+        if (posees.length) placer();
     }
 
     emballer();
 
     /* ---------- la case : sa largeur, puis la hauteur des lettres ---------- */
-    var hauteurLettres = 66;
-
-    // la case se cale sur l'emplacement d'origine du badge, dans .hero-content
-    function ancrer() {
-        var rb = badge.getBoundingClientRect();
-        var gx = Number(gsap.getProperty(badge, 'x')) || 0;
-        var gy = Number(gsap.getProperty(badge, 'y')) || 0;
-        var rc = conteneur.getBoundingClientRect();
-        boite.style.left = (rb.left - gx - rc.left + rb.width / 2) + 'px';
-        boite.style.top = (rb.top - gy - rc.top + rb.height / 2) + 'px';
-        boite.style.width = rb.width + 'px';
-        return rb;
-    }
-
     function reveler() {
         if (revelee) return;
         revelee = true;
 
-        var rb = ancrer();
         var carte = titre.querySelector('.ransom-card');
-        hauteurLettres = carte ? carte.getBoundingClientRect().height : 66;
+        hauteurLettres = carte ? Math.round(carte.getBoundingClientRect().height) : 66;
 
-        boite.style.height = rb.height + 'px';
+        gsap.set(boite, { height: badge.getBoundingClientRect().height });
         gsap.to(boite, { opacity: 1, duration: 0.18, ease: 'power1.out' });
         gsap.to(boite, { height: hauteurLettres, duration: 0.5, ease: 'power3.out' });
 
@@ -2694,18 +2705,6 @@ if (!document.body.classList.contains('photo-fusion')) construireTambour();
         if (!priseBadge) return;
         priseBadge = null;
         badge.classList.remove('badge-prise');
-    });
-
-    // la fenêtre change : la case se recale, les lettres posées la suivent
-    var minuteur = null;
-    window.addEventListener('resize', function () {
-        if (!revelee) return;
-        clearTimeout(minuteur);
-        minuteur = setTimeout(function () {
-            ancrer();
-            gsap.set(boite, { height: hauteurLettres });
-            placer();
-        }, 220);
     });
 
     /* ---------- les lettres qu'on dépose dans la case ---------- */
@@ -2766,9 +2765,9 @@ if (!document.body.classList.contains('photo-fusion')) construireTambour();
         var vise = Math.floor((c.x - r.left) / largeur);
         if (vise < 0) vise = 0;
         if (vise > PLACES - 1) vise = PLACES - 1;
-        var place = placeLibre(vise);
-        if (place < 0) return false;
-        c.slotCase = place;
+        var libre = placeLibre(vise);
+        if (libre < 0) return false;
+        c.slotCase = libre;
         c.dansCase = true;
         posees.push(c);
         placer();
@@ -2786,6 +2785,19 @@ if (!document.body.classList.contains('photo-fusion')) construireTambour();
         placer();
         verifier();
     }
+
+    // la fenêtre change : on resserre à nouveau le texte et on replace les lettres
+    var minuteur = null;
+    window.addEventListener('resize', function () {
+        clearTimeout(minuteur);
+        minuteur = setTimeout(function () {
+            ajuster(sousTitre.lastElementChild);
+            if (revelee) {
+                gsap.set(boite, { height: hauteurLettres });
+                if (posees.length) placer();
+            }
+        }, 220);
+    });
 
     window.caseSecrete = { deposer: deposer, retirer: retirer };
 })();

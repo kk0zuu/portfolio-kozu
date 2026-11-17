@@ -387,7 +387,16 @@ body.hovering .cursor-spiral {
 /* --- LA CASE SECRÈTE DU MINI-JEU ------------------------------------
    Elle est cachée derrière le badge « PORTFOLIO » : en tirant le badge
    on découvre une case blanche qui garde sa largeur et s'allonge jusqu'à
-   la hauteur des lettres, pour qu'on puisse y déposer des lettres. */
+   la hauteur des lettres, pour qu'on puisse y déposer des lettres.
+   La case et le badge partagent une même place dans la ligne : la case
+   pousse donc le texte avec elle et ne peut jamais passer dessous. */
+.portfolio-slot {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
 .portfolio-badge {
     position: relative;
     z-index: 2;
@@ -399,10 +408,10 @@ body.hovering .cursor-spiral {
 
 .case-secrete {
     position: absolute;
-    left: 0;
-    top: 0;
+    left: 50%;
+    top: 50%;
     z-index: 1;
-    width: 0;
+    width: 100%;
     height: 0;
     background: var(--color-white);
     border: 3px solid var(--color-black);
