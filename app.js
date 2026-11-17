@@ -825,8 +825,8 @@ mm.add({
     });
 });
 
-// --- FLÈCHE ROUGE : elle sort du « Où on va ? » quand le curseur descend à son
-// niveau, puis suit la souris sur 360° sans jamais s'effacer ---
+// --- FLÈCHE ROUGE : elle suit le curseur en continu mais reste invisible tant
+// qu'il n'est pas descendu au niveau du « Où on va ? » ---
 (function initFlecheOrbitale() {
     const fleche = document.querySelector('.fleche-orbitale');
     const titre = document.querySelector('.titre-centre');
@@ -835,12 +835,11 @@ mm.add({
     let centre = { x: 0, y: 0 };
     let ancre = { x: 0, y: 0 };
     let rayon = 150;
-    let rayonActuel = 0;        // rangée dans le titre au départ
+    let rayonActuel = 0;
     let seuil = 0;              // le niveau du titre : la flèche attend qu'on y descende
     let curseur = { x: 0, y: 0 };
     let curseurVu = false;
-    let activee = false;        // une fois sortie, elle ne se cache plus
-    let sortie = 0;             // 0 → 1 : progression de la sortie du titre
+    let activee = false;        // une fois révélée, elle ne se cache plus
     let distanceCurseur = 9999;
     let angle = 0;
     let angleVise = angle;
@@ -869,15 +868,16 @@ mm.add({
         rayon = Math.max(r.width / 2 + 52, r.height / 2 + 58);
     }
     mesurer();
+    // on part directement sur l'anneau : la flèche suit déjà le curseur, seule sa
+    // visibilité change quand le curseur atteint le niveau du titre
+    rayonActuel = rayon;
 
-    // elle ne sort qu'une fois le curseur descendu au niveau du texte ; ensuite
-    // elle reste sortie pour de bon, même si le curseur remonte
+    // elle suit le curseur depuis le début, mais reste invisible ; elle devient
+    // visible dès que le curseur descend au niveau du texte, puis ne se cache plus
     function verifierSortie() {
         if (activee || !curseurVu) return;
-        if (curseur.y < seuil) return;   // encore au-dessus du titre : elle reste dedans
+        if (curseur.y < seuil) return;   // encore au-dessus du titre : elle reste invisible
         activee = true;
-        sortie = 0;
-        angle = Math.PI / 2;              // elle sort par le bas du titre
     }
 
     function viser(e) {
@@ -901,25 +901,14 @@ mm.add({
     }, { passive: true });
     window.addEventListener('resize', mesurer);
 
-    let dernier = 0;
-    function tourner(maintenant) {
-        const dt = dernier ? Math.min(80, maintenant - dernier) : 16;
-        dernier = maintenant;
-        // pendant la sortie elle descend droit sous le titre ; une fois sortie,
-        // elle rattrape l'angle visé par le chemin le plus court (sans ça, un
-        // passage par la gauche la faisait tourner à l'envers)
-        if (sortie >= 1) {
-            const ecart = Math.atan2(Math.sin(angleVise - angle), Math.cos(angleVise - angle));
-            angle += ecart * 0.14;
-        }
-
-        // la sortie du titre : le rayon part de zéro et s'ouvre jusqu'à l'anneau
-        if (activee && sortie < 1) sortie = Math.min(1, sortie + dt / 420);
-        const ouverture = sortie * sortie * (3 - 2 * sortie);   // départ et arrivée doux
-        const rayonBase = rayon * ouverture;
+    function tourner() {
+        // on rattrape l'angle visé par le chemin le plus court : sans ça, un
+        // passage par la gauche (de +180° à −180°) la faisait tourner à l'envers
+        const ecart = Math.atan2(Math.sin(angleVise - angle), Math.cos(angleVise - angle));
+        angle += ecart * 0.14;
 
         // quand le curseur approche, il la repousse vers le titre
-        const vise = Math.min(rayonBase, Math.max(0, distanceCurseur - MARGE));
+        const vise = Math.min(rayon, Math.max(0, distanceCurseur - MARGE));
         rayonActuel += (vise - rayonActuel) * 0.22;
 
         const x = centre.x + Math.cos(angle) * rayonActuel - ancre.x;
