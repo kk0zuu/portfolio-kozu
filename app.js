@@ -1212,6 +1212,7 @@ mm.add({
 
     const VITESSE_DOUCE = 7;     // px/s pendant le passage
     const VITESSE_MAX = 240;     // px/s en plein vol
+    const DECOLLAGE = 4200;      // ms : montée en vitesse sur la page plastique
     const FONDU_GAUCHE = 90;     // px : l'étoile s'éteint juste avant de sortir à gauche
     const FONDU_DROITE = 90;     // px : et se rallume en entrant par la droite
     const FONDU_HAUT = 110;      // px : même chose en haut, après le rebouclage
@@ -1246,8 +1247,8 @@ mm.add({
     function trame() {
         const w = window.innerWidth;
         const h = window.innerHeight;
-        const pas = Math.round(Math.max(240, Math.min(w, h) / 2.2));
-        return { pas: pas, L: (Math.ceil(Math.max(w, h) / pas) + 1) * pas, w: w };
+        const pas = Math.round(Math.max(200, Math.min(w, h) / 4));
+        return { pas: pas, L: (Math.ceil(Math.max(w, h) / pas) + 1) * pas, w: w, h: h };
     }
 
     function creerChamp(racine, depart) {
@@ -1291,6 +1292,16 @@ mm.add({
                 if (haut > 1) haut = 1;
                 let op = gauche < droite ? gauche : droite;
                 if (haut < op) op = haut;
+
+                /* pendant le passage, elles ne se posent pas toutes en même
+                   temps : la vague part du haut-droit vers le bas-gauche */
+                if (champ.apparition) {
+                    const a = champ.apparition;
+                    const vague = ((t.w - x) + y) / (t.w + t.h);
+                    const p = (performance.now() - a.depuis - vague * a.etalement) / a.fondu;
+                    op *= p < 0 ? 0 : (p > 1 ? 1 : p);
+                }
+
                 e.el.style.opacity = op < 1 ? op.toFixed(2) : '';
             }
             /* la traînée (longueur et opacité) suit la vitesse, donc elle
@@ -1311,9 +1322,14 @@ mm.add({
         derniere = t;
         for (let i = 0; i < champs.length; i++) {
             const c = champs[i];
-            /* la vitesse rejoint sa cible en douceur : environ 4 s pour passer
-               de la dérive au vol, sans à-coup */
-            c.v += (c.cible - c.v) * Math.min(1, dt * 0.8);
+            /* décollage en douceur : le smoothstep part et arrive à vitesse
+               nulle, donc ni à-coup au départ ni à l'arrivée */
+            if (c.decollage) {
+                let p = (performance.now() - c.decollage.depuis) / c.decollage.duree;
+                if (p < 0) p = 0;
+                if (p > 1) p = 1;
+                c.v = VITESSE_DOUCE + (VITESSE_MAX - VITESSE_DOUCE) * p * p * (3 - 2 * p);
+            }
             c.d += c.v * dt;
             if (c.d > c.t.L * 1000) c.d = c.d % c.t.L;
             c.dessiner();
@@ -1336,7 +1352,9 @@ mm.add({
         lancer();
 
         // après l'arrivée, la vitesse monte doucement : les traînées suivent
-        setTimeout(() => { champ.cible = VITESSE_MAX; }, 280);
+        setTimeout(() => {
+            champ.decollage = { depuis: performance.now(), duree: DECOLLAGE };
+        }, 280);
 
         window.addEventListener('beforeunload', () => ecrireEtat(champ.d));
 
@@ -1354,7 +1372,7 @@ mm.add({
                 const d = champ.d;
                 champs.length = 0;
                 champ = creerChamp(ciel, d);
-                champ.cible = VITESSE_MAX;
+                champ.decollage = { depuis: performance.now() - DECOLLAGE * 0.8, duree: DECOLLAGE };
                 champs.push(champ);
             }, 260);
         });
@@ -1385,9 +1403,13 @@ mm.add({
         enCours = true;
         e.preventDefault();
 
-        /* 1. les étoiles arrivent et glissent déjà doucement, sans traînée */
+        /* 1. les étoiles arrivent une à une en diagonale et glissent déjà
+              doucement, sans traînée */
         lancer();
+        champ.apparition = { depuis: performance.now(), etalement: 620, fondu: 400 };
         sas.classList.add('on');
+        /* la barre passe au sombre avant que la page ne s'ouvre */
+        document.documentElement.classList.add('barre-sombre');
         /* 2. le vert du fond se referme derrière elles */
         setTimeout(() => sas.classList.add('vert'), 380);
         /* 3. la page s'ouvre : la trame reprendra exactement à cette position */
@@ -1401,6 +1423,7 @@ mm.add({
         if (!e.persisted) return;
         sas.classList.remove('on');
         sas.classList.remove('vert');
+        document.documentElement.classList.remove('barre-sombre');
         enCours = false;
     });
 })();

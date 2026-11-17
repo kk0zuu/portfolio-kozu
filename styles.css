@@ -4655,6 +4655,19 @@ body.photo-etape-en-cours .photo-split-side.cote-actif::before {
     background: linear-gradient(90deg, rgba(18, 50, 180, 0.42) 0%, rgba(18, 50, 180, 0) 100%);
 }
 
+/* --- la barre passe au verre sombre pendant le passage (pages claires) --- */
+html.barre-sombre .top-bar {
+    background: rgba(20, 20, 25, 0.42);
+    border-color: rgba(255, 255, 255, 0.15);
+    transition: background-color 0.5s ease, border-color 0.5s ease;
+}
+
+html.barre-sombre .top-bar a,
+html.barre-sombre .top-bar .logo a {
+    color: #FFFFFF;
+    transition: color 0.5s ease;
+}
+
 /* --- le voile de passage : transparent au début, le vert n'arrive qu'après --- */
 .sas-plastique {
     position: fixed;
