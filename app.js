@@ -802,14 +802,9 @@ mm.add({
         ease: "power2.out"
     }, 0.12);
 
-    // la flèche rouge naît avec le titre et se met à tourner autour
-    tlSpiral.fromTo(".fleche-orbitale", {
-        opacity: 0
-    }, {
-        opacity: 1,
-        duration: 0.2,
-        ease: "power2.out"
-    }, 0.12);
+    // la flèche rouge n'est plus révélée par le scroll : elle reste invisible
+    // tant que le curseur n'est pas descendu au niveau du titre, puis elle sort
+    // du titre d'elle-même (voir initFlecheOrbitale)
 
     // la phrase sous les bulles apparaît d'elle-même quand elle entre à l'écran
     gsap.fromTo(".domain-note", {
@@ -830,7 +825,8 @@ mm.add({
     });
 });
 
-// --- FLÈCHE ROUGE : elle orbite autour du « Où on va ? » et pointe le curseur ---
+// --- FLÈCHE ROUGE : elle sort du « Où on va ? » quand le curseur descend à son
+// niveau, puis suit la souris sur 360° sans jamais s'effacer ---
 (function initFlecheOrbitale() {
     const fleche = document.querySelector('.fleche-orbitale');
     const titre = document.querySelector('.titre-centre');
@@ -839,21 +835,21 @@ mm.add({
     let centre = { x: 0, y: 0 };
     let ancre = { x: 0, y: 0 };
     let rayon = 150;
-    let rayonActuel = 150;
-    let distanceCurseur = 9999;
-    // au repos la flèche se pose à droite du titre, bien visible
+    let rayonActuel = 0;        // rangée dans le titre au départ
+    let seuil = 0;              // le niveau du titre : la flèche attend qu'on y descende
+    let curseur = { x: 0, y: 0 };
+    let curseurVu = false;
+    let activee = false;        // une fois sortie, elle ne se cache plus
+    let sortie = 0;             // 0 → 1 : progression de la sortie du titre
     let angle = 0;
     let angleVise = angle;
-
-    // le curseur repousse la flèche : elle recule vers le titre puis s'efface
-    const MARGE = 54;        // écart minimum gardé entre le curseur et la flèche
-    const DEDANS = 26;       // rayon où la flèche est rangée dans le titre
-    const SORTIE = 96;       // rayon à partir duquel elle est de nouveau pleine
 
     function mesurer() {
         const r = titre.getBoundingClientRect();
         centre.x = r.left + r.width / 2;
         centre.y = r.top + r.height / 2;
+        // niveau du texte : la flèche attend que le curseur descende jusque-là
+        seuil = r.top;
         // la flèche est ancrée au centre de son conteneur : on retranche ce point
         const boite = fleche.offsetParent ? fleche.offsetParent.getBoundingClientRect() : null;
         if (boite) {
@@ -868,42 +864,61 @@ mm.add({
     }
     mesurer();
 
+    // elle ne sort qu'une fois le curseur descendu au niveau du texte ; ensuite
+    // elle reste sortie pour de bon, même si le curseur remonte
+    function verifierSortie() {
+        if (activee || !curseurVu) return;
+        if (curseur.y < seuil) return;   // encore au-dessus du titre : elle reste dedans
+        activee = true;
+        sortie = 0;
+        angle = angleVise;                // elle sort droit vers le curseur
+    }
+
     function viser(e) {
         if (e.pointerType === 'touch') return;
+        curseur.x = e.clientX;
+        curseur.y = e.clientY;
+        curseurVu = true;
         mesurer();
         angleVise = Math.atan2(e.clientY - centre.y, e.clientX - centre.x);
-        distanceCurseur = Math.hypot(e.clientX - centre.x, e.clientY - centre.y);
+        verifierSortie();
     }
     document.addEventListener('pointermove', viser, { passive: true });
     document.addEventListener('mousemove', viser, { passive: true });
 
-    window.addEventListener('scroll', mesurer, { passive: true });
+    // au scroll le titre change de niveau : on refait le point, et on vérifie la
+    // sortie au cas où le curseur ne bouge pas
+    window.addEventListener('scroll', function () {
+        mesurer();
+        verifierSortie();
+    }, { passive: true });
     window.addEventListener('resize', mesurer);
 
-    function tourner() {
+    let dernier = 0;
+    function tourner(maintenant) {
+        const dt = dernier ? Math.min(80, maintenant - dernier) : 16;
+        dernier = maintenant;
         // on rattrape l'angle visé par le chemin le plus court : sans ça, un
         // passage par la gauche (de +180° à −180°) la faisait tourner à l'envers
         const ecart = Math.atan2(Math.sin(angleVise - angle), Math.cos(angleVise - angle));
         angle += ecart * 0.14;
 
-        // quand le curseur approche, il la repousse vers le titre
-        const vise = Math.min(rayon, Math.max(0, distanceCurseur - MARGE));
-        rayonActuel += (vise - rayonActuel) * 0.22;
+        // la sortie du titre : le rayon part de zéro et s'ouvre jusqu'à l'anneau
+        if (activee && sortie < 1) sortie = Math.min(1, sortie + dt / 420);
+        const ouverture = sortie * sortie * (3 - 2 * sortie);   // départ et arrivée doux
+        rayonActuel = rayon * ouverture;
 
         const x = centre.x + Math.cos(angle) * rayonActuel - ancre.x;
         const y = centre.y + Math.sin(angle) * rayonActuel - ancre.y;
         fleche.style.transform = 'translate3d(' + x + 'px,' + y + 'px,0) rotate(' +
             (angle * 180 / Math.PI) + 'deg)';
 
-        // entierement rangee dans le titre, elle s'efface ; elle revient dès
-        // que le curseur s'eloigne assez (le fondu suit la repousse)
-        const fondu = Math.max(0, Math.min(1, (rayonActuel - DEDANS) / (SORTIE - DEDANS)));
-        const dessin = fleche.firstElementChild;
-        if (dessin) dessin.style.opacity = fondu;
+        // l'opacité suit le début de la sortie : elle s'allume en quittant le titre
+        fleche.style.opacity = activee ? Math.min(1, sortie * 3) : 0;
 
         requestAnimationFrame(tourner);
     }
-    tourner();
+    requestAnimationFrame(tourner);
 })();
 
 // --- SAS PHOTO : les deux volets se referment avant d'ouvrir la page photo ---
