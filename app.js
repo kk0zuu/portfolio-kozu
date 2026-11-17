@@ -2813,6 +2813,19 @@ if (!document.body.classList.contains('photo-fusion')) construireTambour();
            ni glissement, ni saut, la case est pile là où était le badge. */
         var rb = badge.getBoundingClientRect();
         ecrire(DEFAUT, '', false);
+
+        /* le badge vit dans le flux : la ligne qui se resserre le décalerait de
+           quelques pixels alors qu'on est en train de le tenir. On compense
+           aussitôt son décalage, sans animation, pour qu'il ne bouge pas. */
+        var ra = badge.getBoundingClientRect();
+        var ddx = rb.left - ra.left;
+        var ddy = rb.top - ra.top;
+        if (priseBadge && (ddx || ddy)) {
+            priseBadge.x += ddx;
+            priseBadge.y += ddy;
+            gsap.set(badge, { x: priseBadge.x, y: priseBadge.y });
+        }
+
         var pa = place.getBoundingClientRect();
         decalage.x = Math.round((rb.left + rb.width / 2) - (pa.left + pa.width / 2));
         decalage.y = Math.round((rb.top + rb.height / 2) - (pa.top + pa.height / 2));
