@@ -1212,8 +1212,9 @@ mm.add({
 
     const VITESSE_DOUCE = 7;     // px/s pendant le passage
     const VITESSE_MAX = 240;     // px/s en plein vol
-    const FONDU_GAUCHE = 200;    // px : l'étoile s'éteint avant de sortir à gauche
-    const FONDU_HAUT = 110;      // px : et se rallume en entrant par le haut
+    const FONDU_GAUCHE = 90;     // px : l'étoile s'éteint juste avant de sortir à gauche
+    const FONDU_DROITE = 90;     // px : et se rallume en entrant par la droite
+    const FONDU_HAUT = 110;      // px : même chose en haut, après le rebouclage
     const CLE = 'etoiles-plastique';
 
     const surPage = /plastique\.html$/.test(location.pathname);
@@ -1245,8 +1246,8 @@ mm.add({
     function trame() {
         const w = window.innerWidth;
         const h = window.innerHeight;
-        const pas = Math.round(Math.max(220, Math.min(w, h) / 2.6));
-        return { pas: pas, L: (Math.ceil(Math.max(w, h) / pas) + 1) * pas };
+        const pas = Math.round(Math.max(240, Math.min(w, h) / 2.2));
+        return { pas: pas, L: (Math.ceil(Math.max(w, h) / pas) + 1) * pas, w: w };
     }
 
     function creerChamp(racine, depart) {
@@ -1279,21 +1280,24 @@ mm.add({
                 if (y < 0) y += L;
                 e.el.style.transform = 'translate3d(' + x.toFixed(1) + 'px,' + y.toFixed(1) + 'px,0)';
 
-                /* au bord gauche, l'étoile et sa traînée s'éteignent avant
-                   d'être coupées par le bord : plus de disparition brutale.
-                   En haut, elles se rallument de la même façon en entrant. */
+                /* l'étoile et sa traînée s'éteignent juste avant d'être coupées
+                   par le bord gauche, et se rallument en entrant par la droite
+                   (ou par le haut, quand elles rebouclent). */
                 let gauche = x / FONDU_GAUCHE;
+                let droite = (t.w - x) / FONDU_DROITE;
                 let haut = y / FONDU_HAUT;
                 if (gauche > 1) gauche = 1;
+                if (droite > 1) droite = 1;
                 if (haut > 1) haut = 1;
-                const op = gauche < haut ? gauche : haut;
+                let op = gauche < droite ? gauche : droite;
+                if (haut < op) op = haut;
                 e.el.style.opacity = op < 1 ? op.toFixed(2) : '';
             }
             /* la traînée (longueur et opacité) suit la vitesse, donc elle
                apparaît progressivement avec elle */
             const part = Math.min(1, champ.v / VITESSE_MAX);
             plan.style.setProperty('--t', part.toFixed(3));
-            plan.style.setProperty('--to', (0.7 * part).toFixed(3));
+            plan.style.setProperty('--to', (0.6 * part).toFixed(3));
         };
 
         champ.dessiner();
