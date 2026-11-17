@@ -735,6 +735,9 @@
             /* le choix réapparaît : ses animations d'ouverture (volets, pastille,
                textes) se rejoueraient par-dessus, on les tait pour ce retour */
             body.classList.add('photo-retour');
+            /* les textes du choix apparaissent par-dessus la photo qui se referme,
+               et non derrière elle (voir styles.css) */
+            body.classList.add('photo-retour-en-cours');
             /* si la page se recharge après ce retour, le choix ne doit pas rejouer
                ses volets d'ouverture */
             try { sessionStorage.setItem('photo-retour', '1'); } catch (e) { /* sans stockage, tant pis */ }
@@ -848,6 +851,9 @@
                 defaults: { ease: 'power2.inOut' },
                 onComplete: function () {
                     if (voile) voile.remove();
+                    /* la photo du voile et celle du côté se remplacent dans la même
+                       image : les images des côtés reviennent sans coupure visible */
+                    body.classList.remove('photo-retour-en-cours');
                     bloc.hidden = true;
                     gsap.set(bloc, { y: 0, clearProps: 'opacity' });
 

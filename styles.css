@@ -4669,6 +4669,25 @@ body.photo-etape-en-cours .photo-split-side.cote-actif::before {
     transition: none !important;
 }
 
+/* Retour domaine → choix : le même principe dans l'autre sens. Les textes du
+   choix passent au-dessus de la photo qui se referme (elles apparaissent en
+   fondu, jamais sous l'image), et les images propres des deux côtés s'effacent
+   pendant le retour pour laisser voir la copie du voile, qui se cale dessus. */
+body.photo-retour-en-cours .photo-split-header,
+body.photo-retour-en-cours .split-center-versus {
+    z-index: 950;
+}
+
+body.photo-retour-en-cours .photo-split-side {
+    z-index: 960;
+}
+
+body.photo-retour-en-cours .photo-split-side .photo-split-bg,
+body.photo-retour-en-cours .photo-split-side::before {
+    opacity: 0 !important;
+    transition: none !important;
+}
+
 /* le mot « photographie » qui voyage du choix vers le titre du domaine */
 .mot-transit {
     position: fixed;
