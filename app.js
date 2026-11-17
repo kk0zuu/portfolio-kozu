@@ -12,15 +12,21 @@ if (typeof gsap !== 'undefined') {
 const cursor = document.querySelector('.custom-cursor');
 
 if (cursor) {
-    document.addEventListener('mousemove', (e) => {
+    /* On écoute le pointeur et non la souris : saisir une lettre annule le
+       pointerdown, ce qui coupe les événements souris de compatibilité. Avec
+       mousemove, le curseur restait figé dès qu'on attrapait une lettre. */
+    document.addEventListener('pointermove', (e) => {
+        if (e.pointerType === 'touch') return;
+        const x = e.clientX;
+        const y = e.clientY;
         requestAnimationFrame(() => {
-            cursor.style.left = e.clientX + 'px';
-            cursor.style.top = e.clientY + 'px';
+            cursor.style.left = x + 'px';
+            cursor.style.top = y + 'px';
             if (cursor.style.opacity !== '1') {
                 cursor.style.opacity = '1';
             }
         });
-    });
+    }, { passive: true });
 
     document.addEventListener('mouseleave', () => {
         cursor.style.opacity = '0';
