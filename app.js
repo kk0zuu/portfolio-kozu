@@ -1216,8 +1216,9 @@ mm.add({
 (function initEtoilesPlastique() {
     if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
 
-    const VITESSE_DOUCE = 7;     // px/s pendant le passage
-    const VITESSE_MAX = 240;     // px/s en plein vol
+    const VITESSE_DOUCE = 6;     // px/s pendant le passage
+    const VITESSE_MAX = 205;     // px/s en plein vol
+    const OPACITE = 0.85;        // les étoiles restent un peu en retrait du ciel
     const DECOLLAGE = 4200;      // ms : montée en vitesse sur la page plastique
     const FONDU_GAUCHE = 90;     // px : l'étoile s'éteint juste avant de sortir à gauche
     const FONDU_DROITE = 90;     // px : et se rallume en entrant par la droite
@@ -1298,7 +1299,7 @@ mm.add({
                 if (haut > 1) haut = 1;
                 let op = gauche < droite ? gauche : droite;
                 if (haut < op) op = haut;
-
+                op *= OPACITE;
                 /* pendant le passage, elles ne se posent pas toutes en même
                    temps : la vague part du haut-droit vers le bas-gauche */
                 if (champ.apparition) {
