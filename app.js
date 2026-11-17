@@ -2199,11 +2199,14 @@ if (!document.body.classList.contains('photo-fusion')) construireTambour();
     var aide = document.createElement('div');
     aide.className = 'titre-saisie';
     aide.setAttribute('aria-hidden', 'true');
-    /* Le tracé a été pivoté de 45° : même courbure, mais il va maintenant de
-       droite à gauche, comme le décalage de la lettre. */
+    /* Le tracé va de droite à gauche, comme le décalage de la lettre. Il est
+       plus long que ce déplacement : le point n'en parcourt que le dernier
+       tronçon, calculé pour valoir exactement les 8 px de la lettre. */
+    const TRACE = 'M 20 16 C 14.94 18.4 8.19 18.4 2 16';
+    const COURSE = 8;          // le décalage de la lettre, en px
     aide.innerHTML =
         '<svg viewBox="0 0 24 20" xmlns="http://www.w3.org/2000/svg">' +
-        '<path class="titre-saisie-trait" d="M 20 16 C 17.75 17.06 14.75 17.06 12 16"/></svg>' +
+        '<path class="titre-saisie-trait" d="' + TRACE + '"/></svg>' +
         '<span class="titre-saisie-point"></span>';
     titre.appendChild(aide);
 
@@ -2229,13 +2232,24 @@ if (!document.body.classList.contains('photo-fusion')) construireTambour();
         };
     }
 
-    // Le point part de (20, 16) dans la boîte : on le pose à 10 px à gauche et
+    // Le tracé part de (20, 16) dans la boîte : on le pose à 10 px à gauche et
     // 6 px sous l'angle de la lettre, donc un peu à l'écart de celle-ci.
     function placer() {
         var p = coinBasGauche(premiere);
         aide.style.left = (p.x - 30) + 'px';
         aide.style.top = (p.y - 10) + 'px';
     }
+
+    // Le point ne parcourt que la fin du tracé : on lui donne le pourcentage de
+    // départ qui correspond à la course de la lettre, mesuré sur le vrai tracé.
+    (function calerDepart() {
+        var chemin = aide.querySelector('path');
+        if (!chemin || !chemin.getTotalLength) return;
+        var longueur = chemin.getTotalLength();
+        if (!longueur) return;
+        var depart = Math.max(0, 1 - COURSE / longueur) * 100;
+        aide.style.setProperty('--depart-point', depart.toFixed(2) + '%');
+    })();
 
     var minuteur = null;
     var saisie = false;

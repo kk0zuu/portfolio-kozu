@@ -442,11 +442,11 @@ body.hovering .cursor-spiral {
 }
 
 @keyframes titre-invite-point {
-    0%   { offset-distance: 0%; }
+    0%   { offset-distance: var(--depart-point, 55.4%); }
     28%  { offset-distance: 100%; }
     47%  { offset-distance: 100%; }
-    75%  { offset-distance: 0%; }
-    100% { offset-distance: 0%; }
+    75%  { offset-distance: var(--depart-point, 55.4%); }
+    100% { offset-distance: var(--depart-point, 55.4%); }
 }
 
 .hero-section.titre-invite #hero-title > .ransom-wrapper:first-of-type .ransom-card {
@@ -497,7 +497,7 @@ body.hovering .cursor-spiral {
     border-radius: 50%;
     background: var(--color-black);
     box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.45);
-    offset-path: path('M 20 16 C 17.75 17.06 14.75 17.06 12 16');
+    offset-path: path('M 20 16 C 14.94 18.4 8.19 18.4 2 16');
     offset-rotate: 0deg;
     will-change: offset-distance;
 }
