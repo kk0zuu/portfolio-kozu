@@ -2549,7 +2549,6 @@ if (!document.body.classList.contains('photo-fusion')) construireTambour();
         'NON': { texte: "non c'est" },
         'GO': { texte: '1, 2, 3...' },
         'SUD': { texte: 'Nord ou' },
-        'TOUT': { texte: "un point c'est" },
         'OUI': { texte: "c'est un grand" },
         'GOUT': { texte: 'vous avez bon' },
         'AUTO': { texte: "fan d'", signe: '?' },
@@ -2643,14 +2642,16 @@ if (!document.body.classList.contains('photo-fusion')) construireTambour();
         ajuster(l);
     }
 
-    function ecrire(texte, marque) {
+    function ecrire(texte, marque, glisse) {
         marque = marque || '';
         if (texte === texteActuel && marque === signeActuel) return;
         texteActuel = texte;
+        if (glisse === undefined) glisse = true;
 
         /* Tout ce qui va bouger est mesuré avant : le texte, la case et le
            badge glissent ensuite vers leur nouvelle place, au lieu de sauter
-           quand la ligne se recentre. */
+           quand la ligne se recentre. À la révélation, la case apparaît
+           directement à sa place : pas de glissement à ce moment-là. */
         var avantTexte = sousTitre.getBoundingClientRect();
         var avantCase = boite.getBoundingClientRect();
         var avantBadge = badge.getBoundingClientRect();
@@ -2681,6 +2682,25 @@ if (!document.body.classList.contains('photo-fusion')) construireTambour();
         sousTitre.appendChild(neuve);
         ajuster(neuve);
 
+        /* le rouleau part dans tous les cas, avec ou sans glissement */
+        var piles = [];
+        Array.prototype.forEach.call(neuve.children, function (col) { if (col._pile) piles.push(col._pile); });
+        if (piles.length) {
+            gsap.fromTo(piles, { yPercent: 0 }, {
+                yPercent: ARRIVEE,
+                duration: 0.62,
+                ease: 'back.out(1.2)',
+                stagger: ETALEMENT
+            });
+        }
+
+        if (!glisse) {
+            // la case apparaît déjà à sa place : ni elle, ni le texte, ni le
+            // badge ne glissent à cet instant
+            if (posees.length) placer(0);
+            return;
+        }
+
         var apresTexte = sousTitre.getBoundingClientRect();
         var dxTexte = avantTexte.left - apresTexte.left;
         if (Math.abs(dxTexte) > 1) {
@@ -2703,17 +2723,6 @@ if (!document.body.classList.contains('photo-fusion')) construireTambour();
                 var by = parseFloat(gsap.getProperty(badge, 'y')) || 0;
                 gsap.fromTo(badge, { x: bx + dxBadge, y: by + dyBadge }, { x: bx, y: by, duration: 0.5, ease: 'power3.out', overwrite: 'auto' });
             }
-        }
-
-        var piles = [];
-        Array.prototype.forEach.call(neuve.children, function (col) { if (col._pile) piles.push(col._pile); });
-        if (piles.length) {
-            gsap.fromTo(piles, { yPercent: 0 }, {
-                yPercent: ARRIVEE,
-                duration: 0.62,
-                ease: 'back.out(1.2)',
-                stagger: ETALEMENT
-            });
         }
 
         // la case a pu se décaler avec la nouvelle longueur : on y replace les
@@ -2748,7 +2757,7 @@ if (!document.body.classList.contains('photo-fusion')) construireTambour();
             onComplete: centrer
         });
 
-        ecrire(DEFAUT, '');
+        ecrire(DEFAUT, '', false);
     }
 
     /* ---------- le badge qu'on peut tirer, sans l'annoncer ---------- */
@@ -2819,7 +2828,7 @@ if (!document.body.classList.contains('photo-fusion')) construireTambour();
     }
 
     function placer(duree) {
-        var d = duree || 0.32;
+        var d = (duree === undefined) ? 0.32 : duree;
         var r = rectBoite();
         var largeur = r.width / PLACES;
         posees.forEach(function (c) {
