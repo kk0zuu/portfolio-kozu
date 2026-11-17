@@ -745,7 +745,7 @@ body.contact-page .logiciels-aide-point {
     color: #E4002B;
     opacity: 0;
     /* elle est déjà en place et pointe le curseur : seule son opacité s'anime */
-    transition: opacity 0.25s ease;
+    transition: opacity 0.45s ease;
     pointer-events: none;
     transform-origin: 50% 50%;
     filter: drop-shadow(3px 3px 0 var(--color-black));
@@ -855,7 +855,7 @@ body.contact-page .logiciels-aide-point {
     z-index: 15;
     white-space: nowrap;
     pointer-events: none;
-    transition: transform 0.2s ease, scale 0.35s ease, opacity 0.35s ease;
+    transition: transform 0.2s ease, scale 0.35s ease, opacity 0.35s ease, rotate 0.35s ease;
     transform-origin: 50% 50%;
 }
 
@@ -863,8 +863,23 @@ body.contact-page .logiciels-aide-point {
 .bubble-photo .handwritten-label { transform: rotate(4deg); }
 .bubble-plastique .handwritten-label { transform: rotate(-2deg); }
 
+/* L'étiquette du domaine survolé se berce doucement de gauche à droite, avec
+   des temps d'arrêt pour rester lisible. On anime la propriété `rotate` et non
+   `transform` : le scale du survol et la rotation de départ de GSAP restent donc
+   intacts, sans `!important` supplémentaire. */
+@keyframes etiquette-bercement {
+    0%   { rotate: 0deg; }
+    16%  { rotate: -3.6deg; }
+    34%  { rotate: -3.6deg; }
+    50%  { rotate: 3.6deg; }
+    68%  { rotate: 3.6deg; }
+    84%  { rotate: 0deg; }
+    100% { rotate: 0deg; }
+}
+
 .bubble-card:hover .handwritten-label {
     transform: scale(1.08) rotate(0deg);
+    animation: etiquette-bercement 4.2s ease-in-out infinite;
 }
 
 /* RESPONSIVE */
