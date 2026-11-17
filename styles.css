@@ -1,5 +1,9 @@
 /* VARIABLES GLOBALES */
 :root {
+    /* étoile à cinq branches, pointe tournée vers +x : les éléments qui la
+       portent la font pivoter pour que la pointe mène le mouvement */
+    --etoile-cinq: polygon(100% 50%, 65.4% 61.2%, 65.4% 97.6%, 44.1% 68.2%, 9.6% 79.4%, 30.9% 50%, 9.6% 20.6%, 44.1% 31.8%, 65.4% 2.4%, 65.4% 38.8%);
+
     --color-bg-start: #FFFFFF;
     --color-bg-end: #E4F6D0; /* Vert pâle */
     
@@ -4599,6 +4603,68 @@ body.photo-etape-en-cours .photo-split-side.cote-actif::before {
     opacity: 1;
     /* fondu court : la page se charge plus tôt */
     transition: opacity 0.22s ease;
+}
+
+/* ==================================================== */
+/* VERS PLASTIQUE : un champ d'étoiles géométriques sur  */
+/* le vert du fond, avant d'ouvrir la page des projets    */
+/* ==================================================== */
+
+.sas-plastique {
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    width: 100vw;
+    background: var(--color-bg-end);
+    opacity: 0;
+    visibility: hidden;
+    /* sous la barre de navigation (1000) : elle reste visible pendant le passage */
+    z-index: 900;
+    pointer-events: none;
+    overflow: hidden;
+    transition: opacity 0.5s ease, background-color 0.85s ease, visibility 0.5s;
+}
+
+.sas-plastique.on {
+    visibility: visible;
+    opacity: 1;
+    /* le vert monte vite : le champ d'étoiles se pose par-dessus */
+    transition: opacity 0.22s ease, background-color 0.85s ease;
+}
+
+/* à l'arrivée, le vert s'efface : la page et sa barre reprennent leur place
+   sous les étoiles, qui s'effacent ensuite */
+.sas-plastique.sur-page {
+    background: transparent;
+}
+
+/* les étoiles du passage : même forme que celles du fond de la page */
+.sas-plastique-etoile {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: var(--tete, 26px);
+    height: var(--tete, 26px);
+    margin: calc(var(--tete, 26px) / -2) 0 0 calc(var(--tete, 26px) / -2);
+    background: #1232B4;
+    clip-path: var(--etoile-cinq);
+    translate: var(--x) var(--y);
+    opacity: 0;
+    animation: sas-etoile-pose 0.6s ease var(--retard, 0s) both;
+    /* en pause tant que le voile n'est pas ouvert : les étoiles ne se posent
+       qu'au moment du passage, en vague, et restent en place quand on les
+       remet en pause à l'arrivée */
+    animation-play-state: paused;
+}
+
+.sas-plastique.on .sas-plastique-etoile {
+    animation-play-state: running;
+}
+
+@keyframes sas-etoile-pose {
+    from { opacity: 0; scale: 0.15; }
+    to   { opacity: var(--op, 0.78); scale: 1; }
 }
 
 /* ==================================================== */

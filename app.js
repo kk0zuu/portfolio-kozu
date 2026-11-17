@@ -1200,6 +1200,82 @@ mm.add({
     });
 })();
 
+// --- SAS PLASTIQUE : un champ d'étoiles géométriques sur le vert du fond ---
+// Avant d'ouvrir les projets plastiques, la page devient du vert du fond et des
+// étoiles à cinq branches s'y posent une à une, en diagonale depuis le coin
+// haut-droit. À l'arrivée, le vert s'efface sous les étoiles, puis celles du fond
+// de la page prennent le relais et se mettent à filer l'une après l'autre.
+(function initSasPlastique() {
+    const calme = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (calme) return;
+
+    const surPage = /plastique\.html$/.test(location.pathname);
+    const TOTAL = 22;
+
+    let sas = document.querySelector('.sas-plastique');
+    if (!sas) {
+        sas = document.createElement('div');
+        sas.className = 'sas-plastique';
+        sas.setAttribute('aria-hidden', 'true');
+        for (let i = 0; i < TOTAL; i++) {
+            const etoile = document.createElement('span');
+            etoile.className = 'sas-plastique-etoile';
+            const x = 4 + Math.random() * 92;     // vw
+            const y = 4 + Math.random() * 92;     // vh
+            /* la vague part du coin haut-droit (x grand, y petit) et gagne le
+               bas-gauche : l'avancement vaut 0 là-bas, 1 à l'autre bout */
+            const avancee = ((100 - x) + y) / 200;
+            etoile.style.setProperty('--x', x.toFixed(2) + 'vw');
+            etoile.style.setProperty('--y', y.toFixed(2) + 'vh');
+            etoile.style.setProperty('--tete', Math.round(16 + Math.random() * 14) + 'px');
+            etoile.style.setProperty('--op', (0.6 + Math.random() * 0.25).toFixed(2));
+            etoile.style.setProperty('--retard', (avancee * 0.8).toFixed(2) + 's');
+            sas.appendChild(etoile);
+        }
+        document.body.appendChild(sas);
+    }
+
+    if (surPage) {
+        /* arrivée : le champ est déjà en place, la page se charge dessous */
+        sas.classList.add('on');
+        setTimeout(() => {
+            sas.classList.add('sur-page');              // le vert s'efface
+            document.body.classList.add('pm-vol');       // les étoiles du fond s'élancent
+            setTimeout(() => { sas.classList.remove('on'); }, 600);
+        }, 560);
+
+        window.addEventListener('pageshow', (e) => {
+            if (!e.persisted) return;
+            sas.remove();
+        });
+        return;
+    }
+
+    let enCours = false;
+
+    document.addEventListener('click', (e) => {
+        if (enCours) return;
+        if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button === 1) return;
+        const lien = e.target && e.target.closest ? e.target.closest('a[href]') : null;
+        if (!lien) return;
+        if (lien.target && lien.target !== '_self') return;
+        const href = lien.getAttribute('href') || '';
+        if (!/^plastique\.html(#.*)?$/.test(href)) return;
+
+        enCours = true;
+        e.preventDefault();
+        sas.classList.add('on');
+        /* 800 ms de pose des étoiles + leur apparition : la page s'ouvre juste après */
+        setTimeout(() => { window.location.href = href; }, 1050);
+    }, true);
+
+    window.addEventListener('pageshow', (e) => {
+        if (!e.persisted) return;
+        sas.classList.remove('on');
+        enCours = false;
+    });
+})();
+
 // --- VISIONNEUSE PHOTO : LIGHTBOX AVEC NAVIGATION ---
 (function initLightbox() {
     // Pages qui désactivent la visionneuse plein écran (ex. la page Numérique,
