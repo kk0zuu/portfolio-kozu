@@ -2121,7 +2121,7 @@ if (!document.body.classList.contains('photo-fusion')) construireTambour();
             if (!c.libre || c.dansCase) return;
             gsap.set(c.el, { x: c.x - c.hx, y: c.y - c.hy, rotation: c.rot0 + c.a });
             if (c === prise) return;
-            var z = 100 + Math.round(c.y / 10);
+            var z = (c.enPlus ? 900 : 100) + Math.round(c.y / 10);
             if (z !== c.z) { c.z = z; c.el.style.zIndex = z; }
         });
     }
@@ -2168,6 +2168,12 @@ if (!document.body.classList.contains('photo-fusion')) construireTambour();
             c.vx = 0;
             c.vy = 0;
             c.va = 0;
+            /* on repart de la position réellement vue : la mesure d'origine a
+               pu être prise pendant l'animation d'intro, et l'écart ferait
+               sauter la lettre au moment où on la saisit */
+            var rr = c.el.getBoundingClientRect();
+            c.x = rr.left + rr.width / 2;
+            c.y = rr.top + rr.height / 2;
             decal.x = e.clientX - c.x;
             decal.y = e.clientY - c.y;
             c.el.style.zIndex = 5000;
@@ -2182,16 +2188,27 @@ if (!document.body.classList.contains('photo-fusion')) construireTambour();
     window.lettresTitre = {
         ajouter: function (modele, cx, cy) {
             if (!modele || !modele.parentNode) return false;
+            // une seule lettre en plus à la fois
+            var vieux = document.querySelectorAll('.lettre-en-plus');
+            for (var k = 0; k < vieux.length; k++) {
+                if (vieux[k].parentNode) vieux[k].parentNode.removeChild(vieux[k]);
+            }
             var el = modele.cloneNode(true);
             el.classList.add('lettre-en-plus');
+            /* le modèle est rangé dans la case : sa transformation contient le
+               décalage du rangement. On repart d'une rotation propre. */
+            var rot = parseFloat(el.getAttribute('data-rot')) || 0;
+            el.style.transform = 'rotate(' + rot + 'deg)';
             el.style.position = 'absolute';
             el.style.margin = '0';
             el.style.left = '0px';
             el.style.top = '0px';
             el.style.zIndex = 4000;
-            (modele.closest('.ransom-title-wrapper') || modele.parentNode).appendChild(el);
+            /* dans le titre lui-même : même contexte d'empilement que les
+               autres lettres, donc au-dessus d'elles quand on veut la saisir */
+            (modele.closest('#hero-title') || modele.closest('.ransom-title-wrapper') || modele.parentNode).appendChild(el);
 
-            var racine = el.parentNode;
+            var racine = el.offsetParent || el.parentNode;
             var rb = racine.getBoundingClientRect();
             el.style.left = (cx - rb.left - el.offsetWidth / 2) + 'px';
             el.style.top = (cy - rb.top - el.offsetHeight / 2) + 'px';
@@ -2203,16 +2220,57 @@ if (!document.body.classList.contains('photo-fusion')) construireTambour();
                 vx: 0, vy: 0, a: 0, va: 0,
                 hx: b.left + b.width / 2, hy: b.top + b.height / 2,
                 w: b.width, h: b.height,
-                rot0: parseFloat(el.getAttribute('data-rot')) || 0,
+                rot0: rot,
                 libre: true,
+                enPlus: true,
                 z: 0
             };
             corps.push(c);
             brancher(c);
 
+            // la lettre modèle est rangée dans la case : on repart de sa taille
+            // pleine et sans sa classe de saisie
+            el.classList.remove('saisie');
+            if (window.gsap) gsap.set(el, { scale: 1 });
             var carte = el.querySelector('.ransom-card');
             if (carte && window.gsap) gsap.from(carte, { scale: 0.4, opacity: 0, duration: 0.5, ease: 'back.out(1.8)' });
-            return true;
+            return el;
+        },
+
+        /* Retire du jeu une lettre ajoutée à la volée (et de la page, avec un
+           petit effacement). La physique oublie son corps au passage. */
+        retirer: function (el) {
+            if (!el) return;
+            el.dataset.parti = '1';
+            for (var i = 0; i < corps.length; i++) {
+                if (corps[i].el === el) {
+                    if (prise === corps[i]) prise = null;
+                    corps.splice(i, 1);
+                    break;
+                }
+            }
+            var carte = el.querySelector('.ransom-card');
+            var effacer = function () { if (el.parentNode) el.parentNode.removeChild(el); };
+            if (carte && window.gsap) {
+                gsap.to(carte, { scale: 0, opacity: 0, duration: 0.22, ease: 'power2.in', overwrite: true, onComplete: effacer });
+                /* filet de sécurité : la lettre quitte la page quoi qu'il arrive */
+                setTimeout(effacer, 420);
+            } else {
+                effacer();
+            }
+        },
+
+        /* La place d'origine d'une lettre, mesurée sur la mise en page (et non
+           sur sa transformation) : elle reste juste même si la page a défilé
+           ou si la lettre est rangée dans la case. */
+        home: function (el) {
+            if (!el) return null;
+            var op = el.offsetParent || document.body;
+            var rb = op.getBoundingClientRect();
+            return {
+                x: rb.left + el.offsetLeft + el.offsetWidth / 2,
+                y: rb.top + el.offsetTop + el.offsetHeight / 2
+            };
         }
     };
 
@@ -2629,7 +2687,7 @@ if (!document.body.classList.contains('photo-fusion')) construireTambour();
     var pret = false;
     var priseBadge = null;
     var hauteurLettres = 66;
-    var tAjoute = false;
+    var tEnPlusEl = null;
     /* écart fixe entre la place du badge et la case : il est mesuré à la
        révélation pour que la case reste pile à l'endroit d'où PORTFOLIO a
        été soulevé, malgré le changement de longueur de la ligne */
@@ -2934,22 +2992,32 @@ if (!document.body.classList.contains('photo-fusion')) construireTambour();
         var secret = SECRETS[mot];
         ecrire(secret ? secret.texte : DEFAUT, secret ? secret.signe : '');
 
-        // le second T : il n'apparaît qu'un fois TOU ou TU formé, pour
-        // permettre TOUT et TUTO malgré l'unique T du nom
-        if (!tAjoute && (mot === 'TOU' || mot === 'TU')) {
-            tAjoute = true;
-            var modele = null;
-            for (var i = 0; i < posees.length; i++) {
-                var carte = posees[i].el.querySelector('.ransom-card');
-                if (carte && carte.textContent.trim() === 'T') { modele = posees[i].el; break; }
+        /* Le second T : il apparaît à la place du T d'origine dès que la case
+           forme TOU ou TU, et disparaît dès qu'on défait cette combinaison.
+           Tant qu'il est lui-même rangé dans la case, il reste là. */
+        var combo = (mot === 'TOU' || mot === 'TU');
+        var tDedans = false, modele = null;
+        for (var i = 0; i < posees.length; i++) {
+            var carte = posees[i].el.querySelector('.ransom-card');
+            if (!carte || carte.textContent.trim() !== 'T') continue;
+            if (tEnPlusEl && posees[i].el === tEnPlusEl) tDedans = true;
+            else if (!tEnPlusEl) modele = posees[i].el;
+        }
+
+        if (combo && !tEnPlusEl) {
+            if (!modele) {
+                for (var j = 0; j < posees.length; j++) {
+                    var cj = posees[j].el.querySelector('.ransom-card');
+                    if (cj && cj.textContent.trim() === 'T') { modele = posees[j].el; break; }
+                }
             }
             if (modele && window.lettresTitre) {
-                /* il tombe juste sous la case, à hauteur de la 4e place */
-                var rc = boite.getBoundingClientRect();
-                var hb = heroSection.getBoundingClientRect();
-                var ty = Math.min(rc.bottom + 66, hb.bottom - 40);
-                window.lettresTitre.ajouter(modele, rc.left + rc.width * 0.8, ty);
+                var home = window.lettresTitre.home(modele);
+                if (home) tEnPlusEl = window.lettresTitre.ajouter(modele, home.x, home.y);
             }
+        } else if (!combo && tEnPlusEl && !tDedans) {
+            if (window.lettresTitre) window.lettresTitre.retirer(tEnPlusEl);
+            tEnPlusEl = null;
         }
     }
 
