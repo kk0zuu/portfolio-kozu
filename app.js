@@ -2654,6 +2654,7 @@ if (!document.body.classList.contains('photo-fusion')) construireTambour();
         'GOUT': { texte: 'vous avez bon' },
         'GOAT': { texte: "c'est moi le" },
         'AND': { texte: 'we do english here,' },
+        'GAI': { texte: "je suis quelqu'un de" },
         'AUTO': { texte: "fan d'", signe: '?' },
         'DOS': { texte: "j'ai mal au" }
     };
