@@ -3088,3 +3088,27 @@ if (!document.body.classList.contains('photo-fusion')) construireTambour();
 
     window.caseSecrete = { deposer: deposer, retirer: retirer };
 })();
+
+// --- ARRIVÉE SUR LE CHOIX DES DOMAINES ---
+// Depuis une page de domaine, « retour au choix des domaines » mène à
+// index.html#choix-domaines. Le navigateur s'y pose avant que les images et
+// l'intro n'aient fini de mettre la page en place : on recale donc la position
+// une fois le chargement terminé, puis à la fin de l'intro, pour arriver pile
+// sur le choix des domaines et jamais sur le haut de la page.
+(function poserSurLeChoix() {
+    if (location.hash !== '#choix-domaines') return;
+    var dernier = -1;
+
+    function poser() {
+        var cible = document.getElementById('choix-domaines');
+        if (!cible) return;
+        var y = cible.getBoundingClientRect().top + (window.pageYOffset || 0);
+        y = Math.max(0, Math.round(y));
+        if (Math.abs(y - (window.pageYOffset || 0)) < 4 || y === dernier) return;
+        dernier = y;
+        window.scrollTo(0, y);
+    }
+
+    window.addEventListener('load', function () { requestAnimationFrame(poser); });
+    document.addEventListener('hero:intro-done', function () { requestAnimationFrame(poser); });
+})();

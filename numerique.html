@@ -501,7 +501,7 @@ h1 em{font-style:normal;color:var(--neon)}
 .portes-btn{
   display:inline-flex;align-items:center;gap:.85rem;
   background:transparent;border:1px solid rgba(255,255,255,.16);color:#c4c4c4;
-  padding:.68rem 1.05rem;border-radius:99px;font:inherit;cursor:none;
+  padding:.68rem 1.05rem;border-radius:99px;font:inherit;cursor:none;text-decoration:none;
   transition:border-color .3s ease,color .3s ease,background .3s ease;
 }
 .portes-btn:hover{border-color:rgba(255,255,255,.45);color:#fff;background:rgba(255,255,255,.05)}
@@ -696,11 +696,11 @@ body.sas-actif .wrap,body.sas-actif .portes-zone,body.sas-actif .num-foot{opacit
     </div>
 
     <div class="portes-zone">
-        <button class="portes-btn" type="button" id="ouvrirPortes">
-            <span class="portes-label">Le site</span>
-            <span class="portes-titre">Toutes les pages</span>
+        <a class="portes-btn" href="index.html#choix-domaines">
+            <span class="portes-label">Retour</span>
+            <span class="portes-titre">Choix des domaines</span>
             <span class="portes-fleche">↑</span>
-        </button>
+        </a>
     </div>
 
     <footer class="num-foot">
@@ -729,17 +729,6 @@ body.sas-actif .wrap,body.sas-actif .portes-zone,body.sas-actif .num-foot{opacit
       <button class="descendre cache" type="button" id="descendre" aria-label="Faire défiler vers le bas">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v15"/><path d="M5.5 12.5 12 19l6.5-6.5"/></svg>
       </button>
-    </section>
-
-    <section class="portes" id="portes" aria-hidden="true">
-      <div class="portes-fond"></div>
-      <div class="portes-panneau" role="dialog" aria-label="Toutes les pages du site">
-        <div class="portes-tete">
-          <span class="portes-kicker">on va où maintenant ?</span>
-          <button class="btn" type="button" id="fermerPortes">Fermer ✕</button>
-        </div>
-        <div class="portes-bande" id="portesBande"></div>
-      </div>
     </section>
 
 <script>
@@ -1558,52 +1547,6 @@ body.sas-actif .wrap,body.sas-actif .portes-zone,body.sas-actif .num-foot{opacit
       once: true,
       passive: ev === 'wheel' || ev === 'touchstart'
     });
-  });
-})();
-</script>
-<script>
-(function () {
-  var PAGES = [
-    { nom: 'Accueil', lien: 'index.html', img: 'images/accueil/25_ddacc5d5faefcad7851ce776a8c7b294.jpg' },
-    { nom: 'Photographie', lien: 'photographie.html', img: 'images/photographie/01_b35768227e74191c86b1985b17349a9f.jpg' },
-    { nom: 'Projets plastiques', lien: 'plastique.html', img: 'images/plastique/01_3ef2e9a610b41c771511f92e592a0e7c.png' }
-  ];
-
-  var panneau = document.getElementById('portes');
-  var bande = document.getElementById('portesBande');
-  var fermer = document.getElementById('fermerPortes');
-  var ouvrir = document.getElementById('ouvrirPortes');
-  if (!panneau || !bande || !ouvrir) return;
-
-  bande.innerHTML = PAGES.map(function (p) {
-    return '<a class="porte" href="' + p.lien + '">' +
-      '<span class="porte-img"><img src="' + p.img + '" alt="" loading="lazy" /></span>' +
-      '<span class="porte-nom">' + p.nom + '</span>' +
-    '</a>';
-  }).join('');
-
-  function afficher() {
-    panneau.classList.add('on');
-    panneau.setAttribute('aria-hidden', 'false');
-    document.body.classList.add('gele');
-    var premier = bande.querySelector('.porte');
-    if (premier) setTimeout(function () { premier.focus({ preventScroll: true }); }, 500);
-  }
-
-  function cacher() {
-    if (!panneau.classList.contains('on')) return;
-    panneau.classList.remove('on');
-    panneau.setAttribute('aria-hidden', 'true');
-    document.body.classList.remove('gele');
-  }
-
-  ouvrir.addEventListener('click', afficher);
-  fermer.addEventListener('click', cacher);
-  panneau.addEventListener('click', function (e) {
-    if (e.target === panneau || e.target.classList.contains('portes-fond')) cacher();
-  });
-  document.addEventListener('keydown', function (e) {
-    if (e.key === 'Escape') cacher();
   });
 })();
 </script>
