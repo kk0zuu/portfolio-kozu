@@ -2652,6 +2652,7 @@ if (!document.body.classList.contains('photo-fusion')) construireTambour();
         'TOUS': { texte: 'Tous pour un et un pour' },
         'OUI': { texte: "c'est un grand" },
         'GOUT': { texte: 'vous avez bon' },
+        'GOAT': { texte: "c'est moi le" },
         'AUTO': { texte: "fan d'", signe: '?' },
         'DOS': { texte: "j'ai mal au" }
     };
