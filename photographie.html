@@ -831,13 +831,11 @@
 
             var voile = document.createElement('div');
             voile.className = 'photo-etape';
-            /* le voile naît transparent : il apparaît en fondu par-dessus la page du
-               domaine, qui s'efface en même temps (la photo du fond est la même) */
-            voile.style.cssText = 'position:fixed;z-index:900;pointer-events:none;overflow:hidden;background:#F6F4F0;opacity:0;' +
+            voile.style.cssText = 'position:fixed;z-index:900;pointer-events:none;overflow:hidden;background:#F6F4F0;' +
                 'left:0;top:0;width:100vw;height:100vh;';
             var image = document.createElement('div');
             image.style.cssText = 'position:absolute;inset:0;background-image:url("' + url + '");' +
-                'background-size:cover;background-position:50% 50%;opacity:1;transform-origin:50% 50%;' +
+                'background-size:cover;background-position:50% 50%;opacity:0.6;transform-origin:50% 50%;' +
                 /* filtre neutre explicite : sinon GSAP part de « aucun filtre » = noir */
                 'filter:brightness(1) saturate(1) contrast(1);transition:background-position 0.8s ease;';
             voile.appendChild(image);
@@ -898,15 +896,11 @@
                 }
             });
 
-            /* le voile apparaît en fondu pendant que la page du domaine s'efface :
-               ses textes et ses cases ne disparaissent plus d'un coup */
-            tl.to(voile, { opacity: 1, duration: 0.3, ease: 'power1.out' }, 0);
-
-            /* puis le voile se referme sur son côté, la photo se recadre */
-            tl.to(voile, { left: r.left, top: r.top, width: r.width, height: r.height, duration: 0.7 }, 0.26);
-            tl.to(image, { opacity: 1, scale: echelleReelle, filter: filtres, duration: 0.62, ease: 'power1.inOut' }, 0.3);
-            tl.call(function () { image.style.backgroundPosition = positionReelle; }, null, 0.3);
-            if (couche) tl.to(couche, { opacity: 1, duration: 0.62 }, 0.3);
+            /* le voile se referme sur son côté, la photo se recadre */
+            tl.to(voile, { left: r.left, top: r.top, width: r.width, height: r.height, duration: 0.7 }, 0);
+            tl.to(image, { opacity: 1, scale: echelleReelle, filter: filtres, duration: 0.62, ease: 'power1.inOut' }, 0.08);
+            tl.call(function () { image.style.backgroundPosition = positionReelle; }, null, 0.08);
+            if (couche) tl.to(couche, { opacity: 1, duration: 0.62 }, 0.08);
 
             /* le mot revient à sa taille et à sa couleur de départ */
             if (cloneMot) {
@@ -924,11 +918,11 @@
                 }, null, 0.78);
             }
 
-            tl.to(bloc, { opacity: 0, duration: 0.3, ease: 'power1.in' }, 0);
-            tl.to('.photo-split-side', { opacity: 1, duration: 0.45 }, 0.42);
+            tl.to(bloc, { opacity: 0, duration: 0.35 }, 0);
+            tl.to('.photo-split-side', { opacity: 1, duration: 0.45 }, 0.2);
             tl.to('.split-side-badge, .split-side-title, .split-side-desc, .split-side-cta, .split-center-versus',
-                { y: 0, opacity: 1, duration: 0.5, stagger: 0.03, ease: 'power2.out' }, 0.47);
-            tl.to('.photo-split-header', { y: 0, opacity: 1, duration: 0.45, ease: 'power2.out' }, 0.52);
+                { y: 0, opacity: 1, duration: 0.5, stagger: 0.03, ease: 'power2.out' }, 0.25);
+            tl.to('.photo-split-header', { y: 0, opacity: 1, duration: 0.45, ease: 'power2.out' }, 0.3);
         }
 
         /* ---- hero épinglé ----
