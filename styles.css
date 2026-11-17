@@ -867,19 +867,22 @@ body.contact-page .logiciels-aide-point {
    des temps d'arrêt pour rester lisible. On anime la propriété `rotate` et non
    `transform` : le scale du survol et la rotation de départ de GSAP restent donc
    intacts, sans `!important` supplémentaire. */
+/* Le côté droit se penche un peu plus que le gauche : le tilt de repos de
+   l'étiquette mange une partie du bercement vers la droite */
 @keyframes etiquette-bercement {
     0%   { rotate: 0deg; }
-    12%  { rotate: -5.5deg; }
-    30%  { rotate: -5.5deg; }
-    44%  { rotate: 5.5deg; }
-    62%  { rotate: 5.5deg; }
-    76%  { rotate: 0deg; }
+    10%  { rotate: -6deg; }
+    26%  { rotate: -6deg; }
+    40%  { rotate: 7.5deg; }
+    56%  { rotate: 7.5deg; }
+    70%  { rotate: 0deg; }
+    84%  { rotate: 0deg; }
     100% { rotate: 0deg; }
 }
 
 .bubble-card:hover .handwritten-label {
     transform: scale(1.08) rotate(0deg);
-    animation: etiquette-bercement 2.8s ease-in-out infinite;
+    animation: etiquette-bercement 2.2s ease-in-out infinite;
 }
 
 /* RESPONSIVE */
