@@ -2719,6 +2719,22 @@ if (!document.body.classList.contains('photo-fusion')) construireTambour();
         return col;
     }
 
+    /* La colonne prend la largeur de sa vraie lettre. Sans ça, c'est le glyphe
+       le plus large du rouleau qui la fixe : « i » ou « , » héritaient d'une
+       colonne de la taille d'un « m », d'où un espacement irrégulier. */
+    function fixerLargeurs(ligne) {
+        var fs = parseFloat(getComputedStyle(ligne).fontSize) || 16;
+        var cols = ligne.querySelectorAll('.slot-case');
+        for (var i = 0; i < cols.length; i++) {
+            var items = cols[i].querySelectorAll('.slot-item');
+            if (!items.length) continue;
+            var r = document.createRange();
+            r.selectNodeContents(items[items.length - 1]);
+            var w = r.getBoundingClientRect().width;
+            if (w > 0) cols[i].style.width = (w / fs).toFixed(3) + 'em';
+        }
+    }
+
     function construire(texte, posee) {
         var l = document.createElement('span');
         l.className = 'slot-ligne';
@@ -2788,6 +2804,7 @@ if (!document.body.classList.contains('photo-fusion')) construireTambour();
 
         var neuve = construire(texte, false);
         sousTitre.appendChild(neuve);
+        fixerLargeurs(neuve);
         ajuster(neuve);
 
         /* le rouleau part dans tous les cas, avec ou sans glissement */

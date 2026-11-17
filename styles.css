@@ -448,6 +448,12 @@ body.hovering .cursor-spiral {
     display: inline-block;
     height: 1.3em;
     line-height: 1.3em;
+    box-sizing: content-box;
+    /* la fenêtre de coupe déborde de 0,6 em de chaque côté (padding compensé par
+       des marges négatives) : les glyphes du rouleau, souvent plus larges que
+       la vraie lettre, ne sont pas rognés latéralement */
+    padding: 0 0.6em;
+    margin: 0 -0.6em;
     overflow: hidden;
     vertical-align: bottom;
     text-transform: none;
