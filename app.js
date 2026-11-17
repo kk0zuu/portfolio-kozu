@@ -841,8 +841,14 @@ mm.add({
     let curseurVu = false;
     let activee = false;        // une fois sortie, elle ne se cache plus
     let sortie = 0;             // 0 → 1 : progression de la sortie du titre
+    let distanceCurseur = 9999;
     let angle = 0;
     let angleVise = angle;
+
+    // le curseur repousse la flèche : elle recule vers le titre puis s'efface
+    const MARGE = 54;        // écart minimum gardé entre le curseur et la flèche
+    const DEDANS = 26;       // rayon où la flèche est rangée dans le titre
+    const SORTIE = 96;       // rayon à partir duquel elle est de nouveau pleine
 
     function mesurer() {
         const r = titre.getBoundingClientRect();
@@ -871,7 +877,7 @@ mm.add({
         if (curseur.y < seuil) return;   // encore au-dessus du titre : elle reste dedans
         activee = true;
         sortie = 0;
-        angle = angleVise;                // elle sort droit vers le curseur
+        angle = Math.PI / 2;              // elle sort par le bas du titre
     }
 
     function viser(e) {
@@ -881,6 +887,7 @@ mm.add({
         curseurVu = true;
         mesurer();
         angleVise = Math.atan2(e.clientY - centre.y, e.clientX - centre.x);
+        distanceCurseur = Math.hypot(e.clientX - centre.x, e.clientY - centre.y);
         verifierSortie();
     }
     document.addEventListener('pointermove', viser, { passive: true });
@@ -898,23 +905,35 @@ mm.add({
     function tourner(maintenant) {
         const dt = dernier ? Math.min(80, maintenant - dernier) : 16;
         dernier = maintenant;
-        // on rattrape l'angle visé par le chemin le plus court : sans ça, un
-        // passage par la gauche (de +180° à −180°) la faisait tourner à l'envers
-        const ecart = Math.atan2(Math.sin(angleVise - angle), Math.cos(angleVise - angle));
-        angle += ecart * 0.14;
+        // pendant la sortie elle descend droit sous le titre ; une fois sortie,
+        // elle rattrape l'angle visé par le chemin le plus court (sans ça, un
+        // passage par la gauche la faisait tourner à l'envers)
+        if (sortie >= 1) {
+            const ecart = Math.atan2(Math.sin(angleVise - angle), Math.cos(angleVise - angle));
+            angle += ecart * 0.14;
+        }
 
         // la sortie du titre : le rayon part de zéro et s'ouvre jusqu'à l'anneau
         if (activee && sortie < 1) sortie = Math.min(1, sortie + dt / 420);
         const ouverture = sortie * sortie * (3 - 2 * sortie);   // départ et arrivée doux
-        rayonActuel = rayon * ouverture;
+        const rayonBase = rayon * ouverture;
+
+        // quand le curseur approche, il la repousse vers le titre
+        const vise = Math.min(rayonBase, Math.max(0, distanceCurseur - MARGE));
+        rayonActuel += (vise - rayonActuel) * 0.22;
 
         const x = centre.x + Math.cos(angle) * rayonActuel - ancre.x;
         const y = centre.y + Math.sin(angle) * rayonActuel - ancre.y;
         fleche.style.transform = 'translate3d(' + x + 'px,' + y + 'px,0) rotate(' +
             (angle * 180 / Math.PI) + 'deg)';
 
-        // l'opacité suit le début de la sortie : elle s'allume en quittant le titre
-        fleche.style.opacity = activee ? Math.min(1, sortie * 3) : 0;
+        fleche.style.opacity = activee ? 1 : 0;
+
+        // entierement rangee dans le titre, elle s'efface ; elle revient dès
+        // que le curseur s'eloigne assez (le fondu suit la repousse)
+        const fondu = Math.max(0, Math.min(1, (rayonActuel - DEDANS) / (SORTIE - DEDANS)));
+        const dessin = fleche.firstElementChild;
+        if (dessin) dessin.style.opacity = fondu;
 
         requestAnimationFrame(tourner);
     }
