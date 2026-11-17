@@ -2070,8 +2070,8 @@ if (!document.body.classList.contains('photo-fusion')) construireTambour();
     aide.className = 'titre-saisie';
     aide.setAttribute('aria-hidden', 'true');
     aide.innerHTML =
-        '<svg viewBox="0 0 22 20" xmlns="http://www.w3.org/2000/svg">' +
-        '<path class="titre-saisie-trait" d="M 18 6 C 14.5 7.5 12 10 10 14"/></svg>' +
+        '<svg viewBox="0 0 24 20" xmlns="http://www.w3.org/2000/svg">' +
+        '<path class="titre-saisie-trait" d="M 20 16 C 17 14.5 14 11.5 12 8"/></svg>' +
         '<span class="titre-saisie-point"></span>';
     titre.appendChild(aide);
 
@@ -2097,21 +2097,43 @@ if (!document.body.classList.contains('photo-fusion')) construireTambour();
         };
     }
 
-    // Le départ du tracé est en (18, 6) dans la boîte : on y amène l'angle.
+    // Le point part de (20, 16) dans la boîte : on le pose à 10 px à gauche et
+    // 6 px sous l'angle de la lettre, donc un peu à l'écart de celle-ci.
     function placer() {
         var p = coinBasGauche(premiere);
-        aide.style.left = (p.x - 18) + 'px';
-        aide.style.top = (p.y - 6) + 'px';
+        aide.style.left = (p.x - 30) + 'px';
+        aide.style.top = (p.y - 10) + 'px';
     }
 
     var minuteur = null;
     var saisie = false;
+    var fini = false;          // une lettre a déjà été bougée : plus d'invitation
+    var arme = 0;
+
+    // L'invitation ne se montre qu'après un temps sans geste : si la souris
+    // bouge encore, le minuteur repart et rien n'apparaît.
+    var INACTIVITE = 700;
 
     function possible() {
-        if (saisie || window.scrollY > 12) return false;
+        if (fini || saisie || window.scrollY > 12) return false;
         var r = heroSection.getBoundingClientRect();
         return r.bottom > 160 && r.top < window.innerHeight - 80;
     }
+
+    function programmer(delai) {
+        if (fini) return;
+        clearTimeout(minuteur);
+        minuteur = setTimeout(montrer, delai === undefined ? INACTIVITE : delai);
+    }
+
+    window.addEventListener('pointermove', function (e) {
+        if (e.pointerType && e.pointerType !== 'mouse') return;
+        if (fini || saisie || heroSection.classList.contains('titre-invite')) return;
+        var maintenant = Date.now();
+        if (maintenant - arme < 150) return;   // pas un minuteur par pixel parcouru
+        arme = maintenant;
+        programmer();
+    }, { passive: true });
 
     function montrer() {
         if (!possible()) { cacher(); return; }
@@ -2131,8 +2153,7 @@ if (!document.body.classList.contains('photo-fusion')) construireTambour();
     window.addEventListener('scroll', function () {
         cacher();
         document.body.classList.remove('lettre-survolee');
-        clearTimeout(minuteur);
-        minuteur = setTimeout(montrer, 300);
+        programmer(300);
     }, { passive: true });
 
     window.addEventListener('resize', function () {
@@ -2143,6 +2164,9 @@ if (!document.body.classList.contains('photo-fusion')) construireTambour();
     document.addEventListener('pointerdown', function (e) {
         if (!e.target || !e.target.closest || !e.target.closest('.ransom-wrapper')) return;
         saisie = true;
+        /* la leçon est comprise : l'invitation ne revient plus, et la lettre
+           ne se décale plus toute seule */
+        fini = true;
         clearTimeout(minuteur);
         cacher();
         document.body.classList.add('lettre-saisie');
@@ -2152,8 +2176,6 @@ if (!document.body.classList.contains('photo-fusion')) construireTambour();
         if (!saisie) return;
         saisie = false;
         document.body.classList.remove('lettre-saisie');
-        clearTimeout(minuteur);
-        minuteur = setTimeout(montrer, 700);
     });
 
     // curseur : la main « à saisir » apparaît sur les lettres du titre
@@ -2168,13 +2190,11 @@ if (!document.body.classList.contains('photo-fusion')) construireTambour();
     });
 
     document.addEventListener('hero:intro-done', function () {
-        clearTimeout(minuteur);
-        minuteur = setTimeout(montrer, 900);
+        programmer(900);
     });
 
     window.addEventListener('load', function () {
-        clearTimeout(minuteur);
-        minuteur = setTimeout(montrer, 900);
+        programmer(900);
     });
 })();
 

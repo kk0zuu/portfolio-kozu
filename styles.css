@@ -455,9 +455,9 @@ body.hovering .cursor-spiral {
 
 .titre-saisie {
     position: absolute;
-    /* boîte calée pour que le départ du tracé tombe pile sur l'angle
-       inférieur gauche de la lettre (voir placer() dans app.js) */
-    width: 22px;
+    /* boîte calée à côté de l'angle inférieur gauche de la lettre, à quelques
+       pixels d'écart (voir placer() dans app.js) */
+    width: 24px;
     height: 20px;
     pointer-events: none;
     opacity: 0;
@@ -497,7 +497,7 @@ body.hovering .cursor-spiral {
     border-radius: 50%;
     background: var(--color-black);
     box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.45);
-    offset-path: path('M 18 6 C 14.5 7.5 12 10 10 14');
+    offset-path: path('M 20 16 C 17 14.5 14 11.5 12 8');
     offset-rotate: 0deg;
     will-change: offset-distance;
 }
