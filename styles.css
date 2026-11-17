@@ -451,8 +451,10 @@ body.hovering .cursor-spiral {
 
 .titre-saisie {
     position: absolute;
-    width: 70px;
-    height: 46px;
+    /* boîte calée pour que le départ du tracé tombe pile sur l'angle
+       inférieur gauche de la lettre (voir placer() dans app.js) */
+    width: 22px;
+    height: 20px;
     pointer-events: none;
     opacity: 0;
     transition: opacity 0.45s ease;
@@ -472,27 +474,33 @@ body.hovering .cursor-spiral {
 }
 
 .titre-saisie-trait {
-    stroke: rgba(255, 255, 255, 0.92);
-    stroke-width: 2.6;
+    stroke: var(--color-black);
+    stroke-opacity: 0.62;
+    stroke-width: 2;
     stroke-linecap: round;
-    filter: drop-shadow(0 0 3px rgba(0, 0, 0, 0.5));
 }
 
 /* le point suit le tracé courbe ; s'il n'y a pas de offset-path, on le cache
    plutôt que de le laisser figé dans un coin */
+/* le point parcourt une courbe dont l'écart horizontal vaut exactement le
+   décalage de la lettre (8 px) : les deux avancent et reviennent ensemble */
 .titre-saisie-point {
     position: absolute;
     top: 0;
     left: 0;
-    width: 10px;
-    height: 10px;
+    width: 7px;
+    height: 7px;
     border-radius: 50%;
-    background: var(--color-white);
-    border: 2px solid var(--color-black);
-    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.45);
-    offset-path: path('M 64 40 C 46 43 22 36 10 12');
+    background: var(--color-black);
+    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.45);
+    offset-path: path('M 18 6 C 14.5 7.5 12 10 10 14');
     offset-rotate: 0deg;
     will-change: offset-distance;
+}
+
+/* l'animation ne démarre qu'avec l'invite : point et lettre partent donc
+   exactement en même temps et restent en phase */
+.hero-section.titre-invite .titre-saisie-point {
     animation: titre-invite-point 3.2s ease-in-out infinite;
 }
 

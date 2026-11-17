@@ -1994,17 +1994,38 @@ if (!document.body.classList.contains('photo-fusion')) construireTambour();
     aide.className = 'titre-saisie';
     aide.setAttribute('aria-hidden', 'true');
     aide.innerHTML =
-        '<svg viewBox="0 0 70 46" xmlns="http://www.w3.org/2000/svg">' +
-        '<path class="titre-saisie-trait" d="M 64 40 C 46 43 22 36 10 12"/></svg>' +
+        '<svg viewBox="0 0 22 20" xmlns="http://www.w3.org/2000/svg">' +
+        '<path class="titre-saisie-trait" d="M 18 6 C 14.5 7.5 12 10 10 14"/></svg>' +
         '<span class="titre-saisie-point"></span>';
     titre.appendChild(aide);
 
-    // le coin inférieur gauche du « I » : le point part de là et s'en éloigne
+    // Coin inférieur gauche réellement visible de la lettre : on part de la
+    // mise en page (offsetLeft/offsetTop, insensibles au scroll et aux animations)
+    // et on y applique la matrice de la lettre (rotation et descente aléatoires),
+    // pour tomber pile sur l'angle et pas sur le coin de sa boîte englobante.
+    function coinBasGauche(el) {
+        var w = el.offsetWidth;
+        var h = el.offsetHeight;
+        var cx = el.offsetLeft + w / 2;
+        var cy = el.offsetTop + h / 2;
+        var a = 1, b = 0, c = 0, d = 1, e = 0, f = 0;
+        var t = getComputedStyle(el).transform;
+        if (t && t !== 'none') {
+            var m = new DOMMatrix(t);
+            a = m.a; b = m.b; c = m.c; d = m.d; e = m.e; f = m.f;
+        }
+        var lx = -w / 2, ly = h / 2;      // coin bas-gauche dans le repère de la lettre
+        return {
+            x: cx + (a * lx + c * ly) + e,
+            y: cy + (b * lx + d * ly) + f
+        };
+    }
+
+    // Le départ du tracé est en (18, 6) dans la boîte : on y amène l'angle.
     function placer() {
-        var r = premiere.getBoundingClientRect();
-        var t = titre.getBoundingClientRect();
-        aide.style.left = Math.round(r.left - t.left - 66) + 'px';
-        aide.style.top = Math.round(r.bottom - t.top - 44) + 'px';
+        var p = coinBasGauche(premiere);
+        aide.style.left = (p.x - 18) + 'px';
+        aide.style.top = (p.y - 6) + 'px';
     }
 
     var minuteur = null;
@@ -2020,6 +2041,10 @@ if (!document.body.classList.contains('photo-fusion')) construireTambour();
         if (!possible()) { cacher(); return; }
         placer();
         heroSection.classList.add('titre-invite');
+        // la typo du titre arrive parfois après le calcul : on recale dès que
+        // la mise en page est stable, sinon l'invite reste à côté de l'angle
+        requestAnimationFrame(placer);
+        if (document.fonts && document.fonts.ready) document.fonts.ready.then(function () { placer(); });
     }
 
     function cacher() {
