@@ -4632,9 +4632,9 @@ body.photo-etape-en-cours .photo-split-side.cote-actif::before {
     position: absolute;
     left: 0;
     top: 0;
-    width: 46px;
-    height: 46px;
-    margin: -23px 0 0 -23px;
+    width: 64px;
+    height: 64px;
+    margin: -32px 0 0 -32px;
     background: #1232B4;
     clip-path: var(--etoile-cinq);
     transform: rotate(135deg);
@@ -4645,9 +4645,9 @@ body.photo-etape-en-cours .photo-split-side.cote-actif::before {
     position: absolute;
     left: 0;
     top: 0;
-    width: 340px;
-    height: 4px;
-    margin-top: -2px;
+    width: 460px;
+    height: 5px;
+    margin-top: -2.5px;
     border-radius: 2px;
     transform-origin: 0 50%;
     transform: rotate(-45deg) scaleX(var(--t, 0));
