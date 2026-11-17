@@ -593,6 +593,57 @@ body.hovering .cursor-spiral {
     transform: translateY(0);
 }
 
+/* Indice de glisser : un trait fin sous la barre et un point qui en suit les
+   déplacements (le va-et-vient est écrit par app.js, ici seule l'apparition) */
+.logiciels-aide {
+    position: absolute;
+    left: 50%;
+    bottom: 0.1rem;
+    width: 74px;
+    height: 11px;
+    margin-left: -37px;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.45s ease;
+}
+
+.logiciels.va-et-vient .logiciels-aide {
+    opacity: 1;
+}
+
+.logiciels-aide::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 50%;
+    height: 3px;
+    margin-top: -1.5px;
+    border-radius: 2px;
+    background: rgba(11, 11, 12, 0.28);
+}
+
+.logiciels-aide-point {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 9px;
+    height: 9px;
+    margin: -4.5px 0 0 -4.5px;
+    border-radius: 50%;
+    background: var(--color-black);
+    will-change: transform;
+}
+
+/* sur le fond bleu de Contact, l'indice passe en blanc */
+body.contact-page .logiciels-aide::before {
+    background: rgba(255, 255, 255, 0.42);
+}
+
+body.contact-page .logiciels-aide-point {
+    background: #FFFFFF;
+}
+
 .intro-text p {
     font-size: clamp(1.2rem, 2vw, 1.8rem);
     font-weight: 700;

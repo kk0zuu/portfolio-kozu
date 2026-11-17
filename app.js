@@ -336,6 +336,18 @@ if (cursor) {
     let largeurGroupe = 0;
     let decalage = 0; // px, toujours ramené dans ]-largeurGroupe ; 0]
 
+    // --- Indice de glisser : un trait fin sous la barre, avec un point qui suit
+    // ses déplacements (le va-et-vient lui-même est plus bas dans ce fichier) ---
+    const aide = document.createElement('div');
+    aide.className = 'logiciels-aide';
+    aide.setAttribute('aria-hidden', 'true');
+    aide.innerHTML = '<span class="logiciels-aide-point"></span>';
+    bande.appendChild(aide);
+    const point = aide.querySelector('.logiciels-aide-point');
+
+    const AMPLITUDE = 18;   // px : l'écart du petit va-et-vient
+    let nudge = 0;          // décalage du va-et-vient, ajouté au glisser manuel
+
     function ramener() {
         if (!largeurGroupe) return;
         decalage = decalage % largeurGroupe;
@@ -343,7 +355,12 @@ if (cursor) {
     }
 
     function appliquer() {
-        glisse.style.transform = 'translate3d(' + decalage + 'px, 0, 0)';
+        glisse.style.transform = 'translate3d(' + (decalage + nudge) + 'px, 0, 0)';
+        // le point coulisse sur le trait proportionnellement au déplacement de la barre
+        if (point && AMPLITUDE) {
+            const portee = Math.max(0, (aide.offsetWidth - point.offsetWidth) / 2);
+            point.style.transform = 'translate3d(' + (nudge / AMPLITUDE * portee).toFixed(2) + 'px, 0, 0)';
+        }
     }
 
     // La première moitié couvre la largeur de l'écran, la seconde assure la boucle
@@ -388,6 +405,60 @@ if (cursor) {
         }
     });
 
+    // --- Le va-et-vient : la barre se dandine doucement, mais seulement quand le
+    // scroll est arrêté et qu'elle est encore à l'écran, pour ne pas déranger le
+    // ScrollTrigger. Le point du trait suit exactement ce déplacement.
+    const etatNudge = { v: 0 };
+    let vaEtVient = null;
+    let repos = null;
+
+    function barreVisible() {
+        const r = bande.getBoundingClientRect();
+        const h = window.innerHeight || document.documentElement.clientHeight;
+        return r.bottom > 60 && r.top < h - 40;
+    }
+
+    function stopper() {
+        if (vaEtVient) {
+            vaEtVient.kill();
+            vaEtVient = null;
+        }
+        bande.classList.remove('va-et-vient');
+        if (nudge !== 0) {
+            nudge = 0;
+            etatNudge.v = 0;
+            appliquer();
+        }
+    }
+
+    function demarrer() {
+        if (actif || vaEtVient || !barreVisible()) return;
+        etatNudge.v = 0;
+        nudge = 0;
+        appliquer();
+        vaEtVient = gsap.timeline({
+            repeat: -1,
+            repeatDelay: 0.75,
+            onUpdate: function () {
+                nudge = etatNudge.v;
+                appliquer();
+            }
+        })
+            .to(etatNudge, { v: AMPLITUDE, duration: 1.05, ease: 'sine.inOut' })
+            .to(etatNudge, { v: -AMPLITUDE, duration: 1.7, ease: 'sine.inOut' })
+            .to(etatNudge, { v: 0, duration: 1.05, ease: 'sine.inOut' });
+        bande.classList.add('va-et-vient');
+    }
+
+    function surScroll() {
+        stopper();
+        clearTimeout(repos);
+        repos = setTimeout(function () {
+            if (!actif) demarrer();
+        }, 300);
+    }
+    window.addEventListener('scroll', surScroll, { passive: true });
+
     // Glisser à la main : on maintient la ligne et on la déplace de gauche à droite
     let actif = false;
     let pointeur = null;
@@ -397,6 +468,8 @@ if (cursor) {
     bande.addEventListener('pointerdown', function (e) {
         if (e.pointerType === 'mouse' && e.button !== 0) return;
         actif = true;
+        stopper();
+        clearTimeout(repos);
         pointeur = e.pointerId;
         departX = e.clientX;
         departDecalage = decalage;
@@ -418,6 +491,8 @@ if (cursor) {
         bande.classList.remove('glisse-active');
         try { if (pointeur !== null) bande.releasePointerCapture(pointeur); } catch (err) {}
         pointeur = null;
+        // après un glisser, on rend la main au va-et-vient
+        surScroll();
     }
 
     bande.addEventListener('pointerup', relacher);
