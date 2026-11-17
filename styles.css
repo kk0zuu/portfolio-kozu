@@ -744,6 +744,8 @@ body.contact-page .logiciels-aide-point {
     margin: -20.5px 0 0 -31px;
     color: #E4002B;
     opacity: 0;
+    /* elle est déjà en place et pointe le curseur : seule son opacité s'anime */
+    transition: opacity 0.25s ease;
     pointer-events: none;
     transform-origin: 50% 50%;
     filter: drop-shadow(3px 3px 0 var(--color-black));
