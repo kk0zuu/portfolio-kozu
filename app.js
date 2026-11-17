@@ -1200,56 +1200,160 @@ mm.add({
     });
 })();
 
-// --- SAS PLASTIQUE : un champ d'étoiles géométriques sur le vert du fond ---
-// Avant d'ouvrir les projets plastiques, la page devient du vert du fond et des
-// étoiles à cinq branches s'y posent une à une, en diagonale depuis le coin
-// haut-droit. À l'arrivée, le vert s'efface sous les étoiles, puis celles du fond
-// de la page prennent le relais et se mettent à filer l'une après l'autre.
-(function initSasPlastique() {
-    const calme = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    if (calme) return;
+// --- ÉTOILES DE PLASTIQUE : trame régulière + passage depuis les autres pages ---
+// Une seule trame régulière, un seul déplacement : chaque étoile est un point de
+// la grille, décalé tout entier vers le bas-gauche. La position du champ est
+// sauvegardée au moment du clic et reprise telle quelle à l'arrivée, donc le
+// passage d'une page à l'autre ne se voit pas. La vitesse est douce pendant la
+// transition puis monte progressivement sur la page, et la traînée suit la
+// vitesse : rien ne démarre d'un coup.
+(function initEtoilesPlastique() {
+    if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+    const VITESSE_DOUCE = 12;    // px/s pendant le passage
+    const VITESSE_MAX = 430;     // px/s en plein vol
+    const CLE = 'etoiles-plastique';
 
     const surPage = /plastique\.html$/.test(location.pathname);
-    const TOTAL = 22;
+    const champs = [];
+    let boucle = 0;
+    let derniere = 0;
 
-    let sas = document.querySelector('.sas-plastique');
-    if (!sas) {
-        sas = document.createElement('div');
-        sas.className = 'sas-plastique';
-        sas.setAttribute('aria-hidden', 'true');
-        for (let i = 0; i < TOTAL; i++) {
-            const etoile = document.createElement('span');
-            etoile.className = 'sas-plastique-etoile';
-            const x = 4 + Math.random() * 92;     // vw
-            const y = 4 + Math.random() * 92;     // vh
-            /* la vague part du coin haut-droit (x grand, y petit) et gagne le
-               bas-gauche : l'avancement vaut 0 là-bas, 1 à l'autre bout */
-            const avancee = ((100 - x) + y) / 200;
-            etoile.style.setProperty('--x', x.toFixed(2) + 'vw');
-            etoile.style.setProperty('--y', y.toFixed(2) + 'vh');
-            etoile.style.setProperty('--tete', Math.round(16 + Math.random() * 14) + 'px');
-            etoile.style.setProperty('--op', (0.6 + Math.random() * 0.25).toFixed(2));
-            etoile.style.setProperty('--retard', (avancee * 0.8).toFixed(2) + 's');
-            sas.appendChild(etoile);
-        }
-        document.body.appendChild(sas);
+    // la position sauvegardée continue d'avancer pendant le chargement de la page
+    function lireEtat() {
+        try {
+            const brut = sessionStorage.getItem(CLE);
+            if (!brut) return 0;
+            const garde = JSON.parse(brut);
+            const ecoule = Math.min(2000, Math.max(0, Date.now() - garde.t));
+            return garde.d + VITESSE_DOUCE * ecoule / 1000;
+        } catch (err) { return 0; }
     }
 
-    if (surPage) {
-        /* arrivée : le champ est déjà en place, la page se charge dessous */
-        sas.classList.add('on');
-        setTimeout(() => {
-            sas.classList.add('sur-page');              // le vert s'efface
-            document.body.classList.add('pm-vol');       // les étoiles du fond s'élancent
-            setTimeout(() => { sas.classList.remove('on'); }, 600);
-        }, 560);
+    function ecrireEtat(d) {
+        try { sessionStorage.setItem(CLE, JSON.stringify({ d: d, t: Date.now() })); } catch (err) {}
+    }
 
-        window.addEventListener('pageshow', (e) => {
-            if (!e.persisted) return;
-            sas.remove();
+    function oublierEtat() {
+        try { sessionStorage.removeItem(CLE); } catch (err) {}
+    }
+
+    // Trame carrée : le pas suit le plus petit côté. La période L dépasse l'écran,
+    // si bien que les rebouclages se font hors champ et que la trame reste intacte.
+    function trame() {
+        const w = window.innerWidth;
+        const h = window.innerHeight;
+        const pas = Math.round(Math.max(190, Math.min(w, h) / 3.1));
+        return { pas: pas, L: (Math.ceil(Math.max(w, h) / pas) + 1) * pas };
+    }
+
+    function creerChamp(racine, depart) {
+        racine.innerHTML = '';
+        const plan = document.createElement('div');
+        plan.className = 'ciel-plan';
+        racine.appendChild(plan);
+
+        const t = trame();
+        const etoiles = [];
+        for (let y = 0; y < t.L; y += t.pas) {
+            for (let x = 0; x < t.L; x += t.pas) {
+                const el = document.createElement('span');
+                el.className = 'etoile';
+                el.innerHTML = '<i class="etoile-trainee"></i><i class="etoile-tete"></i>';
+                plan.appendChild(el);
+                etoiles.push({ el: el, x: x, y: y });
+            }
+        }
+
+        const champ = { d: depart, v: VITESSE_DOUCE, cible: VITESSE_DOUCE, t: t, etoiles: etoiles };
+
+        champ.dessiner = function () {
+            const L = t.L;
+            for (let i = 0; i < etoiles.length; i++) {
+                const e = etoiles[i];
+                let x = (e.x - champ.d) % L;
+                let y = (e.y + champ.d) % L;
+                if (x < 0) x += L;
+                if (y < 0) y += L;
+                e.el.style.transform = 'translate3d(' + x.toFixed(1) + 'px,' + y.toFixed(1) + 'px,0)';
+            }
+            /* la traînée (longueur et opacité) suit la vitesse, donc elle
+               apparaît progressivement avec elle */
+            const part = Math.min(1, champ.v / VITESSE_MAX);
+            plan.style.setProperty('--t', part.toFixed(3));
+            plan.style.setProperty('--to', (0.7 * part).toFixed(3));
+        };
+
+        champ.dessiner();
+        return champ;
+    }
+
+    function tourner(t) {
+        boucle = requestAnimationFrame(tourner);
+        if (!derniere) { derniere = t; return; }
+        const dt = Math.min(0.05, (t - derniere) / 1000);
+        derniere = t;
+        for (let i = 0; i < champs.length; i++) {
+            const c = champs[i];
+            /* la vitesse rejoint sa cible en douceur : environ 4 s pour passer
+               de la dérive au vol, sans à-coup */
+            c.v += (c.cible - c.v) * Math.min(1, dt * 0.8);
+            c.d += c.v * dt;
+            if (c.d > c.t.L * 1000) c.d = c.d % c.t.L;
+            c.dessiner();
+        }
+    }
+
+    function lancer() {
+        if (boucle) return;
+        derniere = 0;
+        boucle = requestAnimationFrame(tourner);
+    }
+
+    /* ---------- sur la page plastique : la trame reprend, puis s'élance ---------- */
+    if (surPage) {
+        const ciel = document.getElementById('pmCiel');
+        if (!ciel) return;
+
+        let champ = creerChamp(ciel, lireEtat());
+        champs.push(champ);
+        lancer();
+
+        // après l'arrivée, la vitesse monte doucement : les traînées suivent
+        setTimeout(() => { champ.cible = VITESSE_MAX; }, 280);
+
+        window.addEventListener('beforeunload', () => ecrireEtat(champ.d));
+
+        // si l'on repart ailleurs, la position sauvegardée n'a plus lieu d'être
+        document.addEventListener('click', (e) => {
+            const lien = e.target && e.target.closest ? e.target.closest('a[href]') : null;
+            if (!lien) return;
+            if (!/plastique\.html/.test(lien.getAttribute('href') || '')) oublierEtat();
+        }, true);
+
+        let minuteur = null;
+        window.addEventListener('resize', () => {
+            clearTimeout(minuteur);
+            minuteur = setTimeout(() => {
+                const d = champ.d;
+                champs.length = 0;
+                champ = creerChamp(ciel, d);
+                champ.cible = VITESSE_MAX;
+                champs.push(champ);
+            }, 260);
         });
         return;
     }
+
+    /* ---------- depuis les autres pages : le voile de passage ---------- */
+    const sas = document.createElement('div');
+    sas.className = 'sas-plastique';
+    sas.setAttribute('aria-hidden', 'true');
+    sas.innerHTML = '<div class="sas-plastique-fond"></div><div class="sas-plastique-ciel"></div>';
+    document.body.appendChild(sas);
+
+    const champ = creerChamp(sas.querySelector('.sas-plastique-ciel'), 0);
+    champs.push(champ);
 
     let enCours = false;
 
@@ -1264,17 +1368,27 @@ mm.add({
 
         enCours = true;
         e.preventDefault();
+
+        /* 1. les étoiles arrivent et glissent déjà doucement, sans traînée */
+        lancer();
         sas.classList.add('on');
-        /* 800 ms de pose des étoiles + leur apparition : la page s'ouvre juste après */
-        setTimeout(() => { window.location.href = href; }, 1050);
+        /* 2. le vert du fond se referme derrière elles */
+        setTimeout(() => sas.classList.add('vert'), 380);
+        /* 3. la page s'ouvre : la trame reprendra exactement à cette position */
+        setTimeout(() => {
+            ecrireEtat(champ.d);
+            window.location.href = href;
+        }, 1080);
     }, true);
 
     window.addEventListener('pageshow', (e) => {
         if (!e.persisted) return;
         sas.classList.remove('on');
+        sas.classList.remove('vert');
         enCours = false;
     });
 })();
+
 
 // --- VISIONNEUSE PHOTO : LIGHTBOX AVEC NAVIGATION ---
 (function initLightbox() {

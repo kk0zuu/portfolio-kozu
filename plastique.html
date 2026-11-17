@@ -29,30 +29,11 @@ body.pm-focus .pm-entete{opacity:0 !important;}
 body.pm-focus .pm-halo{opacity:.2;}
 .pm-piste{position:absolute;inset:0;}
 
-/* ---------- fond : étoiles filantes bleues (le bleu de Contact) ---------- */
+/* ---------- fond : la trame d'étoiles bleues (le bleu de Contact) ----------
+   Les étoiles et leur traînée sont dessinées par app.js (initEtoilesPlastique),
+   qui gère aussi le passage depuis les autres pages : voir .ciel-plan et
+   .etoile dans styles.css. */
 .pm-ciel{position:fixed;inset:0;z-index:0;overflow:hidden;pointer-events:none;}
-.pm-etoile{position:absolute;left:0;top:0;height:3px;border-radius:2px;
-  width:var(--long,165px);
-  background:linear-gradient(90deg,rgba(18,50,180,0) 0%,rgba(18,50,180,.45) 55%,rgba(18,50,180,.95) 100%);
-  /* 135° : la pointe dense du trait file vers le bas-gauche */
-  rotate:135deg;opacity:0;will-change:translate,opacity;}
-/* le champ ne s'élance qu'une fois la page chargée (classe posée par app.js) */
-body.pm-vol .pm-etoile{animation:pm-file var(--duree,6s) linear var(--retard,0s) infinite;}
-/* la tête : une étoile à cinq branches, pointe dans l'axe du trajet */
-.pm-etoile::after{content:'';position:absolute;top:50%;right:calc(var(--tete,28px) / -2);
-  width:var(--tete,28px);height:var(--tete,28px);margin-top:calc(var(--tete,28px) / -2);
-  background:#1232B4;
-  clip-path:var(--etoile-cinq);
-  filter:drop-shadow(0 0 8px rgba(18,50,180,.45));}
-/* le trajet est un vrai 45° : autant de pixels en x qu'en y (vmax des deux côtés),
-   vers le bas et vers la gauche */
-@keyframes pm-file{
-  0%{translate:var(--x) var(--y);opacity:0;}
-  9%{opacity:.72;}
-  62%{opacity:.72;}
-  80%{translate:calc(var(--x) - 115vmax) calc(var(--y) + 115vmax);opacity:0;}
-  100%{translate:calc(var(--x) - 115vmax) calc(var(--y) + 115vmax);opacity:0;}
-}
 
 .pm-voile{position:fixed;inset:0;z-index:30;background:rgba(5,5,6,.86);
   opacity:0;visibility:hidden;transition:opacity .45s ease,visibility .45s;}
@@ -1053,32 +1034,6 @@ body.pm-focus .pm-retour-focus{opacity:1;visibility:visible;}
         { y: 0, opacity: 1, duration: 0.55, ease: 'power2.out', delay: calme ? 0 : 0.9 });
 })();
 
-/* ---------- étoiles filantes du fond ---------- */
-// Chaque étoile a sa position de départ, sa longueur, sa vitesse et son
-// décalage : le ciel ne se répète jamais exactement, mais reste calme.
-(function () {
-    var ciel = document.getElementById('pmCiel');
-    if (!ciel) return;
-    if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-
-    var TOTAL = 16;
-    function hasard(min, max) { return min + Math.random() * (max - min); }
-
-    for (var i = 0; i < TOTAL; i++) {
-        var etoile = document.createElement('span');
-        etoile.className = 'pm-etoile';
-        etoile.style.setProperty('--x', hasard(15, 115).toFixed(2) + 'vw');
-        etoile.style.setProperty('--y', hasard(-45, 75).toFixed(2) + 'vh');
-        /* même longueur et même tête pour toutes : le champ reste régulier.
-           Le retard est positif, les étoiles s'élancent donc l'une après l'autre
-           quand la page se met en route. */
-        etoile.style.setProperty('--long', '165px');
-        etoile.style.setProperty('--tete', '28px');
-        etoile.style.setProperty('--duree', hasard(5.2, 6.2).toFixed(2) + 's');
-        etoile.style.setProperty('--retard', hasard(0, 3.2).toFixed(2) + 's');
-        ciel.appendChild(etoile);
-    }
-})();
 </script>
 </body>
 </html>

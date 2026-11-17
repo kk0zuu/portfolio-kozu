@@ -4606,65 +4606,90 @@ body.photo-etape-en-cours .photo-split-side.cote-actif::before {
 }
 
 /* ==================================================== */
-/* VERS PLASTIQUE : un champ d'étoiles géométriques sur  */
-/* le vert du fond, avant d'ouvrir la page des projets    */
+/* ÉTOILES DE PLASTIQUE : la trame du fond et le passage  */
+/* vers la page des projets plastiques                    */
 /* ==================================================== */
 
-.sas-plastique {
-    position: fixed;
-    top: 0;
-    bottom: 0;
-    left: 0;
-    width: 100vw;
-    background: var(--color-bg-end);
-    opacity: 0;
-    visibility: hidden;
-    /* sous la barre de navigation (1000) : elle reste visible pendant le passage */
-    z-index: 900;
-    pointer-events: none;
-    overflow: hidden;
-    transition: opacity 0.5s ease, background-color 0.85s ease, visibility 0.5s;
+/* le plan : ses étoiles sont placées à la main, image par image (app.js) */
+.ciel-plan {
+    position: absolute;
+    inset: 0;
+    --t: 0;    /* longueur de traînée : 0 à l'arrêt, 1 en plein vol */
+    --to: 0;   /* et son opacité */
 }
 
-.sas-plastique.on {
-    visibility: visible;
-    opacity: 1;
-    /* le vert monte vite : le champ d'étoiles se pose par-dessus */
-    transition: opacity 0.22s ease, background-color 0.85s ease;
-}
-
-/* à l'arrivée, le vert s'efface : la page et sa barre reprennent leur place
-   sous les étoiles, qui s'effacent ensuite */
-.sas-plastique.sur-page {
-    background: transparent;
-}
-
-/* les étoiles du passage : même forme que celles du fond de la page */
-.sas-plastique-etoile {
+.etoile {
     position: absolute;
     left: 0;
     top: 0;
-    width: var(--tete, 26px);
-    height: var(--tete, 26px);
-    margin: calc(var(--tete, 26px) / -2) 0 0 calc(var(--tete, 26px) / -2);
+    width: 0;
+    height: 0;
+    will-change: transform;
+}
+
+/* la tête : une étoile à cinq branches, pointe tournée vers le bas-gauche */
+.etoile-tete {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 46px;
+    height: 46px;
+    margin: -23px 0 0 -23px;
     background: #1232B4;
     clip-path: var(--etoile-cinq);
-    translate: var(--x) var(--y);
+    transform: rotate(135deg);
+}
+
+/* la traînée : elle n'existe qu'avec la vitesse, et s'allonge avec elle */
+.etoile-trainee {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 340px;
+    height: 4px;
+    margin-top: -2px;
+    border-radius: 2px;
+    transform-origin: 0 50%;
+    transform: rotate(-45deg) scaleX(var(--t, 0));
+    opacity: var(--to, 0);
+    background: linear-gradient(90deg, rgba(18, 50, 180, 0.5) 0%, rgba(18, 50, 180, 0) 100%);
+}
+
+/* --- le voile de passage : transparent au début, le vert n'arrive qu'après --- */
+.sas-plastique {
+    position: fixed;
+    inset: 0;
+    /* sous la barre de navigation (1000) : elle reste visible pendant le passage */
+    z-index: 900;
     opacity: 0;
-    animation: sas-etoile-pose 0.6s ease var(--retard, 0s) both;
-    /* en pause tant que le voile n'est pas ouvert : les étoiles ne se posent
-       qu'au moment du passage, en vague, et restent en place quand on les
-       remet en pause à l'arrivée */
-    animation-play-state: paused;
+    visibility: hidden;
+    pointer-events: none;
+    overflow: hidden;
+    transition: opacity 0.45s ease, visibility 0.45s;
 }
 
-.sas-plastique.on .sas-plastique-etoile {
-    animation-play-state: running;
+.sas-plastique.on {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
 }
 
-@keyframes sas-etoile-pose {
-    from { opacity: 0; scale: 0.15; }
-    to   { opacity: var(--op, 0.78); scale: 1; }
+.sas-plastique-fond {
+    position: absolute;
+    inset: 0;
+    background: var(--color-bg-end);
+    opacity: 0;
+    transition: opacity 0.6s ease;
+}
+
+.sas-plastique.vert .sas-plastique-fond {
+    opacity: 1;
+}
+
+.sas-plastique-ciel {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
 }
 
 /* ==================================================== */
