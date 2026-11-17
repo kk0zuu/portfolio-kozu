@@ -4694,6 +4694,19 @@ body.photo-retour-en-cours .photo-split-side::before {
     transition: none !important;
 }
 
+/* pendant le retour, les axes ne réagissent plus au survol : ni agrandissement,
+   ni assombrissement au milieu de la transition */
+body.photo-retour-en-cours .photo-split-screen,
+body.photo-retour-en-cours .photo-split-side {
+    pointer-events: none;
+}
+
+body.photo-retour-en-cours .photo-split-side {
+    /* le filtre de repos : celui du survol ne doit pas se glisser dans la
+       photo que le voile ramène */
+    filter: none !important;
+}
+
 /* le mot « photographie » qui voyage du choix vers le titre du domaine */
 .mot-transit {
     position: fixed;
