@@ -416,7 +416,9 @@ body.hovering .cursor-spiral {
     background: var(--color-white);
     border: 3px solid var(--color-black);
     box-shadow: 5px 5px 0 var(--color-magenta);
-    translate: -50% -50%; /* le centrage laisse transform libre pour les glissements */
+    /* le centrage se fait par marges négatives (posées en JS quand la hauteur
+       change) : ni transform ni translate, que GSAP réécrit pendant les
+       glissements — c'est ce qui décalait la case d'une demi-largeur */
     opacity: 0;
     overflow: hidden;
     pointer-events: none;

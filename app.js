@@ -2724,6 +2724,12 @@ if (!document.body.classList.contains('photo-fusion')) construireTambour();
     emballer();
 
     /* ---------- la case : sa largeur, puis la hauteur des lettres ---------- */
+    // centrage par marges négatives : exact, et à l'abri des transformations
+    function centrer() {
+        boite.style.marginLeft = (-boite.offsetWidth / 2) + 'px';
+        boite.style.marginTop = (-boite.offsetHeight / 2) + 'px';
+    }
+
     function reveler() {
         if (revelee) return;
         revelee = true;
@@ -2732,8 +2738,15 @@ if (!document.body.classList.contains('photo-fusion')) construireTambour();
         hauteurLettres = carte ? Math.round(carte.getBoundingClientRect().height) : 66;
 
         gsap.set(boite, { height: badge.getBoundingClientRect().height });
+        centrer();
         gsap.to(boite, { opacity: 1, duration: 0.18, ease: 'power1.out' });
-        gsap.to(boite, { height: hauteurLettres, duration: 0.5, ease: 'power3.out' });
+        gsap.to(boite, {
+            height: hauteurLettres,
+            duration: 0.5,
+            ease: 'power3.out',
+            onUpdate: centrer,
+            onComplete: centrer
+        });
 
         ecrire(DEFAUT, '');
     }
@@ -2800,8 +2813,8 @@ if (!document.body.classList.contains('photo-fusion')) construireTambour();
         var p = place.getBoundingClientRect();
         var w = boite.offsetWidth;
         var h = boite.offsetHeight;
-        var l = p.left + (p.width - w) / 2;
-        var t = p.top + (p.height - h) / 2;
+        var l = p.left + p.width / 2 - w / 2;
+        var t = p.top + p.height / 2 - h / 2;
         return { left: l, top: t, right: l + w, bottom: t + h, width: w, height: h };
     }
 
@@ -2881,6 +2894,7 @@ if (!document.body.classList.contains('photo-fusion')) construireTambour();
             ajuster(sousTitre.lastElementChild);
             if (revelee) {
                 gsap.set(boite, { height: hauteurLettres });
+                centrer();
                 if (posees.length) placer();
             }
         }, 220);
