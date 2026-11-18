@@ -3617,7 +3617,7 @@ body.contact-page .flow-cta-btn:hover i {
     text-align: right;
 }
 
-.cv-merci span {
+.cv-merci a {
     display: block;
     width: fit-content;
     max-width: 100%;
@@ -3630,7 +3630,20 @@ body.contact-page .flow-cta-btn:hover i {
     font-size: 0.66rem;
     letter-spacing: 0.14em;
     text-transform: uppercase;
+    text-decoration: none;
     white-space: nowrap;
+    transition: background 0.3s ease, border-color 0.3s ease, color 0.3s ease;
+}
+
+.cv-merci a:hover,
+.cv-merci a:focus-visible {
+    border-color: rgba(255, 255, 255, 0.7);
+    background: rgba(255, 255, 255, 0.18);
+}
+
+.cv-merci a:focus-visible {
+    outline: 2px solid #ffffff;
+    outline-offset: 3px;
 }
 
 /* numéro de domaine en filigrane */
