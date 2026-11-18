@@ -3646,6 +3646,15 @@ body.contact-page .flow-cta-btn:hover i {
     outline-offset: 3px;
 }
 
+/* retour au choix des domaines : même pastille que sur numerique et photo, sous le CV */
+.cv-retour {
+    display: flex;
+    justify-content: flex-end;
+    /* le merci garde son air de 26px : on le rattrape pour coller les deux pastilles */
+    margin-top: -12px;
+    padding: 0 0 26px;
+}
+
 /* numéro de domaine en filigrane */
 body.contact-page .flow-fantome {
     position: absolute;
