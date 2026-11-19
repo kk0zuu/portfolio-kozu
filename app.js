@@ -2665,7 +2665,8 @@ if (!document.body.classList.contains('photo-fusion')) construireTambour();
     if (typeof gsap === 'undefined' || !window.PointerEvent) return;
 
     var GLYPHES = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789?!&%@';
-    var PLACES = 4;                       // quatre lettres au maximum
+    var PLACES = 4;                       // quatre places de référence (la case garde sa largeur)
+    var PLACES_MAX = 6;                   // six lettres au plus : les secrets courts gardent leur rythme
     var SECRETS = {
         'IAN': { texte: "et oui c'est mon nom" },
         'BOSS': { texte: "et oui, c'est moi le" },
@@ -2685,7 +2686,9 @@ if (!document.body.classList.contains('photo-fusion')) construireTambour();
         'AND': { texte: 'we do english here,' },
         'GAI': { texte: "je suis quelqu'un de" },
         'AUTO': { texte: "fan d'", signe: '?' },
-        'DOS': { texte: "j'ai mal au" }
+        'DOS': { texte: "j'ai mal au" },
+        'DAB': { texte: 'en mode 2017 ?' },
+        'TIASOA': { texte: "elle m'a forcé à la rajouter" }
     };
     var DEFAUT = 'secret ?!';
     var ETALEMENT = 0.028;                // décalage du rouleau, colonne par colonne
@@ -2982,11 +2985,11 @@ if (!document.body.classList.contains('photo-fusion')) construireTambour();
     function placeLibre(vise) {
         var prises = {};
         posees.forEach(function (o) { prises[o.slotCase] = true; });
-        for (var d = 0; d < PLACES; d++) {
+        for (var d = 0; d <= PLACES_MAX; d++) {
             var a = vise - d;
             var b = vise + d;
-            if (a >= 0 && !prises[a]) return a;
-            if (b < PLACES && b !== a && !prises[b]) return b;
+            if (a >= 0 && a < PLACES_MAX && !prises[a]) return a;
+            if (b < PLACES_MAX && b !== a && !prises[b]) return b;
         }
         return -1;
     }
@@ -3008,7 +3011,9 @@ if (!document.body.classList.contains('photo-fusion')) construireTambour();
     function placer(duree) {
         var d = (duree === undefined) ? 0.32 : duree;
         var r = rectBoite();
-        var largeur = r.width / PLACES;
+        /* au-delà de quatre lettres, la case resserre ses places pour que le
+           mot tienne en entier sur la largeur du badge */
+        var largeur = r.width / Math.max(PLACES, posees.length);
         posees.forEach(function (c) {
             var i = c.slotCase;
             var cx = r.left + largeur * (i + 0.5);
@@ -3075,11 +3080,11 @@ if (!document.body.classList.contains('photo-fusion')) construireTambour();
         var r = boite.getBoundingClientRect();
         if (!r.width || !r.height) return false;
         if (c.x < r.left || c.x > r.right || c.y < r.top || c.y > r.bottom) return false;
-        if (posees.length >= PLACES) return false;
-        var largeur = r.width / PLACES;
+        if (posees.length >= PLACES_MAX) return false;
+        var largeur = r.width / Math.max(PLACES, posees.length + 1);
         var vise = Math.floor((c.x - r.left) / largeur);
         if (vise < 0) vise = 0;
-        if (vise > PLACES - 1) vise = PLACES - 1;
+        if (vise > PLACES_MAX - 1) vise = PLACES_MAX - 1;
         var libre = placeLibre(vise);
         if (libre < 0) return false;
         c.slotCase = libre;
