@@ -317,12 +317,26 @@ if (cursor) {
           bar.style.removeProperty('--fb-r');
       }, 1.2);
 
+    let parti = false;
+    function entrer() {
+        if (parti) return;
+        parti = true;
+        racine.classList.remove('barre-attente');
+        tl.play();
+    }
+
     if (enAttente) {
-        /* quelques millisecondes sur la page seule avant que la barre n'entre */
-        setTimeout(() => {
-            racine.classList.remove('barre-attente');
-            tl.play();
-        }, 140);
+        if (racine.classList.contains('sas-domaines-arrivee')) {
+            /* retour au choix des domaines : le vert tient l'écran ; la barre
+               n'entre qu'une fois le voile levé, pour reprendre exactement là
+               où sa sortie l'avait laissée */
+            document.addEventListener('choix:reveler', entrer, { once: true });
+            /* filet de sécurité : la barre ne doit jamais rester dehors */
+            setTimeout(entrer, 4000);
+        } else {
+            /* quelques millisecondes sur la page seule avant que la barre n'entre */
+            setTimeout(entrer, 140);
+        }
     } else {
         tl.play();
     }
@@ -1092,6 +1106,7 @@ mm.add({
 
     function remettreBarre() {
         bar.classList.remove('barre-intro');
+        document.body.classList.remove('sas-choix');
         if (vert) vert.classList.remove('on');
         bar.style.removeProperty('--fb-w');
         bar.style.removeProperty('--fb-r');
@@ -1113,24 +1128,18 @@ mm.add({
         const net = href.split('#')[0];
         if (net !== 'index.html' && net !== './' && net !== '/') return;
 
-        /* le retour au choix des domaines a son propre passage : le vert pâle du
-           choix couvre la page, puis l'accueil s'ouvre sur les bulles */
-        if (href.indexOf('#choix-domaines') !== -1) {
-            enCours = true;
-            e.preventDefault();
-            var vert = voileDuChoix();
+        /* le retour au choix des domaines : la barre se range comme sur l'accueil
+           pendant que le vert pâle du choix monte derrière elle (body.sas-choix),
+           puis la page s'ouvre sur ce même vert */
+        const versChoix = href.indexOf('#choix-domaines') !== -1;
+        if (versChoix) {
+            const vert = voileDuChoix();
             /* on force le navigateur à peindre le voile à opacité 0 avant de
                l'allumer : sans ça, le premier retour le ferait claquer d'un
                coup au lieu de fondre sur la page */
             void vert.offsetWidth;
             vert.classList.add('on');
-            /* le vert a fini de monter quand la page s'ouvre : le changement de
-               page se fait sur le même vert que le fond du choix des domaines */
-            setTimeout(() => {
-                try { sessionStorage.setItem('sas-domaines', '1'); } catch (err) {}
-                window.location.href = href;
-            }, 340);
-            return;
+            document.body.classList.add('sas-choix');
         }
 
         enCours = true;
@@ -1144,7 +1153,12 @@ mm.add({
         bar.style.setProperty('--fb-r', '16px');
 
         const tl = gsap.timeline({
-            onComplete: () => { window.location.href = href; }
+            onComplete: () => {
+                if (versChoix) {
+                    try { sessionStorage.setItem('sas-domaines', '1'); } catch (err) {}
+                }
+                window.location.href = href;
+            }
         });
         tl.to(cibles, { opacity: 0, duration: 0.26, ease: 'power2.in' }, 0.04)
           .to(pastille, { opacity: 0, duration: 0.2, ease: 'power2.in' }, 0.04)
@@ -3181,6 +3195,10 @@ if (!document.body.classList.contains('photo-fusion')) construireTambour();
         if (fait) return;
         fait = true;
         if (calme || typeof gsap === 'undefined') { decouvrir(); return; }
+
+        /* la barre entre en même temps que le vert s'efface : sa sortie et son
+           entrée se répondent d'une page à l'autre */
+        document.dispatchEvent(new Event('choix:reveler'));
 
         var tl = gsap.timeline({ onComplete: decouvrir });
         if (voile) tl.to(voile, { opacity: 0, duration: 0.65, ease: 'power2.out' }, 0);

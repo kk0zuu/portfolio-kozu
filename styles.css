@@ -4720,6 +4720,12 @@ html.sas-domaines-arrivee body {
     background-color: var(--color-bg-end) !important;
 }
 
+/* pendant le retour au choix des domaines, la barre passe au-dessus du vert :
+   elle rejoue son apparition de l'accueil à l'envers, bien en vue */
+body.sas-choix .top-bar {
+    z-index: 1500;
+}
+
 /* Pendant le passage choix → domaine, les textes du choix restent au-dessus
    de la photo qui grandit : ils s'effacent en fondu, ils ne sont pas balayés. */
 body.photo-etape-en-cours .photo-split-header,
