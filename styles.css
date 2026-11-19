@@ -3617,6 +3617,7 @@ body.contact-page .flow-cta-btn:hover i {
     text-align: right;
 }
 
+.cv-merci span,
 .cv-merci a {
     display: block;
     width: fit-content;
@@ -3630,8 +3631,11 @@ body.contact-page .flow-cta-btn:hover i {
     font-size: 0.66rem;
     letter-spacing: 0.14em;
     text-transform: uppercase;
-    text-decoration: none;
     white-space: nowrap;
+}
+
+.cv-merci a {
+    text-decoration: none;
     transition: background 0.3s ease, border-color 0.3s ease, color 0.3s ease;
 }
 
@@ -3646,13 +3650,10 @@ body.contact-page .flow-cta-btn:hover i {
     outline-offset: 3px;
 }
 
-/* retour au choix des domaines : même pastille que sur numerique et photo, sous le CV */
-.cv-retour {
-    display: flex;
-    justify-content: flex-end;
+/* le retour à l'accueil reprend la pastille du merci, juste en dessous */
+.cv-merci-retour {
     /* le merci garde son air de 26px : on le rattrape pour coller les deux pastilles */
     margin-top: -12px;
-    padding: 0 0 26px;
 }
 
 /* numéro de domaine en filigrane */
