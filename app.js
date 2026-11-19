@@ -2735,7 +2735,7 @@ if (!document.body.classList.contains('photo-fusion')) construireTambour();
         'AUTO': { texte: "fan d'", signe: '?' },
         'DOS': { texte: "j'ai mal au" },
         'DAB': { texte: 'en mode 2017 ?' },
-        'TIASOA': { texte: "elle m'a forcé à la rajouter" }
+        'TIASOA': { texte: "elle m'a forcé à rajouter son prénom" }
     };
     var DEFAUT = 'secret ?!';
     var ETALEMENT = 0.028;                // décalage du rouleau, colonne par colonne
@@ -2824,19 +2824,41 @@ if (!document.body.classList.contains('photo-fusion')) construireTambour();
         return l;
     }
 
-    // si la phrase ne tient pas à côté de la case, on resserre l'espacement
-    // des lettres au lieu de la laisser déborder
+    // La phrase et la case doivent rester dans la page, même quand la phrase
+    // est longue et que la case s'est ouverte de deux places vers la droite.
+    // On regarde la vraie place de la case, pas une largeur théorique : si ça
+    // dépasse, on resserre l'espacement des lettres, puis la phrase rétrécit
+    // par petits pas jusqu'à rentrer.
+    function tient(l) {
+        if (!l) return true;
+        var marge = 12;
+        var largeur = document.documentElement.clientWidth;
+        var r = rectBoite();
+        var t = l.getBoundingClientRect();
+        return r.right <= largeur - marge && t.left >= marge;
+    }
+
     function ajuster(l) {
         sousTitre.style.letterSpacing = '';
-        if (!l) return;
-        var placeSigne = (signeActuel && signe.offsetWidth) ? signe.offsetWidth + 24 : 0;
-        var dispo = conteneur.getBoundingClientRect().width - badge.getBoundingClientRect().width - 56 - placeSigne;
-        var largeur = l.getBoundingClientRect().width;
-        if (!dispo || !largeur || largeur <= dispo) return;
-        var n = Math.max(1, l.children.length - 1);
-        var ecart = -(largeur - dispo) / n;
-        if (ecart < -8) ecart = -8;
-        sousTitre.style.letterSpacing = ecart.toFixed(2) + 'px';
+        sousTitre.style.fontSize = '';
+        if (!l || tient(l)) return;
+
+        var fs = parseFloat(getComputedStyle(sousTitre).fontSize) || 16;
+
+        // 1) l'espacement se resserre d'au plus 5 % de la taille : les lettres
+        //    restent lisibles, elles ne se touchent pas
+        sousTitre.style.letterSpacing = (-fs * 0.05).toFixed(2) + 'px';
+        if (tient(l)) return;
+
+        // 2) sinon la phrase rétrécit d'un cran à la fois, sans jamais descendre
+        //    sous 60 % de sa taille
+        var mini = fs * 0.6;
+        for (var k = 0; k < 40; k++) {
+            var actuel = parseFloat(getComputedStyle(sousTitre).fontSize) || fs;
+            if (actuel <= mini) break;
+            sousTitre.style.fontSize = Math.max(mini, actuel * 0.96).toFixed(2) + 'px';
+            if (tient(l)) return;
+        }
     }
 
     function emballer() {
@@ -3097,10 +3119,13 @@ if (!document.body.classList.contains('photo-fusion')) construireTambour();
             return (carte ? carte.textContent : '').trim();
         }).join('');
         var secret = SECRETS[mot];
-        ecrire(secret ? secret.texte : DEFAUT, secret ? secret.signe : '');
 
-        /* TIAS ouvre la case à droite : deux places de plus, sans rien déplacer */
+        /* TIAS ouvre la case à droite : deux places de plus, sans rien déplacer.
+           On l'ouvre avant d'écrire la phrase, pour que celle-ci se resserre
+           en tenant compte de la place que la case prend à droite. */
         etendre(mot.indexOf('TIAS') === 0 || posees.length > PLACES);
+
+        ecrire(secret ? secret.texte : DEFAUT, secret ? secret.signe : '');
 
         /* Le second T : il apparaît à la place du T d'origine dès que la case
            forme TOU ou TU, et disparaît dès qu'on défait cette combinaison.
@@ -3206,10 +3231,11 @@ if (!document.body.classList.contains('photo-fusion')) construireTambour();
     window.addEventListener('resize', function () {
         clearTimeout(minuteur);
         minuteur = setTimeout(function () {
-            ajuster(sousTitre.lastElementChild);
             if (revelee) {
                 /* la largeur du badge a pu changer : on remesure la case au
-                   repos, puis on remet son ouverture si elle était ouverte */
+                   repos, puis on remet son ouverture si elle était ouverte.
+                   C'est fait avant de resserrer la phrase, sinon elle se
+                   resserre sur une largeur de case qui n'est plus la bonne. */
                 boite.style.setProperty('--extra', '0px');
                 largeurRepos = boite.offsetWidth;
                 if (etiree) {
@@ -3217,8 +3243,9 @@ if (!document.body.classList.contains('photo-fusion')) construireTambour();
                 }
                 gsap.set(boite, { height: hauteurLettres });
                 centrer();
-                if (posees.length) placer();
             }
+            ajuster(sousTitre.lastElementChild);
+            if (revelee && posees.length) placer();
         }, 220);
     });
 
