@@ -1074,9 +1074,25 @@ mm.add({
     const pastille = bar.querySelector('.nav-bubble');
     const calme = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     let enCours = false;
+    let vert = null;
+
+    /* voile vert pâle du choix des domaines : créé au premier retour, puis
+       réutilisé si l'on revient sur la page */
+    function voileDuChoix() {
+        if (vert && document.body.contains(vert)) return vert;
+        vert = document.querySelector('.sas-domaines-voile');
+        if (!vert) {
+            vert = document.createElement('div');
+            vert.className = 'sas-domaines-voile';
+            vert.setAttribute('aria-hidden', 'true');
+            document.body.appendChild(vert);
+        }
+        return vert;
+    }
 
     function remettreBarre() {
         bar.classList.remove('barre-intro');
+        if (vert) vert.classList.remove('on');
         bar.style.removeProperty('--fb-w');
         bar.style.removeProperty('--fb-r');
         if (typeof gsap !== 'undefined') {
@@ -1096,6 +1112,19 @@ mm.add({
         const href = lien.getAttribute('href') || '';
         const net = href.split('#')[0];
         if (net !== 'index.html' && net !== './' && net !== '/') return;
+
+        /* le retour au choix des domaines a son propre passage : le vert pâle du
+           choix couvre la page, puis l'accueil s'ouvre sur les bulles */
+        if (href.indexOf('#choix-domaines') !== -1) {
+            enCours = true;
+            e.preventDefault();
+            voileDuChoix().classList.add('on');
+            setTimeout(() => {
+                try { sessionStorage.setItem('sas-domaines', '1'); } catch (err) {}
+                window.location.href = href;
+            }, 320);
+            return;
+        }
 
         enCours = true;
         e.preventDefault();
@@ -3111,4 +3140,51 @@ if (!document.body.classList.contains('photo-fusion')) construireTambour();
 
     window.addEventListener('load', function () { requestAnimationFrame(poser); });
     document.addEventListener('hero:intro-done', function () { requestAnimationFrame(poser); });
+})();
+
+// --- OUVERTURE SUR LE CHOIX DES DOMAINES ---
+// index.html pose le voile vert pâle avant son premier rendu quand on arrive par
+// « retour au choix des domaines » (classe sur <html>). Une fois la page chargée,
+// le voile s'efface : le titre apparaît, la phrase suit, et les trois cases rondes
+// gonflent comme des bulles, l'une après l'autre.
+(function ouvrirSurLeChoix() {
+    var racine = document.documentElement;
+    if (!racine.classList.contains('sas-domaines-arrivee')) return;
+
+    var voile = document.getElementById('sasDomaines');
+    var calme = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    var fait = false;
+
+    function decouvrir() {
+        if (voile) {
+            voile.style.visibility = 'hidden';
+            voile.style.opacity = '0';
+        }
+        racine.classList.remove('sas-domaines-arrivee');
+        /* le fond reste vert : c'est l'état du choix des domaines à l'écran */
+        if (typeof gsap !== 'undefined') gsap.set('body', { backgroundColor: 'var(--color-bg-end)' });
+    }
+
+    function reveler() {
+        if (fait) return;
+        fait = true;
+        if (calme || typeof gsap === 'undefined') { decouvrir(); return; }
+
+        var tl = gsap.timeline({ onComplete: decouvrir });
+        if (voile) tl.to(voile, { opacity: 0, duration: 0.65, ease: 'power2.out' }, 0);
+        tl.fromTo('.bubble-card',
+            { scale: 0.12, opacity: 0 },
+            { scale: 1, opacity: 1, duration: 0.9, ease: 'back.out(1.6)', stagger: 0.12 }, 0.08);
+        tl.from('.titre-centre', { opacity: 0, duration: 0.5, ease: 'power2.out' }, 0.42);
+        /* la phrase du bas a son propre dévoilement au scroll : l'arrivée le
+           remplace, sinon elle resterait invisible sous le voile */
+        gsap.killTweensOf('.domain-note');
+        tl.fromTo('.domain-note',
+            { opacity: 0, y: 14 },
+            { opacity: 1, y: 0, duration: 0.5, ease: 'power2.out' }, 0.56);
+    }
+
+    window.addEventListener('load', function () { requestAnimationFrame(reveler); });
+    /* filet de sécurité : le voile ne doit jamais rester en place */
+    setTimeout(reveler, 4200);
 })();

@@ -4678,6 +4678,47 @@ body.photo-retour .split-side-cta {
     transition: opacity 0.22s ease;
 }
 
+/* ==================================================== */
+/* VERS LE CHOIX DES DOMAINES : voile vert pâle          */
+/* il couvre la page avant le chargement, puis s'efface  */
+/* sur l'accueil pendant que les bulles gonflent         */
+/* ==================================================== */
+
+.sas-domaines-voile {
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    /* 100vw : le voile couvre aussi la barre de défilement */
+    width: 100vw;
+    background: var(--color-bg-end);
+    opacity: 0;
+    visibility: hidden;
+    /* au-dessus des volets photo (1200), du voile numérique (1300) et de la barre (1000) */
+    z-index: 1400;
+    pointer-events: none;
+}
+
+.sas-domaines-voile.on {
+    visibility: visible;
+    opacity: 1;
+    /* fondu court : la page se charge plus tôt */
+    transition: opacity 0.3s ease;
+}
+
+/* à l'arrivée, index.html pose ce voile avant son premier rendu : il est déjà
+   plein, sans fondu, et le fond de page est vert d'emblée (sinon il blanchirait
+   le temps que la section de choix entre dans le champ) */
+html.sas-domaines-arrivee .sas-domaines-voile {
+    visibility: visible;
+    opacity: 1;
+    transition: none;
+}
+
+html.sas-domaines-arrivee body {
+    background-color: var(--color-bg-end) !important;
+}
+
 /* Pendant le passage choix → domaine, les textes du choix restent au-dessus
    de la photo qui grandit : ils s'effacent en fondu, ils ne sont pas balayés. */
 body.photo-etape-en-cours .photo-split-header,

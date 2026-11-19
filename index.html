@@ -22,8 +22,23 @@
         setTimeout(function () { r.classList.remove('barre-attente'); }, 1500);
     })();
     </script>
+    <script>
+    /* retour au choix des domaines : le vert du choix est posé avant le premier
+       rendu, pour que la page ne s'affiche jamais d'un coup */
+    (function () {
+        try {
+            if (sessionStorage.getItem('sas-domaines') !== '1') return;
+            sessionStorage.removeItem('sas-domaines');
+            document.documentElement.classList.add('sas-domaines-arrivee');
+        } catch (e) {}
+    })();
+    </script>
 </head>
 <body>
+    <!-- Voile de retour au choix des domaines : ce vert pâle tient l'écran
+         pendant le chargement, puis s'efface sur les bulles qui gonflent -->
+    <div class="sas-domaines-voile" id="sasDomaines" aria-hidden="true"></div>
+
     <!-- Fond photographique qui s'efface au fil du scroll -->
     <div class="fond-image" id="fondImage" aria-hidden="true"></div>
 
