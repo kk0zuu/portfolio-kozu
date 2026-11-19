@@ -1118,11 +1118,18 @@ mm.add({
         if (href.indexOf('#choix-domaines') !== -1) {
             enCours = true;
             e.preventDefault();
-            voileDuChoix().classList.add('on');
+            var vert = voileDuChoix();
+            /* on force le navigateur à peindre le voile à opacité 0 avant de
+               l'allumer : sans ça, le premier retour le ferait claquer d'un
+               coup au lieu de fondre sur la page */
+            void vert.offsetWidth;
+            vert.classList.add('on');
+            /* le vert a fini de monter quand la page s'ouvre : le changement de
+               page se fait sur le même vert que le fond du choix des domaines */
             setTimeout(() => {
                 try { sessionStorage.setItem('sas-domaines', '1'); } catch (err) {}
                 window.location.href = href;
-            }, 320);
+            }, 340);
             return;
         }
 
