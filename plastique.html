@@ -152,13 +152,10 @@ body.pm-focus .pm-commandes,body.pm-focus .pm-aide{opacity:0;pointer-events:none
 
 /* retour au choix des domaines : la pastille des pages de domaine, posée en bas
    à gauche puisque le rail occupe tout l'écran */
-.pm-retour-domaines{position:fixed;left:clamp(1rem,3vw,2.4rem);bottom:1.6rem;z-index:6;
-  display:inline-block;padding:.6rem 1.25rem;border-radius:999px;
-  font-family:var(--font-display);font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;
-  background:rgba(255,255,255,.72);border:1.5px solid rgba(11,11,12,.12);color:#333333;
-  text-decoration:none;box-shadow:0 4px 12px rgba(0,0,0,.08);cursor:none;
-  transition:background .25s ease,color .25s ease,border-color .25s ease,transform .25s ease;}
-.pm-retour-domaines:hover{background:#0B0B0C;border-color:#0B0B0C;color:#FFFFFF;transform:translateY(-2px);}
+/* le bouton de retour au choix des domaines est le même sur tout le site
+   (.retour-domaines dans styles.css) ; ici il est simplement posé en bas à
+   gauche, puisque le rail occupe tout l'écran */
+.pm-retour-domaines{position:fixed;left:clamp(1rem,3vw,2.4rem);bottom:1.6rem;z-index:6;}
 body.pm-focus .pm-retour-domaines{opacity:0;pointer-events:none;}
 
 .pm-retour-focus{position:fixed;top:1rem;left:clamp(1rem,3vw,2.4rem);z-index:70;
@@ -304,7 +301,10 @@ body.pm-focus .pm-retour-focus{opacity:1;visibility:visible;}
     <p class="pm-aide">Clique une famille pour l'ouvrir · flèches ou molette pour naviguer</p>
 </main>
 
-<a class="pm-retour-domaines" href="index.html#choix-domaines">← Retour au choix des domaines</a>
+<a class="retour-domaines pm-retour-domaines clair" href="index.html#choix-domaines">
+    <span class="retour-fleche" aria-hidden="true"></span>
+    <span>Choix des domaines</span>
+</a>
 
 <div class="pm-voile" id="pmVoile"></div>
 <div class="pm-flou" id="pmFlou"></div>

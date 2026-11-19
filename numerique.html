@@ -498,53 +498,9 @@ h1 em{font-style:normal;color:var(--neon)}
 
 /* ---------- bas de page : bouton des pages ---------- */
 .portes-zone{max-width:1100px;margin:2.2rem auto .5rem;padding:0 1.5rem;display:flex;justify-content:center}
-.portes-btn{
-  display:inline-flex;align-items:center;gap:.85rem;
-  background:transparent;border:1px solid rgba(255,255,255,.16);color:#c4c4c4;
-  padding:.68rem 1.05rem;border-radius:99px;font:inherit;cursor:none;text-decoration:none;
-  transition:border-color .3s ease,color .3s ease,background .3s ease;
-}
-.portes-btn:hover{border-color:rgba(255,255,255,.45);color:#fff;background:rgba(255,255,255,.05)}
-.portes-label{font-size:.55rem;letter-spacing:.2em;text-transform:uppercase;color:#757575}
-.portes-titre{font-family:'Archivo Black',sans-serif;font-size:.8rem;text-transform:uppercase;letter-spacing:.02em}
-.portes-label,.portes-titre{position:relative;z-index:1}
+/* le bouton de retour au choix des domaines est le même sur tout le site :
+   voir .retour-domaines dans styles.css */
 
-/* La flèche du retour : une tige et une pointe. Par défaut elle pointe à gauche ;
-   au survol la pointe part au bord gauche de la page et la tige s'étire et
-   s'épaissit pour la suivre, au-dessus du texte du bouton. La longueur de
-   l'étirement (--etirement) est mesurée au survol par le script plus bas. */
-.portes-fleche{
-  position:relative;z-index:3;flex:none;
-  display:block;width:1.35rem;height:.85rem;
-  color:var(--neon);
-}
-/* la tige */
-.portes-fleche::after{
-  content:'';position:absolute;right:0;top:50%;
-  width:100%;height:2px;background:currentColor;
-  transform:translateY(-50%);
-  transition:width .55s cubic-bezier(.22,.7,.2,1),height .55s cubic-bezier(.22,.7,.2,1);
-}
-/* la pointe */
-.portes-fleche::before{
-  content:'';position:absolute;left:0;top:50%;width:0;height:0;
-  border-top:6px solid transparent;border-bottom:6px solid transparent;
-  border-right:9px solid currentColor;
-  transform:translate(0,-50%);
-  transition:transform .55s cubic-bezier(.22,.7,.2,1),
-             border-top-width .55s cubic-bezier(.22,.7,.2,1),
-             border-bottom-width .55s cubic-bezier(.22,.7,.2,1),
-             border-right-width .55s cubic-bezier(.22,.7,.2,1);
-}
-.portes-btn:hover .portes-fleche::before,
-.portes-btn:focus-visible .portes-fleche::before{
-  transform:translate(calc(-1 * var(--etirement, 0px)),-50%);
-  border-top-width:9px;border-bottom-width:9px;border-right-width:13px;
-}
-.portes-btn:hover .portes-fleche::after,
-.portes-btn:focus-visible .portes-fleche::after{
-  width:calc(100% + var(--etirement, 0px));height:5px;
-}
 
 /* ---------- panneau de toutes les pages ---------- */
 .portes{position:fixed;inset:0;z-index:1150;visibility:hidden}
@@ -733,10 +689,9 @@ body.sas-actif .wrap,body.sas-actif .portes-zone,body.sas-actif .num-foot{opacit
     </div>
 
     <div class="portes-zone">
-        <a class="portes-btn" href="index.html#choix-domaines">
-            <span class="portes-label">Retour</span>
-            <span class="portes-titre">Choix des domaines</span>
-            <span class="portes-fleche" aria-hidden="true"></span>
+        <a class="retour-domaines" href="index.html#choix-domaines">
+            <span class="retour-fleche" aria-hidden="true"></span>
+            <span>Choix des domaines</span>
         </a>
     </div>
 
@@ -1593,30 +1548,5 @@ body.sas-actif .wrap,body.sas-actif .portes-zone,body.sas-actif .num-foot{opacit
 <script src="jeux-assets.js"></script>
 <script src="jeux.js"></script>
 <script src="app.js"></script>
-<script>
-/* Le retour du numérique : la flèche s'étire jusqu'au bord gauche de la page.
-   On mesure la distance depuis la flèche au moment du survol (et au
-   redimensionnement), pour que l'étirement tombe pile sur le bord. */
-(function () {
-    var btn = document.querySelector('.portes-btn');
-    if (!btn) return;
-    var fleche = btn.querySelector('.portes-fleche');
-    if (!fleche) return;
-
-    function mesurer() {
-        var r = fleche.getBoundingClientRect();
-        btn.style.setProperty('--etirement', Math.max(0, Math.round(r.left)) + 'px');
-    }
-
-    btn.addEventListener('pointerenter', mesurer);
-    btn.addEventListener('mouseenter', mesurer);
-    btn.addEventListener('focus', mesurer);
-    window.addEventListener('resize', mesurer);
-    /* la mise en page bouge encore pendant le sas d'entrée : on remesure quand
-       tout est posé, pour que la valeur de repos soit juste elle aussi */
-    window.addEventListener('load', function () { requestAnimationFrame(mesurer); });
-    mesurer();
-})();
-</script>
 </body>
 </html>

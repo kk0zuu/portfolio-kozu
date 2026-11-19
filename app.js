@@ -1072,6 +1072,32 @@ mm.add({
     });
 })();
 
+// --- BOUTON « CHOIX DES DOMAINES » : la flèche s'étire jusqu'au bord de la page ---
+// Le bouton est le même partout (voir styles.css) : seule la longueur de
+// l'étirement dépend de sa place, on la mesure au survol et au redimensionnement.
+(function initRetourDomaines() {
+    var boutons = [].slice.call(document.querySelectorAll('.retour-domaines'));
+    if (!boutons.length) return;
+
+    function mesurer(btn) {
+        var fleche = btn.querySelector('.retour-fleche');
+        if (!fleche) return;
+        btn.style.setProperty('--etirement', Math.max(0, Math.round(fleche.getBoundingClientRect().left)) + 'px');
+    }
+
+    boutons.forEach(function (btn) {
+        ['pointerenter', 'mouseenter', 'focus'].forEach(function (ev) {
+            btn.addEventListener(ev, function () { mesurer(btn); });
+        });
+        mesurer(btn);
+    });
+
+    window.addEventListener('resize', function () { boutons.forEach(mesurer); });
+    window.addEventListener('load', function () {
+        requestAnimationFrame(function () { boutons.forEach(mesurer); });
+    });
+})();
+
 // --- SAS ACCUEIL : la barre rejoue son apparition de l'accueil, à l'envers ---
 // Depuis n'importe quelle page, un retour à l'accueil fait d'abord se vider la
 // barre, se réduire en pastille puis remonter hors champ, comme sur l'accueil.

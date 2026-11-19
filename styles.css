@@ -1264,10 +1264,125 @@ body.contact-page .logiciels-aide-point {
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
 }
 
+/* ==================================================== */
+/* BOUTON « CHOIX DES DOMAINES » : un seul modèle        */
+/* partout — pastille fine, flèche à gauche qui s'étire  */
+/* jusqu'au bord de la page au survol                    */
+/* ==================================================== */
+
+.retour-domaines {
+    --retour-trait: rgba(255, 255, 255, 0.16);
+    --retour-texte: #c4c4c4;
+    --retour-trait-survol: rgba(255, 255, 255, 0.45);
+    --retour-texte-survol: #FFFFFF;
+    --retour-fond: transparent;
+    --retour-fond-survol: rgba(255, 255, 255, 0.05);
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.7rem;
+    padding: 0.68rem 1.05rem;
+    border: 1px solid var(--retour-trait);
+    border-radius: 99px;
+    background: var(--retour-fond);
+    color: var(--retour-texte);
+    font-family: var(--font-display);
+    font-size: 0.8rem;
+    line-height: 1;
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+    text-decoration: none;
+    cursor: none;
+    transition: border-color 0.3s ease, color 0.3s ease, background-color 0.3s ease;
+}
+
+.retour-domaines:hover,
+.retour-domaines:focus-visible {
+    border-color: var(--retour-trait-survol);
+    color: var(--retour-texte-survol);
+    background: var(--retour-fond-survol);
+}
+
+/* version claire : sur les fonds pâles (photo, plastique) */
+.retour-domaines.clair {
+    --retour-trait: rgba(0, 0, 0, 0.1);
+    --retour-texte: #333333;
+    --retour-trait-survol: rgba(0, 0, 0, 0.35);
+    --retour-texte-survol: #000000;
+    --retour-fond: rgba(255, 255, 255, 0.7);
+    --retour-fond-survol: rgba(255, 255, 255, 0.92);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+}
+
+/* la flèche : une tige et une pointe à gauche. Au survol la pointe part au
+   bord gauche de la page et la tige s'étire et s'épaissit pour la suivre.
+   La longueur (--etirement) est mesurée par app.js au moment du survol. */
+.retour-fleche {
+    position: relative;
+    z-index: 3;
+    flex: none;
+    display: block;
+    width: 1.35rem;
+    height: 0.85rem;
+    color: var(--color-neon-pink);
+}
+
+.retour-fleche::after {
+    content: '';
+    position: absolute;
+    right: 0;
+    top: 50%;
+    width: 100%;
+    height: 2px;
+    background: currentColor;
+    transform: translateY(-50%);
+    transition: width 0.55s cubic-bezier(0.22, 0.7, 0.2, 1), height 0.55s cubic-bezier(0.22, 0.7, 0.2, 1);
+}
+
+.retour-fleche::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 50%;
+    width: 0;
+    height: 0;
+    border-top: 6px solid transparent;
+    border-bottom: 6px solid transparent;
+    border-right: 9px solid currentColor;
+    transform: translate(0, -50%);
+    transition: transform 0.55s cubic-bezier(0.22, 0.7, 0.2, 1),
+                border-top-width 0.55s cubic-bezier(0.22, 0.7, 0.2, 1),
+                border-bottom-width 0.55s cubic-bezier(0.22, 0.7, 0.2, 1),
+                border-right-width 0.55s cubic-bezier(0.22, 0.7, 0.2, 1);
+}
+
+.retour-domaines:hover .retour-fleche::before,
+.retour-domaines:focus-visible .retour-fleche::before {
+    transform: translate(calc(-1 * var(--etirement, 0px)), -50%);
+    border-top-width: 9px;
+    border-bottom-width: 9px;
+    border-right-width: 13px;
+}
+
+.retour-domaines:hover .retour-fleche::after,
+.retour-domaines:focus-visible .retour-fleche::after {
+    width: calc(100% + var(--etirement, 0px));
+    height: 5px;
+}
+
 /* les boutons de continuation en bas de domaine : mêmes pastilles que ceux du haut */
 .domain-continuation {
     margin: 3rem auto 2.5rem;
     max-width: 1100px;
+}
+
+/* quand le bouton retour est à droite, sa tige s'étire sous la pastille
+   voisine au lieu de passer par-dessus */
+.domain-continuation .subnav-btn {
+    position: relative;
+    z-index: 4;
 }
 
 .subnav-btn:hover,
