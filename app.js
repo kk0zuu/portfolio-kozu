@@ -2686,8 +2686,8 @@ if (!document.body.classList.contains('photo-fusion')) construireTambour();
     if (typeof gsap === 'undefined' || !window.PointerEvent) return;
 
     var GLYPHES = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789?!&%@';
-    var PLACES = 4;                       // quatre places de référence (la case garde sa largeur)
-    var PLACES_MAX = 6;                   // six lettres au plus : les secrets courts gardent leur rythme
+    var PLACES = 4;                       // quatre places sous le badge
+    var PLACES_MAX = 6;                   // six au plus : au-delà de TIAS, la case s'ouvre de deux places
     var SECRETS = {
         'IAN': { texte: "et oui c'est mon nom" },
         'BOSS': { texte: "et oui, c'est moi le" },
@@ -2743,6 +2743,8 @@ if (!document.body.classList.contains('photo-fusion')) construireTambour();
     var priseBadge = null;
     var hauteurLettres = 66;
     var tEnPlusEl = null;
+    var largeurRepos = 0;                 // largeur de la case au repos (ses quatre places)
+    var etiree = false;                   // la case s'est ouverte à droite pour la suite de TIAS
     /* écart fixe entre la place du badge et la case : il est mesuré à la
        révélation pour que la case reste pile à l'endroit d'où PORTFOLIO a
        été soulevé, malgré le changement de longueur de la ligne */
@@ -2913,8 +2915,11 @@ if (!document.body.classList.contains('photo-fusion')) construireTambour();
 
     /* ---------- la case : sa largeur, puis la hauteur des lettres ---------- */
     // centrage par marges négatives : exact, et à l'abri des transformations
+    // (la largeur de repos sert de référence : quand la case s'ouvre à droite,
+    // son bord gauche et les lettres déjà posées ne bougent pas)
     function centrer() {
-        boite.style.marginLeft = (decalage.x - boite.offsetWidth / 2) + 'px';
+        var base = largeurRepos || boite.offsetWidth;
+        boite.style.marginLeft = (decalage.x - base / 2) + 'px';
         boite.style.marginTop = (decalage.y - boite.offsetHeight / 2) + 'px';
     }
 
@@ -2925,6 +2930,7 @@ if (!document.body.classList.contains('photo-fusion')) construireTambour();
         var carte = titre.querySelector('.ransom-card');
         hauteurLettres = carte ? Math.round(carte.getBoundingClientRect().height) : 66;
 
+        largeurRepos = boite.offsetWidth;
         gsap.set(boite, { height: badge.getBoundingClientRect().height });
         centrer();
         gsap.to(boite, { opacity: 1, duration: 0.18, ease: 'power1.out' });
@@ -3024,7 +3030,8 @@ if (!document.body.classList.contains('photo-fusion')) construireTambour();
         var p = place.getBoundingClientRect();
         var w = boite.offsetWidth;
         var h = boite.offsetHeight;
-        var l = p.left + p.width / 2 - w / 2 + decalage.x;
+        var base = largeurRepos || w;
+        var l = p.left + p.width / 2 - base / 2 + decalage.x;
         var t = p.top + p.height / 2 - h / 2 + decalage.y;
         return { left: l, top: t, right: l + w, bottom: t + h, width: w, height: h };
     }
@@ -3032,9 +3039,9 @@ if (!document.body.classList.contains('photo-fusion')) construireTambour();
     function placer(duree) {
         var d = (duree === undefined) ? 0.32 : duree;
         var r = rectBoite();
-        /* au-delà de quatre lettres, la case resserre ses places pour que le
-           mot tienne en entier sur la largeur du badge */
-        var largeur = r.width / Math.max(PLACES, posees.length);
+        /* les places gardent toujours le même pas : les lettres déjà posées ne
+           bougent pas quand la case s'ouvre pour la suite du mot */
+        var largeur = (largeurRepos || r.width) / PLACES;
         posees.forEach(function (c) {
             var i = c.slotCase;
             var cx = r.left + largeur * (i + 0.5);
@@ -3066,6 +3073,9 @@ if (!document.body.classList.contains('photo-fusion')) construireTambour();
         var secret = SECRETS[mot];
         ecrire(secret ? secret.texte : DEFAUT, secret ? secret.signe : '');
 
+        /* TIAS ouvre la case à droite : deux places de plus, sans rien déplacer */
+        etendre(mot.indexOf('TIAS') === 0 || posees.length > PLACES);
+
         /* Le second T : il apparaît à la place du T d'origine dès que la case
            forme TOU ou TU, et disparaît dès qu'on défait cette combinaison.
            Tant qu'il est lui-même rangé dans la case, il reste là. */
@@ -3095,14 +3105,52 @@ if (!document.body.classList.contains('photo-fusion')) construireTambour();
         }
     }
 
+    /* ---------- la case qui s'ouvre à droite pour « TIAS » ---------- */
+    /* Quatre places tiennent sous le badge. Dès que les lettres forment TIAS,
+       la case s'étire vers la droite de deux places — son bord gauche et les
+       lettres déjà posées ne bougent pas — pour laisser entrer la suite du mot.
+       Elle se referme en douceur dès que TIAS n'y est plus. */
+    function compacter() {
+        var ordre = posees.slice().sort(function (a, b) { return a.slotCase - b.slotCase; });
+        var change = false;
+        for (var i = 0; i < ordre.length; i++) {
+            if (ordre[i].slotCase !== i) { ordre[i].slotCase = i; change = true; }
+        }
+        return change;
+    }
+
+    function etendre(oui) {
+        if (!largeurRepos || oui === etiree) return;
+        etiree = oui;
+        if (!oui) compacter();
+        var extra = oui ? Math.round(largeurRepos / PLACES * (PLACES_MAX - PLACES)) : 0;
+
+        if (typeof gsap === 'undefined') {
+            boite.style.setProperty('--extra', extra + 'px');
+            centrer();
+            if (posees.length) placer(0);
+            return;
+        }
+
+        gsap.to(boite, {
+            '--extra': extra + 'px',
+            duration: 0.5,
+            ease: 'power3.inOut',
+            onUpdate: centrer,
+            overwrite: 'auto'
+        });
+        if (posees.length) placer(0.5);
+    }
+
     function deposer(c) {
         if (!revelee || !c || posees.indexOf(c) >= 0) return false;
         // on accepte la lettre là où la case est *vue* (même en plein glissement)…
         var r = boite.getBoundingClientRect();
         if (!r.width || !r.height) return false;
         if (c.x < r.left || c.x > r.right || c.y < r.top || c.y > r.bottom) return false;
-        if (posees.length >= PLACES_MAX) return false;
-        var largeur = r.width / Math.max(PLACES, posees.length + 1);
+        /* les deux places de plus n'existent que quand la case s'est ouverte */
+        if (posees.length >= (etiree ? PLACES_MAX : PLACES)) return false;
+        var largeur = (largeurRepos || r.width) / PLACES;
         var vise = Math.floor((c.x - r.left) / largeur);
         if (vise < 0) vise = 0;
         if (vise > PLACES_MAX - 1) vise = PLACES_MAX - 1;
@@ -3134,6 +3182,13 @@ if (!document.body.classList.contains('photo-fusion')) construireTambour();
         minuteur = setTimeout(function () {
             ajuster(sousTitre.lastElementChild);
             if (revelee) {
+                /* la largeur du badge a pu changer : on remesure la case au
+                   repos, puis on remet son ouverture si elle était ouverte */
+                boite.style.setProperty('--extra', '0px');
+                largeurRepos = boite.offsetWidth;
+                if (etiree) {
+                    boite.style.setProperty('--extra', Math.round(largeurRepos / PLACES * (PLACES_MAX - PLACES)) + 'px');
+                }
                 gsap.set(boite, { height: hauteurLettres });
                 centrer();
                 if (posees.length) placer();

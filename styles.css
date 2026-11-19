@@ -411,7 +411,8 @@ body.hovering .cursor-spiral {
     left: 50%;
     top: 50%;
     z-index: 1;
-    width: 100%;
+    /* la case s'ouvre de deux places à droite quand les lettres forment TIAS */
+    width: calc(100% + var(--extra, 0px));
     height: 0;
     background: var(--color-white);
     border: 3px solid var(--color-black);
