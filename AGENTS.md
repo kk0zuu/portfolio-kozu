@@ -521,6 +521,13 @@ Autres points de vigilance de l'accueil :
   part quand `#choix-domaines` touche le haut de l'écran ou quand la page est au bas. Toute
   modification de la hauteur de page change ce déclenchement : vérifier que les étoiles
   partent toujours.
+- `initFlecheGuide` (dans `app.js`) ajoute une petite flèche bleue `.fleche-guide` sur
+  l'accueil : elle démarre 64 px sous `#hero-title`, pointe vers le bas, puis suit le scroll le
+  long d'une courbe paramétrique (constantes `BOUCLES`, `ONDES`, `RESPIRATION`). Sa course vaut
+  `scrollHeight - innerHeight`, donc son ordonnée à l'écran ne bouge presque pas : elle
+  accompagne la visite au lieu de la dépasser. Elle est en `z-index: -1` (derrière le contenu)
+  et son style vit dans le `<style>` de `index.html`. Si l'on change la hauteur du titre ou de
+  la page, vérifier qu'elle part toujours sous le titre et reste dans l'écran.
 
 ---
 

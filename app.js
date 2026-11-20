@@ -3537,3 +3537,109 @@ if (!document.body.classList.contains('photo-fusion')) construireTambour();
         }, 220);
     });
 })();
+
+// --- FLÈCHE GUIDE : une petite flèche bleue accompagne la visite ---
+// Elle démarre sous le titre du site, pointe vers le bas, puis descend avec le
+// scroll en décrivant une courbe organique : trois loopings, des allers-retours
+// et des passages à l'horizontale. Sa course suit le défilement au pixel près
+// (elle reste donc toujours à l'écran), mais le chemin qu'elle parcourt n'est
+// pas régulier : une boucle avale beaucoup de longueur en peu de scroll, une
+// ligne droite très peu, d'où les accélérations et les ralentissements. Un
+// léger décalage du paramètre ajoute une respiration lente par-dessus.
+// Elle est posée derrière le contenu (z-index: -1), comme la photo de fond.
+(function initFlecheGuide() {
+    const titre = document.getElementById('hero-title');
+    if (!titre) return;
+    if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+    const BOUCLES = 3;          // loopings sur la descente
+    const ONDES = 2;            // ondulation lente : les allers-retours
+    const RESPIRATION = 0.55;   // écart de vitesse de ±55 % autour de celle du scroll
+    const FREQ_RESPIRATION = 2; // deux accélérations et deux ralentissements
+
+    const fleche = document.createElement('div');
+    fleche.className = 'fleche-guide';
+    fleche.setAttribute('aria-hidden', 'true');
+    fleche.innerHTML =
+        '<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">' +
+        '<path d="M9.2 1.5 H14.8 V13 H20.4 L12 22.6 L3.6 13 H9.2 Z" ' +
+        'fill="#1232B4" stroke="#000000" stroke-width="1.6" stroke-linejoin="miter"/>' +
+        '</svg>';
+    document.body.appendChild(fleche);
+
+    let largeur = 0;
+    let haut = 0;       // y du départ, sous le titre
+    let course = 0;     // descente totale = défilement maximal de la page
+    let cx = 0;         // axe de la courbe
+    let Ax = 0;         // amplitude horizontale
+    let By = 0;         // amplitude verticale des loopings
+    let By2 = 0;        // amplitude de l'ondulation lente
+    let anglePrec = null;
+
+    function mesurer() {
+        const vh = window.innerHeight;
+        const t = titre.getBoundingClientRect();
+        largeur = document.documentElement.clientWidth;
+        haut = t.bottom + window.scrollY + 64;
+        course = Math.max(0, document.documentElement.scrollHeight - vh);
+        cx = largeur / 2;
+        /* la courbe reste dans une bande raisonnable, proportionnelle à l'écran */
+        const portee = Math.min(largeur * 0.33, 520);
+        Ax = portee / 2;
+        By = Math.min(170, vh * 0.19);
+        By2 = By * 0.42;
+        anglePrec = null;
+        /* page plus courte que l'écran : rien à accompagner */
+        fleche.style.display = course < 120 ? 'none' : '';
+    }
+
+    function dessiner() {
+        const max = course;
+        const s = max > 0 ? Math.min(1, Math.max(0, window.scrollY / max)) : 0;
+
+        /* le scroll avance de façon inégale : la flèche ralentit puis rattrape,
+           sans jamais reculer (la dérivée reste positive) */
+        const u = Math.min(1, Math.max(0, s + (RESPIRATION / (2 * Math.PI * FREQ_RESPIRATION)) *
+            Math.sin(2 * Math.PI * FREQ_RESPIRATION * s)));
+
+        const a = 2 * Math.PI * BOUCLES * u;
+        const b = 2 * Math.PI * ONDES * u;
+
+        const x = cx + Ax * (1 - Math.cos(a)) - Ax * (1 - Math.cos(b));
+        const y = haut + course * u + By * Math.sin(a) + By2 * Math.sin(b);
+
+        /* pente de la courbe : la pointe de la flèche suit le chemin, et repart
+           donc vers le bas à chaque boucle refermée */
+        const dx = Ax * Math.sin(a) * 2 * Math.PI * BOUCLES -
+                   Ax * Math.sin(b) * 2 * Math.PI * ONDES;
+        const dy = course +
+                   By * Math.cos(a) * 2 * Math.PI * BOUCLES +
+                   By2 * Math.cos(b) * 2 * Math.PI * ONDES;
+        let angle = Math.atan2(dy, dx) * 180 / Math.PI - 90;   // 0 = pointe vers le bas
+        if (anglePrec !== null) {
+            /* on tourne toujours du côté le plus court */
+            while (angle - anglePrec > 180) angle -= 360;
+            while (angle - anglePrec < -180) angle += 360;
+        }
+        anglePrec = angle;
+
+        fleche.style.transform = 'translate3d(' + x.toFixed(1) + 'px,' + y.toFixed(1) + 'px,0) rotate(' +
+            angle.toFixed(2) + 'deg)';
+    }
+
+    /* une seule mise à jour par image, même si le scroll crache des événements */
+    let attente = false;
+    function auScroll() {
+        if (attente) return;
+        attente = true;
+        requestAnimationFrame(function () { attente = false; dessiner(); });
+    }
+
+    mesurer();
+    dessiner();
+
+    window.addEventListener('scroll', auScroll, { passive: true });
+    /* le chargement des images déplace la page : on recale le départ */
+    window.addEventListener('load', function () { mesurer(); dessiner(); });
+    window.addEventListener('resize', function () { mesurer(); dessiner(); });
+})();
