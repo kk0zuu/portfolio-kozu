@@ -530,21 +530,33 @@ Autres points de vigilance de l'accueil :
   modification de la hauteur de page change ce déclenchement : vérifier que les étoiles
   partent toujours.
 - `initFlecheGuide` (dans `app.js`) ajoute sur l'accueil un **trait bleu qui s'étire** le long
-  d'une courbe paramétrique (constantes `BOUCLES`, `ONDES`, `RESPIRATION`) : ce n'est pas un
-  objet qui se déplace mais un `<path>` dont on révèle la longueur par `stroke-dasharray` /
+  d'une courbe paramétrique (constantes `BOUCLES`, `ONDES`) : ce n'est pas un objet qui se
+  déplace mais un `<path>` dont on révèle la longueur par `stroke-dasharray` /
   `stroke-dashoffset` selon le scroll, avec un `<path>` en forme de pointe posé sur la fin du
-  trait par `transform` (translation + rotation sur la pente). Sa vitesse suit un **profil
-  intégré puis normalisé** (`construireProfil` / `avance`) : elle démarre à `VITESSE_DEPART`
-  (6 % de la vitesse du scroll — le scroll descend donc plus vite que le tracé), remonte à plein
-  régime sur `RAMPE` (12 % du scroll), puis alterne deux ralentissements et deux accélérations
-  (  `RESPIRATION`). L'intégrale est normalisée pour que `u(1) = 1` : quel que soit le réglage, la
-  fin du tracé tombe pile en bas de page et rien ne recule. La vitesse est décrite **en fonction
-  de `u`**, pas du scroll : c'est ce qui permet de viser un virage précis. `RALENTI`,
-  `RALENTI_LARGEUR` et `RALENTI_FORCE` écrasent ainsi la vitesse dans le virage serré autour de
-  « qui suis-je ? » (elle y tombe à ~20 % de celle des loopings voisins). `avance(s)` inverse le
-  profil. `DELAI_DEPART` (140 px) décale le
-  départ : le tracé ne bouge pas pendant les premiers pixels de scroll, la pointe attend sous le
-  titre. C'est `s` qui est recalculé sur `course - DELAI_DEPART`, pas la longueur du tracé.
+  trait par `transform` (translation + rotation sur la pente).
+- **La vitesse se mesure en pixels de tracé par pixel de scroll**, jamais en part de `u`. C'est la
+  seule unité qui corresponde à ce qu'on voit, et un **cran de molette vaut 100 px** sur presque
+  toutes les souris : c'est l'unité de mesure à utiliser pour juger (`scrollTo` de 100 en 100,
+  relever `stroke-dashoffset`, faire la différence). Le tracé fait ~5 400 px pour une course de
+  ~2 000 px : **il avance donc en moyenne 2,7 fois plus vite que la page**, et on ne peut pas
+  ralentir un endroit sans accélérer le reste. Sur cette base, les valeurs relevées sont de
+  ~55 à ~410 px de tracé par cran (contre 27 à 864 avant le 20/11) : ~330 dans la descente, ~250
+  à 330 dans le virage, ~215 à 335 dans le tour final.
+- Le profil (`construireProfil` / `avance`) est construit **après** le tracé, sur ses longueurs
+  réelles : chaque tronçon coûte « sa longueur divisée par la vitesse voulue », on cumule, on
+  normalise (`u(1) = 1` : la fin tombe pile en bas de page et rien ne recule), et `avance(s)`
+  inverse le tout. `SOUFFLE` fait respirer la vitesse de ±8 %, `VITESSE_DEPART` (25 % de la
+  vitesse normale) et `RAMPE` (12 % du scroll) donnent le démarrage lent, `VIRAGE` /
+  `VIRAGE_LARGEUR` / `VIRAGE_LENT` ralentissent le grand virage qui balaie à gauche sous
+  « qui suis-je ? » (u ≈ 0,31 : c'est là que la pointe est au plus à gauche, pas à 0,17), et
+  `FIN_LENT` / `FIN_RENTREE` font de même pour le tour final.
+  **Piège vécu** : un ralentissement exprimé en `u` ne ralentit rien du tout — il déplace le
+  tracé dans la page, et comme le profil est normalisé, il accélère même tout le reste. Quand un
+  endroit paraît trop rapide, mesurer d'abord **où il se trouve en `u`** (relever la position de
+  la pointe pendant le scroll), puis régler la cloche à cet endroit-là.
+- `DELAI_DEPART` (140 px) décale le départ : le tracé ne bouge pas pendant les premiers pixels
+  de scroll, la pointe attend sous le titre. C'est `s` qui est recalculé sur
+  `course - DELAI_DEPART`, pas la longueur du tracé.
 - **Apparition** : le `<svg>` est invisible au chargement (`opacity: 0`, 18 px plus bas, dans le
   `<style>` de `index.html`). `initFlecheGuide` pose la classe **`.fleche-prete`** à la fin de
   l'animation d'accueil — événement `hero:intro-done` émis par la timeline GSAP du hero, avec une

@@ -3563,21 +3563,27 @@ if (!document.body.classList.contains('photo-fusion')) construireTambour();
 
     const BOUCLES = 3;          // loopings sur la descente
     const ONDES = 2;            // ondulation lente : les allers-retours
-    /* écart de vitesse autour de celle du scroll : le trait avance entre 22 %
-       et 178 % de la vitesse du défilement. */
-    const RESPIRATION = 0.78;
+    /* La vitesse se mesure en **pixels de tracé par pixel de scroll** : c'est
+       la seule chose qu'on voie, et un cran de molette vaut 100 px sur presque
+       toutes les souris. Le profil se construit donc sur les longueurs réelles
+       du tracé (voir `construireProfil`), et non sur la part de u : une zone
+       lente coûte autant de scroll partout, quelle que soit la densité de la
+       courbe à cet endroit. Toutes les valeurs ci-dessous sont relatives. */
+    const SOUFFLE = 0.08;       // respiration : ±8 % autour de la vitesse
     const FREQ_RESPIRATION = 2; // deux accélérations et deux ralentissements
     /* au tout début le tracé est presque immobile : le scroll descend plus vite
-       que lui, puis il rattrape sur la première tranche de la page. VITESSE_DEPART
-       est une fraction de la vitesse du scroll (0,06 = 6 %). */
-    const VITESSE_DEPART = 0.06;
+       que lui, puis il rattrape sur la première tranche de la page */
+    const VITESSE_DEPART = 0.25;  // un quart de la vitesse normale
     const RAMPE = 0.12;         // part du scroll où la vitesse remonte à la normale
-    const PROFIL = 400;         // précision du profil de vitesse
-    /* le virage serré du haut, autour de « qui suis-je ? », se parcourt au pas :
-       une cloche locale y écrase la vitesse */
-    const RALENTI = 0.17;       // sa place, en part du tracé
-    const RALENTI_LARGEUR = 0.055;
-    const RALENTI_FORCE = 0.8;  // la vitesse y tombe à 20 % de la sienne ailleurs
+    /* le grand virage qui balaie à gauche au-dessus de « qui suis-je ? » se
+       parcourt au pas. Sa place se lit sur le tracé, pas au hasard : c'est le
+       point où la pointe est au plus à gauche sous le titre */
+    const VIRAGE = 0.31;        // sa place, en part du tracé
+    const VIRAGE_LARGEUR = 0.085;
+    const VIRAGE_LENT = 0.6;    // part de la vitesse normale dans le virage
+    /* et le tour final, autour de « où on va ? », se prend le temps d'être lu */
+    const FIN_LENT = 0.6;       // part de la vitesse normale dans le tour final
+    const FIN_RENTREE = 0.09;   // sur quelle part de la courbe on y descend
     const PAS = 900;            // points d'échantillonnage du tracé
     /* le tracé ne démarre pas au premier pixel de scroll : il laisse passer
        quelques centimètres, le temps que la page se mette en route */
@@ -3648,43 +3654,42 @@ if (!document.body.classList.contains('photo-fusion')) construireTambour();
     let texteX0 = 0, texteX1 = 0;   // la colonne de la présentation
     let profil = [];    // avancement du tracé en fonction du scroll, normalisé
 
-    /* Profil de vitesse. La vitesse est décrite **en fonction de l'avancement du
-       tracé** (u), pas du scroll : c'est la seule façon de ralentir un virage
-       précis, puisqu'à chaque instant c'est bien le tracé qui compte. On en
-       déduit combien de scroll coûte chaque fraction de tracé, on normalise
-       (u(1) = 1 exactement), et `avance()` fait le chemin inverse. */
+    /* Profil de vitesse, en pixels de tracé par pixel de scroll. Il se
+       construit **après** le tracé (il lui faut ses longueurs) : chaque tronçon
+       coûte « sa longueur divisée par la vitesse qu'on veut y voir », on cumule
+       ce coût, on normalise pour que le tracé finisse pile en bas de page, et
+       `avance()` fait le chemin inverse pour retrouver u à partir du scroll. */
     function construireProfil() {
-        const vitesse = function (u) {
-            let w = u / RAMPE;
-            if (w > 1) w = 1;
-            const lisse = w * w * (3 - 2 * w);
-            const souffle = 1 - RESPIRATION * Math.cos(2 * Math.PI * FREQ_RESPIRATION * u);
-            const d = (u - RALENTI) / RALENTI_LARGEUR;
-            const frein = 1 - RALENTI_FORCE * Math.exp(-d * d);
-            return Math.max(0.05, (VITESSE_DEPART + (souffle - VITESSE_DEPART) * lisse) * frein);
+        if (!total) { profil = [0]; return; }
+        const lenteur = function (u) {
+            const d = (u - VIRAGE) / VIRAGE_LARGEUR;
+            const virage = 1 - (1 - VIRAGE_LENT) * Math.exp(-d * d);
+            const fin = 1 - (1 - FIN_LENT) * lisser((u - FIN_U0) / FIN_RENTREE);
+            const souffle = 1 - SOUFFLE * Math.cos(2 * Math.PI * FREQ_RESPIRATION * u);
+            const rampe = VITESSE_DEPART + (1 - VITESSE_DEPART) * lisser(u / RAMPE);
+            return Math.max(0.03, virage * fin * souffle * rampe);
         };
         profil = [0];
-        const pas = 1 / PROFIL;
-        let total = 0;
-        for (let i = 1; i <= PROFIL; i++) {
-            total += pas / ((vitesse((i - 1) * pas) + vitesse(i * pas)) / 2);
-            profil.push(total);
+        let somme = 0;
+        for (let i = 1; i <= PAS; i++) {
+            somme += (cumul[i] - cumul[i - 1]) / lenteur((i - 0.5) / PAS);
+            profil.push(somme);
         }
-        for (let i = 0; i <= PROFIL; i++) profil[i] /= total;
+        for (let i = 0; i <= PAS; i++) profil[i] /= somme;
     }
 
     /* part du tracé atteinte pour un scroll donné : on inverse le profil */
     function avance(s) {
         if (s <= 0) return 0;
         if (s >= 1) return 1;
-        let bas = 0, haut = PROFIL;
+        let bas = 0, haut = PAS;
         while (haut - bas > 1) {
             const mid = (bas + haut) >> 1;
             if (profil[mid] <= s) bas = mid; else haut = mid;
         }
         const ecart = profil[bas + 1] - profil[bas];
         const f = ecart > 0 ? (s - profil[bas]) / ecart : 0;
-        return Math.min(1, (bas + f) / PROFIL);
+        return Math.min(1, (bas + f) / PAS);
     }
 
     /* la cloche du premier looping : 1 au centre, 0 de part et d'autre */
@@ -3865,6 +3870,9 @@ if (!document.body.classList.contains('photo-fusion')) construireTambour();
         /* aucun trait visible au départ : seul l'arrondi de la pointe reste */
         trait.setAttribute('stroke-dasharray', total.toFixed(1));
         trait.setAttribute('stroke-dashoffset', total.toFixed(1));
+
+        /* le profil de vitesse dépend des longueurs : il se refait ici */
+        construireProfil();
     }
 
     /* dessine le tracé jusqu'à la part u, pointe comprise */
@@ -3933,7 +3941,6 @@ if (!document.body.classList.contains('photo-fusion')) construireTambour();
         requestAnimationFrame(function () { attente = false; dessiner(); });
     }
 
-    construireProfil();
     mesurer();
     dessiner();
 
