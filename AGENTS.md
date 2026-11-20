@@ -544,28 +544,29 @@ Autres points de vigilance de l'accueil :
   sous `#hero-title`. Couleurs et épaisseur : `.fleche-trait` / `.fleche-pointe` dans le
   `<style>` de `index.html`, bleu `#1232B4` (le fond de Contact), **sans contour**. Le tracé est
   ré-échantillonné (`PAS` points) à chaque `resize` et au `load`, car il dépend de la hauteur
-  réelle de la page. Le **premier looping** (celui qui passe autour de « qui suis-je ? ») est
-  **dessiné à part** (`construireVent`) : entre `VENT_A` et `VENT_B`, une **spirale** de
-  `VENT_TOUR` degrés part du point d'arrivée de la courbe, s'ouvre jusqu'à `VENT_R0` → 1 fois une
-  ellipse large et plate (`VENT_RX` de la page, `VENT_RY` pour son aplatissement) centrée sur le
-  titre, puis rejoint la courbe de base. C'est ce qui donne la grande boucle qui englobe le titre
-  au lieu du rond serré d'origine ; deux points fantômes garantissent les raccords. La cloche
-  gaussienne (`BOSSE`, `BOSSE_LARGEUR`, `BOSSE_X`, `BOSSE_Y`, `BOSSE_BAS`) ne sert plus qu'à la
-  partie de la courbe qui précède et suit cette boucle. La pente de la pointe est mesurée par
-  différence finie sur `point()`, pour rester juste malgré la boucle et la finale.
-- La **fin du tracé** est construite à part (`construireFinale`) : à partir de `FIN_U0` (0,86),
-  la courbe de base est remplacée par une **Catmull-Rom centripète** qui monte au-dessus du
-  titre `.titre-centre`, fait un looping (`FIN_RAYON`) et vient finir **derrière le titre**
-  `« Où on va ? »` (la pointe est donc invisible). Deux points fantômes encadrent la liste de
-  contrôle : l'un avant la jonction (raccord dans la même direction), l'autre après l'arrivée
-  (sans lui, la dernière ligne droite ne serait jamais parcourue). Le titre est mesuré en
-  coordonnées du document à chaque `mesurer()`.
+  réelle de la page.
+- **Aucun morceau n'est dessiné en courbe de points de contrôle.** Les deux moments particuliers
+  (« qui suis-je ? » et la fin) sont obtenus en **tirant la courbe vers une forme lisse** :
+  `point(u)` part de `base(u)` puis ajoute `(cible − point) × poids`, où le poids monte et
+  redescend par `lisser()` (dérivée nulle aux deux bouts). Comme la base et la cible sont
+  lisses, le raccord l'est aussi : c'est ce qui a remplacé les Catmull-Rom, qui donnaient des
+  coudes visibles.
+  - **Premier looping** : élargi par la cloche gaussienne `BOSSE` / `BOSSE_X` / `BOSSE_Y` /
+    `BOSSE_BAS`. **Ne pas trop l'augmenter** : au-delà de ~0,5 la boucle se referme en pointe
+    (les deux branches se rejoignent) et le tracé a l'air cassé. `BOSSE_X` reste modéré.
+  - **Fin du tracé** : à partir de `FIN_U0` (0,84), la courbe est tirée vers un **cercle**
+    (`FIN_RAYON`, 190 px) centré sur `.titre-centre`, en `(finCx, finCy)` ; le poids atteint 1 au
+    bout de `FIN_RAMPE` (30 % de la fin) et y reste, si bien que le cercle est parcouru en entier.
+    `FIN_TOUR` (−320°) donne le sens et l'amplitude ; le tour démarre à l'angle où la courbe
+    arrive (`finAngle`, calculé dans `placerCibles`), pour que la jonction ne fasse pas de saut.
+    Le tracé finit donc **sous le titre, pointe visible** (il ne se cache plus derrière).
+- La pente de la pointe est mesurée par différence finie sur `point()`, pour rester juste malgré
+  la boucle et le tour final.
 - Quand la pointe arrive (`u ≥ 0,985`), `initFlecheGuide` émet l'événement **`fleche-guide:arrivee`**.
   `initFlecheOrbitale` (la flèche rouge) l'attend : sans cet événement, elle reste invisible même
   si le curseur est au niveau du titre. Supprimer ou renommer l'événement empêche la flèche rouge
   d'apparaître ; inversement, si le guide ne tourne pas (pas de `#hero-title`, mouvement réduit),
   la flèche rouge garde son ancien déclenchement.
-  malgré cette cloche.
 
 ---
 

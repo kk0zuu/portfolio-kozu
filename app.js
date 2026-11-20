@@ -3579,26 +3579,19 @@ if (!document.body.classList.contains('photo-fusion')) construireTambour();
        l'endroit où il se trouve, et qui retombe à zéro ailleurs */
     const BOSSE = 0.17;         // sa place, en part du tracé
     const BOSSE_LARGEUR = 0.09; // largeur de la cloche
-    const BOSSE_X = 0.7;        // 70 % plus large
-    const BOSSE_Y = 0.55;       // 55 % plus haut
-    const BOSSE_BAS = 170;      // et 170 px plus bas
-    /* la fin du tracé remonte au-dessus du titre « où on va ? », fait un
-       looping et vient se perdre derrière lui : elle est dessinée à part, en
-       courbe de Catmull-Rom, à partir d'un point de jonction */
-    const FIN_U0 = 0.86;        // part du tracé où la courbe de base s'arrête
-    const FIN_RAYON = 95;       // rayon du looping final
-    const FIN_PAS = 10;         // points par segment de la finale
-    /* le premier looping est aussi dessiné à part : une ellipse large et plate
-       qui enveloppe le titre « qui suis-je ? », plutôt que le rond serré que
-       donne la courbe de base à cet endroit */
-    const VENT_A = 0.04;        // la courbe de base s'arrête ici…
-    const VENT_B = 0.34;        // … et reprend là
-    const VENT_TOUR = 540;      // amplitude angulaire de la boucle
-    const VENT_R0 = 0.35;       // rayon au départ, en part du rayon final
-    const VENT_POINTS = 7;      // points de contrôle de la spirale
-    const VENT_RX = 0.365;      // demi-largeur, en part de la page
-    const VENT_RY = 0.33;       // demi-hauteur, en part de la demi-largeur
-    const VENT_PAS = 60;        // un point de contrôle de l'ellipse tous les 60°
+    const BOSSE_X = 0.35;       // un peu plus large
+    const BOSSE_Y = 0.2;        // un peu plus haut
+    const BOSSE_BAS = 90;       // et un peu plus bas
+    /* Rien n'est dessiné « à part » : les deux moments particuliers du tracé
+       sont obtenus en le **tirant doucement** vers une forme cible (une ellipse
+       autour du titre « qui suis-je ? », un grand tour autour de « où on va ? »).
+       Le poids du mélange monte et redescend en douceur, et la courbe de base
+       comme la cible sont lisses : le raccord l'est donc aussi, sans point de
+       contrôle ni cassure. */
+    const FIN_U0 = 0.84;        // début du mélange de la fin
+    const FIN_RAYON = 190;      // rayon du tour final
+    const FIN_RAMPE = 0.3;      // part de la fin où le tracé rejoint le tour
+    const FIN_TOUR = -320;      // balayage du tour (négatif : sens horaire)
     const NS = 'http://www.w3.org/2000/svg';
 
     const svg = document.createElementNS(NS, 'svg');
@@ -3628,9 +3621,9 @@ if (!document.body.classList.contains('photo-fusion')) construireTambour();
     let cumul = [];     // longueur de trait accumulée jusqu'à chaque point
     let total = 0;
     let anglePrec = null;
-    let finale = [];    // la fin du tracé, échantillonnée
-    let vent = [];      // le premier looping, échantillonné
-    let annonce = false; // le trait est-il arrivé derrière le titre ?
+    let annonce = false; // le trait est-il arrivé au bout de son tour ?
+    /* forme cible du tour final, recalée à chaque mesure de la page */
+    let finCx = 0, finCy = 0, finAngle = 0;
     let profil = [];    // avancement du tracé en fonction du scroll, normalisé
 
     /* Profil de vitesse : on intègre la vitesse voulue le long du scroll, puis
@@ -3681,129 +3674,45 @@ if (!document.body.classList.contains('photo-fusion')) construireTambour();
         };
     }
 
-    /* interpole dans un morceau de tracé échantillonné à pas régulier en u */
-    function dansMorceau(morceau, u, a, b) {
-        const t = (u - a) / (b - a) * (morceau.length - 1);
-        const i = Math.min(morceau.length - 2, Math.floor(t));
-        const f = t - i;
-        return {
-            x: morceau[i].x + (morceau[i + 1].x - morceau[i].x) * f,
-            y: morceau[i].y + (morceau[i + 1].y - morceau[i].y) * f
-        };
+    /* montée et descente en douceur, dérivée nulle aux deux bouts */
+    function lisser(t) {
+        const x = Math.min(1, Math.max(0, t));
+        return x * x * (3 - 2 * x);
     }
 
     function point(u) {
-        if (finale.length && u > FIN_U0) return dansMorceau(finale, u, FIN_U0, 1);
-        if (vent.length && u >= VENT_A && u <= VENT_B) return dansMorceau(vent, u, VENT_A, VENT_B);
-        return base(u);
+        const p = base(u);
+
+        /* fin : le tracé est tiré vers un grand tour autour de « où on va ? »,
+           et s'arrête dessus, la pointe visible sous le titre */
+        if (finCx && u > FIN_U0) {
+            const t = (u - FIN_U0) / (1 - FIN_U0);
+            /* le tracé rejoint le tour en quelques pour cent, puis le suit
+               exactement : le cercle est donc parcouru en entier, et la
+               jonction reste lisse puisque le poids repart de zéro */
+            const w = lisser(t / FIN_RAMPE);
+            const a = (finAngle + t * FIN_TOUR) * Math.PI / 180;
+            p.x += (finCx + Math.cos(a) * FIN_RAYON - p.x) * w;
+            p.y += (finCy + Math.sin(a) * FIN_RAYON - p.y) * w;
+        }
+        return p;
     }
 
-    /* Catmull-Rom centripète : il passe par tous les points sans boucler dans
-       le vide quand ils sont inégalement espacés */
-    function catmull(p0, p1, p2, p3, t) {
-        const dist = function (a, b) { return Math.pow(Math.hypot(b.x - a.x, b.y - a.y), 0.5) || 1e-6; };
-        const t0 = 0, t1 = t0 + dist(p0, p1), t2 = t1 + dist(p1, p2), t3 = t2 + dist(p2, p3);
-        const tt = t1 + (t2 - t1) * t;
-        const mel = function (a, b, ta, tb) {
-            return {
-                x: a.x + (b.x - a.x) * (tt - ta) / (tb - ta),
-                y: a.y + (b.y - a.y) * (tt - ta) / (tb - ta)
-            };
-        };
-        const a1 = mel(p0, p1, t0, t1);
-        const a2 = mel(p1, p2, t1, t2);
-        const a3 = mel(p2, p3, t2, t3);
-        return mel(mel(a1, a2, t0, t2), mel(a2, a3, t1, t3), t1, t2);
-    }
-
-    /* la finale : de la jonction au-dessus du titre, un tour et un quart de
-       cercle (le looping), puis la pointe entre derrière le titre */
-    function construireFinale() {
-        finale = [];
-        const titre = document.querySelector('.titre-centre');
-        if (!titre) return;
-        const r = titre.getBoundingClientRect();
-        const droite = r.left + r.width;
-        const hautTitre = r.top + window.scrollY;
-        const milieuTitre = hautTitre + r.height / 2;
-
-        const J = base(FIN_U0);
-        const avant = base(FIN_U0 - 0.004);
-        const apres = base(FIN_U0 + 0.004);
-        const dir = Math.atan2(apres.y - avant.y, apres.x - avant.x);
-
-        const kx = droite + 190;            // centre du looping final
-        const ky = hautTitre - 200;
-        const pol = function (deg) {
-            return {
-                x: kx + Math.cos(deg * Math.PI / 180) * FIN_RAYON,
-                y: ky + Math.sin(deg * Math.PI / 180) * FIN_RAYON
-            };
-        };
-
-        /* le premier point est un fantôme : il prolonge la courbe avant la
-           jonction, pour que le raccord parte dans la même direction */
-        const liste = [{ x: J.x - Math.cos(dir) * 100, y: J.y - Math.sin(dir) * 100 }, J,
-            { x: J.x + Math.cos(dir) * 120, y: J.y + Math.sin(dir) * 120 }];
-        for (let d = 100; d <= 420; d += 40) liste.push(pol(d));
-
-        /* la pointe finit derrière le titre, puis un second fantôme prolonge la
-           courbe : sans lui, la dernière ligne droite ne serait jamais
-           parcourue */
-        const sortie = liste[liste.length - 1];
-        const arret = { x: droite - 12, y: milieuTitre };
-        const dx = arret.x - sortie.x, dy = arret.y - sortie.y;
-        const longueur = Math.hypot(dx, dy) || 1;
-        liste.push(arret);
-        liste.push({ x: arret.x + dx / longueur * 100, y: arret.y + dy / longueur * 100 });
-
-        const n = liste.length;
-        for (let i = 1; i < n - 2; i++) {
-            for (let k = 0; k < FIN_PAS; k++) {
-                finale.push(catmull(liste[i - 1], liste[i], liste[i + 1], liste[i + 2], k / FIN_PAS));
-            }
-        }
-        finale.push(liste[n - 2]);
-    }
-
-    /* le premier looping : une ellipse autour de « qui suis-je ? ». On entre par
-       le point de l'ellipse le plus proche, on en fait le tour complet, puis on
-       reprend la courbe de base : le départ croise donc l'arrivée, comme sur un
-       vrai looping. Deux fantômes encadrent la liste pour les raccords. */
-    function construireVent() {
-        vent = [];
-        const titre = document.querySelector('.intro-section .section-title');
-        if (!titre) return;
-        const r = titre.getBoundingClientRect();
-        const ey = r.top + window.scrollY + r.height / 2 + 40;
-        const rx = Math.min(largeur * VENT_RX, 580);
-        const ry = Math.min(rx * VENT_RY, 190);
-
-        const entree = base(VENT_A);
-        /* la boucle part de l'endroit où la courbe arrive et s'ouvre en
-           spirale : le rayon grandit à chaque fraction de tour, si bien que la
-           pointe sort du titre par en dessous au lieu de le traverser */
-        const phi0 = Math.atan2((entree.y - ey) / ry, (entree.x - cx) / rx);
-        const liste = [base(VENT_A - 0.004), entree];
-        for (let i = 1; i <= VENT_POINTS; i++) {
-            const a = phi0 + (VENT_TOUR * i / VENT_POINTS) * Math.PI / 180;
-            const k = VENT_R0 + (1 - VENT_R0) * i / VENT_POINTS;
-            liste.push({ x: cx + Math.cos(a) * rx * k, y: ey + Math.sin(a) * ry * k });
-        }
-        liste.push(base(VENT_B));
-        liste.push(base(VENT_B + 0.004));
-
-        const n = liste.length;
-        for (let i = 1; i < n - 2; i++) {
-            for (let k = 0; k < FIN_PAS; k++) {
-                vent.push(catmull(liste[i - 1], liste[i], liste[i + 1], liste[i + 2], k / FIN_PAS));
-            }
-        }
-        vent.push(liste[n - 2]);
+    /* cale le tour final sur le titre de la page réelle */
+    function placerCibles() {
+        const fin = document.querySelector('.titre-centre');
+        if (!fin) return;
+        const r = fin.getBoundingClientRect();
+        finCx = r.left + r.width / 2 + 60;
+        finCy = r.top + window.scrollY - 20;
+        /* on démarre le tour du côté où le tracé arrive, pour que la jonction
+           ne fasse pas de saut */
+        const j = base(FIN_U0);
+        finAngle = Math.atan2((j.y - finCy) / FIN_RAYON, (j.x - finCx) / FIN_RAYON) * 180 / Math.PI;
     }
 
     /* la pente donne l'orientation de la pointe ; on la mesure sur la courbe
-       elle-même, pour qu'elle reste juste malgré la cloche et la finale */
+       elle-même, pour qu'elle reste juste malgré la cloche et le tour final */
     function pente(u) {
         const e = 0.0002;
         const avant = point(Math.max(0, u - e));
@@ -3834,8 +3743,7 @@ if (!document.body.classList.contains('photo-fusion')) construireTambour();
         svg.setAttribute('height', page);
         svg.setAttribute('viewBox', '0 0 ' + largeur + ' ' + page);
 
-        construireVent();
-        construireFinale();
+        placerCibles();
 
         /* le tracé échantillonné : la courbe est lisse, la ligne brisée ne se
            voit pas, et elle donne la longueur réelle du chemin */
