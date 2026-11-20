@@ -3551,7 +3551,11 @@ if (!document.body.classList.contains('photo-fusion')) construireTambour();
 
     const BOUCLES = 3;          // loopings sur la descente
     const ONDES = 2;            // ondulation lente : les allers-retours
-    const RESPIRATION = 0.55;   // écart de vitesse de ±55 % autour de celle du scroll
+    /* écart de vitesse autour de celle du scroll : le trait avance entre 22 %
+       et 178 % de la vitesse du défilement. Le signe compte — la sinusoïde est
+       retranchée, donc u démarre en dessous de s : le tracé commence au pas,
+       puis accélère jusqu'au premier looping. */
+    const RESPIRATION = 0.78;
     const FREQ_RESPIRATION = 2; // deux accélérations et deux ralentissements
     const PAS = 900;            // points d'échantillonnage du tracé
     /* le premier looping, celui qui passe au-dessus de « qui suis-je ? », est
@@ -3668,8 +3672,9 @@ if (!document.body.classList.contains('photo-fusion')) construireTambour();
         const s = course > 0 ? Math.min(1, Math.max(0, window.scrollY / course)) : 0;
 
         /* le scroll avance de façon inégale : le trait s'allonge plus ou moins
-           vite, sans jamais reculer (la dérivée reste positive) */
-        const u = Math.min(1, Math.max(0, s + (RESPIRATION / (2 * Math.PI * FREQ_RESPIRATION)) *
+           vite, sans jamais reculer (la dérivée reste positive). Retranchée,
+           la sinusoïde freine le tout début (u < s) et rattrape ensuite. */
+        const u = Math.min(1, Math.max(0, s - (RESPIRATION / (2 * Math.PI * FREQ_RESPIRATION)) *
             Math.sin(2 * Math.PI * FREQ_RESPIRATION * s)));
 
         /* longueur de trait jusqu'à u : les points sont à pas constant en u */
