@@ -763,6 +763,7 @@ body.hovering .cursor-spiral {
     padding-right: var(--logiciels-gap);
 }
 
+/* chaque pastille est un lien vers la page Wikipédia du logiciel */
 .logiciel {
     display: flex;
     flex-direction: column;
@@ -770,6 +771,24 @@ body.hovering .cursor-spiral {
     gap: 0.5rem;
     flex: 0 0 auto;
     user-select: none;
+    text-decoration: none;
+    color: inherit;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.logiciel:focus-visible {
+    outline: 2.5px solid var(--color-black);
+    outline-offset: 6px;
+    border-radius: 6px;
+}
+
+.logiciel:focus-visible img {
+    transform: scale(1.14);
+}
+
+.logiciel:focus-visible .logiciel-nom {
+    opacity: 1;
+    transform: translateY(0);
 }
 
 .logiciel img {

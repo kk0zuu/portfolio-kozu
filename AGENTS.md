@@ -517,6 +517,20 @@ Ajouter un **quatrième domaine** n'est pas une opération de données. Il faut 
 6. son favicon étoile dans `images/favicons/`.
 
 Autres points de vigilance de l'accueil :
+- **Bandeau des logiciels** (`.logiciels`, sur `index.html` *et* `contact.html`) : chaque pastille
+  est un `<a class="logiciel" href="https://fr.wikipedia.org/wiki/…" target="_blank"
+  rel="noopener noreferrer" draggable="false">` qui mène à la page **Wikipédia francophone** du
+  logiciel, avec la ligne technique qui va avec (16 pastilles dans le motif de base). Trois
+  pièges, tous tenus par `app.js` :
+  - le bandeau se **duplique** (remplissage de la largeur + deux clones) : les copies reçoivent
+    `tabindex="-1"` pour ne pas quadrupler les liens au clavier — seul le motif de départ reste
+    atteignable ;
+  - la **capture du pointeur** n'est posée qu'au premier vrai mouvement (`bouge > 4`). Posée dès
+    l'appui, elle détourne le clic vers la bande et **aucun lien ne s'ouvre** ;
+  - un relâchement après un glisser ne suit pas le lien (`bouge > 6` → `preventDefault`), sans
+    quoi chaque glissade sur la ligne ouvrirait une page Wikipédia.
+  Si l'on ajoute un logiciel, mettre l'`alt` **et** le `title` (`Nom — Wikipédia (nouvel onglet)`)
+  et vérifier que la page existe en français : une URL fausse casse le lien, pas la mise en page.
 - `initSasAccueil` intercepte les liens vers `index.html` depuis les autres pages pour rejouer
   le sas : ne pas ajouter de lien vers l'accueil dans un endroit où cette animation serait
   indésirable.

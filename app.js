@@ -386,6 +386,9 @@ if (cursor) {
     // La première moitié couvre la largeur de l'écran, la seconde assure la boucle
     function construire() {
         groupe.innerHTML = base;
+        /* nombre de pastilles du motif de départ : les répétitions qui suivent
+           ne doivent pas doubler les liens dans le parcours au clavier */
+        const nbMotif = groupe.querySelectorAll('.logiciel').length;
         piste.innerHTML = '';
         piste.appendChild(groupe);
 
@@ -401,6 +404,11 @@ if (cursor) {
             clone.setAttribute('aria-hidden', 'true');
             piste.appendChild(clone);
         }
+
+        /* une seule série de pastilles reste atteignable à la touche Tab */
+        Array.prototype.forEach.call(piste.querySelectorAll('.logiciel'), function (lien, i) {
+            lien.tabIndex = i < nbMotif ? 0 : -1;
+        });
 
         largeurGroupe = groupe.getBoundingClientRect().width;
         decalage = 0;
@@ -484,6 +492,9 @@ if (cursor) {
     let pointeur = null;
     let departX = 0;
     let departDecalage = 0;
+    let bouge = 0;      // course du pointeur depuis l'appui, pour distinguer un
+                        // clic d'un glisser (on ne suit pas un lien en glissant)
+    let capture = false;
 
     bande.addEventListener('pointerdown', function (e) {
         if (e.pointerType === 'mouse' && e.button !== 0) return;
@@ -493,12 +504,20 @@ if (cursor) {
         pointeur = e.pointerId;
         departX = e.clientX;
         departDecalage = decalage;
+        bouge = 0;
+        capture = false;
         bande.classList.add('glisse-active');
-        try { bande.setPointerCapture(pointeur); } catch (err) {}
+        /* pas de capture tout de suite : elle détourne le clic vers la bande et
+           la pastille ne s'ouvrirait jamais. Elle vient au premier mouvement. */
     });
 
     bande.addEventListener('pointermove', function (e) {
         if (!actif || e.pointerId !== pointeur) return;
+        bouge = Math.max(bouge, Math.abs(e.clientX - departX));
+        if (!capture && bouge > 4) {
+            capture = true;
+            try { bande.setPointerCapture(pointeur); } catch (err) {}
+        }
         decalage = departDecalage + (e.clientX - departX);
         ramener();
         appliquer();
@@ -509,7 +528,8 @@ if (cursor) {
         if (e && e.pointerId !== undefined && e.pointerId !== pointeur) return;
         actif = false;
         bande.classList.remove('glisse-active');
-        try { if (pointeur !== null) bande.releasePointerCapture(pointeur); } catch (err) {}
+        try { if (capture && pointeur !== null) bande.releasePointerCapture(pointeur); } catch (err) {}
+        capture = false;
         pointeur = null;
         // après un glisser, on rend la main au va-et-vient
         surScroll();
@@ -517,6 +537,16 @@ if (cursor) {
 
     bande.addEventListener('pointerup', relacher);
     bande.addEventListener('pointercancel', relacher);
+
+    /* après un glisser, le relâchement ne doit pas ouvrir le lien Wikipédia
+       de la pastille qui se trouve sous le doigt */
+    bande.addEventListener('click', function (e) {
+        const venaitDeGlisser = bouge > 6;
+        bouge = 0;      // remis à zéro : un clic au clavier n'a pas de pointerdown
+        if (!venaitDeGlisser) return;
+        e.preventDefault();
+        e.stopPropagation();
+    });
     window.addEventListener('blur', function () { relacher(); });
 
     window.addEventListener('load', function () {
