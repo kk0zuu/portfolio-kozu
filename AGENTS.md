@@ -533,10 +533,12 @@ Autres points de vigilance de l'accueil :
   d'une courbe paramétrique (constantes `BOUCLES`, `ONDES`, `RESPIRATION`) : ce n'est pas un
   objet qui se déplace mais un `<path>` dont on révèle la longueur par `stroke-dasharray` /
   `stroke-dashoffset` selon le scroll, avec un `<path>` en forme de pointe posé sur la fin du
-  trait par `transform` (translation + rotation sur la pente). Sa vitesse est modulée :
-  `RESPIRATION` **est retranchée** à `s`, donc le tracé démarre à 22 % de la vitesse du scroll,
-  accélère jusqu'au premier looping, puis alterne deux ralentissements et deux accélérations
-  (inverser le signe inverserait ce départ). Le tout vit dans un `<svg>` aux
+  trait par `transform` (translation + rotation sur la pente). Sa vitesse suit un **profil
+  intégré puis normalisé** (`construireProfil` / `avance`) : elle démarre à `VITESSE_DEPART`
+  (6 % de la vitesse du scroll — le scroll descend donc plus vite que le tracé), remonte à plein
+  régime sur `RAMPE` (12 % du scroll), puis alterne deux ralentissements et deux accélérations
+  (`RESPIRATION`). L'intégrale est normalisée pour que `u(1) = 1` : quel que soit le réglage, la
+  fin du tracé tombe pile en bas de page et rien ne recule. Le tout vit dans un `<svg>` aux
   mesures du document (`viewBox` = largeur × `scrollHeight`), en `z-index: -1` derrière le
   contenu ; sa longueur de course vaut `scrollHeight - innerHeight` et le trait démarre 64 px
   sous `#hero-title`. Couleurs et épaisseur : `.fleche-trait` / `.fleche-pointe` dans le

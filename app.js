@@ -3564,11 +3564,15 @@ if (!document.body.classList.contains('photo-fusion')) construireTambour();
     const BOUCLES = 3;          // loopings sur la descente
     const ONDES = 2;            // ondulation lente : les allers-retours
     /* écart de vitesse autour de celle du scroll : le trait avance entre 22 %
-       et 178 % de la vitesse du défilement. Le signe compte — la sinusoïde est
-       retranchée, donc u démarre en dessous de s : le tracé commence au pas,
-       puis accélère jusqu'au premier looping. */
+       et 178 % de la vitesse du défilement. */
     const RESPIRATION = 0.78;
     const FREQ_RESPIRATION = 2; // deux accélérations et deux ralentissements
+    /* au tout début le tracé est presque immobile : le scroll descend plus vite
+       que lui, puis il rattrape sur la première tranche de la page. VITESSE_DEPART
+       est une fraction de la vitesse du scroll (0,06 = 6 %). */
+    const VITESSE_DEPART = 0.06;
+    const RAMPE = 0.12;         // part du scroll où la vitesse remonte à la normale
+    const PROFIL = 400;         // précision du profil de vitesse
     const PAS = 900;            // points d'échantillonnage du tracé
     /* le premier looping, celui qui passe au-dessus de « qui suis-je ? », est
        élargi et posé un peu plus bas que les autres : une cloche centrée sur
@@ -3615,6 +3619,35 @@ if (!document.body.classList.contains('photo-fusion')) construireTambour();
     let anglePrec = null;
     let finale = [];    // la fin du tracé, échantillonnée
     let annonce = false; // le trait est-il arrivé derrière le titre ?
+    let profil = [];    // avancement du tracé en fonction du scroll, normalisé
+
+    /* Profil de vitesse : on intègre la vitesse voulue le long du scroll, puis
+       on normalise pour que la fin du tracé tombe exactement en bas de page.
+       u(0) = 0 et u(1) = 1 quel que soit le réglage, et u ne recule jamais. */
+    function construireProfil() {
+        const vitesse = function (s) {
+            let w = s / RAMPE;
+            if (w > 1) w = 1;
+            const lisse = w * w * (3 - 2 * w);
+            const souffle = 1 - RESPIRATION * Math.cos(2 * Math.PI * FREQ_RESPIRATION * s);
+            return VITESSE_DEPART + (souffle - VITESSE_DEPART) * lisse;
+        };
+        profil = [0];
+        const pas = 1 / PROFIL;
+        let total = 0;
+        for (let i = 1; i <= PROFIL; i++) {
+            total += (vitesse((i - 1) * pas) + vitesse(i * pas)) / 2 * pas;
+            profil.push(total);
+        }
+        for (let i = 0; i <= PROFIL; i++) profil[i] /= total;
+    }
+
+    /* part du tracé atteinte pour un scroll donné */
+    function avance(s) {
+        const t = s * PROFIL;
+        const i = Math.min(PROFIL - 1, Math.floor(t));
+        return profil[i] + (profil[i + 1] - profil[i]) * (t - i);
+    }
 
     /* la cloche du premier looping : 1 au centre, 0 de part et d'autre */
     function bosse(u) {
@@ -3775,10 +3808,8 @@ if (!document.body.classList.contains('photo-fusion')) construireTambour();
         const s = course > 0 ? Math.min(1, Math.max(0, window.scrollY / course)) : 0;
 
         /* le scroll avance de façon inégale : le trait s'allonge plus ou moins
-           vite, sans jamais reculer (la dérivée reste positive). Retranchée,
-           la sinusoïde freine le tout début (u < s) et rattrape ensuite. */
-        const u = Math.min(1, Math.max(0, s - (RESPIRATION / (2 * Math.PI * FREQ_RESPIRATION)) *
-            Math.sin(2 * Math.PI * FREQ_RESPIRATION * s)));
+           vite, sans jamais reculer (le profil est croissant) */
+        const u = Math.min(1, Math.max(0, avance(s)));
 
         /* longueur de trait jusqu'à u : les points sont à pas constant en u */
         const i = Math.min(PAS - 1, Math.floor(u * PAS));
@@ -3814,6 +3845,7 @@ if (!document.body.classList.contains('photo-fusion')) construireTambour();
         requestAnimationFrame(function () { attente = false; dessiner(); });
     }
 
+    construireProfil();
     mesurer();
     dessiner();
 
