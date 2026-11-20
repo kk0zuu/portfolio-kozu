@@ -3681,6 +3681,7 @@ if (!document.body.classList.contains('photo-fusion')) construireTambour();
     /* forme cible du tour final, recalée à chaque mesure de la page */
     let finCx = 0, finCy = 0, finAngle = 0;
     let finBx = 0, finBy = 0;   // l'arrivée : derrière le titre
+    let hauteurPage = 0;        // hauteur du document, sans le débord du SVG
     let texteY = 0;             // le centre du repli dans la présentation
     let texteGap = 0;           // l'interligne à viser
     let texteX0 = 0, texteX1 = 0;   // la colonne de la présentation
@@ -3822,9 +3823,12 @@ if (!document.body.classList.contains('photo-fusion')) construireTambour();
         const r = fin.getBoundingClientRect();
         finCx = r.left + r.width / 2 + 60;
         finCy = r.top + window.scrollY - 20;
-        /* le point d'arrivée : dans le cadre du titre, donc invisible */
-        finBx = r.left + r.width - 12;
-        finBy = r.top + window.scrollY + r.height / 2;
+        /* la sortie : le tracé quitte la page par le bas, au pied du document.
+           On vise le bord inférieur exact (et pas plus bas) pour ne pas
+           agrandir la zone de défilement : le SVG laisse déborder ses traits,
+           et un point posé sous la page ajouterait des pixels de scroll. */
+        finBx = r.left + r.width / 2;
+        finBy = hauteurPage || document.documentElement.scrollHeight;
         /* on démarre le tour du côté où le tracé arrive, pour que la jonction
            ne fasse pas de saut */
         const j = base(FIN_U0);
@@ -3862,7 +3866,14 @@ if (!document.body.classList.contains('photo-fusion')) construireTambour();
     function mesurer() {
         const vh = window.innerHeight;
         const t = titre.getBoundingClientRect();
+        /* la hauteur se lit **sans** le SVG : la pointe sortant par le bas
+           déborderait de quelques pixels et la page grandirait à chaque
+           mesure, alors qu'on veut une hauteur stable */
+        const affichage = svg.style.display;
+        svg.style.display = 'none';
         const page = document.documentElement.scrollHeight;
+        svg.style.display = affichage;
+        hauteurPage = page;
         largeur = document.documentElement.clientWidth;
         haut = t.bottom + window.scrollY + 64;
         course = Math.max(0, page - vh);

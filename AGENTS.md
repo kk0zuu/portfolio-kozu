@@ -603,10 +603,12 @@ Autres points de vigilance de l'accueil :
     `FIN_TOUR` (−320°) donne le sens et l'amplitude ; le tour démarre à l'angle où la courbe
     arrive (`finAngle`, calculé dans `placerCibles`), pour que la jonction ne fasse pas de saut.
     Sur les derniers `FIN_PLONGEE` (60 %) de la fin, la cible quitte le cercle et **glisse
-    jusqu'au cadre du titre** (`finBx` / `finBy` : 12 px à l'intérieur du bord droit, à
-    mi-hauteur) : la pointe entre donc bien **dans « où on va ? »** et disparaît derrière lui.
-    Il ne faut pas la faire finir au milieu du cercle (ce qu'on voyait avant) : c'est ce
-    dernier glissement qui la pose derrière le titre.
+    jusqu'au pied du document** (`finBx` = centre de `.titre-centre`, `finBy` = hauteur de la
+    page) : le tracé descend entre les bulles et **sort par le bas de la page**. Ne pas le
+    faire finir dans le cadre du titre (ce qu'on voyait avant) : Ian veut qu'il quitte la page.
+    **Piège** : `finBy` s'appuie sur `hauteurPage`, la hauteur mesurée dans `mesurer()` **SVG
+    masqué**. Lue directement, `scrollHeight` inclut les quelques pixels de pointe qui dépassent,
+    et la page grandit à chaque mesure (vu : +18 px par passe).
 - **Passage dans la présentation** (le paragraphe « J'aime mélanger… », à droite du `f`) : le
   tracé y faisait un repli qui barrait une ligne de texte. Il est maintenant **aplati** autour de
   l'interligne par `TEXTE_C` / `TEXTE_LARGEUR` / `TEXTE_PLAT` (0,38) : son parcours ne change pas,
