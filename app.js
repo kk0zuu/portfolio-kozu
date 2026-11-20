@@ -3329,7 +3329,9 @@ if (!document.body.classList.contains('photo-fusion')) construireTambour();
 
 // --- ÉTOILES DU CHOIX DES DOMAINES : deux rideaux le long des bords ---
 // À gauche les étoiles descendent, à droite elles montent ; le centre du cadre
-// reste vide. Tant qu'on descend, c'est le scroll qui les entraîne et qui les
+// reste vide. Le champ commence au haut de « qui suis-je ? » : les étoiles
+// pointent déjà pendant cette section et n'arrivent pas d'un coup sur le choix
+// des domaines. Tant qu'on descend, c'est le scroll qui les entraîne et qui les
 // allume en fondu. Une fois la page arrivée en bas, le scroll ne peut plus
 // rien : elles continuent alors leur course au temps qui passe.
 (function initEtoilesDomaines() {
@@ -3337,17 +3339,20 @@ if (!document.body.classList.contains('photo-fusion')) construireTambour();
     if (!section) return;
     if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
 
+    /* le champ ne peut pas rester dans la section : elle rogne ses débordements
+       et il doit déborder vers le haut, sur « qui suis-je ? » */
+    const intro = document.querySelector('.intro-section') || section;
+
     const PAR_COTE = 14;       // étoiles par bord, à pleine largeur
     const DEBORD = 90;         // px hors du cadre avant le rebouclage
     const ENTRAINE = 0.5;      // px parcourus par px de scroll descendu
     const VITESSE = 26;        // px/s une fois la page arrivée en bas
-    const PART_FONDU = 0.32;   // part de la course du scroll où le fondu s'achève
     const ENTREE = 950;        // ms : le fondu d'arrivée, quand on revient sur la page
 
     const champ = document.createElement('div');
     champ.className = 'etoiles-domaines';
     champ.setAttribute('aria-hidden', 'true');
-    section.insertBefore(champ, section.firstChild);
+    document.body.appendChild(champ);
 
     let naissance = 0;      // instant où les étoiles entrent à l'écran
     const etoiles = [];
@@ -3362,9 +3367,21 @@ if (!document.body.classList.contains('photo-fusion')) construireTambour();
 
     function entre(a, b) { return a + Math.random() * (b - a); }
 
+    /* le champ est calé sur le document : du haut de « qui suis-je ? » au bas
+       du choix des domaines. La position est refaite quand la page se stabilise
+       (polices, images), pour que le changement de hauteur des sections ne
+       déplace pas la couture des étoiles. */
+    function placer() {
+        const haut = intro.getBoundingClientRect().top + window.scrollY;
+        const bas = section.getBoundingClientRect().bottom + window.scrollY;
+        champ.style.top = Math.round(haut) + 'px';
+        champ.style.height = Math.round(Math.max(0, bas - haut)) + 'px';
+    }
+
     function semer() {
-        largeur = section.clientWidth;
-        hauteur = section.offsetHeight;
+        placer();
+        largeur = champ.clientWidth;
+        hauteur = champ.clientHeight;
         const bande = Math.max(110, Math.min(300, largeur * 0.21));
         const nombre = Math.round(PAR_COTE * (largeur < 760 ? 0.65 : 1));
 
@@ -3401,11 +3418,17 @@ if (!document.body.classList.contains('photo-fusion')) construireTambour();
     }
 
     function dessiner() {
-        const r = section.getBoundingClientRect();
-        const haut = r.top + window.scrollY;
-        const debut = haut - window.innerHeight * 0.7;
+        const r = champ.getBoundingClientRect();               // les étoiles
+        const choix = section.getBoundingClientRect();         // le récit
+        hauteur = r.height;
+
+        /* le fondu part dès que les étoiles pointent par le bas de l'écran et
+           s'achève quand les bulles prennent leurs places : pendant
+           « qui suis-je ? » elles sont déjà là, encore voilées */
+        const debut = r.top + window.scrollY - window.innerHeight * 0.85;
+        const fin = choix.top + window.scrollY - window.innerHeight * 0.25;
         finPage = Math.max(0, document.documentElement.scrollHeight - window.innerHeight);
-        const fenetre = Math.max(1, finPage - debut);
+        const fenetre = Math.max(1, fin - debut);
         proche = r.bottom > -320 && r.top < window.innerHeight + 320;
 
         /* le fondu ne commence qu'au moment où elles entrent vraiment à
@@ -3419,7 +3442,7 @@ if (!document.body.classList.contains('photo-fusion')) construireTambour();
            avant le bas : le scroll ne peut alors plus rien). Les étoiles
            avancent donc au temps qui passe. La course se mesure à l'horloge et
            non à la frame, elle reste juste d'un écran à l'autre. */
-        if (r.top <= 1 || window.scrollY >= finPage - 2) {
+        if (choix.top <= 1 || window.scrollY >= finPage - 2) {
             if (!tBas) tBas = maintenant;
             derive += VITESSE * (maintenant - tBas) / 1000;
             tBas = maintenant;
@@ -3433,10 +3456,10 @@ if (!document.body.classList.contains('photo-fusion')) construireTambour();
         if (p < 0) p = 0;
         if (p > 1) p = 1;
 
-        /* le fondu : elles s'allument déjà en mouvement */
-        let f = p / PART_FONDU;
-        if (f > 1) f = 1;
-        let fondu = f * f * (3 - 2 * f);
+        /* le fondu court sur toute l'approche, lissé pour que l'allumage
+           reste progressif : c'est lui qui les fait poindre dès
+           « qui suis-je ? » */
+        let fondu = p * p * (3 - 2 * p);
 
         /* et le fondu d'arrivée : en revenant sur la page, on est déjà tout en
            bas du scroll, donc sans lui les étoiles seraient là d'un coup. Il
@@ -3494,7 +3517,9 @@ if (!document.body.classList.contains('photo-fusion')) construireTambour();
     }
 
     window.addEventListener('scroll', rejoindre, { passive: true });
-    window.addEventListener('load', rejoindre);
+    /* au chargement complet, les sections ont leur hauteur définitive : le
+       champ est reposé avant de redessiner */
+    window.addEventListener('load', function () { placer(); rejoindre(); });
     window.addEventListener('hashchange', rejoindre);
     window.addEventListener('pageshow', rejoindre);
 

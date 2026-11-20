@@ -512,9 +512,15 @@ Autres points de vigilance de l'accueil :
 - `initSasAccueil` intercepte les liens vers `index.html` depuis les autres pages pour rejouer
   le sas : ne pas ajouter de lien vers l'accueil dans un endroit où cette animation serait
   indésirable.
-- `initEtoilesDomaines` déclenche la dérive des étoiles quand `#choix-domaines` touche le bas
-  de page (`finPage - 2`) ou dès l'arrivée par `index.html#choix-domaines`. Toute modification
-  de la hauteur de page change ce déclenchement : vérifier que les étoiles partent toujours.
+- `initEtoilesDomaines` pose son champ (`.etoiles-domaines`) **hors** de `#choix-domaines`,
+  directement dans `body`, et le cale en JS du haut de `.intro-section` au bas de
+  `#choix-domaines` : les étoiles pointent déjà pendant « qui suis-je ? ». Le champ est en
+  `z-index: -1` (derrière le contenu, comme `.fond-image`) et son bord haut est masqué en
+  dégradé pour ne pas couper les étoiles net. Le fondu d'allumage court de l'arrivée du champ
+  par le bas de l'écran jusqu'à l'arrivée des bulles ; la course libre (au temps qui passe)
+  part quand `#choix-domaines` touche le haut de l'écran ou quand la page est au bas. Toute
+  modification de la hauteur de page change ce déclenchement : vérifier que les étoiles
+  partent toujours.
 
 ---
 

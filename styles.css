@@ -5274,11 +5274,20 @@ html.anim .contact-liens > a {
 /* d'elles-mêmes, sans scroll.                            */
 /* ==================================================== */
 .etoiles-domaines {
+    /* le champ déborde vers le haut : posé sur le document, du haut de
+       « qui suis-je ? » au bas du choix des domaines (top et height sont
+       calculés par app.js), et glissé derrière le contenu des deux sections */
     position: absolute;
-    inset: 0;
-    z-index: 0;
+    left: 0;
+    right: 0;
+    top: 0;
+    height: 0;
+    z-index: -1;
     overflow: hidden;
     pointer-events: none;
+    /* les étoiles s'effacent au bord haut du champ au lieu d'y être coupées */
+    -webkit-mask-image: linear-gradient(to bottom, transparent 0, #000 10%);
+    mask-image: linear-gradient(to bottom, transparent 0, #000 10%);
     /* le violet du badge « PORTFOLIO » et du titre « OÙ ON VA ? » */
     --etoiles-teinte: #C224EB;
 }
