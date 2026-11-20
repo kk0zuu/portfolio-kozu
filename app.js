@@ -3538,15 +3538,12 @@ if (!document.body.classList.contains('photo-fusion')) construireTambour();
     });
 })();
 
-// --- FLÈCHE GUIDE : une petite flèche bleue accompagne la visite ---
-// Elle démarre sous le titre du site, pointe vers le bas, puis descend avec le
-// scroll en décrivant une courbe organique : trois loopings, des allers-retours
-// et des passages à l'horizontale. Sa course suit le défilement au pixel près
-// (elle reste donc toujours à l'écran), mais le chemin qu'elle parcourt n'est
-// pas régulier : une boucle avale beaucoup de longueur en peu de scroll, une
-// ligne droite très peu, d'où les accélérations et les ralentissements. Un
-// léger décalage du paramètre ajoute une respiration lente par-dessus.
-// Elle est posée derrière le contenu (z-index: -1), comme la photo de fond.
+// --- FLÈCHE GUIDE : un trait bleu qui s'étire au fil de la page ---
+// Le tracé est une courbe paramétrique organique : trois loopings, des
+// allers-retours, des passages à l'horizontale. Le scroll ne déplace pas une
+// flèche : il fait grandir le trait le long de ce chemin, et la pointe reste
+// posée au bout, orientée par la pente. Le tracé vit dans un SVG aux mesures
+// du document (donc en coordonnées de page) posé derrière tout le contenu.
 (function initFlecheGuide() {
     const titre = document.getElementById('hero-title');
     if (!titre) return;
@@ -3556,16 +3553,25 @@ if (!document.body.classList.contains('photo-fusion')) construireTambour();
     const ONDES = 2;            // ondulation lente : les allers-retours
     const RESPIRATION = 0.55;   // écart de vitesse de ±55 % autour de celle du scroll
     const FREQ_RESPIRATION = 2; // deux accélérations et deux ralentissements
+    const PAS = 900;            // points d'échantillonnage du tracé
+    const NS = 'http://www.w3.org/2000/svg';
 
-    const fleche = document.createElement('div');
-    fleche.className = 'fleche-guide';
-    fleche.setAttribute('aria-hidden', 'true');
-    fleche.innerHTML =
-        '<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">' +
-        '<path d="M9.2 1.5 H14.8 V13 H20.4 L12 22.6 L3.6 13 H9.2 Z" ' +
-        'fill="#1232B4" stroke="#000000" stroke-width="1.6" stroke-linejoin="miter"/>' +
-        '</svg>';
-    document.body.appendChild(fleche);
+    const svg = document.createElementNS(NS, 'svg');
+    svg.setAttribute('class', 'fleche-guide');
+    svg.setAttribute('aria-hidden', 'true');
+
+    const trait = document.createElementNS(NS, 'path');
+    trait.setAttribute('class', 'fleche-trait');
+
+    const pointe = document.createElementNS(NS, 'path');
+    pointe.setAttribute('class', 'fleche-pointe');
+    /* la pointe du dessin est à l'origine : la rotation la fait pivoter sur
+       elle-même, et la translation la pose exactement au bout du trait */
+    pointe.setAttribute('d', 'M0 0 L-7.5 -17 L0 -12.4 L7.5 -17 Z');
+
+    svg.appendChild(trait);
+    svg.appendChild(pointe);
+    document.body.appendChild(svg);
 
     let largeur = 0;
     let haut = 0;       // y du départ, sous le titre
@@ -3574,14 +3580,36 @@ if (!document.body.classList.contains('photo-fusion')) construireTambour();
     let Ax = 0;         // amplitude horizontale
     let By = 0;         // amplitude verticale des loopings
     let By2 = 0;        // amplitude de l'ondulation lente
+    let cumul = [];     // longueur de trait accumulée jusqu'à chaque point
+    let total = 0;
     let anglePrec = null;
+
+    function point(u) {
+        const a = 2 * Math.PI * BOUCLES * u;
+        const b = 2 * Math.PI * ONDES * u;
+        return {
+            x: cx + Ax * (1 - Math.cos(a)) - Ax * (1 - Math.cos(b)),
+            y: haut + course * u + By * Math.sin(a) + By2 * Math.sin(b)
+        };
+    }
+
+    /* dérivées : la pente donne l'orientation de la pointe */
+    function pente(u) {
+        const a = 2 * Math.PI * BOUCLES * u;
+        const b = 2 * Math.PI * ONDES * u;
+        return {
+            x: Ax * Math.sin(a) * 2 * Math.PI * BOUCLES - Ax * Math.sin(b) * 2 * Math.PI * ONDES,
+            y: course + By * Math.cos(a) * 2 * Math.PI * BOUCLES + By2 * Math.cos(b) * 2 * Math.PI * ONDES
+        };
+    }
 
     function mesurer() {
         const vh = window.innerHeight;
         const t = titre.getBoundingClientRect();
+        const page = document.documentElement.scrollHeight;
         largeur = document.documentElement.clientWidth;
         haut = t.bottom + window.scrollY + 64;
-        course = Math.max(0, document.documentElement.scrollHeight - vh);
+        course = Math.max(0, page - vh);
         cx = largeur / 2;
         /* la courbe reste dans une bande raisonnable, proportionnelle à l'écran */
         const portee = Math.min(largeur * 0.33, 520);
@@ -3589,33 +3617,51 @@ if (!document.body.classList.contains('photo-fusion')) construireTambour();
         By = Math.min(170, vh * 0.19);
         By2 = By * 0.42;
         anglePrec = null;
+
         /* page plus courte que l'écran : rien à accompagner */
-        fleche.style.display = course < 120 ? 'none' : '';
+        if (course < 120) { svg.style.display = 'none'; return; }
+        svg.style.display = '';
+
+        svg.setAttribute('width', largeur);
+        svg.setAttribute('height', page);
+        svg.setAttribute('viewBox', '0 0 ' + largeur + ' ' + page);
+
+        /* le tracé échantillonné : la courbe est lisse, la ligne brisée ne se
+           voit pas, et elle donne la longueur réelle du chemin */
+        let d = '';
+        cumul = [0];
+        let prec = point(0);
+        d = 'M' + prec.x.toFixed(1) + ' ' + prec.y.toFixed(1);
+        for (let i = 1; i <= PAS; i++) {
+            const p = point(i / PAS);
+            d += 'L' + p.x.toFixed(1) + ' ' + p.y.toFixed(1);
+            cumul.push(cumul[i - 1] + Math.hypot(p.x - prec.x, p.y - prec.y));
+            prec = p;
+        }
+        total = cumul[PAS];
+        trait.setAttribute('d', d);
+        /* aucun trait visible au départ : seul l'arrondi de la pointe reste */
+        trait.setAttribute('stroke-dasharray', total.toFixed(1));
+        trait.setAttribute('stroke-dashoffset', total.toFixed(1));
     }
 
     function dessiner() {
-        const max = course;
-        const s = max > 0 ? Math.min(1, Math.max(0, window.scrollY / max)) : 0;
+        if (!total) return;
+        const s = course > 0 ? Math.min(1, Math.max(0, window.scrollY / course)) : 0;
 
-        /* le scroll avance de façon inégale : la flèche ralentit puis rattrape,
-           sans jamais reculer (la dérivée reste positive) */
+        /* le scroll avance de façon inégale : le trait s'allonge plus ou moins
+           vite, sans jamais reculer (la dérivée reste positive) */
         const u = Math.min(1, Math.max(0, s + (RESPIRATION / (2 * Math.PI * FREQ_RESPIRATION)) *
             Math.sin(2 * Math.PI * FREQ_RESPIRATION * s)));
 
-        const a = 2 * Math.PI * BOUCLES * u;
-        const b = 2 * Math.PI * ONDES * u;
+        /* longueur de trait jusqu'à u : les points sont à pas constant en u */
+        const i = Math.min(PAS - 1, Math.floor(u * PAS));
+        const long = cumul[i] + (cumul[i + 1] - cumul[i]) * (u * PAS - i);
+        trait.setAttribute('stroke-dashoffset', (total - long).toFixed(1));
 
-        const x = cx + Ax * (1 - Math.cos(a)) - Ax * (1 - Math.cos(b));
-        const y = haut + course * u + By * Math.sin(a) + By2 * Math.sin(b);
-
-        /* pente de la courbe : la pointe de la flèche suit le chemin, et repart
-           donc vers le bas à chaque boucle refermée */
-        const dx = Ax * Math.sin(a) * 2 * Math.PI * BOUCLES -
-                   Ax * Math.sin(b) * 2 * Math.PI * ONDES;
-        const dy = course +
-                   By * Math.cos(a) * 2 * Math.PI * BOUCLES +
-                   By2 * Math.cos(b) * 2 * Math.PI * ONDES;
-        let angle = Math.atan2(dy, dx) * 180 / Math.PI - 90;   // 0 = pointe vers le bas
+        const p = point(u);
+        const v = pente(u);
+        let angle = Math.atan2(v.y, v.x) * 180 / Math.PI - 90;   // 0 = pointe vers le bas
         if (anglePrec !== null) {
             /* on tourne toujours du côté le plus court */
             while (angle - anglePrec > 180) angle -= 360;
@@ -3623,8 +3669,8 @@ if (!document.body.classList.contains('photo-fusion')) construireTambour();
         }
         anglePrec = angle;
 
-        fleche.style.transform = 'translate3d(' + x.toFixed(1) + 'px,' + y.toFixed(1) + 'px,0) rotate(' +
-            angle.toFixed(2) + 'deg)';
+        pointe.setAttribute('transform', 'translate(' + p.x.toFixed(1) + ' ' + p.y.toFixed(1) +
+            ') rotate(' + angle.toFixed(2) + ')');
     }
 
     /* une seule mise à jour par image, même si le scroll crache des événements */

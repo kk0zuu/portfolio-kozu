@@ -15,22 +15,27 @@
        plus d'éclair de la barre à sa place définitive au chargement */
     html.barre-attente .top-bar { opacity: 0; }
 
-    /* la flèche guide : petite flèche bleue qui accompagne la visite.
-       z-index négatif : elle passe derrière tout le contenu, comme la photo
-       de fond de l'accueil. Sa position vient du script (app.js). */
+    /* la flèche guide : un trait bleu (le bleu du fond de Contact) qui s'étire
+       au fil du scroll, la pointe posée au bout. z-index négatif : elle passe
+       derrière tout le contenu, comme la photo de fond de l'accueil. Le tracé
+       et sa longueur sont calculés par app.js. */
     .fleche-guide {
         position: absolute;
         top: 0;
         left: 0;
-        width: 26px;
-        height: 26px;
-        /* elle tourne autour de son centre, qui est le point du chemin */
-        margin: -13px 0 0 -13px;
         z-index: -1;
         pointer-events: none;
-        will-change: transform;
+        overflow: visible;
     }
-    .fleche-guide svg { display: block; width: 100%; height: 100%; }
+    /* le trait lui-même : pas de contour, seulement le bleu du site */
+    .fleche-trait {
+        fill: none;
+        stroke: #1232B4;
+        stroke-width: 3;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+    }
+    .fleche-pointe { fill: #1232B4; }
     </style>
     <script>
     (function () {

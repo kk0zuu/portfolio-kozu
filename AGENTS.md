@@ -529,13 +529,17 @@ Autres points de vigilance de l'accueil :
   part quand `#choix-domaines` touche le haut de l'écran ou quand la page est au bas. Toute
   modification de la hauteur de page change ce déclenchement : vérifier que les étoiles
   partent toujours.
-- `initFlecheGuide` (dans `app.js`) ajoute une petite flèche bleue `.fleche-guide` sur
-  l'accueil : elle démarre 64 px sous `#hero-title`, pointe vers le bas, puis suit le scroll le
-  long d'une courbe paramétrique (constantes `BOUCLES`, `ONDES`, `RESPIRATION`). Sa course vaut
-  `scrollHeight - innerHeight`, donc son ordonnée à l'écran ne bouge presque pas : elle
-  accompagne la visite au lieu de la dépasser. Elle est en `z-index: -1` (derrière le contenu)
-  et son style vit dans le `<style>` de `index.html`. Si l'on change la hauteur du titre ou de
-  la page, vérifier qu'elle part toujours sous le titre et reste dans l'écran.
+- `initFlecheGuide` (dans `app.js`) ajoute sur l'accueil un **trait bleu qui s'étire** le long
+  d'une courbe paramétrique (constantes `BOUCLES`, `ONDES`, `RESPIRATION`) : ce n'est pas un
+  objet qui se déplace mais un `<path>` dont on révèle la longueur par `stroke-dasharray` /
+  `stroke-dashoffset` selon le scroll, avec un `<path>` en forme de pointe posé sur la fin du
+  trait par `transform` (translation + rotation sur la pente). Le tout vit dans un `<svg>` aux
+  mesures du document (`viewBox` = largeur × `scrollHeight`), en `z-index: -1` derrière le
+  contenu ; sa longueur de course vaut `scrollHeight - innerHeight` et le trait démarre 64 px
+  sous `#hero-title`. Couleurs et épaisseur : `.fleche-trait` / `.fleche-pointe` dans le
+  `<style>` de `index.html`, bleu `#1232B4` (le fond de Contact), **sans contour**. Le tracé est
+  ré-échantillonné (`PAS` points) à chaque `resize` et au `load`, car il dépend de la hauteur
+  réelle de la page.
 
 ---
 
