@@ -287,6 +287,14 @@
             tl.to([zone].concat(note ? [note] : []),
                 { opacity: 0, scale: 1.02, filter: 'blur(8px)', duration: 0.5, ease: 'power2.in' }, 0);
 
+            /* le champ d'étoiles est posé sur le document, en dehors de la
+               sélection : il faut l'éteindre lui aussi, sinon il resterait seul
+               à l'écran une fois les bulles parties */
+            var etoiles = document.querySelector('.etoiles-domaines');
+            if (etoiles) {
+                tl.to(etoiles, { opacity: 0, duration: 0.5, ease: 'power2.in' }, 0);
+            }
+
             /* la barre se vide, redevient pastille et remonte hors champ */
             tl.to(cibles, { opacity: 0, duration: 0.26, ease: 'power2.in' }, 0.04)
               .to(pastille, { opacity: 0, duration: 0.2, ease: 'power2.in' }, 0.04)
@@ -306,6 +314,8 @@
             gsap.set(zone, { clearProps: 'opacity,transform,filter' });
             var noteRetour = document.querySelector('.domain-note');
             if (noteRetour) gsap.set(noteRetour, { clearProps: 'opacity,transform,filter' });
+            var etoilesRetour = document.querySelector('.etoiles-domaines');
+            if (etoilesRetour) gsap.set(etoilesRetour, { clearProps: 'opacity' });
             var sasNum = document.getElementById('sasNum');
             if (sasNum) {
                 sasNum.classList.remove('on');
