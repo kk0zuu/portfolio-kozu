@@ -3373,11 +3373,14 @@ if (!document.body.classList.contains('photo-fusion')) construireTambour();
             for (let i = 0; i < nombre; i++) {
                 const el = document.createElement('i');
                 el.className = 'etoile-domaine';
-                el.style.setProperty('--taille', entre(7, 20).toFixed(1) + 'px');
+                const taille = entre(15, 40);
+                el.style.setProperty('--taille', taille.toFixed(1) + 'px');
 
                 /* plus on s'écarte du bord, plus l'étoile est rare : les bords
-                   restent fournis, le centre du cadre reste vide */
-                const ecart = Math.pow(Math.random(), 1.6) * bande;
+                   restent fournis, le centre du cadre reste vide. Elle est
+                   écartée du bord de la moitié de sa taille pour ne jamais
+                   être coupée par le cadre. */
+                const ecart = Math.max(taille / 2, Math.pow(Math.random(), 1.6) * bande);
 
                 etoiles.push({
                     el: el,
