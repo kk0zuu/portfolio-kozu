@@ -567,7 +567,11 @@ Autres points de vigilance de l'accueil :
     bout de `FIN_RAMPE` (30 % de la fin) et y reste, si bien que le cercle est parcouru en entier.
     `FIN_TOUR` (−320°) donne le sens et l'amplitude ; le tour démarre à l'angle où la courbe
     arrive (`finAngle`, calculé dans `placerCibles`), pour que la jonction ne fasse pas de saut.
-    Le tracé finit donc **sous le titre, pointe visible** (il ne se cache plus derrière).
+    Sur les derniers `FIN_PLONGEE` (60 %) de la fin, la cible quitte le cercle et **glisse
+    jusqu'au cadre du titre** (`finBx` / `finBy` : 12 px à l'intérieur du bord droit, à
+    mi-hauteur) : la pointe entre donc bien **dans « où on va ? »** et disparaît derrière lui.
+    Il ne faut pas la faire finir au milieu du cercle (ce qu'on voyait avant) : c'est ce
+    dernier glissement qui la pose derrière le titre.
 - La pente de la pointe est mesurée par différence finie sur `point()`, pour rester juste malgré
   la boucle et le tour final.
 - Quand la pointe arrive (`u ≥ 0,985`), `initFlecheGuide` émet l'événement **`fleche-guide:arrivee`**.

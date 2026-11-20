@@ -3595,6 +3595,8 @@ if (!document.body.classList.contains('photo-fusion')) construireTambour();
     const FIN_RAYON = 190;      // rayon du tour final
     const FIN_RAMPE = 0.3;      // part de la fin où le tracé rejoint le tour
     const FIN_TOUR = -320;      // balayage du tour (négatif : sens horaire)
+    const FIN_PLONGEE = 0.6;    // part de la fin à partir de laquelle le tracé
+                                // quitte le tour et entre derrière le titre
     const NS = 'http://www.w3.org/2000/svg';
 
     const svg = document.createElementNS(NS, 'svg');
@@ -3627,6 +3629,7 @@ if (!document.body.classList.contains('photo-fusion')) construireTambour();
     let annonce = false; // le trait est-il arrivé au bout de son tour ?
     /* forme cible du tour final, recalée à chaque mesure de la page */
     let finCx = 0, finCy = 0, finAngle = 0;
+    let finBx = 0, finBy = 0;   // l'arrivée : derrière le titre
     let profil = [];    // avancement du tracé en fonction du scroll, normalisé
 
     /* Profil de vitesse : on intègre la vitesse voulue le long du scroll, puis
@@ -3695,8 +3698,15 @@ if (!document.body.classList.contains('photo-fusion')) construireTambour();
                jonction reste lisse puisque le poids repart de zéro */
             const w = lisser(t / FIN_RAMPE);
             const a = (finAngle + t * FIN_TOUR) * Math.PI / 180;
-            p.x += (finCx + Math.cos(a) * FIN_RAYON - p.x) * w;
-            p.y += (finCy + Math.sin(a) * FIN_RAYON - p.y) * w;
+            let cibleX = finCx + Math.cos(a) * FIN_RAYON;
+            let cibleY = finCy + Math.sin(a) * FIN_RAYON;
+            /* sur la fin, la cible quitte le cercle et glisse jusqu'au titre :
+               la pointe y entre et disparaît derrière le cadre */
+            const d = lisser((t - FIN_PLONGEE) / (1 - FIN_PLONGEE));
+            cibleX += (finBx - cibleX) * d;
+            cibleY += (finBy - cibleY) * d;
+            p.x += (cibleX - p.x) * w;
+            p.y += (cibleY - p.y) * w;
         }
         return p;
     }
@@ -3708,6 +3718,9 @@ if (!document.body.classList.contains('photo-fusion')) construireTambour();
         const r = fin.getBoundingClientRect();
         finCx = r.left + r.width / 2 + 60;
         finCy = r.top + window.scrollY - 20;
+        /* le point d'arrivée : dans le cadre du titre, donc invisible */
+        finBx = r.left + r.width - 12;
+        finBy = r.top + window.scrollY + r.height / 2;
         /* on démarre le tour du côté où le tracé arrive, pour que la jonction
            ne fasse pas de saut */
         const j = base(FIN_U0);
