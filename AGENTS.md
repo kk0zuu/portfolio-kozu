@@ -537,8 +537,16 @@ Autres points de vigilance de l'accueil :
   intégré puis normalisé** (`construireProfil` / `avance`) : elle démarre à `VITESSE_DEPART`
   (6 % de la vitesse du scroll — le scroll descend donc plus vite que le tracé), remonte à plein
   régime sur `RAMPE` (12 % du scroll), puis alterne deux ralentissements et deux accélérations
-  (`RESPIRATION`). L'intégrale est normalisée pour que `u(1) = 1` : quel que soit le réglage, la
-  fin du tracé tombe pile en bas de page et rien ne recule. Le tout vit dans un `<svg>` aux
+  (  `RESPIRATION`). L'intégrale est normalisée pour que `u(1) = 1` : quel que soit le réglage, la
+  fin du tracé tombe pile en bas de page et rien ne recule. `DELAI_DEPART` (140 px) décale le
+  départ : le tracé ne bouge pas pendant les premiers pixels de scroll, la pointe attend sous le
+  titre. C'est `s` qui est recalculé sur `course - DELAI_DEPART`, pas la longueur du tracé.
+- **Apparition** : le `<svg>` est invisible au chargement (`opacity: 0`, 18 px plus bas, dans le
+  `<style>` de `index.html`). `initFlecheGuide` pose la classe **`.fleche-prete`** à la fin de
+  l'animation d'accueil — événement `hero:intro-done` émis par la timeline GSAP du hero, avec une
+  minuterie de secours à 2,6 s — et le trait monte et apparaît en fondu avec le titre. Ne pas
+  oublier cette classe si l'animation d'accueil est modifiée : sans elle la flèche resterait
+  invisible. Le tout vit dans un `<svg>` aux
   mesures du document (`viewBox` = largeur × `scrollHeight`), en `z-index: -1` derrière le
   contenu ; sa longueur de course vaut `scrollHeight - innerHeight` et le trait démarre 64 px
   sous `#hero-title`. Couleurs et épaisseur : `.fleche-trait` / `.fleche-pointe` dans le

@@ -3574,6 +3574,9 @@ if (!document.body.classList.contains('photo-fusion')) construireTambour();
     const RAMPE = 0.12;         // part du scroll où la vitesse remonte à la normale
     const PROFIL = 400;         // précision du profil de vitesse
     const PAS = 900;            // points d'échantillonnage du tracé
+    /* le tracé ne démarre pas au premier pixel de scroll : il laisse passer
+       quelques centimètres, le temps que la page se mette en route */
+    const DELAI_DEPART = 140;   // en px de scroll
     /* le premier looping, celui qui passe au-dessus de « qui suis-je ? », est
        élargi et posé un peu plus bas que les autres : une cloche centrée sur
        l'endroit où il se trouve, et qui retombe à zéro ailleurs */
@@ -3766,7 +3769,8 @@ if (!document.body.classList.contains('photo-fusion')) construireTambour();
 
     function dessiner() {
         if (!total) return;
-        const s = course > 0 ? Math.min(1, Math.max(0, window.scrollY / course)) : 0;
+        const marge = course - DELAI_DEPART;
+        const s = marge > 0 ? Math.min(1, Math.max(0, (window.scrollY - DELAI_DEPART) / marge)) : 0;
 
         /* le scroll avance de façon inégale : le trait s'allonge plus ou moins
            vite, sans jamais reculer (le profil est croissant) */
@@ -3809,6 +3813,18 @@ if (!document.body.classList.contains('photo-fusion')) construireTambour();
     construireProfil();
     mesurer();
     dessiner();
+
+    /* la flèche n'entre en scène qu'une fois le titre posé : elle attend la fin
+       de l'animation d'accueil (`hero:intro-done`), avec une minuterie de
+       secours au cas où cette animation n'aurait pas lieu */
+    let parue = false;
+    function paraitre() {
+        if (parue) return;
+        parue = true;
+        svg.classList.add('fleche-prete');
+    }
+    document.addEventListener('hero:intro-done', paraitre, { once: true });
+    setTimeout(paraitre, 2600);
 
     window.addEventListener('scroll', auScroll, { passive: true });
     /* le chargement des images déplace la page : on recale le départ */
