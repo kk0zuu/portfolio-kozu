@@ -578,6 +578,12 @@ Autres points de vigilance de l'accueil :
     dernier glissement qui la pose derrière le titre.
 - La pente de la pointe est mesurée par différence finie sur `point()`, pour rester juste malgré
   la boucle et le tour final.
+- **Demi-tour au départ** : au clic sur une bulle de domaine **sauf la photographie**, `rentrer()`
+  fait reculer le tracé jusqu'à zéro en `RETOUR` (380 ms), pointe comprise (elle refait le chemin
+  en sens inverse). La variable `recul` bloque `dessiner()` pendant ce temps : la flèche n'est donc
+  plus à l'écran pendant la transition de page, et le scroll ne la ramène pas. `pageshow` remet
+  `recul` à faux au retour depuis le cache du navigateur. Le clic n'est pas intercepté (pas de
+  `preventDefault`) : les transitions existantes continuent de faire la navigation.
 - Quand la pointe arrive (`u ≥ 0,985`), `initFlecheGuide` émet l'événement **`fleche-guide:arrivee`**.
   `initFlecheOrbitale` (la flèche rouge) l'attend : sans cet événement, elle reste invisible même
   si le curseur est au niveau du titre. Supprimer ou renommer l'événement empêche la flèche rouge

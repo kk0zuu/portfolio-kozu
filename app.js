@@ -3582,6 +3582,7 @@ if (!document.body.classList.contains('photo-fusion')) construireTambour();
     /* le tracé ne démarre pas au premier pixel de scroll : il laisse passer
        quelques centimètres, le temps que la page se mette en route */
     const DELAI_DEPART = 140;   // en px de scroll
+    const RETOUR = 380;         // durée du demi-tour, en ms (avant la transition)
     /* le premier looping, celui qui passe au-dessus de « qui suis-je ? », est
        élargi et posé un peu plus bas que les autres : une cloche centrée sur
        l'endroit où il se trouve, et qui retombe à zéro ailleurs */
@@ -3631,7 +3632,9 @@ if (!document.body.classList.contains('photo-fusion')) construireTambour();
     let cumul = [];     // longueur de trait accumulée jusqu'à chaque point
     let total = 0;
     let anglePrec = null;
-    let annonce = false; // le trait est-il arrivé au bout de son tour ?
+    let annonce = false;  // le trait est-il arrivé au bout de son tour ?
+    let uAffiche = 0;     // part du tracé actuellement dessinée
+    let recul = false;    // le tracé est-il en train de rentrer (demi-tour)
     /* forme cible du tour final, recalée à chaque mesure de la page */
     let finCx = 0, finCy = 0, finAngle = 0;
     let finBx = 0, finBy = 0;   // l'arrivée : derrière le titre
@@ -3796,14 +3799,10 @@ if (!document.body.classList.contains('photo-fusion')) construireTambour();
         trait.setAttribute('stroke-dashoffset', total.toFixed(1));
     }
 
-    function dessiner() {
+    /* dessine le tracé jusqu'à la part u, pointe comprise */
+    function tracer(u) {
         if (!total) return;
-        const marge = course - DELAI_DEPART;
-        const s = marge > 0 ? Math.min(1, Math.max(0, (window.scrollY - DELAI_DEPART) / marge)) : 0;
-
-        /* le scroll avance de façon inégale : le trait s'allonge plus ou moins
-           vite, sans jamais reculer (le profil est croissant) */
-        const u = Math.min(1, Math.max(0, avance(s)));
+        uAffiche = u;
 
         /* longueur de trait jusqu'à u : les points sont à pas constant en u */
         const i = Math.min(PAS - 1, Math.floor(u * PAS));
@@ -3831,6 +3830,33 @@ if (!document.body.classList.contains('photo-fusion')) construireTambour();
         }
     }
 
+    function dessiner() {
+        if (!total || recul) return;
+        const marge = course - DELAI_DEPART;
+        const s = marge > 0 ? Math.min(1, Math.max(0, (window.scrollY - DELAI_DEPART) / marge)) : 0;
+        /* le scroll avance de façon inégale : le trait s'allonge plus ou moins
+           vite, sans jamais reculer (le profil est croissant) */
+        tracer(Math.min(1, Math.max(0, avance(s))));
+    }
+
+    /* Demi-tour : quand on quitte l'accueil par un domaine, le tracé rentre en
+       arrière jusqu'à son point de départ, pointe comprise, avant que la page
+       ne bascule. Il n'est donc plus là pendant la transition. */
+    function rentrer() {
+        if (recul || !total || uAffiche <= 0) return;
+        recul = true;
+        const depart = uAffiche;
+        const debut = performance.now();
+        const duree = RETOUR;
+        function pas(maintenant) {
+            const t = Math.min(1, (maintenant - debut) / duree);
+            const doux = t * t * (3 - 2 * t);
+            tracer(depart * (1 - doux));
+            if (t < 1) requestAnimationFrame(pas);
+        }
+        requestAnimationFrame(pas);
+    }
+
     /* une seule mise à jour par image, même si le scroll crache des événements */
     let attente = false;
     function auScroll() {
@@ -3854,6 +3880,25 @@ if (!document.body.classList.contains('photo-fusion')) construireTambour();
     }
     document.addEventListener('hero:intro-done', paraitre, { once: true });
     setTimeout(paraitre, 2600);
+
+    /* les domaines sauf la photographie : au clic, la flèche fait demi-tour
+       pendant que la transition se prépare */
+    Array.prototype.forEach.call(document.querySelectorAll('.bubble-card'), function (bouchon) {
+        const href = bouchon.getAttribute('href') || '';
+        if (/photographie\.html/.test(href)) return;
+        bouchon.addEventListener('click', function (e) {
+            if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button === 1) return;
+            rentrer();
+        });
+    });
+
+    /* retour arrière depuis le cache du navigateur : la flèche reprend sa place */
+    window.addEventListener('pageshow', function (e) {
+        if (!e.persisted) return;
+        recul = false;
+        mesurer();
+        dessiner();
+    });
 
     window.addEventListener('scroll', auScroll, { passive: true });
     /* le chargement des images déplace la page : on recale le départ */
