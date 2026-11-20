@@ -3588,6 +3588,17 @@ if (!document.body.classList.contains('photo-fusion')) construireTambour();
     const FIN_U0 = 0.86;        // part du tracé où la courbe de base s'arrête
     const FIN_RAYON = 95;       // rayon du looping final
     const FIN_PAS = 10;         // points par segment de la finale
+    /* le premier looping est aussi dessiné à part : une ellipse large et plate
+       qui enveloppe le titre « qui suis-je ? », plutôt que le rond serré que
+       donne la courbe de base à cet endroit */
+    const VENT_A = 0.04;        // la courbe de base s'arrête ici…
+    const VENT_B = 0.34;        // … et reprend là
+    const VENT_TOUR = 540;      // amplitude angulaire de la boucle
+    const VENT_R0 = 0.35;       // rayon au départ, en part du rayon final
+    const VENT_POINTS = 7;      // points de contrôle de la spirale
+    const VENT_RX = 0.365;      // demi-largeur, en part de la page
+    const VENT_RY = 0.33;       // demi-hauteur, en part de la demi-largeur
+    const VENT_PAS = 60;        // un point de contrôle de l'ellipse tous les 60°
     const NS = 'http://www.w3.org/2000/svg';
 
     const svg = document.createElementNS(NS, 'svg');
@@ -3618,6 +3629,7 @@ if (!document.body.classList.contains('photo-fusion')) construireTambour();
     let total = 0;
     let anglePrec = null;
     let finale = [];    // la fin du tracé, échantillonnée
+    let vent = [];      // le premier looping, échantillonné
     let annonce = false; // le trait est-il arrivé derrière le titre ?
     let profil = [];    // avancement du tracé en fonction du scroll, normalisé
 
@@ -3669,16 +3681,20 @@ if (!document.body.classList.contains('photo-fusion')) construireTambour();
         };
     }
 
+    /* interpole dans un morceau de tracé échantillonné à pas régulier en u */
+    function dansMorceau(morceau, u, a, b) {
+        const t = (u - a) / (b - a) * (morceau.length - 1);
+        const i = Math.min(morceau.length - 2, Math.floor(t));
+        const f = t - i;
+        return {
+            x: morceau[i].x + (morceau[i + 1].x - morceau[i].x) * f,
+            y: morceau[i].y + (morceau[i + 1].y - morceau[i].y) * f
+        };
+    }
+
     function point(u) {
-        if (finale.length && u > FIN_U0) {
-            const t = (u - FIN_U0) / (1 - FIN_U0) * (finale.length - 1);
-            const i = Math.min(finale.length - 2, Math.floor(t));
-            const f = t - i;
-            return {
-                x: finale[i].x + (finale[i + 1].x - finale[i].x) * f,
-                y: finale[i].y + (finale[i + 1].y - finale[i].y) * f
-            };
-        }
+        if (finale.length && u > FIN_U0) return dansMorceau(finale, u, FIN_U0, 1);
+        if (vent.length && u >= VENT_A && u <= VENT_B) return dansMorceau(vent, u, VENT_A, VENT_B);
         return base(u);
     }
 
@@ -3750,6 +3766,42 @@ if (!document.body.classList.contains('photo-fusion')) construireTambour();
         finale.push(liste[n - 2]);
     }
 
+    /* le premier looping : une ellipse autour de « qui suis-je ? ». On entre par
+       le point de l'ellipse le plus proche, on en fait le tour complet, puis on
+       reprend la courbe de base : le départ croise donc l'arrivée, comme sur un
+       vrai looping. Deux fantômes encadrent la liste pour les raccords. */
+    function construireVent() {
+        vent = [];
+        const titre = document.querySelector('.intro-section .section-title');
+        if (!titre) return;
+        const r = titre.getBoundingClientRect();
+        const ey = r.top + window.scrollY + r.height / 2 + 40;
+        const rx = Math.min(largeur * VENT_RX, 580);
+        const ry = Math.min(rx * VENT_RY, 190);
+
+        const entree = base(VENT_A);
+        /* la boucle part de l'endroit où la courbe arrive et s'ouvre en
+           spirale : le rayon grandit à chaque fraction de tour, si bien que la
+           pointe sort du titre par en dessous au lieu de le traverser */
+        const phi0 = Math.atan2((entree.y - ey) / ry, (entree.x - cx) / rx);
+        const liste = [base(VENT_A - 0.004), entree];
+        for (let i = 1; i <= VENT_POINTS; i++) {
+            const a = phi0 + (VENT_TOUR * i / VENT_POINTS) * Math.PI / 180;
+            const k = VENT_R0 + (1 - VENT_R0) * i / VENT_POINTS;
+            liste.push({ x: cx + Math.cos(a) * rx * k, y: ey + Math.sin(a) * ry * k });
+        }
+        liste.push(base(VENT_B));
+        liste.push(base(VENT_B + 0.004));
+
+        const n = liste.length;
+        for (let i = 1; i < n - 2; i++) {
+            for (let k = 0; k < FIN_PAS; k++) {
+                vent.push(catmull(liste[i - 1], liste[i], liste[i + 1], liste[i + 2], k / FIN_PAS));
+            }
+        }
+        vent.push(liste[n - 2]);
+    }
+
     /* la pente donne l'orientation de la pointe ; on la mesure sur la courbe
        elle-même, pour qu'elle reste juste malgré la cloche et la finale */
     function pente(u) {
@@ -3782,6 +3834,7 @@ if (!document.body.classList.contains('photo-fusion')) construireTambour();
         svg.setAttribute('height', page);
         svg.setAttribute('viewBox', '0 0 ' + largeur + ' ' + page);
 
+        construireVent();
         construireFinale();
 
         /* le tracé échantillonné : la courbe est lisse, la ligne brisée ne se

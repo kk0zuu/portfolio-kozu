@@ -544,11 +544,15 @@ Autres points de vigilance de l'accueil :
   sous `#hero-title`. Couleurs et épaisseur : `.fleche-trait` / `.fleche-pointe` dans le
   `<style>` de `index.html`, bleu `#1232B4` (le fond de Contact), **sans contour**. Le tracé est
   ré-échantillonné (`PAS` points) à chaque `resize` et au `load`, car il dépend de la hauteur
-  réelle de la page. Le **premier looping** (celui qui passe au-dessus de « qui suis-je ? ») est
-  traité à part par une cloche gaussienne : les constantes `BOSSE`, `BOSSE_LARGEUR`,
-  `BOSSE_X`, `BOSSE_Y` et `BOSSE_BAS` l'agrandissent et le descendent sans toucher au reste du
-  tracé. La pente de la pointe est mesurée par différence finie sur `point()`, pour rester juste
-  malgré cette cloche.
+  réelle de la page. Le **premier looping** (celui qui passe autour de « qui suis-je ? ») est
+  **dessiné à part** (`construireVent`) : entre `VENT_A` et `VENT_B`, une **spirale** de
+  `VENT_TOUR` degrés part du point d'arrivée de la courbe, s'ouvre jusqu'à `VENT_R0` → 1 fois une
+  ellipse large et plate (`VENT_RX` de la page, `VENT_RY` pour son aplatissement) centrée sur le
+  titre, puis rejoint la courbe de base. C'est ce qui donne la grande boucle qui englobe le titre
+  au lieu du rond serré d'origine ; deux points fantômes garantissent les raccords. La cloche
+  gaussienne (`BOSSE`, `BOSSE_LARGEUR`, `BOSSE_X`, `BOSSE_Y`, `BOSSE_BAS`) ne sert plus qu'à la
+  partie de la courbe qui précède et suit cette boucle. La pente de la pointe est mesurée par
+  différence finie sur `point()`, pour rester juste malgré la boucle et la finale.
 - La **fin du tracé** est construite à part (`construireFinale`) : à partir de `FIN_U0` (0,86),
   la courbe de base est remplacée par une **Catmull-Rom centripète** qui monte au-dessus du
   titre `.titre-centre`, fait un looping (`FIN_RAYON`) et vient finir **derrière le titre**
