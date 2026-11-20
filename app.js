@@ -3573,6 +3573,11 @@ if (!document.body.classList.contains('photo-fusion')) construireTambour();
     const VITESSE_DEPART = 0.06;
     const RAMPE = 0.12;         // part du scroll où la vitesse remonte à la normale
     const PROFIL = 400;         // précision du profil de vitesse
+    /* le virage serré du haut, autour de « qui suis-je ? », se parcourt au pas :
+       une cloche locale y écrase la vitesse */
+    const RALENTI = 0.17;       // sa place, en part du tracé
+    const RALENTI_LARGEUR = 0.055;
+    const RALENTI_FORCE = 0.8;  // la vitesse y tombe à 20 % de la sienne ailleurs
     const PAS = 900;            // points d'échantillonnage du tracé
     /* le tracé ne démarre pas au premier pixel de scroll : il laisse passer
        quelques centimètres, le temps que la page se mette en route */
@@ -3632,32 +3637,43 @@ if (!document.body.classList.contains('photo-fusion')) construireTambour();
     let finBx = 0, finBy = 0;   // l'arrivée : derrière le titre
     let profil = [];    // avancement du tracé en fonction du scroll, normalisé
 
-    /* Profil de vitesse : on intègre la vitesse voulue le long du scroll, puis
-       on normalise pour que la fin du tracé tombe exactement en bas de page.
-       u(0) = 0 et u(1) = 1 quel que soit le réglage, et u ne recule jamais. */
+    /* Profil de vitesse. La vitesse est décrite **en fonction de l'avancement du
+       tracé** (u), pas du scroll : c'est la seule façon de ralentir un virage
+       précis, puisqu'à chaque instant c'est bien le tracé qui compte. On en
+       déduit combien de scroll coûte chaque fraction de tracé, on normalise
+       (u(1) = 1 exactement), et `avance()` fait le chemin inverse. */
     function construireProfil() {
-        const vitesse = function (s) {
-            let w = s / RAMPE;
+        const vitesse = function (u) {
+            let w = u / RAMPE;
             if (w > 1) w = 1;
             const lisse = w * w * (3 - 2 * w);
-            const souffle = 1 - RESPIRATION * Math.cos(2 * Math.PI * FREQ_RESPIRATION * s);
-            return VITESSE_DEPART + (souffle - VITESSE_DEPART) * lisse;
+            const souffle = 1 - RESPIRATION * Math.cos(2 * Math.PI * FREQ_RESPIRATION * u);
+            const d = (u - RALENTI) / RALENTI_LARGEUR;
+            const frein = 1 - RALENTI_FORCE * Math.exp(-d * d);
+            return Math.max(0.05, (VITESSE_DEPART + (souffle - VITESSE_DEPART) * lisse) * frein);
         };
         profil = [0];
         const pas = 1 / PROFIL;
         let total = 0;
         for (let i = 1; i <= PROFIL; i++) {
-            total += (vitesse((i - 1) * pas) + vitesse(i * pas)) / 2 * pas;
+            total += pas / ((vitesse((i - 1) * pas) + vitesse(i * pas)) / 2);
             profil.push(total);
         }
         for (let i = 0; i <= PROFIL; i++) profil[i] /= total;
     }
 
-    /* part du tracé atteinte pour un scroll donné */
+    /* part du tracé atteinte pour un scroll donné : on inverse le profil */
     function avance(s) {
-        const t = s * PROFIL;
-        const i = Math.min(PROFIL - 1, Math.floor(t));
-        return profil[i] + (profil[i + 1] - profil[i]) * (t - i);
+        if (s <= 0) return 0;
+        if (s >= 1) return 1;
+        let bas = 0, haut = PROFIL;
+        while (haut - bas > 1) {
+            const mid = (bas + haut) >> 1;
+            if (profil[mid] <= s) bas = mid; else haut = mid;
+        }
+        const ecart = profil[bas + 1] - profil[bas];
+        const f = ecart > 0 ? (s - profil[bas]) / ecart : 0;
+        return Math.min(1, (bas + f) / PROFIL);
     }
 
     /* la cloche du premier looping : 1 au centre, 0 de part et d'autre */

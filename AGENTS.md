@@ -538,7 +538,11 @@ Autres points de vigilance de l'accueil :
   (6 % de la vitesse du scroll — le scroll descend donc plus vite que le tracé), remonte à plein
   régime sur `RAMPE` (12 % du scroll), puis alterne deux ralentissements et deux accélérations
   (  `RESPIRATION`). L'intégrale est normalisée pour que `u(1) = 1` : quel que soit le réglage, la
-  fin du tracé tombe pile en bas de page et rien ne recule. `DELAI_DEPART` (140 px) décale le
+  fin du tracé tombe pile en bas de page et rien ne recule. La vitesse est décrite **en fonction
+  de `u`**, pas du scroll : c'est ce qui permet de viser un virage précis. `RALENTI`,
+  `RALENTI_LARGEUR` et `RALENTI_FORCE` écrasent ainsi la vitesse dans le virage serré autour de
+  « qui suis-je ? » (elle y tombe à ~20 % de celle des loopings voisins). `avance(s)` inverse le
+  profil. `DELAI_DEPART` (140 px) décale le
   départ : le tracé ne bouge pas pendant les premiers pixels de scroll, la pointe attend sous le
   titre. C'est `s` qui est recalculé sur `course - DELAI_DEPART`, pas la longueur du tracé.
 - **Apparition** : le `<svg>` est invisible au chargement (`opacity: 0`, 18 px plus bas, dans le
