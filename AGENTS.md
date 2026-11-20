@@ -124,6 +124,14 @@ n'existe pas. On peut donc l'inclure sur n'importe quelle page sans risque.
 | Contact | bleu `#1232B4` | `etoile-bleu.svg` |
 | 404 | violet `#C224EB` | `etoile-violet.svg` |
 
+Les cinq SVG d'étoile partagent **exactement la même géométrie** : elle remplit 63 des 64 px
+dans les deux sens (l'étoile est étirée verticalement, sinon une étoile à cinq branches perd
+5 % de hauteur). L'étoile blanche de Numérique a un contour noir `stroke-width="2"` en
+`linejoin="round"` et un polygone réduit d'autant : son empreinte extérieure reste identique
+aux quatre autres. **Si l'on retouche un SVG, retoucher les cinq** et incrémenter le `?v=` des
+balises `<link rel="icon">` (aujourd'hui `?v=3`), sinon les navigateurs resservent l'ancienne
+étoile en cache et les onglets n'ont plus la même taille.
+
 Variables CSS globales : `--color-neon-pink`, `--color-neon-green`, `--font-display`,
 `--font-body`, `--font-schoolbell`, `--color-black`, `--color-bg-end`.
 
