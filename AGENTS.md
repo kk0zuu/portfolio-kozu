@@ -547,6 +547,19 @@ Autres points de vigilance de l'accueil :
   `BOSSE_X`, `BOSSE_Y` et `BOSSE_BAS` l'agrandissent et le descendent sans toucher au reste du
   tracé. La pente de la pointe est mesurée par différence finie sur `point()`, pour rester juste
   malgré cette cloche.
+- La **fin du tracé** est construite à part (`construireFinale`) : à partir de `FIN_U0` (0,86),
+  la courbe de base est remplacée par une **Catmull-Rom centripète** qui monte au-dessus du
+  titre `.titre-centre`, fait un looping (`FIN_RAYON`) et vient finir **derrière le titre**
+  `« Où on va ? »` (la pointe est donc invisible). Deux points fantômes encadrent la liste de
+  contrôle : l'un avant la jonction (raccord dans la même direction), l'autre après l'arrivée
+  (sans lui, la dernière ligne droite ne serait jamais parcourue). Le titre est mesuré en
+  coordonnées du document à chaque `mesurer()`.
+- Quand la pointe arrive (`u ≥ 0,985`), `initFlecheGuide` émet l'événement **`fleche-guide:arrivee`**.
+  `initFlecheOrbitale` (la flèche rouge) l'attend : sans cet événement, elle reste invisible même
+  si le curseur est au niveau du titre. Supprimer ou renommer l'événement empêche la flèche rouge
+  d'apparaître ; inversement, si le guide ne tourne pas (pas de `#hero-title`, mouvement réduit),
+  la flèche rouge garde son ancien déclenchement.
+  malgré cette cloche.
 
 ---
 

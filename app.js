@@ -967,10 +967,22 @@ mm.add({
     // visibilité change quand le curseur atteint le niveau du titre
     rayonActuel = rayon;
 
+    /* la flèche rouge n'entre en scène qu'une fois le trait bleu arrivé
+       derrière le « où on va ? ». Sans guide (pas de titre, mouvement réduit),
+       elle n'attend rien et garde son ancien déclenchement. */
+    const guidePresent = !!document.getElementById('hero-title') &&
+        !(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+    let guideArrive = !guidePresent;
+    document.addEventListener('fleche-guide:arrivee', function () {
+        guideArrive = true;
+        verifierSortie();
+    });
+
     // elle suit le curseur depuis le début, mais reste invisible ; elle devient
-    // visible dès que le curseur descend au niveau du texte, puis ne se cache plus
+    // visible dès que le curseur descend au niveau du texte et que le trait
+    // bleu a fini son tracé, puis ne se cache plus
     function verifierSortie() {
-        if (activee || !curseurVu) return;
+        if (activee || !curseurVu || !guideArrive) return;
         if (curseur.y < seuil) return;   // encore au-dessus du titre : elle reste invisible
         activee = true;
     }
@@ -3566,6 +3578,12 @@ if (!document.body.classList.contains('photo-fusion')) construireTambour();
     const BOSSE_X = 0.7;        // 70 % plus large
     const BOSSE_Y = 0.55;       // 55 % plus haut
     const BOSSE_BAS = 170;      // et 170 px plus bas
+    /* la fin du tracé remonte au-dessus du titre « où on va ? », fait un
+       looping et vient se perdre derrière lui : elle est dessinée à part, en
+       courbe de Catmull-Rom, à partir d'un point de jonction */
+    const FIN_U0 = 0.86;        // part du tracé où la courbe de base s'arrête
+    const FIN_RAYON = 95;       // rayon du looping final
+    const FIN_PAS = 10;         // points par segment de la finale
     const NS = 'http://www.w3.org/2000/svg';
 
     const svg = document.createElementNS(NS, 'svg');
@@ -3595,6 +3613,8 @@ if (!document.body.classList.contains('photo-fusion')) construireTambour();
     let cumul = [];     // longueur de trait accumulée jusqu'à chaque point
     let total = 0;
     let anglePrec = null;
+    let finale = [];    // la fin du tracé, échantillonnée
+    let annonce = false; // le trait est-il arrivé derrière le titre ?
 
     /* la cloche du premier looping : 1 au centre, 0 de part et d'autre */
     function bosse(u) {
@@ -3602,7 +3622,7 @@ if (!document.body.classList.contains('photo-fusion')) construireTambour();
         return Math.exp(-d * d);
     }
 
-    function point(u) {
+    function base(u) {
         const a = 2 * Math.PI * BOUCLES * u;
         const b = 2 * Math.PI * ONDES * u;
         const g = bosse(u);
@@ -3616,8 +3636,89 @@ if (!document.body.classList.contains('photo-fusion')) construireTambour();
         };
     }
 
+    function point(u) {
+        if (finale.length && u > FIN_U0) {
+            const t = (u - FIN_U0) / (1 - FIN_U0) * (finale.length - 1);
+            const i = Math.min(finale.length - 2, Math.floor(t));
+            const f = t - i;
+            return {
+                x: finale[i].x + (finale[i + 1].x - finale[i].x) * f,
+                y: finale[i].y + (finale[i + 1].y - finale[i].y) * f
+            };
+        }
+        return base(u);
+    }
+
+    /* Catmull-Rom centripète : il passe par tous les points sans boucler dans
+       le vide quand ils sont inégalement espacés */
+    function catmull(p0, p1, p2, p3, t) {
+        const dist = function (a, b) { return Math.pow(Math.hypot(b.x - a.x, b.y - a.y), 0.5) || 1e-6; };
+        const t0 = 0, t1 = t0 + dist(p0, p1), t2 = t1 + dist(p1, p2), t3 = t2 + dist(p2, p3);
+        const tt = t1 + (t2 - t1) * t;
+        const mel = function (a, b, ta, tb) {
+            return {
+                x: a.x + (b.x - a.x) * (tt - ta) / (tb - ta),
+                y: a.y + (b.y - a.y) * (tt - ta) / (tb - ta)
+            };
+        };
+        const a1 = mel(p0, p1, t0, t1);
+        const a2 = mel(p1, p2, t1, t2);
+        const a3 = mel(p2, p3, t2, t3);
+        return mel(mel(a1, a2, t0, t2), mel(a2, a3, t1, t3), t1, t2);
+    }
+
+    /* la finale : de la jonction au-dessus du titre, un tour et un quart de
+       cercle (le looping), puis la pointe entre derrière le titre */
+    function construireFinale() {
+        finale = [];
+        const titre = document.querySelector('.titre-centre');
+        if (!titre) return;
+        const r = titre.getBoundingClientRect();
+        const droite = r.left + r.width;
+        const hautTitre = r.top + window.scrollY;
+        const milieuTitre = hautTitre + r.height / 2;
+
+        const J = base(FIN_U0);
+        const avant = base(FIN_U0 - 0.004);
+        const apres = base(FIN_U0 + 0.004);
+        const dir = Math.atan2(apres.y - avant.y, apres.x - avant.x);
+
+        const kx = droite + 190;            // centre du looping final
+        const ky = hautTitre - 200;
+        const pol = function (deg) {
+            return {
+                x: kx + Math.cos(deg * Math.PI / 180) * FIN_RAYON,
+                y: ky + Math.sin(deg * Math.PI / 180) * FIN_RAYON
+            };
+        };
+
+        /* le premier point est un fantôme : il prolonge la courbe avant la
+           jonction, pour que le raccord parte dans la même direction */
+        const liste = [{ x: J.x - Math.cos(dir) * 100, y: J.y - Math.sin(dir) * 100 }, J,
+            { x: J.x + Math.cos(dir) * 120, y: J.y + Math.sin(dir) * 120 }];
+        for (let d = 100; d <= 420; d += 40) liste.push(pol(d));
+
+        /* la pointe finit derrière le titre, puis un second fantôme prolonge la
+           courbe : sans lui, la dernière ligne droite ne serait jamais
+           parcourue */
+        const sortie = liste[liste.length - 1];
+        const arret = { x: droite - 12, y: milieuTitre };
+        const dx = arret.x - sortie.x, dy = arret.y - sortie.y;
+        const longueur = Math.hypot(dx, dy) || 1;
+        liste.push(arret);
+        liste.push({ x: arret.x + dx / longueur * 100, y: arret.y + dy / longueur * 100 });
+
+        const n = liste.length;
+        for (let i = 1; i < n - 2; i++) {
+            for (let k = 0; k < FIN_PAS; k++) {
+                finale.push(catmull(liste[i - 1], liste[i], liste[i + 1], liste[i + 2], k / FIN_PAS));
+            }
+        }
+        finale.push(liste[n - 2]);
+    }
+
     /* la pente donne l'orientation de la pointe ; on la mesure sur la courbe
-       elle-même, pour qu'elle reste juste malgré la cloche */
+       elle-même, pour qu'elle reste juste malgré la cloche et la finale */
     function pente(u) {
         const e = 0.0002;
         const avant = point(Math.max(0, u - e));
@@ -3647,6 +3748,8 @@ if (!document.body.classList.contains('photo-fusion')) construireTambour();
         svg.setAttribute('width', largeur);
         svg.setAttribute('height', page);
         svg.setAttribute('viewBox', '0 0 ' + largeur + ' ' + page);
+
+        construireFinale();
 
         /* le tracé échantillonné : la courbe est lisse, la ligne brisée ne se
            voit pas, et elle donne la longueur réelle du chemin */
@@ -3694,6 +3797,13 @@ if (!document.body.classList.contains('photo-fusion')) construireTambour();
 
         pointe.setAttribute('transform', 'translate(' + p.x.toFixed(1) + ' ' + p.y.toFixed(1) +
             ') rotate(' + angle.toFixed(2) + ')');
+
+        /* la pointe vient de rentrer derrière le titre : c'est le signal que
+           guette la flèche rouge pour entrer en scène */
+        if (!annonce && u >= 0.985) {
+            annonce = true;
+            document.dispatchEvent(new CustomEvent('fleche-guide:arrivee'));
+        }
     }
 
     /* une seule mise à jour par image, même si le scroll crache des événements */
