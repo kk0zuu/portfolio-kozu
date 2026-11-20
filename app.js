@@ -3342,12 +3342,14 @@ if (!document.body.classList.contains('photo-fusion')) construireTambour();
     const ENTRAINE = 0.5;      // px parcourus par px de scroll descendu
     const VITESSE = 26;        // px/s une fois la page arrivée en bas
     const PART_FONDU = 0.32;   // part de la course du scroll où le fondu s'achève
+    const ENTREE = 950;        // ms : le fondu d'arrivée, quand on revient sur la page
 
     const champ = document.createElement('div');
     champ.className = 'etoiles-domaines';
     champ.setAttribute('aria-hidden', 'true');
     section.insertBefore(champ, section.firstChild);
 
+    let naissance = 0;      // instant où les étoiles entrent à l'écran
     const etoiles = [];
     let largeur = 0;
     let hauteur = 0;
@@ -3406,11 +3408,18 @@ if (!document.body.classList.contains('photo-fusion')) construireTambour();
         const fenetre = Math.max(1, finPage - debut);
         proche = r.bottom > -320 && r.top < window.innerHeight + 320;
 
-        /* la page est en bas : le scroll ne peut plus rien, les étoiles
-           avancent alors au temps qui passe. La course se mesure à l'horloge
-           et non à la frame, elle reste donc juste d'un écran à l'autre. */
+        /* le fondu ne commence qu'au moment où elles entrent vraiment à
+           l'écran : pas de fondu d'arrivée déjà consommé pendant le chargement */
         const maintenant = performance.now();
-        if (window.scrollY >= finPage - 2) {
+        if (!naissance && proche) naissance = maintenant;
+
+        /* le bout du récit est atteint : soit la page est au bas, soit on vient
+           d'arriver directement sur le choix des domaines (le retour depuis une
+           page de domaine pose la section en haut de l'écran, vingt pixels
+           avant le bas : le scroll ne peut alors plus rien). Les étoiles
+           avancent donc au temps qui passe. La course se mesure à l'horloge et
+           non à la frame, elle reste juste d'un écran à l'autre. */
+        if (r.top <= 1 || window.scrollY >= finPage - 2) {
             if (!tBas) tBas = maintenant;
             derive += VITESSE * (maintenant - tBas) / 1000;
             tBas = maintenant;
@@ -3427,7 +3436,16 @@ if (!document.body.classList.contains('photo-fusion')) construireTambour();
         /* le fondu : elles s'allument déjà en mouvement */
         let f = p / PART_FONDU;
         if (f > 1) f = 1;
-        const fondu = f * f * (3 - 2 * f);
+        let fondu = f * f * (3 - 2 * f);
+
+        /* et le fondu d'arrivée : en revenant sur la page, on est déjà tout en
+           bas du scroll, donc sans lui les étoiles seraient là d'un coup. Il
+           ne change rien quand on arrive en haut de l'accueil. */
+        let entree = naissance ? (maintenant - naissance) / ENTREE : 0;
+        if (entree < 1) {
+            if (entree < 0) entree = 0;
+            fondu *= entree * entree * (3 - 2 * entree);
+        }
 
         const dep = avance * ENTRAINE + derive;
         const P = hauteur + DEBORD * 2;
@@ -3466,11 +3484,19 @@ if (!document.body.classList.contains('photo-fusion')) construireTambour();
     dessiner();
 
     /* le scroll entraîne les étoiles : le dessin part à chaque cran, sans
-       attendre la frame suivante, et la course repart si la section revient */
-    window.addEventListener('scroll', function () {
+       attendre la frame suivante, et la course repart si la section revient.
+       L'arrivée sur #choix-domaines (retour depuis une page de domaine) peut
+       déplacer le scroll sans que la boucle tourne encore : on redessine donc
+       aussi au chargement complet et au saut d'ancre. */
+    function rejoindre() {
         dessiner();
         if (proche) lancer();
-    }, { passive: true });
+    }
+
+    window.addEventListener('scroll', rejoindre, { passive: true });
+    window.addEventListener('load', rejoindre);
+    window.addEventListener('hashchange', rejoindre);
+    window.addEventListener('pageshow', rejoindre);
 
     lancer();
 
