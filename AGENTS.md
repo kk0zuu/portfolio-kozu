@@ -623,9 +623,23 @@ Autres points de vigilance de l'accueil :
   `mailto:` (`gandou.christian@gmail.com`) et des liens externes. Une modification de texte se
   fait directement dans le HTML ; ne pas ajouter de formulaire (il n'y a pas de backend).
 - `404.html` : page autonome pour GitHub Pages (servie automatiquement pour toute URL
-  inconnue). Elle réutilise `styles.css`, la barre de navigation et les classes existantes
-  (`.retour-domaines`, `.subnav-btn`). Son CSS est dans un `<style>` inline. Elle est en
-  `noindex` : ne pas l'indexer.
+  inconnue). Elle réutilise `styles.css` et la barre de navigation. Son CSS est dans un `<style>`
+  inline. Elle est en `noindex` : ne pas l'indexer.
+  - **Une seule action** : le bouton `Retour à l'accueil` (`.erreur-btn`) et la flèche rouge
+    `.erreur-fleche` qui le désigne. Ian a fait retirer « Choix des domaines » et les quatre
+    boutons de domaine (`.retour-domaines` / `.subnav-btn` n'y servent plus) : ne pas les
+    remettre, et ne pas dupliquer dans le contenu ce que dit déjà la barre.
+  - **Les étoiles tournent** : 12 étoiles violettes réparties sur deux anneaux
+    (`.erreur-cercle` porte la rotation, `.erreur-orbite` le rayon, `.erreur-etoile` le motif),
+    chacune avec sa durée et son retard (`--duree`, `--retard`) pour qu'elles ne soient pas en
+    cortège. Le sens est **horaire** : la rotation va de 0 à 360°, et l'étoile porte une
+    contre-rotation (`erreur-contre-tour`) pour rester droite. Les rayons sont donnés en
+    `min(40vh, 29vw)` / `min(46vh, 33vw)` : c'est ce qui garde le centre vide **et** les étoiles
+    dans l'écran quelle que soit la fenêtre. Vérifié : sur un tour complet, aucune étoile ne
+    croise un bloc de contenu (`erreur-manuscrit`, `erreur-numero`, `erreur-titre`,
+    `erreur-texte`, `erreur-actions`, `erreur-pied`). Réduire un rayon les fait passer sur le
+    texte ; l'augmenter les fait sortir du cadre (la section est en `overflow: hidden`).
+    `prefers-reduced-motion` coupe tout.
 
 ---
 

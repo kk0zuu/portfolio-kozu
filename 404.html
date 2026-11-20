@@ -37,7 +37,9 @@
         overflow: hidden;
     }
 
-    /* les étoiles du bas de l'accueil, en rappel sur les côtés */
+    /* les étoiles tournent autour du centre de la page, dans le sens des
+       aiguilles d'une montre. Elles sont posées sur des anneaux (deux rayons)
+       qui laissent le milieu vide : le texte garde son calme. */
     .erreur-etoiles {
         position: absolute;
         inset: 0;
@@ -46,19 +48,60 @@
         pointer-events: none;
     }
 
+    /* l'anneau : un point au centre de la page, qui tourne sur lui-même */
+    .erreur-cercle {
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        width: 0;
+        height: 0;
+        animation: erreur-tour var(--duree, 90s) linear infinite;
+        animation-delay: calc(var(--duree, 90s) * var(--retard, 0) * -1);
+    }
+
+    @keyframes erreur-tour {
+        from { transform: rotate(0deg); }
+        to   { transform: rotate(360deg); }
+    }
+
+    /* la rayon de l'anneau : c'est lui qui tient les étoiles à distance du
+       centre et qui les garde dans l'écran */
+    .erreur-orbite {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 0;
+        height: 0;
+        transform: translateX(var(--rayon, 380px));
+    }
+
     .erreur-etoile {
         position: absolute;
+        left: 0;
+        top: 0;
         width: var(--t, 22px);
         height: var(--t, 22px);
+        margin: calc(var(--t, 22px) / -2);
         background: #C224EB;
         clip-path: var(--etoile-cinq);
         opacity: 0.85;
-        animation: erreur-flotte 11s ease-in-out infinite alternate;
+        /* la contre-rotation garde l'étoile droite pendant qu'elle tourne */
+        animation:
+            erreur-contre-tour var(--duree, 90s) linear infinite,
+            erreur-scintille 7s ease-in-out infinite alternate;
+        animation-delay:
+            calc(var(--duree, 90s) * var(--retard, 0) * -1),
+            calc(var(--retard, 0) * -7s);
     }
 
-    @keyframes erreur-flotte {
-        from { transform: translateY(0) rotate(0deg); }
-        to   { transform: translateY(-26px) rotate(24deg); }
+    @keyframes erreur-contre-tour {
+        from { transform: rotate(0deg); }
+        to   { transform: rotate(-360deg); }
+    }
+
+    @keyframes erreur-scintille {
+        from { opacity: 0.5; }
+        to   { opacity: 0.95; }
     }
 
     .erreur-manuscrit {
@@ -151,15 +194,6 @@
         background: #111111;
     }
 
-    /* les quatre portes du portfolio */
-    .erreur-domaines {
-        display: flex;
-        flex-wrap: wrap;
-        justify-content: center;
-        gap: 0.7rem;
-        margin-bottom: 2.4rem;
-    }
-
     .erreur-pied {
         font-family: var(--font-body);
         font-size: 0.75rem;
@@ -186,13 +220,10 @@
         .erreur-actions {
             gap: 0.8rem;
         }
-        .erreur-domaines .subnav-btn {
-            font-size: 0.78rem;
-            padding: 0.5rem 1.1rem;
-        }
     }
 
     @media (prefers-reduced-motion: reduce) {
+        .erreur-cercle,
         .erreur-etoile { animation: none; }
         .erreur-btn { transition: none; }
     }
@@ -219,14 +250,20 @@
 
     <main class="erreur">
         <div class="erreur-etoiles" aria-hidden="true">
-            <span class="erreur-etoile" style="--t: 30px; left: 6%;  top: 18%; animation-delay: -1.5s;"></span>
-            <span class="erreur-etoile" style="--t: 16px; left: 13%; top: 62%; animation-delay: -4s;"></span>
-            <span class="erreur-etoile" style="--t: 22px; left: 24%; top: 34%; animation-delay: -7s;"></span>
-            <span class="erreur-etoile" style="--t: 34px; left: 88%; top: 24%; animation-delay: -3s;"></span>
-            <span class="erreur-etoile" style="--t: 15px; left: 79%; top: 55%; animation-delay: -6s;"></span>
-            <span class="erreur-etoile" style="--t: 24px; left: 93%; top: 68%; animation-delay: -9s;"></span>
-            <span class="erreur-etoile" style="--t: 18px; left: 47%; top: 10%; animation-delay: -5s;"></span>
-            <span class="erreur-etoile" style="--t: 20px; left: 62%; top: 87%; animation-delay: -2s;"></span>
+            <!-- anneau intérieur : ~380 px du centre, jamais sur le texte -->
+            <span class="erreur-cercle" style="--duree: 96s;  --retard: 0.00;"><span class="erreur-orbite" style="--rayon: min(40vh, 29vw);"><span class="erreur-etoile" style="--t: 24px;"></span></span></span>
+            <span class="erreur-cercle" style="--duree: 96s;  --retard: 0.16;"><span class="erreur-orbite" style="--rayon: min(40vh, 29vw);"><span class="erreur-etoile" style="--t: 16px;"></span></span></span>
+            <span class="erreur-cercle" style="--duree: 96s;  --retard: 0.33;"><span class="erreur-orbite" style="--rayon: min(40vh, 29vw);"><span class="erreur-etoile" style="--t: 30px;"></span></span></span>
+            <span class="erreur-cercle" style="--duree: 96s;  --retard: 0.50;"><span class="erreur-orbite" style="--rayon: min(40vh, 29vw);"><span class="erreur-etoile" style="--t: 18px;"></span></span></span>
+            <span class="erreur-cercle" style="--duree: 96s;  --retard: 0.66;"><span class="erreur-orbite" style="--rayon: min(40vh, 29vw);"><span class="erreur-etoile" style="--t: 22px;"></span></span></span>
+            <span class="erreur-cercle" style="--duree: 96s;  --retard: 0.83;"><span class="erreur-orbite" style="--rayon: min(40vh, 29vw);"><span class="erreur-etoile" style="--t: 15px;"></span></span></span>
+            <!-- anneau extérieur : ~435 px, il sort plus vite du cadre -->
+            <span class="erreur-cercle" style="--duree: 132s; --retard: 0.08;"><span class="erreur-orbite" style="--rayon: min(46vh, 33vw);"><span class="erreur-etoile" style="--t: 20px;"></span></span></span>
+            <span class="erreur-cercle" style="--duree: 132s; --retard: 0.25;"><span class="erreur-orbite" style="--rayon: min(46vh, 33vw);"><span class="erreur-etoile" style="--t: 28px;"></span></span></span>
+            <span class="erreur-cercle" style="--duree: 132s; --retard: 0.42;"><span class="erreur-orbite" style="--rayon: min(46vh, 33vw);"><span class="erreur-etoile" style="--t: 14px;"></span></span></span>
+            <span class="erreur-cercle" style="--duree: 132s; --retard: 0.58;"><span class="erreur-orbite" style="--rayon: min(46vh, 33vw);"><span class="erreur-etoile" style="--t: 24px;"></span></span></span>
+            <span class="erreur-cercle" style="--duree: 132s; --retard: 0.75;"><span class="erreur-orbite" style="--rayon: min(46vh, 33vw);"><span class="erreur-etoile" style="--t: 17px;"></span></span></span>
+            <span class="erreur-cercle" style="--duree: 132s; --retard: 0.92;"><span class="erreur-orbite" style="--rayon: min(46vh, 33vw);"><span class="erreur-etoile" style="--t: 32px;"></span></span></span>
         </div>
 
         <p class="erreur-manuscrit">on a cherché partout…</p>
@@ -243,18 +280,7 @@
                 <path d="M1.5 10.5 H25 V3.5 L46 16 L25 28.5 V21.5 H1.5 Z" fill="currentColor" stroke="#000000" stroke-width="3" stroke-linejoin="miter" />
             </svg>
             <a class="erreur-btn" href="index.html">Retour à l'accueil</a>
-            <a class="retour-domaines clair" href="index.html#choix-domaines">
-                <span class="retour-fleche" aria-hidden="true"></span>
-                <span>Choix des domaines</span>
-            </a>
         </div>
-
-        <nav class="erreur-domaines" aria-label="Les domaines du portfolio">
-            <a class="subnav-btn" href="numerique.html">Numérique</a>
-            <a class="subnav-btn" href="photographie.html">Photographie</a>
-            <a class="subnav-btn" href="plastique.html">Projets plastiques</a>
-            <a class="subnav-btn" href="contact.html">Contact</a>
-        </nav>
 
         <p class="erreur-pied">© 2026 Ian Bossut‑Gandou</p>
     </main>
