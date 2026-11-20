@@ -531,6 +531,11 @@ Autres points de vigilance de l'accueil :
     quoi chaque glissade sur la ligne ouvrirait une page Wikipédia.
   Si l'on ajoute un logiciel, mettre l'`alt` **et** le `title` (`Nom — Wikipédia (nouvel onglet)`)
   et vérifier que la page existe en français : une URL fausse casse le lien, pas la mise en page.
+  Depuis que les pastilles sont des liens, `initLightbox` les **ignore** (`openWith` sort si
+  l'image est dans `.logiciels`) et refuse d'ouvrir une galerie **vide** : sans ce garde-fou, un
+  clic sur un logo ouvrait un cadre noir plein écran par-dessus la page (« visionneuse
+  fantôme », vue sur l'accueil où aucune photo n'est déclarée cliquable). La page photo, elle,
+  garde sa visionneuse : `.pr-card` / `.pe-section` fournissent la galerie.
 - `initSasAccueil` intercepte les liens vers `index.html` depuis les autres pages pour rejouer
   le sas : ne pas ajouter de lien vers l'accueil dans un endroit où cette animation serait
   indésirable.

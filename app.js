@@ -1698,11 +1698,17 @@ mm.add({
     }
 
     function openWith(img) {
+        /* Le bandeau des logiciels n'est pas une galerie : ses pastilles sont des
+           liens vers Wikipédia, un clic ne doit pas ouvrir la visionneuse. */
+        if (img.closest('.logiciels')) return;
         /* La visionneuse reste dans la case d'où l'on part : sur la page photo,
            une case d'un domaine ne propose que ses propres images, pas celles
            des autres cases ni de l'autre domaine. */
         const casePhoto = img.closest('.pr-card, .pe-section, .photo-domaine-bloc') || document;
         collectGallery(casePhoto);
+        /* aucune photo cliquable dans la portée : rien à montrer, on n'ouvre pas
+           un cadre vide (c'était le cas d'un clic sur un logo de l'accueil) */
+        if (!gallery.length) return;
         const index = gallery.findIndex(photo => photo.el === img);
         if (typeof gsap !== 'undefined' && imgEl) gsap.set(imgEl, { clearProps: 'transform,opacity' });
         show(index === -1 ? 0 : index, 1);
