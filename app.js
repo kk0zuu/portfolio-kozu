@@ -3326,3 +3326,160 @@ if (!document.body.classList.contains('photo-fusion')) construireTambour();
     /* filet de sécurité : le voile ne doit jamais rester en place */
     setTimeout(reveler, 4200);
 })();
+
+// --- ÉTOILES DU CHOIX DES DOMAINES : deux rideaux le long des bords ---
+// À gauche les étoiles descendent, à droite elles montent ; le centre du cadre
+// reste vide. Tant qu'on descend, c'est le scroll qui les entraîne et qui les
+// allume en fondu. Une fois la page arrivée en bas, le scroll ne peut plus
+// rien : elles continuent alors leur course au temps qui passe.
+(function initEtoilesDomaines() {
+    const section = document.getElementById('choix-domaines');
+    if (!section) return;
+    if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+    const PAR_COTE = 14;       // étoiles par bord, à pleine largeur
+    const DEBORD = 90;         // px hors du cadre avant le rebouclage
+    const ENTRAINE = 0.5;      // px parcourus par px de scroll descendu
+    const VITESSE = 26;        // px/s une fois la page arrivée en bas
+    const PART_FONDU = 0.32;   // part de la course du scroll où le fondu s'achève
+
+    const champ = document.createElement('div');
+    champ.className = 'etoiles-domaines';
+    champ.setAttribute('aria-hidden', 'true');
+    section.insertBefore(champ, section.firstChild);
+
+    const etoiles = [];
+    let largeur = 0;
+    let hauteur = 0;
+    let finPage = 0;    // scroll maximal : la page est en bas
+    let derive = 0;     // px parcourus sans le scroll, une fois la page en bas
+    let tBas = 0;       // instant où la course libre a commencé
+    let proche = false; // la section touche l'écran : la course continue
+    let boucle = 0;
+    let derniere = 0;
+
+    function entre(a, b) { return a + Math.random() * (b - a); }
+
+    function semer() {
+        largeur = section.clientWidth;
+        hauteur = section.offsetHeight;
+        const bande = Math.max(110, Math.min(300, largeur * 0.21));
+        const nombre = Math.round(PAR_COTE * (largeur < 760 ? 0.65 : 1));
+
+        champ.textContent = '';
+        etoiles.length = 0;
+
+        for (let cote = 0; cote < 2; cote++) {
+            for (let i = 0; i < nombre; i++) {
+                const el = document.createElement('i');
+                el.className = 'etoile-domaine';
+                el.style.setProperty('--taille', entre(7, 20).toFixed(1) + 'px');
+
+                /* plus on s'écarte du bord, plus l'étoile est rare : les bords
+                   restent fournis, le centre du cadre reste vide */
+                const ecart = Math.pow(Math.random(), 1.6) * bande;
+
+                etoiles.push({
+                    el: el,
+                    x: cote === 0 ? ecart : largeur - ecart,
+                    y: Math.random() * (hauteur + DEBORD * 2),
+                    /* les étoiles lointaines glissent un peu moins vite */
+                    part: entre(0.62, 1.12),
+                    sens: cote === 0 ? 1 : -1,   // à gauche vers le bas, à droite vers le haut
+                    angle: Math.random() * 360,
+                    force: entre(0.4, 1),
+                    fondu: -1
+                });
+                champ.appendChild(el);
+            }
+        }
+    }
+
+    function dessiner() {
+        const r = section.getBoundingClientRect();
+        const haut = r.top + window.scrollY;
+        const debut = haut - window.innerHeight * 0.7;
+        finPage = Math.max(0, document.documentElement.scrollHeight - window.innerHeight);
+        const fenetre = Math.max(1, finPage - debut);
+        proche = r.bottom > -320 && r.top < window.innerHeight + 320;
+
+        /* la page est en bas : le scroll ne peut plus rien, les étoiles
+           avancent alors au temps qui passe. La course se mesure à l'horloge
+           et non à la frame, elle reste donc juste d'un écran à l'autre. */
+        const maintenant = performance.now();
+        if (window.scrollY >= finPage - 2) {
+            if (!tBas) tBas = maintenant;
+            derive += VITESSE * (maintenant - tBas) / 1000;
+            tBas = maintenant;
+        } else {
+            tBas = 0;
+        }
+
+        const avance = window.scrollY - debut;
+
+        let p = avance / fenetre;
+        if (p < 0) p = 0;
+        if (p > 1) p = 1;
+
+        /* le fondu : elles s'allument déjà en mouvement */
+        let f = p / PART_FONDU;
+        if (f > 1) f = 1;
+        const fondu = f * f * (3 - 2 * f);
+
+        const dep = avance * ENTRAINE + derive;
+        const P = hauteur + DEBORD * 2;
+
+        for (let i = 0; i < etoiles.length; i++) {
+            const e = etoiles[i];
+            let y = (e.y + dep * e.sens * e.part) % P;
+            if (y < 0) y += P;
+            y -= DEBORD;
+
+            e.el.style.transform = 'translate3d(' + e.x.toFixed(1) + 'px,' +
+                y.toFixed(1) + 'px,0) rotate(' + e.angle.toFixed(1) + 'deg)';
+
+            if (e.fondu !== fondu) {
+                e.el.style.opacity = (fondu * e.force).toFixed(3);
+                e.fondu = fondu;
+            }
+        }
+    }
+
+    function tourner(t) {
+        if (!proche) { boucle = 0; return; }
+        boucle = requestAnimationFrame(tourner);
+        if (!derniere) { derniere = t; return; }
+        derniere = t;
+        dessiner();
+    }
+
+    function lancer() {
+        if (boucle) return;
+        derniere = 0;
+        boucle = requestAnimationFrame(tourner);
+    }
+
+    semer();
+    dessiner();
+
+    /* le scroll entraîne les étoiles : le dessin part à chaque cran, sans
+       attendre la frame suivante, et la course repart si la section revient */
+    window.addEventListener('scroll', function () {
+        dessiner();
+        if (proche) lancer();
+    }, { passive: true });
+
+    lancer();
+
+    /* au changement de taille, la trame est reposée sur les nouvelles mesures ;
+       la course déjà gagnée (derive) est gardée */
+    let minuteur = null;
+    window.addEventListener('resize', function () {
+        clearTimeout(minuteur);
+        minuteur = setTimeout(function () {
+            semer();
+            dessiner();
+            if (proche) lancer();
+        }, 220);
+    });
+})();

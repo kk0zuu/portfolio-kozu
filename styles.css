@@ -5265,3 +5265,33 @@ html.anim .contact-liens > a {
 .domain-retour {
     margin-bottom: 0.9rem;
 }
+
+/* ==================================================== */
+/* ÉTOILES DU CHOIX DES DOMAINES : deux rideaux d'étoiles */
+/* le long des bords — à gauche elles descendent, à       */
+/* droite elles montent. Le scroll les entraîne et les    */
+/* allume en fondu ; page arrivée en bas, elles glissent  */
+/* d'elles-mêmes, sans scroll.                            */
+/* ==================================================== */
+.etoiles-domaines {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    overflow: hidden;
+    pointer-events: none;
+    /* le violet du badge « PORTFOLIO » et du titre « OÙ ON VA ? » */
+    --etoiles-teinte: #C224EB;
+}
+
+.etoile-domaine {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: var(--taille, 12px);
+    height: var(--taille, 12px);
+    margin: calc(var(--taille, 12px) / -2) 0 0 calc(var(--taille, 12px) / -2);
+    background: var(--etoiles-teinte);
+    clip-path: var(--etoile-cinq);
+    opacity: 0;
+    will-change: transform, opacity;
+}
