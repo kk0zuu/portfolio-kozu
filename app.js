@@ -671,7 +671,9 @@ if (introLine && heroSection) {
             scale: 0.9,
             duration: 0.5,
             stagger: 0.02,
-            ease: "power2.out"
+            ease: "power2.out",
+            // les lettres commencent : la flèche guide entre en même temps
+            onStart: () => document.dispatchEvent(new Event('hero:titre-parait'))
         }, "-=0.3");
     }
 }
@@ -3944,17 +3946,17 @@ if (!document.body.classList.contains('photo-fusion')) construireTambour();
     mesurer();
     dessiner();
 
-    /* la flèche n'entre en scène qu'une fois le titre posé : elle attend la fin
-       de l'animation d'accueil (`hero:intro-done`), avec une minuterie de
-       secours au cas où cette animation n'aurait pas lieu */
+    /* la flèche entre en scène **avec** le titre, pas après : elle attend le
+       premier pas de la cascade des lettres (`hero:titre-parait`), avec une
+       minuterie de secours au cas où cette animation n'aurait pas lieu */
     let parue = false;
     function paraitre() {
         if (parue) return;
         parue = true;
         svg.classList.add('fleche-prete');
     }
-    document.addEventListener('hero:intro-done', paraitre, { once: true });
-    setTimeout(paraitre, 2600);
+    document.addEventListener('hero:titre-parait', paraitre, { once: true });
+    setTimeout(paraitre, 900);
 
     /* les domaines sauf la photographie : au clic, la flèche fait demi-tour
        pendant que la transition se prépare */

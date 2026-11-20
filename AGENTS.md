@@ -558,11 +558,16 @@ Autres points de vigilance de l'accueil :
   de scroll, la pointe attend sous le titre. C'est `s` qui est recalculé sur
   `course - DELAI_DEPART`, pas la longueur du tracé.
 - **Apparition** : le `<svg>` est invisible au chargement (`opacity: 0`, 18 px plus bas, dans le
-  `<style>` de `index.html`). `initFlecheGuide` pose la classe **`.fleche-prete`** à la fin de
-  l'animation d'accueil — événement `hero:intro-done` émis par la timeline GSAP du hero, avec une
-  minuterie de secours à 2,6 s — et le trait monte et apparaît en fondu avec le titre. Ne pas
-  oublier cette classe si l'animation d'accueil est modifiée : sans elle la flèche resterait
-  invisible. Le tout vit dans un `<svg>` aux
+  `<style>` de `index.html`). `initFlecheGuide` pose la classe **`.fleche-prete`** **en même
+  temps que le titre**, pas après : le tween des lettres émet l'événement **`hero:titre-parait`**
+  à son `onStart`, et la flèche l'attend (minuterie de secours à 0,9 s). La transition CSS fait
+  0,7 s en opacité et 0,8 s en translation, donc la flèche finit de monter à peu près quand la
+  cascade des lettres se termine. Mesuré sur un chargement à froid : lettres et flèche partent
+  tous les deux à ~0,69 s après le début du document ; avant ce réglage, la flèche attendait
+  `hero:intro-done` (fin de la timeline, ~1,4 s) **puis** son fondu d'une seconde — elle arrivait
+  une seconde après le titre, ce que Ian a refusé. `hero:intro-done`, lui, sert toujours (lettres
+  manipulables, flèche rouge, étoiles) : ne pas le supprimer en modifiant `hero:titre-parait`.
+  Sans la classe, la flèche reste invisible. Le tout vit dans un `<svg>` aux
   mesures du document (`viewBox` = largeur × `scrollHeight`), en `z-index: -1` derrière le
   contenu ; sa longueur de course vaut `scrollHeight - innerHeight` et le trait démarre 64 px
   sous `#hero-title`. Couleurs et épaisseur : `.fleche-trait` / `.fleche-pointe` dans le
