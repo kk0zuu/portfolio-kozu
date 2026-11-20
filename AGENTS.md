@@ -576,6 +576,14 @@ Autres points de vigilance de l'accueil :
     mi-hauteur) : la pointe entre donc bien **dans « où on va ? »** et disparaît derrière lui.
     Il ne faut pas la faire finir au milieu du cercle (ce qu'on voyait avant) : c'est ce
     dernier glissement qui la pose derrière le titre.
+- **Passage dans la présentation** (le paragraphe « J'aime mélanger… », à droite du `f`) : le
+  tracé y faisait un repli qui barrait une ligne de texte. Il est maintenant **aplati** autour de
+  l'interligne par `TEXTE_C` / `TEXTE_LARGEUR` / `TEXTE_PLAT` (0,38) : son parcours ne change pas,
+  seule son épaisseur verticale est écrasée, ce qui le fait glisser entre « … sublimer » et
+  « … et restera ». `placerCibles()` repère la ligne qui porte le mot « sublimer » (donc quel que
+  soit le retour à la ligne) et `calerTexte()` décale ensuite le centre du repli jusqu'à ce que
+  son passage tombe vraiment dans l'interligne. Baisser `TEXTE_PLAT` aplatit davantage ; le
+  remonter redonne au repli sa hauteur d'origine, mais il retombe sur les lignes.
 - La pente de la pointe est mesurée par différence finie sur `point()`, pour rester juste malgré
   la boucle et le tour final.
 - **Demi-tour au départ** : au clic sur une bulle de domaine **sauf la photographie**, `rentrer()`

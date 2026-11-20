@@ -3603,6 +3603,11 @@ if (!document.body.classList.contains('photo-fusion')) construireTambour();
     const FIN_TOUR = -320;      // balayage du tour (négatif : sens horaire)
     const FIN_PLONGEE = 0.6;    // part de la fin à partir de laquelle le tracé
                                 // quitte le tour et entre derrière le titre
+    /* le passage dans le texte de présentation : le tracé y est aplati autour
+       de l'interligne pour glisser entre deux lignes au lieu de les barrer */
+    const TEXTE_C = 0.5;        // sa place, en part du tracé
+    const TEXTE_LARGEUR = 0.105;
+    const TEXTE_PLAT = 0.38;    // facteur d'aplatissement vertical
     const NS = 'http://www.w3.org/2000/svg';
 
     const svg = document.createElementNS(NS, 'svg');
@@ -3638,6 +3643,9 @@ if (!document.body.classList.contains('photo-fusion')) construireTambour();
     /* forme cible du tour final, recalée à chaque mesure de la page */
     let finCx = 0, finCy = 0, finAngle = 0;
     let finBx = 0, finBy = 0;   // l'arrivée : derrière le titre
+    let texteY = 0;             // le centre du repli dans la présentation
+    let texteGap = 0;           // l'interligne à viser
+    let texteX0 = 0, texteX1 = 0;   // la colonne de la présentation
     let profil = [];    // avancement du tracé en fonction du scroll, normalisé
 
     /* Profil de vitesse. La vitesse est décrite **en fonction de l'avancement du
@@ -3708,6 +3716,14 @@ if (!document.body.classList.contains('photo-fusion')) construireTambour();
     function point(u) {
         const p = base(u);
 
+        /* le passage dans la présentation : on rapproche le tracé de
+           l'interligne, sans changer son parcours */
+        const dt = (u - TEXTE_C) / TEXTE_LARGEUR;
+        if (texteGap && dt > -1 && dt < 1) {
+            const w = lisser(1 - Math.abs(dt));
+            p.y += ((texteY + (p.y - texteY) * TEXTE_PLAT) - p.y) * w;
+        }
+
         /* fin : le tracé est tiré vers un grand tour autour de « où on va ? »,
            et s'arrête dessus, la pointe visible sous le titre */
         if (finCx && u > FIN_U0) {
@@ -3732,6 +3748,38 @@ if (!document.body.classList.contains('photo-fusion')) construireTambour();
 
     /* cale le tour final sur le titre de la page réelle */
     function placerCibles() {
+        /* l'interligne de la présentation : entre la 5ᵉ et la 6ᵉ ligne du
+           paragraphe, là où le tracé doit passer sans barrer le texte */
+        texteGap = 0;
+        texteY = 0;
+        const texte = Array.prototype.filter.call(document.querySelectorAll('p'),
+            function (el) { return /sublimer/.test(el.textContent); })[0];
+        if (texte && texte.firstChild && texte.firstChild.nodeType === 3) {
+            const r = document.createRange();
+            r.selectNodeContents(texte);
+            const lignes = Array.prototype.slice.call(r.getClientRects());
+            /* on repère la ligne qui porte « sublimer », où que le texte se
+               coupe : c'est la frontière sous cette ligne qui est visée */
+            const i = texte.textContent.indexOf('sublimer');
+            let cible = null;
+            if (i >= 0) {
+                const mot = document.createRange();
+                mot.setStart(texte.firstChild, i);
+                mot.setEnd(texte.firstChild, i + 8);
+                const m = mot.getBoundingClientRect();
+                const milieu = m.top + m.height / 2;
+                cible = lignes.filter(function (l) { return l.top <= milieu && l.bottom >= milieu; })[0] || null;
+            }
+            if (!cible && lignes.length > 5) cible = lignes[4];
+            if (cible) {
+                texteGap = cible.bottom + window.scrollY;
+                texteY = texteGap;
+                const col = texte.getBoundingClientRect();
+                texteX0 = col.left;
+                texteX1 = col.right;
+            }
+        }
+
         const fin = document.querySelector('.titre-centre');
         if (!fin) return;
         const r = fin.getBoundingClientRect();
@@ -3744,6 +3792,25 @@ if (!document.body.classList.contains('photo-fusion')) construireTambour();
            ne fasse pas de saut */
         const j = base(FIN_U0);
         finAngle = Math.atan2((j.y - finCy) / FIN_RAYON, (j.x - finCx) / FIN_RAYON) * 180 / Math.PI;
+    }
+
+    /* le passage dans la présentation : le tracé y est aplati autour d'un
+       centre ; on décale ce centre jusqu'à ce que le passage tombe vraiment
+       entre les deux lignes, quelle que soit la coupe du texte */
+    function calerTexte() {
+        if (!texteGap) return;
+        for (let n = 0; n < 10; n++) {
+            const ys = [];
+            for (let i = 0; i <= 600; i++) {
+                const p = point(i / 600);
+                if (p.x > texteX0 && p.x < texteX1 && Math.abs(p.y - texteGap) < 70) ys.push(p.y);
+            }
+            if (ys.length < 12) return;
+            ys.sort(function (a, b) { return a - b; });
+            const milieu = ys[Math.floor(ys.length / 2)];
+            if (Math.abs(milieu - texteGap) < 0.5) return;
+            texteY += (texteGap - milieu) * 1.6;
+        }
     }
 
     /* la pente donne l'orientation de la pointe ; on la mesure sur la courbe
@@ -3779,6 +3846,7 @@ if (!document.body.classList.contains('photo-fusion')) construireTambour();
         svg.setAttribute('viewBox', '0 0 ' + largeur + ' ' + page);
 
         placerCibles();
+        calerTexte();
 
         /* le tracé échantillonné : la courbe est lisse, la ligne brisée ne se
            voit pas, et elle donne la longueur réelle du chemin */
