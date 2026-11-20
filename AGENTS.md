@@ -539,7 +539,11 @@ Autres points de vigilance de l'accueil :
   sous `#hero-title`. Couleurs et épaisseur : `.fleche-trait` / `.fleche-pointe` dans le
   `<style>` de `index.html`, bleu `#1232B4` (le fond de Contact), **sans contour**. Le tracé est
   ré-échantillonné (`PAS` points) à chaque `resize` et au `load`, car il dépend de la hauteur
-  réelle de la page.
+  réelle de la page. Le **premier looping** (celui qui passe au-dessus de « qui suis-je ? ») est
+  traité à part par une cloche gaussienne : les constantes `BOSSE`, `BOSSE_LARGEUR`,
+  `BOSSE_X`, `BOSSE_Y` et `BOSSE_BAS` l'agrandissent et le descendent sans toucher au reste du
+  tracé. La pente de la pointe est mesurée par différence finie sur `point()`, pour rester juste
+  malgré cette cloche.
 
 ---
 

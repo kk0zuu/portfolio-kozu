@@ -3554,6 +3554,14 @@ if (!document.body.classList.contains('photo-fusion')) construireTambour();
     const RESPIRATION = 0.55;   // écart de vitesse de ±55 % autour de celle du scroll
     const FREQ_RESPIRATION = 2; // deux accélérations et deux ralentissements
     const PAS = 900;            // points d'échantillonnage du tracé
+    /* le premier looping, celui qui passe au-dessus de « qui suis-je ? », est
+       élargi et posé un peu plus bas que les autres : une cloche centrée sur
+       l'endroit où il se trouve, et qui retombe à zéro ailleurs */
+    const BOSSE = 0.17;         // sa place, en part du tracé
+    const BOSSE_LARGEUR = 0.09; // largeur de la cloche
+    const BOSSE_X = 0.7;        // 70 % plus large
+    const BOSSE_Y = 0.55;       // 55 % plus haut
+    const BOSSE_BAS = 170;      // et 170 px plus bas
     const NS = 'http://www.w3.org/2000/svg';
 
     const svg = document.createElementNS(NS, 'svg');
@@ -3584,23 +3592,33 @@ if (!document.body.classList.contains('photo-fusion')) construireTambour();
     let total = 0;
     let anglePrec = null;
 
+    /* la cloche du premier looping : 1 au centre, 0 de part et d'autre */
+    function bosse(u) {
+        const d = (u - BOSSE) / BOSSE_LARGEUR;
+        return Math.exp(-d * d);
+    }
+
     function point(u) {
         const a = 2 * Math.PI * BOUCLES * u;
         const b = 2 * Math.PI * ONDES * u;
+        const g = bosse(u);
+        /* l'écart au chemin moyen est agrandi et poussé vers le bas autour du
+           premier looping seulement */
+        const ex = Ax * (1 - Math.cos(a)) - Ax * (1 - Math.cos(b));
+        const ey = By * Math.sin(a) + By2 * Math.sin(b);
         return {
-            x: cx + Ax * (1 - Math.cos(a)) - Ax * (1 - Math.cos(b)),
-            y: haut + course * u + By * Math.sin(a) + By2 * Math.sin(b)
+            x: cx + ex * (1 + BOSSE_X * g),
+            y: haut + course * u + ey * (1 + BOSSE_Y * g) + BOSSE_BAS * g
         };
     }
 
-    /* dérivées : la pente donne l'orientation de la pointe */
+    /* la pente donne l'orientation de la pointe ; on la mesure sur la courbe
+       elle-même, pour qu'elle reste juste malgré la cloche */
     function pente(u) {
-        const a = 2 * Math.PI * BOUCLES * u;
-        const b = 2 * Math.PI * ONDES * u;
-        return {
-            x: Ax * Math.sin(a) * 2 * Math.PI * BOUCLES - Ax * Math.sin(b) * 2 * Math.PI * ONDES,
-            y: course + By * Math.cos(a) * 2 * Math.PI * BOUCLES + By2 * Math.cos(b) * 2 * Math.PI * ONDES
-        };
+        const e = 0.0002;
+        const avant = point(Math.max(0, u - e));
+        const apres = point(Math.min(1, u + e));
+        return { x: apres.x - avant.x, y: apres.y - avant.y };
     }
 
     function mesurer() {
