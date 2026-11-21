@@ -150,8 +150,11 @@ Variables CSS globales : `--color-neon-pink`, `--color-neon-green`, `--font-disp
   bloc ou bouton reprend ces rayons, et un calque qui couvre toute la surface (liseré, texture
   en `::before`) reçoit le même rayon, sinon il repeint des angles droits par-dessus.
   Les vrais cercles (points, curseur, étoiles, flèches rondes, avatars) restent ronds.
-  **Exception** : les boutons rectangulaires de Numérique (« ← Rayon », « son activé »…)
-  gardent leurs angles droits.
+  **Exceptions** : les boutons rectangulaires de Numérique (« ← Rayon », « son activé »…) et,
+  sur `plastique.html`, les **boosters** (`.pm-pack`, `.pm-slab`, `.pm-foil`) et les **cartes
+  projet** (`.pm-face`) gardent leurs angles droits — leur silhouette de sachet déchiré et leur
+  cadre noir en dépendent. Les commandes de cette page (« voir le projet », flèches, retours)
+  et la fiche projet, elles, prennent les coins arrondis.
 
 ### 3.5 Identifiants
 
