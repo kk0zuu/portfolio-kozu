@@ -5517,13 +5517,9 @@ body.contact-page .flow-cta-btn {
     border-radius: 12px;
 }
 
-/* l'étiquette « projet plastique » garde ses angles droits au repos ; ce sont
-   ses coins qui s'arrondissent quand sa bulle est survolée (demandé par Ian) */
+/* les étiquettes des bulles de l'accueil sont des cases comme les autres :
+   des rectangles à coins arrondis, au repos comme au survol */
 .handwritten-label {
-    border-radius: 0;
-}
-
-.bubble-card:hover .handwritten-label {
     border-radius: var(--forme-bouton);
 }
 

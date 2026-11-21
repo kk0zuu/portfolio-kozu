@@ -153,13 +153,14 @@ Variables CSS globales : `--color-neon-pink`, `--color-neon-green`, `--font-disp
   **photos** (`.editorial-img-frame`, donc toute la page Photographie) gardent leurs angles
   droits : ce sont des images, pas des boutons — leur case, elle, reste arrondie.
   L'étiquette manuscrite des bulles de l'accueil (`.handwritten-label`, « numérique »,
-  « photographie », « projet plastique ») fait exception : **angles droits au repos**, coins
-  arrondis au survol de sa bulle, et **chacune son ombre** — Numérique à gauche (`-4px 0`),
-  Plastique en bas (`0 4px`), Photographie à droite (`4px 0`) — en plus de son inclinaison
-  propre. Les trois ombres sont **à 70 % d'opacité** (`--ombre-etiquette: rgba(0, 0, 0, 0.7)`),
-  Ian l'a demandé : à noir plein elles pesaient plus que la case. « Projet plastique » est la
-  seule **d'aplomb** (`rotate(0deg)`).
-  Les feuilles sont appelées avec `styles.css?v=3` dans les six pages : **incrémenter ce numéro**
+  « photographie », « projet plastique ») **suit la règle commune** : rectangles à coins
+  arrondis (`--forme-bouton`) au repos comme au survol. Elle a eu un temps des angles droits
+  (demandé puis retiré par Ian le 21/11). Ce qui lui reste de particulier : **chacune son ombre**
+  — Numérique à gauche (`-4px 0`), Plastique en bas (`0 4px`), Photographie à droite (`4px 0`) —
+  plus son inclinaison propre, et « projet plastique » est la seule **d'aplomb** (`rotate(0deg)`).
+  Les trois ombres sont **à 70 % d'opacité** (`--ombre-etiquette: rgba(0, 0, 0, 0.7)`), Ian l'a
+  demandé : à noir plein elles pesaient plus que la case.
+  Les feuilles sont appelées avec `styles.css?v=4` dans les six pages : **incrémenter ce numéro**
   à chaque retouche de `styles.css`, sinon Ian voit l'ancienne version dans son navigateur.
   **Exceptions** : les boutons rectangulaires de Numérique (« ← Rayon », « son activé »…) et,
   sur `plastique.html`, les **boosters** (`.pm-pack`, `.pm-slab`, `.pm-foil`) et les **cartes
