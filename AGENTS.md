@@ -583,10 +583,17 @@ Autres points de vigilance de l'accueil :
   gauche à droite) — un trait bleu (`#1232B4`, comme la flèche) que
   `app.js` pose dans le wrapper de sa lettre, hauteur égale à la chute mesurée, `scaleY` animé
   pour que le haut reste fixe hors cadre. La remontée est la **descente filmée à l'envers** :
-  elle part **d'un bloc quand la dernière lettre est posée** (`finChute`), avec le même ordre, le
-  même écart `ECART_CHUTE` d'une corde à l'autre, la même durée `DUREE_CHUTE` et la courbe
-  inverse `power2.in` (qui est exactement `power2.out` retournée : les deux sont des
-  quadratiques), plus 0,02 s de battement.
+  elle part **d'un bloc quand la dernière lettre est posée**, avec le même ordre, le même écart
+  `ECART_CHUTE` d'une corde à l'autre, la même durée `DUREE_CHUTE` et la courbe inverse
+  `power2.in` (qui est exactement `power2.out` retournée). **Pas de temps mort** : les deux courbes
+  freinent en arrivant, si bien qu'en enchaînant pile elles s'arrêtaient deux ou trois images — d'où
+  `AMORCE` (0,12 s) : la vague part un cheveu **avant** `finChute`, quand la dernière lettre n'est
+  plus qu'à quelques pixels de sa place. Mesuré entre les deux phases : le mouvement total des
+  cordes ne descend plus à zéro (0,011 au creux, contre 0,12 s d'arrêt net avant).
+  À la pose, **la lettre encaisse le choc** : `REBOND` (12 px) vers le bas en 0,08 s, puis retour
+  en 0,22 s en `back.out(3)`, qui la fait dépasser de ~3 px avant de se poser — l'effet « lâchée
+  brusquement par sa corde ». Deux tweens séparés, jamais une ease `back` sur la chute entière :
+  sur 800 px de course, `back` dépasserait de plusieurs dizaines de pixels.
   **La corde s'efface du bas vers le haut** : l'extrémité libre remonte rejoindre l'accroche, qui
   ne bouge pas d'un pixel. Pour ça on ne bascule **pas** l'origine de transformation (elle reste en
   bas, `50% 100%`, comme à la descente) : on anime `scaleY` 1 → 0 **et** `y` 0 → `-hauteur` de la

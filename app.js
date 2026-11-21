@@ -702,6 +702,7 @@ if (introLine && heroSection) {
        haut, hors champ, se posent en décalé, puis les cordes remontent vers
        l'extérieur du cadre. */
     const SURPLOMB = 260;           // accroche au-dessus du cadre (px)
+    const REBOND = 12;              // la lettre s'enfonce de ça en se posant (px)
     const DUREE_CHUTE = 0.40;       // descente d'une lettre (s)
     const ECART_CHUTE = 0.02;       // décalage d'une lettre à la suivante (s)
 
@@ -745,6 +746,13 @@ if (introLine && heroSection) {
             ease: 'power2.out'
         }, rang * ECART_CHUTE);
 
+        /* la corde lâche la lettre : la lettre encaisse le choc, descend un
+           rien plus bas que sa place, puis remonte s'y poser (léger dépassement
+           au retour, `back.out`), comme lâchée brusquement. */
+        const poser = rang * ECART_CHUTE + DUREE_CHUTE;
+        tlHero.to(wrapper, { y: REBOND, duration: 0.08, ease: 'power2.in' }, poser);
+        tlHero.to(wrapper, { y: 0, duration: 0.22, ease: 'back.out(3)' }, poser + 0.08);
+
         cordes[rang] = corde;
     });
 
@@ -755,16 +763,18 @@ if (introLine && heroSection) {
     const finChute = DUREE_CHUTE + Math.max(0, ransomWrappers.length - 1) * ECART_CHUTE;
 
     if (cordes.length) {
-        /* la remontée est la descente filmée à l'envers : elle part d'un bloc
-           quand la dernière lettre est posée, avec le même ordre, le même
-           écart d'une corde à l'autre, la même durée, et la courbe inverse
-           (`power2.in` est exactement `power2.out` retournée). Elle ne se
-           mélange donc plus aux lettres qui tombent encore. L'origine de
-           transformation passe en haut au moment du lâcher : les cordes sont
-           alors tendues, le changement ne se voit pas, et elles se rétractent
-           vers leur accroche, hors du cadre. */
+        /* la remontée est la descente filmée à l'envers : elle part **à
+           l'instant** où la dernière lettre se pose (aucun temps mort), avec le
+           même ordre, le même écart d'une corde à l'autre, la même durée et la
+           courbe inverse (`power2.in` est exactement `power2.out` retournée). */
+        /* la remontée démarre un cheveu avant la pose de la dernière lettre :
+           les deux courbes freinent en arrivant (`power2.out` puis `power2.in`),
+           et sans cette amorce on voit les cordes s'arrêter deux ou trois images
+           avant de repartir — le « temps mort » que Ian a repéré. La dernière
+           lettre est alors à quelques pixels de sa place. */
+        const AMORCE = 0.12;
         cordes.forEach((corde, rang) => {
-            const lacher = finChute + rang * ECART_CHUTE;
+            const lacher = finChute - AMORCE + rang * ECART_CHUTE;
             /* le fil s'efface **du bas vers le haut** : son extrémité libre
                remonte rejoindre l'accroche, qui ne bouge pas d'un pixel. Pour
                ça, l'origine reste celle de la descente (en bas de la corde) et
@@ -778,11 +788,11 @@ if (introLine && heroSection) {
                 y: -hauteur,
                 duration: DUREE_CHUTE,
                 ease: 'power2.in'
-            }, lacher + 0.02);
+            }, lacher);
         });
 
         /* toutes les cordes sont remontées : le hero reprend son rognage */
-        const finRemontee = finChute + (cordes.length - 1) * ECART_CHUTE + 0.02 + DUREE_CHUTE;
+        const finRemontee = finChute - AMORCE + (cordes.length - 1) * ECART_CHUTE + DUREE_CHUTE;
         tlHero.add(() => heroSection.classList.remove('cordes-visibles'), finRemontee + 0.05);
     }
 
