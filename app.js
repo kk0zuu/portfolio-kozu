@@ -755,17 +755,19 @@ if (introLine && heroSection) {
     const finChute = DUREE_CHUTE + Math.max(0, ransomWrappers.length - 1) * ECART_CHUTE;
 
     if (cordes.length) {
-        /* chaque corde remonte dès que SA lettre est posée — même cadence que
-           la descente, même écart, décalé d'un rien pour qu'on voie la lettre
-           se poser d'abord. L'origine de transformation passe en haut au
-           moment du lâcher : la corde est alors tendue, le changement ne se
-           voit pas, et elle se rétracte vers son accroche, hors du cadre. */
+        /* la remontée est le miroir exact de la descente : elle part à
+           l'instant où la lettre se pose, avec le même écart d'une lettre à
+           l'autre, la même durée, et la courbe inverse (`power2.in` est
+           exactement `power2.out` retournée), donc la même nappe de cordes
+           qu'à la descente, à l'envers. L'origine de transformation passe en
+           haut au moment du lâcher : la corde est alors tendue, le changement
+           ne se voit pas, et elle se rétracte vers son accroche, hors cadre. */
         cordes.forEach((corde, rang) => {
-            const lacher = rang * ECART_CHUTE + DUREE_CHUTE + 0.06;
+            const lacher = rang * ECART_CHUTE + DUREE_CHUTE;
             tlHero.set(corde, { transformOrigin: '50% 0%' }, lacher);
             tlHero.to(corde, {
                 scaleY: 0,
-                duration: 0.38,
+                duration: DUREE_CHUTE,
                 ease: 'power2.in'
             }, lacher + 0.02);
         });

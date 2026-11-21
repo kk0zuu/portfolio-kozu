@@ -573,11 +573,13 @@ Autres points de vigilance de l'accueil :
   lettre **descendue au bout d'une corde**, posée dans un ordre **tiré au hasard** (pas de
   gauche à droite) — un trait bleu (`#1232B4`, comme la flèche) que
   `app.js` pose dans le wrapper de sa lettre, hauteur égale à la chute mesurée, `scaleY` animé
-  pour que le haut reste fixe hors cadre. Chaque corde remonte **dès que sa lettre est posée**
-  (même cadence que la descente : l'écart `ECART_CHUTE` entre deux lettres, plus 0,06 s), et
-  l'origine de transformation passe en haut à ce moment-là — corde tendue, donc sans saut. C'est
-  ce qui garde le même rythme qu'à la descente ; un `stagger` unique au moment de la dernière
-  pose donnait une vague uniforme, que Ian a refusée. La ligne d'intro (« et voici mon » +
+  pour que le haut reste fixe hors cadre. Chaque corde remonte **dès que sa lettre est posée**,
+  et la remontée est le **miroir exact** de la descente : même écart `ECART_CHUTE` d'une lettre à
+  l'autre, même durée `DUREE_CHUTE`, courbe `power2.in` (qui est bien `power2.out` retournée : les
+  deux sont des quadratiques), 0,02 s de battement pour que la pose se lise. L'origine de
+  transformation passe en haut au moment du lâcher — corde tendue, donc sans saut. **Ne pas
+  raccourcir la remontée** : avec 0,38 s et un `stagger` unique au moment de la dernière pose, la
+  nappe de cordes n'avait pas le motif de la descente, et Ian l'a vu. La ligne d'intro (« et voici mon » +
   « PORTFOLIO », qui arrivent des deux côtés et se cognent) et la barre de navigation partent,
   elles, à la pose de la dernière lettre. La barre n'entre donc plus sur une minuterie : elle attend l'événement
   **`accueil:titre-pose`**, avec un filet à 4 s. Pendant tout ce temps le hero porte
