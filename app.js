@@ -702,8 +702,8 @@ if (introLine && heroSection) {
        haut, hors champ, se posent en décalé, puis les cordes remontent vers
        l'extérieur du cadre. */
     const SURPLOMB = 260;           // accroche au-dessus du cadre (px)
-    const DUREE_CHUTE = 0.52;       // descente d'une lettre (s)
-    const ECART_CHUTE = 0.025;      // décalage d'une lettre à la suivante (s)
+    const DUREE_CHUTE = 0.47;       // descente d'une lettre (s)
+    const ECART_CHUTE = 0.023;      // décalage d'une lettre à la suivante (s)
 
     /* le hero cesse de rogner : les cordes doivent être visibles jusqu'au haut
        de l'écran, dans la bande où la barre va entrer (retiré à la fin) */
