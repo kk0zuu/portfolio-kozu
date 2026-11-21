@@ -569,6 +569,16 @@ Autres points de vigilance de l'accueil :
   part quand `#choix-domaines` touche le haut de l'écran ou quand la page est au bas. Toute
   modification de la hauteur de page change ce déclenchement : vérifier que les étoiles
   partent toujours.
+- **Ordre de l'apparition de l'accueil** (section 1 de `app.js`) : le titre d'abord, chaque
+  lettre **descendue au bout d'une corde** — un trait bleu (`#1232B4`, comme la flèche) que
+  `app.js` pose dans le wrapper de sa lettre, hauteur égale à la chute mesurée, `scaleY` animé
+  pour que le haut reste fixe hors cadre. Une fois la dernière lettre posée, les cordes
+  remontent (origine de transformation prise en haut) **en même temps** que la ligne d'intro
+  (« et voici mon » + « PORTFOLIO », qui arrivent des deux côtés et se cognent) et que la barre
+  de navigation. La barre n'entre donc plus sur une minuterie : elle attend l'événement
+  **`accueil:titre-pose`**, avec un filet à 4 s. Le haut des cordes est coupé par
+  `.hero-section { overflow: hidden }` : ne pas l'enlever, sinon on voit les cordes s'arrêter
+  en l'air au-dessus du titre.
 - `initFlecheGuide` (dans `app.js`) ajoute sur l'accueil un **trait bleu qui s'étire** le long
   d'une courbe paramétrique (constantes `BOUCLES`, `ONDES`) : ce n'est pas un objet qui se
   déplace mais un `<path>` dont on révèle la longueur par `stroke-dasharray` /
@@ -642,11 +652,10 @@ Autres points de vigilance de l'accueil :
     remplacer `requestAnimationFrame` par des minuteurs dans la console pour tester les animations.
 - **Apparition** : le `<svg>` est invisible au chargement (`opacity: 0`, 18 px plus bas, dans le
   `<style>` de `index.html`). `initFlecheGuide` pose la classe **`.fleche-prete`** **en même
-  temps que le titre**, pas après : le tween des lettres émet l'événement **`hero:titre-parait`**
-  à son `onStart`, et la flèche l'attend (minuterie de secours à 0,9 s). La transition CSS fait
+  temps que le titre**, pas après : la descente des lettres émet l'événement **`hero:titre-parait`**
+  à son départ, et la flèche l'attend (minuterie de secours à 0,9 s). La transition CSS fait
   0,7 s en opacité et 0,8 s en translation, donc la flèche finit de monter à peu près quand la
-  cascade des lettres se termine. Mesuré sur un chargement à froid : lettres et flèche partent
-  tous les deux à ~0,69 s après le début du document ; avant ce réglage, la flèche attendait
+  descente du titre se termine. Avant ce réglage, la flèche attendait
   `hero:intro-done` (fin de la timeline, ~1,4 s) **puis** son fondu d'une seconde — elle arrivait
   une seconde après le titre, ce que Ian a refusé. `hero:intro-done`, lui, sert toujours (lettres
   manipulables, flèche rouge, étoiles) : ne pas le supprimer en modifiant `hero:titre-parait`.

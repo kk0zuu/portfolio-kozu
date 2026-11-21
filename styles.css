@@ -508,6 +508,23 @@ body.hovering .cursor-spiral {
     margin: 0 clamp(-3px, -0.15vw, -1px); /* Rapprochement subtil façon collage */
 }
 
+/* --- CORDES DE L'INTRODUCTION -------------------------------------------
+   Chaque lettre du titre descend suspendue à un trait bleu, le bleu de la
+   flèche guide. La corde est posée dans le wrapper de sa lettre, son bas
+   collé au haut de la lettre ; app.js lui donne la hauteur de la chute et
+   anime son `scaleY`, c'est donc le bout visible qui s'allonge puis remonte. */
+.ransom-wrapper .corde {
+    position: absolute;
+    left: 50%;
+    bottom: 100%;
+    width: 2px;
+    margin-left: -1px;
+    height: 0;
+    background: #1232B4;
+    border-radius: 1px;
+    pointer-events: none;
+}
+
 .hero-section:not(.titre-libre) .ransom-wrapper:hover {
     transform: scale(1.15) rotate(0deg) !important;
     z-index: 25;

@@ -336,8 +336,12 @@ if (cursor) {
             /* filet de sécurité : la barre ne doit jamais rester dehors */
             setTimeout(entrer, 4000);
         } else {
-            /* quelques millisecondes sur la page seule avant que la barre n'entre */
-            setTimeout(entrer, 140);
+            /* la barre n'entre qu'une fois le titre déposé par ses cordes
+               (`accueil:titre-pose`, lancé par l'intro du hero) : les deux
+               animations restent ainsi dans l'ordre voulu, sans minuterie */
+            document.addEventListener('accueil:titre-pose', entrer, { once: true });
+            /* filet de sécurité : la barre ne doit jamais rester dehors */
+            setTimeout(entrer, 4000);
         }
     } else {
         tl.play();
@@ -678,13 +682,74 @@ const heroSection = document.querySelector('.hero-section');
 // Référence à l'explosion au scroll (utilisée par le module des lettres manipulables)
 let tlExplodeRef = null;
 
-// --- 1. APPARITION CLASSIQUE & ÉLÉGANTE DU HERO ---
+// --- 1. APPARITION DU HERO : LE TITRE D'ABORD, DESCENDU AU BOUT DE CORDES ---
 if (introLine && heroSection) {
     const tlHero = gsap.timeline({
         delay: 0.1,
         // Les lettres ne deviennent manipulables qu'une fois l'apparition terminée
         onComplete: () => document.dispatchEvent(new Event('hero:intro-done'))
     });
+
+    /* Le titre arrive en premier : chaque lettre descend suspendue à un trait
+       bleu (le bleu de la flèche). La corde est posée dans le wrapper de la
+       lettre, son bas collé au haut de la lettre, et sa hauteur vaut toute la
+       chute : pendant la descente on ne voit que la longueur déjà déroulée
+       (`scaleY`), le haut de la corde restant fixe, hors du cadre. Les lettres
+       partent donc toutes du même haut, hors champ, se posent en décalé, puis
+       les cordes remontent, tirées par le haut. */
+    const SURPLOMB = 140;           // départ au-dessus du cadre (px)
+    const DUREE_CHUTE = 0.62;       // descente d'une lettre (s)
+    const ECART_CHUTE = 0.03;       // décalage d'une lettre à la suivante (s)
+
+    const cordes = [];
+
+    ransomWrappers.forEach((wrapper, i) => {
+        const corde = document.createElement('span');
+        corde.className = 'corde';
+        corde.setAttribute('aria-hidden', 'true');
+        wrapper.appendChild(corde);
+
+        // chute mesurée sur la place finale de la lettre : elle part hors du cadre
+        const haut = wrapper.getBoundingClientRect().top + window.scrollY;
+        const chute = Math.max(320, haut + SURPLOMB);
+        // la corde annule la rotation de sa lettre pour rester bien verticale
+        const rot = parseFloat(wrapper.getAttribute('data-rot')) || 0;
+
+        corde.style.height = chute + 'px';
+        gsap.set(corde, { rotation: -rot, transformOrigin: '50% 100%' });
+
+        tlHero.from(wrapper, {
+            y: -chute,
+            duration: DUREE_CHUTE,
+            ease: 'power2.out'
+        }, i * ECART_CHUTE);
+
+        tlHero.from(corde, {
+            scaleY: 0,
+            duration: DUREE_CHUTE,
+            ease: 'power2.out'
+        }, i * ECART_CHUTE);
+
+        cordes.push(corde);
+    });
+
+    // le titre paraît : la flèche guide monte en même temps
+    tlHero.add(() => document.dispatchEvent(new Event('hero:titre-parait')), 0);
+
+    // dernière lettre posée
+    const finChute = DUREE_CHUTE + Math.max(0, ransomWrappers.length - 1) * ECART_CHUTE;
+
+    if (cordes.length) {
+        /* la corde est alors prise par son haut : elle se rétracte vers
+           l'extérieur du cadre, comme remontée depuis au-dessus de l'écran */
+        tlHero.set(cordes, { transformOrigin: '50% 0%' }, finChute);
+        tlHero.to(cordes, {
+            scaleY: 0,
+            duration: 0.38,
+            ease: 'power2.in',
+            stagger: 0.012
+        }, finChute);
+    }
 
     /* Ligne d'intro (« et voici mon PORTFOLIO ») : les deux morceaux arrivent
        des deux côtés, se rejoignent au centre, se cognent, puis font deux
@@ -712,22 +777,11 @@ if (introLine && heroSection) {
         return tl;
     }
 
-    if (manuscriptText) tlHero.add(arriverEtCogner(manuscriptText, -1), 0);
-    if (portfolioBadge) tlHero.add(arriverEtCogner(portfolioBadge, 1), 0);
-
-    // Apparition douce en cascade des lettres du titre
-    if (ransomWrappers.length > 0) {
-        tlHero.from(ransomWrappers, {
-            opacity: 0,
-            y: 30,
-            scale: 0.9,
-            duration: 0.5,
-            stagger: 0.02,
-            ease: "power2.out",
-            // les lettres commencent : la flèche guide entre en même temps
-            onStart: () => document.dispatchEvent(new Event('hero:titre-parait'))
-        }, "-=0.42");
-    }
+    /* elles n'entrent qu'une fois les cordes remontées, et la barre de
+       navigation fait de même : elle écoute ce même événement */
+    if (manuscriptText) tlHero.add(arriverEtCogner(manuscriptText, -1), finChute);
+    if (portfolioBadge) tlHero.add(arriverEtCogner(portfolioBadge, 1), finChute);
+    tlHero.add(() => document.dispatchEvent(new Event('accueil:titre-pose')), finChute);
 }
 
 
