@@ -2604,6 +2604,9 @@ if (!document.body.classList.contains('photo-fusion')) construireTambour();
     // L'invitation arrive 550 ms après le dernier défilement. Bouger la souris
     // ne compte pas : seule l'immobilité de la page compte.
     var REPOS = 550;
+    /* au premier affichage, on laisse le titre se poser, puis respirer une
+       seconde avant que le « I » ne tire et que le point ne parte */
+    var PREMIERE = 1000;
 
     function possible() {
         if (fini || saisie || window.scrollY > 12) return false;
@@ -2672,11 +2675,16 @@ if (!document.body.classList.contains('photo-fusion')) construireTambour();
     });
 
     document.addEventListener('hero:intro-done', function () {
-        programmer(REPOS);
+        programmer(PREMIERE);
     });
 
+    /* filet : si l'intro du titre n'a pas lieu (animation coupée), l'invitation
+       vient quand même, plus tard, une fois la page au repos. Programmer sur
+       `load` la faisait apparaître pendant la descente des lettres. */
     window.addEventListener('load', function () {
-        programmer(REPOS);
+        setTimeout(function () {
+            if (!heroSection.classList.contains('titre-invite')) programmer(REPOS);
+        }, 4000);
     });
 })();
 
