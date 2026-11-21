@@ -577,15 +577,18 @@ Autres points de vigilance de l'accueil :
   lettre **descendue au bout d'une corde**, posée dans un ordre **tiré au hasard** (pas de
   gauche à droite) — un trait bleu (`#1232B4`, comme la flèche) que
   `app.js` pose dans le wrapper de sa lettre, hauteur égale à la chute mesurée, `scaleY` animé
-  pour que le haut reste fixe hors cadre. Chaque corde remonte **dès que sa lettre est posée**,
-  et la remontée est le **miroir exact** de la descente : même écart `ECART_CHUTE` d'une lettre à
-  l'autre, même durée `DUREE_CHUTE`, courbe `power2.in` (qui est bien `power2.out` retournée : les
-  deux sont des quadratiques), 0,02 s de battement pour que la pose se lise. L'origine de
-  transformation passe en haut au moment du lâcher — corde tendue, donc sans saut. **Ne pas
-  raccourcir la remontée** : avec 0,38 s et un `stagger` unique au moment de la dernière pose, la
-  nappe de cordes n'avait pas le motif de la descente, et Ian l'a vu. La ligne d'intro (« et voici mon » +
-  « PORTFOLIO », qui arrivent des deux côtés et se cognent) et la barre de navigation partent,
-  elles, à la pose de la dernière lettre. La barre n'entre donc plus sur une minuterie : elle attend l'événement
+  pour que le haut reste fixe hors cadre. La remontée est la **descente filmée à l'envers** :
+  elle part **d'un bloc quand la dernière lettre est posée** (`finChute`), avec le même ordre, le
+  même écart `ECART_CHUTE` d'une corde à l'autre, la même durée `DUREE_CHUTE` et la courbe
+  inverse `power2.in` (qui est exactement `power2.out` retournée : les deux sont des
+  quadratiques), plus 0,02 s de battement. L'origine de transformation passe en haut au moment du
+  lâcher — corde tendue, donc sans saut. **Trois choses à ne pas refaire**, toutes essayées :
+  une remontée plus courte (0,38 s) ou un `stagger` plus serré (0,012) casse le motif ; la lancer
+  corde par corde dès que chaque lettre se pose la fait se mélanger aux lettres qui tombent
+  encore, et Ian l'a refusée deux fois. Le rognage du hero ne revient qu'à `finRemontee` (fin de
+  la dernière remontée). La ligne d'intro (« et voici mon » + « PORTFOLIO », qui arrivent des
+  deux côtés et se cognent) et la barre de navigation partent, elles, à la pose de la dernière
+  lettre. La barre n'entre donc plus sur une minuterie : elle attend l'événement
   **`accueil:titre-pose`**, avec un filet à 4 s. Pendant tout ce temps le hero porte
   **`.cordes-visibles`** (`overflow: visible` dans `styles.css`), sinon il rogne ses débordements à
   48 px du haut (le `padding-top` du body) et la bande où la barre va entrer reste vide : les

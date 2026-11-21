@@ -755,15 +755,16 @@ if (introLine && heroSection) {
     const finChute = DUREE_CHUTE + Math.max(0, ransomWrappers.length - 1) * ECART_CHUTE;
 
     if (cordes.length) {
-        /* la remontée est le miroir exact de la descente : elle part à
-           l'instant où la lettre se pose, avec le même écart d'une lettre à
-           l'autre, la même durée, et la courbe inverse (`power2.in` est
-           exactement `power2.out` retournée), donc la même nappe de cordes
-           qu'à la descente, à l'envers. L'origine de transformation passe en
-           haut au moment du lâcher : la corde est alors tendue, le changement
-           ne se voit pas, et elle se rétracte vers son accroche, hors cadre. */
+        /* la remontée est la descente filmée à l'envers : elle part d'un bloc
+           quand la dernière lettre est posée, avec le même ordre, le même
+           écart d'une corde à l'autre, la même durée, et la courbe inverse
+           (`power2.in` est exactement `power2.out` retournée). Elle ne se
+           mélange donc plus aux lettres qui tombent encore. L'origine de
+           transformation passe en haut au moment du lâcher : les cordes sont
+           alors tendues, le changement ne se voit pas, et elles se rétractent
+           vers leur accroche, hors du cadre. */
         cordes.forEach((corde, rang) => {
-            const lacher = rang * ECART_CHUTE + DUREE_CHUTE;
+            const lacher = finChute + rang * ECART_CHUTE;
             tlHero.set(corde, { transformOrigin: '50% 0%' }, lacher);
             tlHero.to(corde, {
                 scaleY: 0,
@@ -773,7 +774,8 @@ if (introLine && heroSection) {
         });
 
         /* toutes les cordes sont remontées : le hero reprend son rognage */
-        tlHero.add(() => heroSection.classList.remove('cordes-visibles'), finChute + 0.6);
+        const finRemontee = finChute + (cordes.length - 1) * ECART_CHUTE + 0.02 + DUREE_CHUTE;
+        tlHero.add(() => heroSection.classList.remove('cordes-visibles'), finRemontee + 0.05);
     }
 
     /* Ligne d'intro (« et voici mon PORTFOLIO ») : les deux morceaux arrivent
