@@ -586,18 +586,21 @@ Autres points de vigilance de l'accueil :
   elle part **d'un bloc quand la dernière lettre est posée** (`finChute`), avec le même ordre, le
   même écart `ECART_CHUTE` d'une corde à l'autre, la même durée `DUREE_CHUTE` et la courbe
   inverse `power2.in` (qui est exactement `power2.out` retournée : les deux sont des
-  quadratiques), plus 0,02 s de battement. **La corde reste ancrée dans le haut de sa lettre : elle
-  se rembobine dedans** (`scaleY` 1 → 0, origine en bas, **aucune bascule d'origine**), donc elle
-  garde sa lettre au bout pendant toute la remontée et l'image reste celle de la descente. Mesuré
-  sur les deux phases : le bas de chaque corde colle au haut de sa lettre à moins de 2 px, et les
-  longueurs à l'instant `t` de la remontée égalent celles de la descente à l'instant miroir.
+  quadratiques), plus 0,02 s de battement.
+  **La corde s'efface du bas vers le haut** : l'extrémité libre remonte rejoindre l'accroche, qui
+  ne bouge pas d'un pixel. Pour ça on ne bascule **pas** l'origine de transformation (elle reste en
+  bas, `50% 100%`, comme à la descente) : on anime `scaleY` 1 → 0 **et** `y` 0 → `-hauteur` de la
+  corde ensemble, sur la même courbe. Le haut reste donc figé et c'est le bas qui part en premier.
+  Mesuré : sur toute la remontée, le haut de chaque corde ne s'écarte pas de plus de 4 px de sa
+  position de repos, et les longueurs à l'instant `t` égalent celles de la descente à l'instant
+  miroir.
   **Quatre choses à ne pas refaire**, toutes essayées et refusées : une remontée plus courte
   (0,38 s) ou un `stagger` plus serré (0,012) casse le motif ; la lancer corde par corde dès que
-  chaque lettre se pose la fait se mélanger aux lettres qui tombent encore ; et surtout **basculer
-  l'origine en haut pour faire remonter le bout libre** laisse des fils qui pendent dans le vide,
-  sans lettre au bout — c'est ce qu'Ian a repoussé trois fois. La géométrie des longueurs était
-  pourtant identique (vérifiée au pixel), c'était l'image qui ne collait pas : ici chaque corde
-  finit sa course **dans** sa lettre, comme elle en est sortie. Le rognage du hero ne revient qu'à `finRemontee` (fin de
+  chaque lettre se pose la fait se mélanger aux lettres qui tombent encore ; **basculer l'origine
+  en haut** (l'ancienne version) décroche les cordes de leurs lettres d'un coup et Ian l'a
+  repoussée trois fois ; et faire rentrer la corde **dans** sa lettre (l'origine en bas, sans le
+  `y`) donne une remontée du haut vers le bas, qu'il a refusée aussi — c'est la direction qui
+  compte, pas seulement la cadence. Le rognage du hero ne revient qu'à `finRemontee` (fin de
   la dernière remontée). La ligne d'intro (« et voici mon » + « PORTFOLIO », qui arrivent des
   deux côtés et se cognent) et la barre de navigation partent, elles, à la pose de la dernière
   lettre. La barre n'entre donc plus sur une minuterie : elle attend l'événement
