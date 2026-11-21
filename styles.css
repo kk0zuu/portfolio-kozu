@@ -5478,11 +5478,12 @@ body.contact-page .flow-cta-btn {
     border-radius: 10px;
 }
 
+/* les photos gardent leurs angles droits : ce sont des images, pas des
+   boutons (demandé par Ian). Leurs cases, elles, restent arrondies. */
 .editorial-img-frame,
 .pr-card .editorial-img-frame,
-.pe .editorial-img-frame,
-.pr-video video {
-    border-radius: 12px;
+.pe .editorial-img-frame {
+    border-radius: 0;
 }
 
 /* --- Micro-pastilles --- */

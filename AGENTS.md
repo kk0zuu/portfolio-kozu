@@ -149,7 +149,9 @@ Variables CSS globales : `--color-neon-pink`, `--color-neon-green`, `--font-disp
   ses propres styles (Numérique, Plastique, 404) a la sienne en fin de `<style>`. Un nouveau
   bloc ou bouton reprend ces rayons, et un calque qui couvre toute la surface (liseré, texture
   en `::before`) reçoit le même rayon, sinon il repeint des angles droits par-dessus.
-  Les vrais cercles (points, curseur, étoiles, flèches rondes, avatars) restent ronds.
+  Les vrais cercles (points, curseur, étoiles, flèches rondes, avatars) restent ronds, et les
+  **photos** (`.editorial-img-frame`, donc toute la page Photographie) gardent leurs angles
+  droits : ce sont des images, pas des boutons — leur case, elle, reste arrondie.
   **Exceptions** : les boutons rectangulaires de Numérique (« ← Rayon », « son activé »…) et,
   sur `plastique.html`, les **boosters** (`.pm-pack`, `.pm-slab`, `.pm-foil`) et les **cartes
   projet** (`.pm-face`) gardent leurs angles droits — leur silhouette de sachet déchiré et leur
