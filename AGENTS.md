@@ -154,8 +154,11 @@ Variables CSS globales : `--color-neon-pink`, `--color-neon-green`, `--font-disp
   droits : ce sont des images, pas des boutons — leur case, elle, reste arrondie.
   L'étiquette manuscrite des bulles de l'accueil (`.handwritten-label`, « numérique »,
   « photographie », « projet plastique ») fait exception : **angles droits au repos**, coins
-  arrondis au survol de sa bulle ; son ombre tombe **à gauche et vers le bas**
-  (`box-shadow: -4px 4px 0`). Ian l'a demandé ainsi.
+  arrondis au survol de sa bulle, et **chacune son ombre** — Numérique à gauche (`-4px 0`),
+  Plastique en bas (`0 4px`), Photographie à droite (`4px 0`) — en plus de son inclinaison
+  propre. « Projet plastique » est la seule **d'aplomb** (`rotate(0deg)`). Ian l'a demandé ainsi.
+  Les feuilles sont appelées avec `styles.css?v=2` dans les six pages : **incrémenter ce numéro**
+  à chaque retouche de `styles.css`, sinon Ian voit l'ancienne version dans son navigateur.
   **Exceptions** : les boutons rectangulaires de Numérique (« ← Rayon », « son activé »…) et,
   sur `plastique.html`, les **boosters** (`.pm-pack`, `.pm-slab`, `.pm-foil`) et les **cartes
   projet** (`.pm-face`) gardent leurs angles droits — leur silhouette de sachet déchiré et leur
@@ -728,6 +731,13 @@ Autres points de vigilance de l'accueil :
     (0, 250) pour le plongeon dans Plastique ;
   - `PHOTO_U` / `PHOTO_LARGEUR` / `PHOTO_PLONGEE` (0,862 / 0,075 / 0,9) et `PHOTO_DECALAGE`
     (360, 40) pour Photographie, que le tracé ratait de 248 px.
+  **Piège corrigé** : `placerCibles()` lisait `getBoundingClientRect()`, qui contient la
+  translation de la spirale au moment du chargement — les décallages visaient donc une position
+  qui n'existe pas, et le tracé ne faisait que **frôler** Plastique et Photographie (194 px de
+  leur centre au lieu de 13 et 20). On retire `gsap.getProperty(bulle, 'x'/'y')` du centre du
+  rect pour viser la position de repos. Si Ian redit que « le tracé ne passe plus derrière les
+  cases », mesurer d'abord l'écart au centre des trois bulles : il doit rester sous la trentaine
+  de pixels.
   **La bulle, elle, ne bouge pas** : un essai de déplacement de 60 px (360,40 → 300,10) pour
   raccourcir le plongeon a été refusé par Ian — la cible du tracé se règle par `PHOTO_PLONGEE`,
   jamais en déplaçant la bulle, dont la position fait partie du dessin de l'accueil.

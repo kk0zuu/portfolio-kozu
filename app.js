@@ -3966,8 +3966,11 @@ if (!document.body.classList.contains('photo-fusion')) construireTambour();
         const bullePlast = document.querySelector('.bubble-plastique');
         if (bullePlast) {
             const rl = bullePlast.getBoundingClientRect();
-            const cibleLX = rl.left + rl.width / 2 + PLAST_DECALAGE.x;
-            const cibleLY = rl.top + rl.height / 2 + window.scrollY + PLAST_DECALAGE.y;
+            /* le rect contient la translation que la spirale pose au chargement :
+               on la retire pour viser la position de repos de la bulle, sinon le
+               plongeon rate la case et le tracé ne fait que la frôler */
+            const cibleLX = rl.left + rl.width / 2 - gsap.getProperty(bullePlast, 'x') + PLAST_DECALAGE.x;
+            const cibleLY = rl.top + rl.height / 2 + window.scrollY - gsap.getProperty(bullePlast, 'y') + PLAST_DECALAGE.y;
             const natL = point(PLAST_U);
             plastDx = (cibleLX - natL.x) * PLAST_PLONGEE;
             plastDy = (cibleLY - natL.y) * PLAST_PLONGEE;
@@ -3980,8 +3983,8 @@ if (!document.body.classList.contains('photo-fusion')) construireTambour();
         const bullePhoto = document.querySelector('.bubble-photo');
         if (bullePhoto) {
             const rb = bullePhoto.getBoundingClientRect();
-            const cibleX = rb.left + rb.width / 2 + PHOTO_DECALAGE.x;
-            const cibleY = rb.top + rb.height / 2 + window.scrollY + PHOTO_DECALAGE.y;
+            const cibleX = rb.left + rb.width / 2 - gsap.getProperty(bullePhoto, 'x') + PHOTO_DECALAGE.x;
+            const cibleY = rb.top + rb.height / 2 + window.scrollY - gsap.getProperty(bullePhoto, 'y') + PHOTO_DECALAGE.y;
             /* le point que la courbe occupe déjà à cet endroit : on décale de
                la part du chemin qui manque pour entrer dans la bulle */
             const nat = point(PHOTO_U);

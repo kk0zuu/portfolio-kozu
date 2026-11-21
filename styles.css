@@ -1112,8 +1112,8 @@ body.contact-page .logiciels-aide-point {
     background: var(--color-white);
     padding: 0.3rem 1.2rem;
     border: 3px solid var(--color-black);
-    /* ombre portée à gauche et vers le bas (demandé par Ian) */
-    box-shadow: -4px 4px 0 var(--color-black);
+    /* ombre portée : le côté change d'une bulle à l'autre, plus bas */
+    box-shadow: 0 4px 0 var(--color-black);
     text-transform: lowercase;
     z-index: 15;
     white-space: nowrap;
@@ -1122,9 +1122,20 @@ body.contact-page .logiciels-aide-point {
     transform-origin: 50% 50%;
 }
 
-.bubble-num .handwritten-label { transform: rotate(-5deg); }
-.bubble-photo .handwritten-label { transform: rotate(4deg); }
-.bubble-plastique .handwritten-label { transform: rotate(-2deg); }
+/* chacune son ombre, demandé par Ian : Numérique à gauche, Plastique en bas,
+   Photographie à droite */
+.bubble-num .handwritten-label {
+    transform: rotate(-5deg);
+    box-shadow: -4px 0 0 var(--color-black);
+}
+
+.bubble-photo .handwritten-label {
+    transform: rotate(4deg);
+    box-shadow: 4px 0 0 var(--color-black);
+}
+
+/* « projet plastique » reste d'aplomb au repos, et son ombre sous elle */
+.bubble-plastique .handwritten-label { transform: rotate(0deg); }
 
 /* L'étiquette du domaine survolé se berce d'un bord à l'autre comme un
    pendule : elle passe par sa pose de repos à pleine vitesse, sans jamais
