@@ -844,16 +844,14 @@ mm.add({
             ease: "power1.inOut"
         }, 0);
 
-        // PHOTO : Trajectoire descendue (atterrit à y: 10) — elle s'arrête un
-        // peu plus près du centre et un peu plus haut pour que le tracé de la
-        // flèche la traverse (voir PHOTO_DECALAGE dans initFlecheGuide)
+        // PHOTO : Trajectoire descendue (atterrit à y: 40)
         tlSpiral.to(".bubble-photo", {
             motionPath: {
                 path: [
                     { x: 0, y: 0 },
                     { x: 120, y: 110 },
-                    { x: 250, y: 60 },
-                    { x: 300, y: 10 }
+                    { x: 250, y: 100 },
+                    { x: 360, y: 40 }
                 ],
                 curviness: 1.5
             },
@@ -3659,11 +3657,11 @@ if (!document.body.classList.contains('photo-fusion')) construireTambour();
        vers le centre de la bulle, puis relâche. */
     const PHOTO_U = 0.862;      // sa place, en part du tracé
     const PHOTO_LARGEUR = 0.075; // demi-largeur de la fenêtre (fin en cosinus)
-    const PHOTO_PLONGEE = 0.3;   // part du chemin qui reste à faire vers la bulle
+    const PHOTO_PLONGEE = 0.9;   // part du chemin qui reste à faire vers la bulle
     /* où la bulle se pose à la fin de la spirale : elle n'a pas de position
        propre en CSS (elle est centrée au départ), c'est ce décalage, repris des
        motionPath de `initSpirale`, qui l'écarte du centre de la zone */
-    const PHOTO_DECALAGE = { x: 300, y: 10 };
+    const PHOTO_DECALAGE = { x: 360, y: 40 };
     /* le passage dans la bulle Plastique, entre Numérique et Photographie : le
        tracé filait tout droit au-dessus d'elle et les deux bulles du haut se
        trouvaient reliées par un trait horizontal. Une cloche l'y fait plonger

@@ -674,8 +674,11 @@ Autres points de vigilance de l'accueil :
   avec un décalage constant repris du `motionPath` de la bulle dans `initSpirale` :
   - `PLAST_U` / `PLAST_LARGEUR` / `PLAST_PLONGEE` (0,8 / 0,085 / 0,95) et `PLAST_DECALAGE`
     (0, 250) pour le plongeon dans Plastique ;
-  - `PHOTO_U` / `PHOTO_LARGEUR` / `PHOTO_PLONGEE` (0,862 / 0,075 / 0,3) et `PHOTO_DECALAGE`
-    (300, 10) pour Photographie, que le tracé ratait de 248 px.
+  - `PHOTO_U` / `PHOTO_LARGEUR` / `PHOTO_PLONGEE` (0,862 / 0,075 / 0,9) et `PHOTO_DECALAGE`
+    (360, 40) pour Photographie, que le tracé ratait de 248 px.
+  **La bulle, elle, ne bouge pas** : un essai de déplacement de 60 px (360,40 → 300,10) pour
+  raccourcir le plongeon a été refusé par Ian — la cible du tracé se règle par `PHOTO_PLONGEE`,
+  jamais en déplaçant la bulle, dont la position fait partie du dessin de l'accueil.
   Les deux fenêtres se **chevauchent** (0,715–0,885 et 0,787–0,937) : `placerCibles()` calcule
   d'abord le décalage de Plastique puis celui de Photographie, sur un `point()` qui contient
   déjà le premier — sinon la queue d'une cloche déplace le passage de l'autre —, et `point()`
@@ -692,7 +695,7 @@ Autres points de vigilance de l'accueil :
     u ≈ 0,84) ; posé **après**, c'est lui qui a le dernier mot, il n'y a plus de lutte.
   Résultat mesuré (1600 × 950) : rayon de courbure minimal de **121 px** dans la zone des bulles,
   aucun saut d'angle de plus de **4,6°** d'un point au suivant — le U se lit comme une seule
-  courbe — et les trois passages à **13, 62 et 95 px** du centre des bulles.
+  courbe — et les trois passages à **13, 62 et 21 px** du centre des bulles.
   Les décalages viennent des `motionPath` de `initSpirale` : une bulle n'a **pas** de position
   propre en CSS (elle est centrée au départ, c'est la spirale qui l'écarte), donc sa position
   finale se lit « centre mesuré + ce décalage ». Si l'on retouche la trajectoire de la spirale,
