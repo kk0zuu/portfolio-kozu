@@ -722,6 +722,15 @@ Autres points de vigilance de l'accueil :
 - `contact.html` : page statique, aucun contenu structuré. Le contact passe par un
   `mailto:` (`gandou.christian@gmail.com`) et des liens externes. Une modification de texte se
   fait directement dans le HTML ; ne pas ajouter de formulaire (il n'y a pas de backend).
+  - **Le CV est décomposé dans la page** (`.cv` → `.cv-tete` / `.cv-corps`), son CSS vit dans
+    `styles.css` (chercher `/* ---------- CV décomposé dans la page ---------- */`). C'est une
+    **maquette** : elle doit dire la même chose que le PDF téléchargeable, mais elle n'est pas
+    générée depuis lui — une nouvelle version du CV se reporte à la main dans le HTML. Ne pas
+    changer sa mise en page pour y faire tenir du texte : raccourcir le texte.
+  - **Téléchargement** : `.cv-telecharger` dans l'en-tête du CV (`href` vers
+    `images/cv/CV%20alternance…pdf`, chemins encodés comme partout, `download` pour donner un
+    nom propre au fichier). Le PDF doit être **suivi par git**, sinon le bouton renvoie une 404
+    sur GitHub Pages. Il est calé à droite par le `space-between` déjà présent sur `.cv-tete`.
 - `404.html` : page autonome pour GitHub Pages (servie automatiquement pour toute URL
   inconnue). Elle réutilise `styles.css` et la barre de navigation. Son CSS est dans un `<style>`
   inline. Elle est en `noindex` : ne pas l'indexer.
@@ -768,15 +777,13 @@ d'office :
 1. **Poids des images** : ~212 Mo / 265 fichiers, jusqu'à 4,8 Mo par PNG. La conversion WebP, le
    plafonnement et l'ajout de `width`/`height` sont validés sur le principe mais pas lancés
    (attendre le « go »).
-2. **Bouton « Télécharger le CV » en PDF** : à implémenter plus tard (l'image CV existe dans
-   `images/cv/`).
-3. **Fichiers orphelins** : `photo-pro.html`, `photo-expressive.html`, `_archive/`,
+2. **Fichiers orphelins** : `photo-pro.html`, `photo-expressive.html`, `_archive/`,
    `images/manifest.json`, une vidéo `problème swipe des pages photos.mp4` (~7,5 Mo), des
    dizaines d'images non référencées dans `images/accueil/`.
-4. **Pieds de page incohérents** : absents sur `index.html` et `contact.html`, présents ailleurs.
-5. **Accessibilité / SEO** : pas de `meta description` ni Open Graph sauf contact, trois `h1`
+3. **Pieds de page incohérents** : absents sur `index.html` et `contact.html`, présents ailleurs.
+4. **Accessibilité / SEO** : pas de `meta description` ni Open Graph sauf contact, trois `h1`
    sur `photographie.html`, focus clavier à revoir par endroits.
-6. **Mobile** : le responsive est prévu en fin de projet ; ne pas entreprendre de refonte
+5. **Mobile** : le responsive est prévu en fin de projet ; ne pas entreprendre de refonte
    mobile au détour d'un ajout de projet.
 
 ---

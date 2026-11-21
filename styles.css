@@ -4138,6 +4138,53 @@ body.contact-page .nav-links a {
     max-width: 34ch;
 }
 
+/* bouton de téléchargement du CV : même famille que les pastilles du dossier
+   (contour noir, ombre décalée), calé à droite de l'en-tête */
+.cv-telecharger {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.55rem;
+    padding: 0.62rem 0.95rem;
+    background: var(--color-neon-green);
+    color: var(--color-black);
+    border: 3px solid var(--color-black);
+    box-shadow: 5px 5px 0 var(--color-black);
+    font-family: var(--font-bungee);
+    font-size: 0.62rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    text-decoration: none;
+    white-space: nowrap;
+    transform: rotate(-1.4deg);
+    transition: transform 0.22s ease, box-shadow 0.22s ease;
+    cursor: none;
+}
+
+.cv-telecharger:hover,
+.cv-telecharger:focus-visible {
+    transform: rotate(-1.4deg) translate(-2px, -2px);
+    box-shadow: 8px 8px 0 var(--color-black);
+}
+
+.cv-telecharger:focus-visible {
+    outline: 2px solid var(--color-black);
+    outline-offset: 3px;
+}
+
+.cv-telecharger-icone {
+    font-family: var(--font-body);
+    font-size: 0.95rem;
+    line-height: 1;
+}
+
+.cv-telecharger-format {
+    padding: 0.1rem 0.35rem;
+    background: var(--color-black);
+    color: #FFFFFF;
+    font-size: 0.5rem;
+    letter-spacing: 0.08em;
+}
+
 .cv-contacts {
     display: flex;
     flex-direction: column;
