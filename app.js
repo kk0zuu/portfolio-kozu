@@ -35,16 +35,18 @@ if (cursor) {
         cursor.style.opacity = '1';
     });
 
+    /* Ce qui fait passer le curseur en spirale. Les photos qui ouvrent la
+       visionneuse en font partie : elles sont cliquables sans être des liens
+       (pages photo). */
+    const CIBLE_SPIRALE = '.hover-target, a, button, .pr-card .editorial-img-frame, .pe-section .editorial-img-frame';
+    const enSpirale = (el) => !!(el && el.closest && el.closest(CIBLE_SPIRALE));
+
     document.addEventListener('mouseover', (e) => {
-        if (e.target.closest('.hover-target, a, button')) {
-            document.body.classList.add('hovering');
-        }
+        if (enSpirale(e.target)) document.body.classList.add('hovering');
     });
 
     document.addEventListener('mouseout', (e) => {
-        if (!e.relatedTarget || !e.relatedTarget.closest('.hover-target, a, button')) {
-            document.body.classList.remove('hovering');
-        }
+        if (!enSpirale(e.relatedTarget)) document.body.classList.remove('hovering');
     });
 }
 

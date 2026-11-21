@@ -2282,7 +2282,9 @@ body.contact-page .logiciels-aide-point {
     display: flex;
     align-items: center;
     justify-content: center;
-    cursor: pointer;
+    /* le curseur personnalisé passe en spirale au survol : on masque la
+       flèche système pour qu'elle ne double pas la spirale */
+    cursor: none;
     transition: transform 0.25s ease, box-shadow 0.25s ease;
 }
 
