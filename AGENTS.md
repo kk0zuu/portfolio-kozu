@@ -626,12 +626,19 @@ Autres points de vigilance de l'accueil :
 - **La vitesse se mesure en pixels de tracé par pixel de scroll**, jamais en part de `u`. C'est la
   seule unité qui corresponde à ce qu'on voit, et un **cran de molette vaut 100 px** sur presque
   toutes les souris : c'est l'unité de mesure à utiliser pour juger (`scrollTo` de 100 en 100,
-  relever `stroke-dashoffset`, faire la différence). Le tracé fait ~5 400 px pour une course de
-  ~2 000 px : **il avance donc en moyenne 2,7 fois plus vite que la page**, et on ne peut pas
-  ralentir un endroit sans accélérer le reste. Sur cette base, les valeurs relevées sont de
-  ~55 à ~600 px de tracé par cran (contre 27 à 864 avant le 20/11) : ~320 à 430 dans la descente,
-  ~250 à 320 dans le virage, ~210 à 340 dans la remontée finale, et les **deux trous d'arrêt** (voir
-  plus bas) : 28-71 au premier demi-tour, 49-62 à celui du texte.
+  relever `stroke-dashoffset`, faire la différence). **`AMPLEUR` (0,35) est le seul réglage qui
+  raccourcisse vraiment le chemin** : le profil ne fait que redistribuer le scroll, jamais
+  réduire la longueur, et comme il est normalisé, tout ralentissement local accélère le reste.
+  Mesuré le 21/11 (1 583 × 900) : tracé de **5 460 px pour 1 914 px de course**, soit **285 px
+  par cran en moyenne**, pointes à ~725 (avec `AMPLEUR` à 1 : 7 158 px, 374 px par cran,
+  pointes à 943 — la flèche traversait presque un écran par cran). Les **deux trous d'arrêt**
+  (voir plus bas) descendent à ~20 px par cran.
+  **Le plancher est de ~253 px par cran**, et le tracé actuel en est à 12 % : c'est le trajet
+  minimal qui passe par les trois perles (1 649 px de descente, 426 puis 417 px d'une bulle à
+  l'autre, 2 352 px de remontée hors du cadre). Autrement dit **on ne peut plus guère ralentir
+  en racourcissant le dessin** ; il n'y a plus qu'une voie : **rallonger la page** (pour ~950 px
+  de course en plus, le même tracé tombe à ~190 px par cran), ce qui est une décision de mise en
+  page, pas de code.
 - Le profil (`construireProfil` / `avance`) est construit **après** le tracé, sur ses longueurs
   réelles : chaque tronçon coûte « sa longueur divisée par la vitesse voulue », on cumule, on
   normalise (`u(1) = 1` : la fin tombe pile en bas de page et rien ne recule), et `avance(s)`
@@ -654,11 +661,12 @@ Autres points de vigilance de l'accueil :
   `ARRETS` contient les **deux** endroits où le tracé fait demi-tour sur place : `0,132` (le
   premier looping, juste au-dessus de « qui suis-je ? », page y ≈ 1 036) et `TEXTE_C` (le virage
   du texte). Ian a demandé que le premier ait le même ralenti que le second : même `ARRET` (4)
-  et même `ARRET_LARGEUR` (0,055) pour les deux. Mesuré à 4 / 0,055 : 179 → 71 → **28** → 174 px
-  de tracé par cran autour du premier demi-tour (la pointe y est à son point le plus à droite,
-  `(469 ; 1 068)`), 221 → 62 → **49** → 177 autour de celui du texte ; max 600 ailleurs (contre
-  510 avec un seul arrêt, 404 sans aucun). Chaque arrêt coûte du scroll, donc le reste accélère
-  d'autant : c'est le compromis normal du profil (voir le premier piège).
+  et même `ARRET_LARGEUR` (0,055) pour les deux. Mesuré à 4 / 0,055 avec l'ampleur actuelle :
+  le cran tombe à **~20 à 50 px** de tracé au creux des deux arrêts, contre **~725 px au plus
+  vite ailleurs**. Chaque arrêt coûte du
+  scroll, donc le reste accélère d'autant : c'est le compromis normal du profil (voir le premier
+  piège). Baisser `ARRET` calme l'ensemble du tracé, mais retire le temps d'arrêt que Ian a
+  demandé aux deux demi-tours.
   **La géométrie ne bouge pas** : ces réglages ne touchent que le profil de vitesse, jamais
   `base()` ni `point()`.
   Pour vérifier qu'un trou de vitesse tombe au bon endroit, relever à chaque cran l'avancement
@@ -744,12 +752,17 @@ Autres points de vigilance de l'accueil :
   son passage tombe vraiment dans l'interligne. Baisser `TEXTE_PLAT` aplatit davantage ; le
   remonter redonne au repli sa hauteur d'origine, mais il retombe sur les lignes.
 - **Passage dans les trois bulles** : le tracé entre une fois dans chaque case, **dans l'ordre du
-  geste** — Numérique (u ≈ 0,70–0,76), **Plastique (u ≈ 0,77–0,82, 13 px de son centre)** puis
-  Photographie (u ≈ 0,83–0,87) — et en **un seul U continu** : il plonge dans Plastique puis
-  remonte vers Photographie, au lieu de relier les deux bulles du haut par un trait horizontal
-  qui passait 130 px au-dessus de Plastique (la version que Ian a raturée). Chaque case reçoit
-  une **cloche en cosinus** qui déplace le voisinage du tracé vers son centre puis le relâche,
-  avec un décalage constant repris du `motionPath` de la bulle dans `initSpirale` :
+  geste** — Numérique (u ≈ 0,72), **Plastique (u = 0,8)** puis Photographie (u = 0,862) — et en
+  **une seule ligne continue** : il plonge dans Plastique puis remonte vers Photographie, au lieu
+  de relier les deux bulles du haut par un trait horizontal qui passait 130 px au-dessus de
+  Plastique (la version que Ian a raturée). Chaque case reçoit une **cloche en cosinus** qui
+  déplace le voisinage du tracé vers son centre puis le relâche, avec un décalage constant repris
+  du `motionPath` de la bulle dans `initSpirale` :
+  - `NUM_U` / `NUM_LARGEUR` / `NUM_PLONGEE` (0,72 / 0,09 / 0,9) et `NUM_DECALAGE` (−370, 40) pour
+    Numérique : cette perle n'a **pas** toujours eu de cloche — tant que le tracé avait ses grands
+    bras, il l'atteignait de lui-même (à 13 px près) ; dès qu'on resserre le dessin (`AMPLEUR`),
+    il la rate de **247 px**, ce qui a obligé à l'y amener comme les deux autres. Ne pas retirer
+    cette cloche en croyant qu'elle est décorative ;
   - `PLAST_U` / `PLAST_LARGEUR` / `PLAST_PLONGEE` (0,8 / 0,085 / 0,95) et `PLAST_DECALAGE`
     (0, 250) pour le plongeon dans Plastique ;
   - `PHOTO_U` / `PHOTO_LARGEUR` / `PHOTO_PLONGEE` (0,862 / 0,075 / 0,9) et `PHOTO_DECALAGE`
@@ -764,10 +777,11 @@ Autres points de vigilance de l'accueil :
   **La bulle, elle, ne bouge pas** : un essai de déplacement de 60 px (360,40 → 300,10) pour
   raccourcir le plongeon a été refusé par Ian — la cible du tracé se règle par `PHOTO_PLONGEE`,
   jamais en déplaçant la bulle, dont la position fait partie du dessin de l'accueil.
-  Les deux fenêtres se **chevauchent** (0,715–0,885 et 0,787–0,937) : `placerCibles()` calcule
-  d'abord le décalage de Plastique puis celui de Photographie, sur un `point()` qui contient
-  déjà le premier — sinon la queue d'une cloche déplace le passage de l'autre —, et `point()`
-  applique Plastique **avant** Photographie, pour que Photographie garde le dernier mot.
+  Les fenêtres se **chevauchent** (0,63–0,81, 0,715–0,885 et 0,787–0,937) : `placerCibles()`
+  calcule les décalages dans l'ordre des passages — Numérique, Plastique, Photographie —, sur un
+  `point()` qui contient déjà les précédents, sinon la queue d'une cloche déplace le passage de
+  l'autre ; et `point()` les applique dans ce même ordre, pour que Photographie garde le dernier
+  mot.
   **Trois pièges vécus, dans l'ordre où ils se sont présentés** :
   - tirer le point vers le centre de la bulle (`p += (centre − p) × poids`) fait une **épingle à
     135°** : la courbe repart de l'autre côté. Un **décalage** (`p += décalage × poids`) garde la
@@ -778,9 +792,8 @@ Autres points de vigilance de l'accueil :
     bords, aucun cran possible ;
   - posé **avant** le mélange de la remontée finale, le décalage est combattu par lui (23° de coude à
     u ≈ 0,84) ; posé **après**, c'est lui qui a le dernier mot, il n'y a plus de lutte.
-  Résultat mesuré (1600 × 950) : rayon de courbure minimal de **121 px** dans la zone des bulles,
-  aucun saut d'angle de plus de **4,6°** d'un point au suivant — le U se lit comme une seule
-  courbe — et les trois passages à **13, 62 et 21 px** du centre des bulles.
+  Résultat mesuré (1 583 × 900, `AMPLEUR` 0,35) : les trois passages à **29, 15 et 30 px** du
+  centre des bulles, et **aucun croisement** du tracé avec lui-même sur tout le `d`.
   Les décalages viennent des `motionPath` de `initSpirale` : une bulle n'a **pas** de position
   propre en CSS (elle est centrée au départ, c'est la spirale qui l'écarte), donc sa position
   finale se lit « centre mesuré + ce décalage ». Si l'on retouche la trajectoire de la spirale,

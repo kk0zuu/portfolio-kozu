@@ -3740,6 +3740,20 @@ if (!document.body.classList.contains('photo-fusion')) construireTambour();
     /* et le tour final, autour de « où on va ? », se prend le temps d'être lu */
     const FIN_LENT = 0.6;       // part de la vitesse normale dans le tour final
     const FIN_RENTREE = 0.09;   // sur quelle part de la courbe on y descend
+    /* Compacité du dessin : **le seul réglage qui change la distance
+       parcourue par la flèche entre deux crans de molette**. Le profil de
+       vitesse ne fait que redistribuer le scroll, il ne raccourcit jamais le
+       chemin ; et comme il est normalisé, ralentir un endroit accélère le
+       reste. Un cran de molette vaut 100 px : avec le tracé large d'origine
+       (7 158 px de long pour 1 914 px de course, soit 374 px par cran et des
+       pointes à 943), la flèche traversait presque un écran par cran. À 35 %
+       d'amplitude, le tracé mesure 5 460 px et le cran vaut 285 px — c'est à
+       peu près le plus court possible (253 px si le fil allait droit d'une
+       perle à l'autre), donc **ne pas descendre plus bas sans toucher à la
+       page** : les loopings ne sont plus que des ondulations.
+       Pour aller plus lentement, il faut rallonger la page (plus de `course`),
+       pas le tracé. */
+    const AMPLEUR = 0.35;       // 1 = le tracé large d'origine
     const PAS = 900;            // points d'échantillonnage du tracé
     /* le tracé ne démarre pas au premier pixel de scroll : il laisse passer
        quelques centimètres, le temps que la page se mette en route */
@@ -3788,6 +3802,15 @@ if (!document.body.classList.contains('photo-fusion')) construireTambour();
     const PLAST_LARGEUR = 0.085; // demi-largeur de la fenêtre (fin en cosinus)
     const PLAST_PLONGEE = 0.95;  // part du chemin qui reste à faire vers la bulle
     const PLAST_DECALAGE = { x: 0, y: 250 };  // position finale de la bulle
+    /* le passage dans la bulle Numérique, la première des trois perles. Il
+       n'avait pas de cloche : le tracé y arrivait grâce à la largeur de ses
+       bras. Dès qu'on resserre le dessin (voir `AMPLEUR`), il la rate, donc on
+       l'y amène comme les deux autres — même cloche en cosinus, même décalage
+       constant repris de la spirale. */
+    const NUM_U = 0.72;         // sa place, avant Plastique et Photographie
+    const NUM_LARGEUR = 0.09;   // demi-largeur de la fenêtre (fin en cosinus)
+    const NUM_PLONGEE = 0.9;    // part du chemin qui reste à faire vers la bulle
+    const NUM_DECALAGE = { x: -370, y: 40 };  // position finale de la bulle
     /* aux deux endroits où le tracé fait demi-tour sur place (le premier
        looping autour de « qui suis-je ? », et le virage du texte), il n'a
        presque aucune longueur à parcourir : un profil fondé sur la seule
@@ -3835,6 +3858,7 @@ if (!document.body.classList.contains('photo-fusion')) construireTambour();
     let texteY = 0;             // le centre du repli dans la présentation
     let texteGap = 0;           // l'interligne à viser
     let texteX0 = 0, texteX1 = 0;   // la colonne de la présentation
+    let numDx = 0, numDy = 0;       // et vers la bulle Numérique
     let photoDx = 0, photoDy = 0;   // de combien le tracé plonge vers la bulle Photo
     let plastDx = 0, plastDy = 0;   // et vers la bulle Plastique
     let profil = [];    // avancement du tracé en fonction du scroll, normalisé
@@ -3922,6 +3946,19 @@ if (!document.body.classList.contains('photo-fusion')) construireTambour();
             p.y += ((texteY + (p.y - texteY) * TEXTE_PLAT) - p.y) * w;
         }
 
+        /* le plongeon dans la bulle Numérique, la première perle du collier.
+           Posé **avant** Plastique et Photographie, qui gardent le dernier
+           mot : les fenêtres se chevauchent, et chaque passage doit être calé
+           sur un `point()` qui contient déjà les précédents. */
+        if (numDx || numDy) {
+            const tn = (u - NUM_U) / NUM_LARGEUR;
+            if (tn > -1 && tn < 1) {
+                const wn = 0.5 + 0.5 * Math.cos(Math.PI * tn);
+                p.x += numDx * wn;
+                p.y += numDy * wn;
+            }
+        }
+
         /* le plongeon dans la bulle Plastique : même principe, une cloche en
            cosinus qui descend le tracé jusqu'au centre de la bulle et le
            remonte ensuite, sans toucher à la forme du reste de la courbe. */
@@ -3971,6 +4008,21 @@ if (!document.body.classList.contains('photo-fusion')) construireTambour();
 
     /* cale le tour final sur le titre de la page réelle */
     function placerCibles() {
+        /* le centre de la bulle Numérique, la première perle : le tracé y entre
+           une fois, avant de plonger dans Plastique et de remonter vers
+           Photographie */
+        numDx = 0;
+        numDy = 0;
+        const bulleNum = document.querySelector('.bubble-num');
+        if (bulleNum) {
+            const rn = bulleNum.getBoundingClientRect();
+            const cibleNX = rn.left + rn.width / 2 - gsap.getProperty(bulleNum, 'x') + NUM_DECALAGE.x;
+            const cibleNY = rn.top + rn.height / 2 + window.scrollY - gsap.getProperty(bulleNum, 'y') + NUM_DECALAGE.y;
+            const natN = point(NUM_U);
+            numDx = (cibleNX - natN.x) * NUM_PLONGEE;
+            numDy = (cibleNY - natN.y) * NUM_PLONGEE;
+        }
+
         /* le centre de la bulle Plastique, entre Numérique et Photographie :
            le tracé y plonge une fois, en un seul U, au lieu de passer au-dessus */
         plastDx = 0;
@@ -4106,9 +4158,10 @@ if (!document.body.classList.contains('photo-fusion')) construireTambour();
         course = Math.max(0, page - vh);
         cx = largeur / 2;
         /* la courbe reste dans une bande raisonnable, proportionnelle à l'écran */
-        const portee = Math.min(largeur * 0.33, 520);
+                const portee = Math.min(largeur * 0.33, 520) * AMPLEUR;
+
         Ax = portee / 2;
-        By = Math.min(170, vh * 0.19);
+        By = Math.min(170, vh * 0.19) * AMPLEUR;
         By2 = By * 0.42;
         anglePrec = null;
 
