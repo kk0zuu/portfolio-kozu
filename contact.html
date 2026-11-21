@@ -462,22 +462,26 @@
 
         if (calme) return;
 
-        /* ---------- apparition des blocs : léger glissement + fondu ---------- */
+        /* ---------- apparition des blocs : SKEW KINETIQUE ----------
+           le bloc arrive de travers (penché de 3°, ancré en haut à gauche, 40 px
+           plus bas) et se redresse en freinant net. `expo.out` est exactement la
+           courbe de référence (0.16, 1, 0.3, 1) ; le fondu, lui, est plus court
+           que la redressée (0,4 s contre 0,8 s), comme dans la référence. */
         function apparait(sel, base, ecart) {
             var els = [].slice.call(document.querySelectorAll(sel));
             els.forEach(function (el, i) {
-                /* état final explicite : un simple from() repartirait de l'opacité
-                   déjà mise à 0 par le CSS et laisserait l'élément invisible */
-                gsap.fromTo(el,
-                    { y: 26, opacity: 0 },
-                    {
-                        y: 0,
-                        opacity: 1,
-                        duration: 0.6,
-                        ease: 'power2.out',
-                        delay: base + i * (ecart || 0),
-                        scrollTrigger: { trigger: el, start: 'top 88%', once: true }
-                    });
+                /* état de départ explicite : un simple from() repartirait de
+                   l'opacité déjà mise à 0 par le CSS et laisserait l'élément
+                   invisible */
+                var tl = gsap.timeline({
+                    delay: base + i * (ecart || 0),
+                    scrollTrigger: { trigger: el, start: 'top 88%', once: true }
+                });
+                tl.fromTo(el,
+                    { y: 40, skewY: 3, transformOrigin: 'top left', opacity: 0 },
+                    { y: 0, skewY: 0, duration: 0.8, ease: 'expo.out' }, 0)
+                  .fromTo(el, { opacity: 0 },
+                    { opacity: 1, duration: 0.4, ease: 'power1.out' }, 0);
             });
         }
 

@@ -784,7 +784,16 @@ Autres points de vigilance de l'accueil :
 ## 8. Contact et 404
 
 - `contact.html` : page statique, aucun contenu structuré. Le contact passe par un
-  `mailto:` (`gandou.christian@gmail.com`) et des liens externes. Une modification de texte se
+  `mailto:` (`gandou.christian@gmail.com`) et des liens externes.
+  - **L'arrivée des blocs est en essai** (21/11). Tout passe par une seule fonction,
+    `apparait(sel, base, ecart)` dans le `<script>` de la page : état de départ explicite,
+    `delay` + `scrollTrigger` (`top 88%`, `once`), et l'élément ne devient jamais invisible pour de
+    bon. La version posée est le **Skew Kinetic** (départ `y: 40`, `skewY: 3°`, ancrage en haut à
+    gauche, 0,8 s en `expo.out` — c'est exactement `cubic-bezier(0.16, 1, 0.3, 1)` —, fondu en
+    0,4 s). La variante **mise au point optique** (flou 8 px + `scale(1.04)` → net, 0,85 s) vit
+    dans **`contact-focus.html`**, une copie jetable et `noindex` de la page : Ian choisit, on
+    garde la gagnante dans `contact.html` et on **supprime ce fichier**. GSAP interpole très bien
+    `filter: blur()`, il n'y a donc rien à ajouter au CSS. Une modification de texte se
   fait directement dans le HTML ; ne pas ajouter de formulaire (il n'y a pas de backend).
   - **Le CV est décomposé dans la page** (`.cv` → `.cv-tete` / `.cv-corps`), son CSS vit dans
     `styles.css` (chercher `/* ---------- CV décomposé dans la page ---------- */`). C'est une
