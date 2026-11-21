@@ -765,7 +765,11 @@ if (introLine && heroSection) {
            vers leur accroche, hors du cadre. */
         cordes.forEach((corde, rang) => {
             const lacher = finChute + rang * ECART_CHUTE;
-            tlHero.set(corde, { transformOrigin: '50% 0%' }, lacher);
+            /* pas de bascule d'origine cette fois : la corde reste ancrée dans
+               le haut de sa lettre et se rembobine dedans, comme elle en est
+               sortie. Elle garde donc sa lettre au bout pendant toute la
+               remontée — c'est exactement l'image de la descente, à l'envers
+               (même longueurs, même ordre, même cadence). */
             tlHero.to(corde, {
                 scaleY: 0,
                 duration: DUREE_CHUTE,

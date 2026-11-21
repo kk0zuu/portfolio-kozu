@@ -586,11 +586,18 @@ Autres points de vigilance de l'accueil :
   elle part **d'un bloc quand la dernière lettre est posée** (`finChute`), avec le même ordre, le
   même écart `ECART_CHUTE` d'une corde à l'autre, la même durée `DUREE_CHUTE` et la courbe
   inverse `power2.in` (qui est exactement `power2.out` retournée : les deux sont des
-  quadratiques), plus 0,02 s de battement. L'origine de transformation passe en haut au moment du
-  lâcher — corde tendue, donc sans saut. **Trois choses à ne pas refaire**, toutes essayées :
-  une remontée plus courte (0,38 s) ou un `stagger` plus serré (0,012) casse le motif ; la lancer
-  corde par corde dès que chaque lettre se pose la fait se mélanger aux lettres qui tombent
-  encore, et Ian l'a refusée deux fois. Le rognage du hero ne revient qu'à `finRemontee` (fin de
+  quadratiques), plus 0,02 s de battement. **La corde reste ancrée dans le haut de sa lettre : elle
+  se rembobine dedans** (`scaleY` 1 → 0, origine en bas, **aucune bascule d'origine**), donc elle
+  garde sa lettre au bout pendant toute la remontée et l'image reste celle de la descente. Mesuré
+  sur les deux phases : le bas de chaque corde colle au haut de sa lettre à moins de 2 px, et les
+  longueurs à l'instant `t` de la remontée égalent celles de la descente à l'instant miroir.
+  **Quatre choses à ne pas refaire**, toutes essayées et refusées : une remontée plus courte
+  (0,38 s) ou un `stagger` plus serré (0,012) casse le motif ; la lancer corde par corde dès que
+  chaque lettre se pose la fait se mélanger aux lettres qui tombent encore ; et surtout **basculer
+  l'origine en haut pour faire remonter le bout libre** laisse des fils qui pendent dans le vide,
+  sans lettre au bout — c'est ce qu'Ian a repoussé trois fois. La géométrie des longueurs était
+  pourtant identique (vérifiée au pixel), c'était l'image qui ne collait pas : ici chaque corde
+  finit sa course **dans** sa lettre, comme elle en est sortie. Le rognage du hero ne revient qu'à `finRemontee` (fin de
   la dernière remontée). La ligne d'intro (« et voici mon » + « PORTFOLIO », qui arrivent des
   deux côtés et se cognent) et la barre de navigation partent, elles, à la pose de la dernière
   lettre. La barre n'entre donc plus sur une minuterie : elle attend l'événement
