@@ -694,12 +694,20 @@ if (introLine && heroSection) {
        bleu (le bleu de la flèche). La corde est posée dans le wrapper de la
        lettre, son bas collé au haut de la lettre, et sa hauteur vaut toute la
        chute : pendant la descente on ne voit que la longueur déjà déroulée
-       (`scaleY`), le haut de la corde restant fixe, hors du cadre. Les lettres
-       partent donc toutes du même haut, hors champ, se posent en décalé, puis
-       les cordes remontent, tirées par le haut. */
-    const SURPLOMB = 140;           // départ au-dessus du cadre (px)
+       (`scaleY`), le haut de la corde restant fixe, au-dessus du cadre. Le
+       hero porte la classe `.cordes-visibles` : il ne rogne pas ses
+       débordements pendant l'intro, pour que les cordes restent visibles dans
+       la bande du haut — celle où la barre de navigation arrive — et passent
+       derrière elle (elle est en `z-index: 1000`). Les lettres partent du même
+       haut, hors champ, se posent en décalé, puis les cordes remontent vers
+       l'extérieur du cadre. */
+    const SURPLOMB = 260;           // accroche au-dessus du cadre (px)
     const DUREE_CHUTE = 0.52;       // descente d'une lettre (s)
     const ECART_CHUTE = 0.025;      // décalage d'une lettre à la suivante (s)
+
+    /* le hero cesse de rogner : les cordes doivent être visibles jusqu'au haut
+       de l'écran, dans la bande où la barre va entrer (retiré à la fin) */
+    heroSection.classList.add('cordes-visibles');
 
     /* Ordre de pose tiré au hasard, pas de gauche à droite : `ordrePose[k]`
        est la lettre qui arrive en k-ième position. Il sert aussi au rangement
@@ -716,7 +724,7 @@ if (introLine && heroSection) {
 
         // chute mesurée sur la place finale de la lettre : elle part hors du cadre
         const haut = wrapper.getBoundingClientRect().top + window.scrollY;
-        const chute = Math.max(320, haut + SURPLOMB);
+        const chute = Math.max(360, haut + SURPLOMB);
         // la corde annule la rotation de sa lettre pour rester bien verticale
         const rot = parseFloat(wrapper.getAttribute('data-rot')) || 0;
         // rang de cette lettre dans la pose, tiré au hasard
@@ -756,6 +764,9 @@ if (introLine && heroSection) {
             ease: 'power2.in',
             stagger: 0.012
         }, finChute);
+
+        /* toutes les cordes sont remontées : le hero reprend son rognage */
+        tlHero.add(() => heroSection.classList.remove('cordes-visibles'), finChute + 0.6);
     }
 
     /* Ligne d'intro (« et voici mon PORTFOLIO ») : les deux morceaux arrivent

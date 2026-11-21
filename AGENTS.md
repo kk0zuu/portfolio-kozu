@@ -577,9 +577,12 @@ Autres points de vigilance de l'accueil :
   remontent (origine de transformation prise en haut) **en même temps** que la ligne d'intro
   (« et voici mon » + « PORTFOLIO », qui arrivent des deux côtés et se cognent) et que la barre
   de navigation. La barre n'entre donc plus sur une minuterie : elle attend l'événement
-  **`accueil:titre-pose`**, avec un filet à 4 s. Le haut des cordes est coupé par
-  `.hero-section { overflow: hidden }` : ne pas l'enlever, sinon on voit les cordes s'arrêter
-  en l'air au-dessus du titre.
+  **`accueil:titre-pose`**, avec un filet à 4 s. Pendant tout ce temps le hero porte
+  **`.cordes-visibles`** (`overflow: visible` dans `styles.css`), sinon il rogne ses débordements à
+  48 px du haut (le `padding-top` du body) et la bande où la barre va entrer reste vide : les
+  cordes montent donc jusqu'au bord de l'écran et passent **derrière** la barre (`z-index: 1000`),
+  où on les voit encore à travers son verre. La classe est retirée quand les cordes ont fini de
+  remonter — le rognage doit revenir avant le scroll, qui éparpille les lettres à ±850 px.
 - `initFlecheGuide` (dans `app.js`) ajoute sur l'accueil un **trait bleu qui s'étire** le long
   d'une courbe paramétrique (constantes `BOUCLES`, `ONDES`) : ce n'est pas un objet qui se
   déplace mais un `<path>` dont on révèle la longueur par `stroke-dasharray` /

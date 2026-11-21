@@ -512,7 +512,11 @@ body.hovering .cursor-spiral {
    Chaque lettre du titre descend suspendue à un trait bleu, le bleu de la
    flèche guide. La corde est posée dans le wrapper de sa lettre, son bas
    collé au haut de la lettre ; app.js lui donne la hauteur de la chute et
-   anime son `scaleY`, c'est donc le bout visible qui s'allonge puis remonte. */
+   anime son `scaleY`, c'est donc le bout visible qui s'allonge puis remonte.
+   Le hero ne rogne pas ses débordements tant que les cordes vivent
+   (`.cordes-visibles`, posée le temps de l'intro) : elles restent donc
+   visibles jusqu'au haut de l'écran, dans la bande où la barre arrive, et
+   passent derrière elle (elle est en `z-index: 1000`). */
 .ransom-wrapper .corde {
     position: absolute;
     left: 50%;
@@ -523,6 +527,13 @@ body.hovering .cursor-spiral {
     background: #1232B4;
     border-radius: 1px;
     pointer-events: none;
+}
+
+/* le temps de la descente et de la remontée des cordes, le hero laisse
+   déborder : sans ça, tout ce qui passe au-dessus de lui est coupé au ras de
+   sa boîte (48 px sous le haut de l'écran, à cause du `padding-top` du body) */
+.hero-section.cordes-visibles {
+    overflow: visible;
 }
 
 .hero-section:not(.titre-libre) .ransom-wrapper:hover {
