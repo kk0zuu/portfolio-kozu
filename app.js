@@ -2626,9 +2626,9 @@ if (!document.body.classList.contains('photo-fusion')) construireTambour();
     // L'invitation arrive 550 ms après le dernier défilement. Bouger la souris
     // ne compte pas : seule l'immobilité de la page compte.
     var REPOS = 550;
-    /* au premier affichage, on laisse le titre se poser, puis respirer une
-       seconde avant que le « I » ne tire et que le point ne parte */
-    var PREMIERE = 1000;
+    /* au premier affichage, on laisse le titre se poser, puis un peu respirer
+       avant que le « I » ne tire et que le point ne parte */
+    var PREMIERE = 600;
 
     function possible() {
         if (fini || saisie || window.scrollY > 12) return false;
