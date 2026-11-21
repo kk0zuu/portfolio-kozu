@@ -665,14 +665,21 @@ Autres points de vigilance de l'accueil :
   soit le retour à la ligne) et `calerTexte()` décale ensuite le centre du repli jusqu'à ce que
   son passage tombe vraiment dans l'interligne. Baisser `TEXTE_PLAT` aplatit davantage ; le
   remonter redonne au repli sa hauteur d'origine, mais il retombe sur les lignes.
-- **Passage dans les trois bulles** : le tracé traverse une fois chaque case de domaine —
-  Numérique (u ≈ 0,71–0,76, 79 px sous le bord), Photographie (u ≈ 0,85, 94 px) et Plastique
-  (u ≈ 0,97–0,98, 124 px). Au départ il **ratait Photographie de 248 px** (son point le plus
-  proche passait juste au-dessus du coin haut-gauche). Deux réglages le corrigent ensemble :
-  `PHOTO_U` / `PHOTO_LARGEUR` / `PHOTO_PLONGEE` (0,862 / 0,075 / 0,3) et un **déplacement de 60 px**
-  de la bulle elle-même (`PHOTO_DECALAGE` = 300, 10, repris de son `motionPath` dans
-  `initSpirale`). Sur une fenêtre de u, tout le voisinage du tracé est **décalé** vers la bulle
-  (30 % du chemin qui manquait), puis relâché.
+- **Passage dans les trois bulles** : le tracé entre une fois dans chaque case, **dans l'ordre du
+  geste** — Numérique (u ≈ 0,70–0,76), **Plastique (u ≈ 0,77–0,82, 13 px de son centre)** puis
+  Photographie (u ≈ 0,83–0,87) — et en **un seul U continu** : il plonge dans Plastique puis
+  remonte vers Photographie, au lieu de relier les deux bulles du haut par un trait horizontal
+  qui passait 130 px au-dessus de Plastique (la version que Ian a raturée). Chaque case reçoit
+  une **cloche en cosinus** qui déplace le voisinage du tracé vers son centre puis le relâche,
+  avec un décalage constant repris du `motionPath` de la bulle dans `initSpirale` :
+  - `PLAST_U` / `PLAST_LARGEUR` / `PLAST_PLONGEE` (0,8 / 0,085 / 0,95) et `PLAST_DECALAGE`
+    (0, 250) pour le plongeon dans Plastique ;
+  - `PHOTO_U` / `PHOTO_LARGEUR` / `PHOTO_PLONGEE` (0,862 / 0,075 / 0,3) et `PHOTO_DECALAGE`
+    (300, 10) pour Photographie, que le tracé ratait de 248 px.
+  Les deux fenêtres se **chevauchent** (0,715–0,885 et 0,787–0,937) : `placerCibles()` calcule
+  d'abord le décalage de Plastique puis celui de Photographie, sur un `point()` qui contient
+  déjà le premier — sinon la queue d'une cloche déplace le passage de l'autre —, et `point()`
+  applique Plastique **avant** Photographie, pour que Photographie garde le dernier mot.
   **Trois pièges vécus, dans l'ordre où ils se sont présentés** :
   - tirer le point vers le centre de la bulle (`p += (centre − p) × poids`) fait une **épingle à
     135°** : la courbe repart de l'autre côté. Un **décalage** (`p += décalage × poids`) garde la
@@ -683,13 +690,13 @@ Autres points de vigilance de l'accueil :
     bords, aucun cran possible ;
   - posé **avant** le mélange du tour final, le décalage est combattu par lui (23° de coude à
     u ≈ 0,84) ; posé **après**, c'est lui qui a le dernier mot, il n'y a plus de lutte.
-  Résultat mesuré : écart maximal de 120 px à la courbe d'origine, rayon de courbure minimal de
-  83 px dans la zone (les cusp naturels du tracé descendent à 20–50 px), et aucun virage plus
-  serré que ceux qui existaient déjà.
-  `PHOTO_DECALAGE` vient des `motionPath` de `initSpirale` : la bulle n'a **pas** de position
+  Résultat mesuré (1600 × 950) : rayon de courbure minimal de **121 px** dans la zone des bulles,
+  aucun saut d'angle de plus de **4,6°** d'un point au suivant — le U se lit comme une seule
+  courbe — et les trois passages à **13, 62 et 95 px** du centre des bulles.
+  Les décalages viennent des `motionPath` de `initSpirale` : une bulle n'a **pas** de position
   propre en CSS (elle est centrée au départ, c'est la spirale qui l'écarte), donc sa position
   finale se lit « centre mesuré + ce décalage ». Si l'on retouche la trajectoire de la spirale,
-  mettre ce décalage à jour, sinon le plongeon vise à côté. Réglages pensés pour le desktop
+  mettre les décalages à jour, sinon le plongeon vise à côté. Réglages pensés pour le desktop
   (branche `isDesktop`) : la branche mobile a ses propres trajectoires.
 - La pente de la pointe est mesurée par différence finie sur `point()`, pour rester juste malgré
   la boucle et le tour final.

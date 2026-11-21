@@ -3664,6 +3664,14 @@ if (!document.body.classList.contains('photo-fusion')) construireTambour();
        propre en CSS (elle est centrée au départ), c'est ce décalage, repris des
        motionPath de `initSpirale`, qui l'écarte du centre de la zone */
     const PHOTO_DECALAGE = { x: 300, y: 10 };
+    /* le passage dans la bulle Plastique, entre Numérique et Photographie : le
+       tracé filait tout droit au-dessus d'elle et les deux bulles du haut se
+       trouvaient reliées par un trait horizontal. Une cloche l'y fait plonger
+       puis remonter dans le même geste, ce qui donne le grand U du parcours. */
+    const PLAST_U = 0.8;        // sa place, entre Numérique et Photographie
+    const PLAST_LARGEUR = 0.085; // demi-largeur de la fenêtre (fin en cosinus)
+    const PLAST_PLONGEE = 0.95;  // part du chemin qui reste à faire vers la bulle
+    const PLAST_DECALAGE = { x: 0, y: 250 };  // position finale de la bulle
     /* aux deux endroits où le tracé fait demi-tour sur place (le premier
        looping autour de « qui suis-je ? », et le virage du texte), il n'a
        presque aucune longueur à parcourir : un profil fondé sur la seule
@@ -3714,6 +3722,7 @@ if (!document.body.classList.contains('photo-fusion')) construireTambour();
     let texteGap = 0;           // l'interligne à viser
     let texteX0 = 0, texteX1 = 0;   // la colonne de la présentation
     let photoDx = 0, photoDy = 0;   // de combien le tracé plonge vers la bulle Photo
+    let plastDx = 0, plastDy = 0;   // et vers la bulle Plastique
     let profil = [];    // avancement du tracé en fonction du scroll, normalisé
 
     /* Profil de vitesse, en pixels de tracé par pixel de scroll. Il se
@@ -3818,6 +3827,18 @@ if (!document.body.classList.contains('photo-fusion')) construireTambour();
             p.y += (cibleY - p.y) * w;
         }
 
+        /* le plongeon dans la bulle Plastique : même principe, une cloche en
+           cosinus qui descend le tracé jusqu'au centre de la bulle et le
+           remonte ensuite, sans toucher à la forme du reste de la courbe. */
+        if (plastDx || plastDy) {
+            const tl = (u - PLAST_U) / PLAST_LARGEUR;
+            if (tl > -1 && tl < 1) {
+                const wl = 0.5 + 0.5 * Math.cos(Math.PI * tl);
+                p.x += plastDx * wl;
+                p.y += plastDy * wl;
+            }
+        }
+
         /* le plongeon dans la bulle Photographie : le tracé descend le long de
            « où on va ? » et la rate de peu. On ne tire pas le point vers un
            centre (la courbe y ferait une épingle) : on **décale** le voisinage,
@@ -3837,6 +3858,20 @@ if (!document.body.classList.contains('photo-fusion')) construireTambour();
 
     /* cale le tour final sur le titre de la page réelle */
     function placerCibles() {
+        /* le centre de la bulle Plastique, entre Numérique et Photographie :
+           le tracé y plonge une fois, en un seul U, au lieu de passer au-dessus */
+        plastDx = 0;
+        plastDy = 0;
+        const bullePlast = document.querySelector('.bubble-plastique');
+        if (bullePlast) {
+            const rl = bullePlast.getBoundingClientRect();
+            const cibleLX = rl.left + rl.width / 2 + PLAST_DECALAGE.x;
+            const cibleLY = rl.top + rl.height / 2 + window.scrollY + PLAST_DECALAGE.y;
+            const natL = point(PLAST_U);
+            plastDx = (cibleLX - natL.x) * PLAST_PLONGEE;
+            plastDy = (cibleLY - natL.y) * PLAST_PLONGEE;
+        }
+
         /* le centre où la bulle Photographie se pose à la fin de la spirale :
            le tracé doit y passer une fois, comme dans Numérique et Plastique */
         photoDx = 0;
