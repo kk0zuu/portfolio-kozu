@@ -686,14 +686,34 @@ if (introLine && heroSection) {
         onComplete: () => document.dispatchEvent(new Event('hero:intro-done'))
     });
 
-    // Apparition simple et fluide de la ligne d'intro ("et voici mon PORTFOLIO")
-    tlHero.from([manuscriptText, portfolioBadge], {
-        opacity: 0,
-        y: 20,
-        duration: 0.6,
-        stagger: 0.15,
-        ease: "power2.out"
-    });
+    /* Ligne d'intro (« et voici mon PORTFOLIO ») : les deux morceaux arrivent
+       des deux côtés, se rejoignent au centre, se cognent, puis font deux
+       petits rebonds de plus en plus courts avant de se poser. L'élan
+       accélère (`power3.in`) ; chaque rebond les renvoie de leur côté, puis
+       les ramène, comme deux objets qui s'entrechoquent. */
+    const ARRIVEE = 180;            // élan de départ, de chaque côté (px)
+    const REBONDS = [15, 5];        // amplitude des deux rebonds (px)
+
+    function arriverEtCogner(el, sens) {
+        const tl = gsap.timeline();
+        tl.fromTo(el,
+            { opacity: 0, x: sens * ARRIVEE },
+            { opacity: 1, x: 0, duration: 0.42, ease: 'power3.in' }, 0);
+
+        let t = 0.42;
+        REBONDS.forEach((amplitude, i) => {
+            const sortie = i === 0 ? 0.12 : 0.08;
+            const retour = i === 0 ? 0.18 : 0.14;
+            tl.to(el, { x: sens * amplitude, duration: sortie, ease: 'power2.out' }, t);
+            t += sortie;
+            tl.to(el, { x: 0, duration: retour, ease: 'power2.inOut' }, t);
+            t += retour;
+        });
+        return tl;
+    }
+
+    if (manuscriptText) tlHero.add(arriverEtCogner(manuscriptText, -1), 0);
+    if (portfolioBadge) tlHero.add(arriverEtCogner(portfolioBadge, 1), 0);
 
     // Apparition douce en cascade des lettres du titre
     if (ransomWrappers.length > 0) {
@@ -706,7 +726,7 @@ if (introLine && heroSection) {
             ease: "power2.out",
             // les lettres commencent : la flèche guide entre en même temps
             onStart: () => document.dispatchEvent(new Event('hero:titre-parait'))
-        }, "-=0.3");
+        }, "-=0.42");
     }
 }
 
