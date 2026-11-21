@@ -600,6 +600,25 @@ Autres points de vigilance de l'accueil :
 - `DELAI_DEPART` (140 px) décale le départ : le tracé ne bouge pas pendant les premiers pixels
   de scroll, la pointe attend sous le titre. C'est `s` qui est recalculé sur
   `course - DELAI_DEPART`, pas la longueur du tracé.
+- **Rattrapage au rechargement** : le navigateur remet la page à la hauteur où l'usager l'avait
+  laissée. Sans rien, le tracé apparaît **déjà dessiné** d'un coup (il était posé par le
+  `dessiner()` d'initialisation). `rattraper()` le dessine alors tout seul, de 0 jusqu'à
+  `avance(s)`, en 0,7 à 2 s (`smoothstep`), et la cible est **relue à chaque image** : si la
+  hauteur n'est restaurée qu'après `load`, le tracé y va quand même. Pendant ce temps `dessiner()`
+  ne fait rien (`rattrapage` non nul). Un geste de l'usager (`wheel`, `touchstart`, `keydown`,
+  `pointerdown`) annule et rend la main au défilement ; `rentrer()` (demi-tour) l'annule aussi.
+  Appelé à l'initialisation, sur `load` et sur `pageshow` restauré ; au tout début (< 1,2 s) et
+  tant que rien n'est dessiné, un défilement passe aussi par le rattrapage, ce qui couvre la
+  restauration tardive de la hauteur.
+  **Deux pièges vécus** :
+  - un `setTimeout(duree + 500)` sert de filet : si les images s'arrêtent (onglet en arrière-plan,
+    appareil en veille), le rattrapage se termine et `dessiner()` reprend, au lieu de laisser le
+    tracé figé pour toujours ;
+  - `auScroll` a un verrou `attente` levé par l'image suivante. Si cette image n'arrive jamais
+    (frames gelées), le tracé **ne suit plus le défilement** : vu en test quand la prévisualisation
+    ne rendait plus de frames. Ce n'est pas un bug de page (le navigateur finit par rendre la
+    frame), mais c'est ce qui rend les mesures impossibles dans cet environnement — il faut alors
+    remplacer `requestAnimationFrame` par des minuteurs dans la console pour tester les animations.
 - **Apparition** : le `<svg>` est invisible au chargement (`opacity: 0`, 18 px plus bas, dans le
   `<style>` de `index.html`). `initFlecheGuide` pose la classe **`.fleche-prete`** **en même
   temps que le titre**, pas après : le tween des lettres émet l'événement **`hero:titre-parait`**

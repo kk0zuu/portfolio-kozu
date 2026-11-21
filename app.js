@@ -3703,6 +3703,7 @@ if (!document.body.classList.contains('photo-fusion')) construireTambour();
     let annonce = false;  // le trait est-il arrivé au bout de son tour ?
     let uAffiche = 0;     // part du tracé actuellement dessinée
     let recul = false;    // le tracé est-il en train de rentrer (demi-tour)
+    let rattrapage = 0;   // jeton du dessin automatique au chargement
     /* forme cible du tour final, recalée à chaque mesure de la page */
     let finCx = 0, finCy = 0, finAngle = 0;
     let finBx = 0, finBy = 0;   // l'arrivée : derrière le titre
@@ -4013,7 +4014,7 @@ if (!document.body.classList.contains('photo-fusion')) construireTambour();
     }
 
     function dessiner() {
-        if (!total || recul) return;
+        if (!total || recul || rattrapage) return;
         const marge = course - DELAI_DEPART;
         const s = marge > 0 ? Math.min(1, Math.max(0, (window.scrollY - DELAI_DEPART) / marge)) : 0;
         /* le scroll avance de façon inégale : le trait s'allonge plus ou moins
@@ -4025,6 +4026,7 @@ if (!document.body.classList.contains('photo-fusion')) construireTambour();
        arrière jusqu'à son point de départ, pointe comprise, avant que la page
        ne bascule. Il n'est donc plus là pendant la transition. */
     function rentrer() {
+        rattrapage = 0;      // un rattrapage en cours n'a plus la main
         if (recul || !total || uAffiche <= 0) return;
         recul = true;
         const depart = uAffiche;
@@ -4041,14 +4043,70 @@ if (!document.body.classList.contains('photo-fusion')) construireTambour();
 
     /* une seule mise à jour par image, même si le scroll crache des événements */
     let attente = false;
+    let debutVie = performance.now();
     function auScroll() {
         if (attente) return;
         attente = true;
-        requestAnimationFrame(function () { attente = false; dessiner(); });
+        requestAnimationFrame(function () {
+            attente = false;
+            /* la hauteur que le navigateur remet au rechargement arrive parfois
+               après l'événement `load` : tant que rien n'est dessiné et qu'on
+               est au tout début, ce défilement passe par le rattrapage animé
+               au lieu de poser le tracé d'un coup */
+            if (uAffiche <= 0 && performance.now() - debutVie < 1200 && rattraper()) return;
+            dessiner();
+        });
+    }
+
+    /* Au rechargement, le navigateur remet la page à la hauteur où l'usager
+       l'avait laissée. Sans ça, le tracé apparaît d'un coup, déjà dessiné
+       jusqu'à cette hauteur. On le laisse alors se dessiner tout seul, à
+       l'allure d'un défilement, et il reprend la main dès qu'on touche à la
+       page (molette, clavier, appui) : c'est le défilement qui décide. */
+    function rattraper() {
+        if (recul || rattrapage) return false;
+        const marge = course - DELAI_DEPART;
+        if (!total || marge <= 0) return false;
+        const departS = Math.min(1, Math.max(0, (window.scrollY - DELAI_DEPART) / marge));
+        if (departS < 0.02) return false;
+        const jeton = ++rattrapage;
+        const debut = performance.now();
+        const duree = Math.min(2000, 700 + 1300 * departS);
+        /* filet de sécurité : si les images s'arrêtent (onglet en arrière-plan,
+           appareil en veille), le rattrapage se termine quand même et le
+           défilement reprend la main, plutôt que de bloquer le tracé */
+        const secours = setTimeout(function () {
+            if (jeton !== rattrapage) return;
+            rattrapage = 0;
+            dessiner();
+        }, duree + 500);
+        function pas(maintenant) {
+            if (jeton !== rattrapage) return;
+            const t = Math.min(1, (maintenant - debut) / duree);
+            const doux = t * t * (3 - 2 * t);
+            /* la cible est relue à chaque image : si le navigateur ne remet la
+               page à sa hauteur qu'après coup, le tracé l'y rejoint quand même */
+            const s = Math.min(1, Math.max(0, (window.scrollY - DELAI_DEPART) / marge));
+            tracer(Math.min(1, avance(s)) * doux);
+            if (t < 1) { requestAnimationFrame(pas); return; }
+            clearTimeout(secours);
+            rattrapage = 0;
+        }
+        requestAnimationFrame(pas);
+        return true;
     }
 
     mesurer();
-    dessiner();
+    if (!rattraper()) dessiner();
+
+    /* l'usager touche la page : le rattrapage s'efface, le défilement reprend */
+    ['wheel', 'touchstart', 'keydown', 'pointerdown'].forEach(function (type) {
+        window.addEventListener(type, function () {
+            if (!rattrapage) return;
+            rattrapage = 0;
+            dessiner();
+        }, { passive: true });
+    });
 
     /* la flèche entre en scène **avec** le titre, pas après : elle attend le
        premier pas de la cascade des lettres (`hero:titre-parait`), avec une
@@ -4078,11 +4136,11 @@ if (!document.body.classList.contains('photo-fusion')) construireTambour();
         if (!e.persisted) return;
         recul = false;
         mesurer();
-        dessiner();
+        if (!rattraper()) dessiner();
     });
 
     window.addEventListener('scroll', auScroll, { passive: true });
     /* le chargement des images déplace la page : on recale le départ */
-    window.addEventListener('load', function () { mesurer(); dessiner(); });
+    window.addEventListener('load', function () { mesurer(); if (!rattraper()) dessiner(); });
     window.addEventListener('resize', function () { mesurer(); dessiner(); });
 })();
