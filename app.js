@@ -755,15 +755,20 @@ if (introLine && heroSection) {
     const finChute = DUREE_CHUTE + Math.max(0, ransomWrappers.length - 1) * ECART_CHUTE;
 
     if (cordes.length) {
-        /* la corde est alors prise par son haut : elle se rétracte vers
-           l'extérieur du cadre, comme remontée depuis au-dessus de l'écran */
-        tlHero.set(cordes, { transformOrigin: '50% 0%' }, finChute);
-        tlHero.to(cordes, {
-            scaleY: 0,
-            duration: 0.38,
-            ease: 'power2.in',
-            stagger: 0.012
-        }, finChute);
+        /* chaque corde remonte dès que SA lettre est posée — même cadence que
+           la descente, même écart, décalé d'un rien pour qu'on voie la lettre
+           se poser d'abord. L'origine de transformation passe en haut au
+           moment du lâcher : la corde est alors tendue, le changement ne se
+           voit pas, et elle se rétracte vers son accroche, hors du cadre. */
+        cordes.forEach((corde, rang) => {
+            const lacher = rang * ECART_CHUTE + DUREE_CHUTE + 0.06;
+            tlHero.set(corde, { transformOrigin: '50% 0%' }, lacher);
+            tlHero.to(corde, {
+                scaleY: 0,
+                duration: 0.38,
+                ease: 'power2.in'
+            }, lacher + 0.02);
+        });
 
         /* toutes les cordes sont remontées : le hero reprend son rognage */
         tlHero.add(() => heroSection.classList.remove('cordes-visibles'), finChute + 0.6);

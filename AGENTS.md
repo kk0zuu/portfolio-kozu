@@ -573,10 +573,13 @@ Autres points de vigilance de l'accueil :
   lettre **descendue au bout d'une corde**, posée dans un ordre **tiré au hasard** (pas de
   gauche à droite) — un trait bleu (`#1232B4`, comme la flèche) que
   `app.js` pose dans le wrapper de sa lettre, hauteur égale à la chute mesurée, `scaleY` animé
-  pour que le haut reste fixe hors cadre. Une fois la dernière lettre posée, les cordes
-  remontent (origine de transformation prise en haut) **en même temps** que la ligne d'intro
-  (« et voici mon » + « PORTFOLIO », qui arrivent des deux côtés et se cognent) et que la barre
-  de navigation. La barre n'entre donc plus sur une minuterie : elle attend l'événement
+  pour que le haut reste fixe hors cadre. Chaque corde remonte **dès que sa lettre est posée**
+  (même cadence que la descente : l'écart `ECART_CHUTE` entre deux lettres, plus 0,06 s), et
+  l'origine de transformation passe en haut à ce moment-là — corde tendue, donc sans saut. C'est
+  ce qui garde le même rythme qu'à la descente ; un `stagger` unique au moment de la dernière
+  pose donnait une vague uniforme, que Ian a refusée. La ligne d'intro (« et voici mon » +
+  « PORTFOLIO », qui arrivent des deux côtés et se cognent) et la barre de navigation partent,
+  elles, à la pose de la dernière lettre. La barre n'entre donc plus sur une minuterie : elle attend l'événement
   **`accueil:titre-pose`**, avec un filet à 4 s. Pendant tout ce temps le hero porte
   **`.cordes-visibles`** (`overflow: visible` dans `styles.css`), sinon il rogne ses débordements à
   48 px du haut (le `padding-top` du body) et la bande où la barre va entrer reste vide : les
