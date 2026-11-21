@@ -5374,3 +5374,127 @@ html.anim .contact-liens > a {
     opacity: 0;
     will-change: transform, opacity;
 }
+
+/* ==================================================== */
+/* FORME UNIQUE — rectangles à coins arrondis            */
+/* ==================================================== */
+/* Une seule famille de formes sur tout le site : ni     */
+/* pilule, ni rectangle à angles droits. Les pastilles   */
+/* en 999px deviennent des rectangles arrondis, les      */
+/* blocs carrés aussi ; les grandes surfaces gardent des */
+/* coins un peu plus larges, comme les cases photo.      */
+/* Restent ronds les vrais cercles (points, curseur,     */
+/* étoiles, flèches rondes, avatars). Les boutons        */
+/* rectangulaires de Numérique (« ← Rayon », « son       */
+/* activé »…) ne sont pas touchés : c'est l'exception.   */
+/* Seuls les rayons sont modifiés ici : aucune autre     */
+/* propriété, donc aucune mécanique ne bouge.            */
+
+:root {
+    --forme-bloc: 20px;     /* cases, cartes, panneaux */
+    --forme-bouton: 12px;   /* boutons, pastilles, badges */
+    --forme-tag: 8px;       /* micro-pastilles */
+}
+
+/* --- Pastilles : rectangles arrondis, plus jamais des pilules --- */
+
+.domain-pill-badge,
+.subnav-btn,
+.retour-domaines,
+.bubble-category-pill,
+.bio-cv-link,
+.contact-card-badge,
+.cv-image-overlay-badge,
+.cv-action-btn,
+.cv-skill-pill,
+.split-side-badge,
+.split-side-cta,
+.video-placeholder-badge,
+.cv-merci span,
+.cv-merci a,
+body.contact-page .flow-cta-btn {
+    border-radius: var(--forme-bouton);
+}
+
+/* --- Grandes surfaces : cases, cartes, panneaux --- */
+
+/* les blocs-titres (blancs ou noirs) ont exactement la même forme */
+.section-title,
+.brutal-highlight,
+.erreur-titre {
+    border-radius: 16px;
+}
+
+.cv-telecharger {
+    border-radius: 14px;
+}
+
+.contact-mail,
+.contact-lien,
+.contact-infos,
+.contact-domaine,
+.contact-cv {
+    border-radius: var(--forme-bloc);
+}
+
+.cv {
+    border-radius: 24px;
+}
+
+/* l'en-tête du CV vient buter sur le haut de la feuille : ses coins
+   suivent les siens, sinon il dépasse des coins arrondis */
+.cv-tete {
+    border-radius: 21px 21px 0 0;
+}
+
+/* le liseré rayé de l'en-tête est un calque plein cadre : sans coins
+   arrondis il repeint des angles droits par-dessus ceux du CV */
+.cv-tete::before {
+    border-radius: 21px 21px 0 0;
+}
+
+.cv-colonne {
+    border-radius: 16px;
+}
+
+/* --- Blocs moyens, cadres d'images, lignes de contenu --- */
+
+.portfolio-badge,
+.handwritten-label,
+.scrapbook-note,
+.contact-info,
+.contact-cv-vignette {
+    border-radius: 12px;
+}
+
+.contact-sous-titre {
+    border-radius: 10px;
+}
+
+.editorial-img-frame,
+.pr-card .editorial-img-frame,
+.pe .editorial-img-frame,
+.pr-video video {
+    border-radius: 12px;
+}
+
+/* --- Micro-pastilles --- */
+
+.contact-cv-zoom,
+.cv-kicker,
+.cv-date,
+.cv-niveau,
+body.contact-page .flow-pre-badge {
+    border-radius: var(--forme-tag);
+}
+
+.cv-telecharger-format,
+.cv-titre::before {
+    border-radius: 6px;
+}
+
+/* la bulle de l'accueil : son image devient un carré au survol,
+   elle devient un carré arrondi comme le reste */
+.bubble-card:hover .bubble-image-wrapper {
+    border-radius: 12px;
+}

@@ -614,6 +614,28 @@ body.sas-actif .wrap,body.sas-actif .portes-zone,body.sas-actif .num-foot{opacit
   .vignette{flex:0 0 34vw;height:40vh}
   body{padding-top:4.2rem}
 }
+
+        /* --- FORME UNIQUE : cases en rectangles aux coins arrondis.
+           Les boutons rectangulaires (« ← Rayon », « son activé »…) gardent
+           leurs angles droits : c'est l'exception demandée. Seuls les rayons
+           changent, rien d'autre. --- */
+        .frame, .v-img, .gal figure, .galerie-item, .yt-image, .yt-carte,
+        .yt-slot, .kozu-video, .kozu-video--plein, .kozu-accroche, .moches-img,
+        .volet, .slot, .lt-img, .ms-img {
+            border-radius: 12px;
+        }
+
+        .hero, .projet, .game-wrap, .rayon, .portes-panneau {
+            border-radius: 16px;
+        }
+
+        .gal img, .gal video, .galerie-item img, .yt-vignette {
+            border-radius: 10px;
+        }
+
+        .kozu-badge, .lt-tag, .ms-boite {
+            border-radius: 8px;
+        }
 </style>
 </head>
 <body class="sans-lightbox">

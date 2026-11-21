@@ -142,6 +142,16 @@ Variables CSS globales : `--color-neon-pink`, `--color-neon-green`, `--font-disp
 - **`<style>` de la page** : tout le reste. C'est la convention du projet : chaque page porte
   ses styles de mise en page. Ne pas déplacer l'existant.
 - Toute animation nouvelle doit respecter `@media (prefers-reduced-motion: reduce)`.
+- **Une seule famille de formes** : partout, cases, boutons et blocs de texte sont des
+  **rectangles à coins arrondis** — jamais des pilules (`999px`), jamais des angles droits. Les
+  rayons sont posés dans la section « FORME UNIQUE » en fin de `styles.css`, avec
+  `--forme-bloc` (20 px), `--forme-bouton` (12 px) et `--forme-tag` (8 px) ; une page qui porte
+  ses propres styles (Numérique, Plastique, 404) a la sienne en fin de `<style>`. Un nouveau
+  bloc ou bouton reprend ces rayons, et un calque qui couvre toute la surface (liseré, texture
+  en `::before`) reçoit le même rayon, sinon il repeint des angles droits par-dessus.
+  Les vrais cercles (points, curseur, étoiles, flèches rondes, avatars) restent ronds.
+  **Exception** : les boutons rectangulaires de Numérique (« ← Rayon », « son activé »…)
+  gardent leurs angles droits.
 
 ### 3.5 Identifiants
 
