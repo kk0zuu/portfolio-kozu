@@ -716,22 +716,25 @@ Autres points de vigilance de l'accueil :
     (les deux branches se rejoignent) et le tracé a l'air cassé. `BOSSE_X` reste modéré.
   - **Fin du tracé : le fil d'un collier qui sort de la page.** À partir de `FIN_U0` (0,88 —
     **après** le passage dans la bulle Photographie), le tracé ne fait plus le tour de « où on va ? »
-    : il remonte et **sort par le haut de la page**, en **arc de cercle** de grand rayon. La
-    descente par le haut à gauche, les trois bulles en perles, la remontée par le haut à droite :
-    c'est la forme de collier voulue par Ian (21/11). L'arc est décrit **en polaire** (centre,
-    rayon, angle) et raccordé par `FIN_RAMPE` (30 % de la section, poids **et** pente nuls aux deux
-    bords) : dès que le poids vaut 1 le tracé est *exactement* sur le cercle, donc d'une courbure
-    **constante** — mesuré, 8 à 9° de rotation par tranche de 3 % de tracé sur toute la fin, et le
-    dernier point tombe à y = −62, hors du cadre.
-    `placerCibles()` lit le point et la **tangente** de sortie de la bulle (sur `point(FIN_U0)` et
-    `point(FIN_U0 − 0,0006)`, donc sans dépendre de l'arc lui-même) et cherche, parmi les rayons
-    `RAYONS` (900 → 2 200 px) et les deux côtés de la normale, le premier arc dont le sommet passe
-    **au-dessus** du haut de la page. C'est le piège de ce dessin : un cercle ne monte que jusqu'à
-    son sommet, donc un rayon trop court (essayé à 640) ne sort jamais du cadre — l'arc redescend
-    avant, et le code retombait silencieusement sur la courbe de base. Le sens de parcours se
-    déduit de la tangente, jamais du hasard.
-    Ne pas revenir à un mélange vers un point qui se déplace : mesuré plus tôt, le rayon y variait
-    de 166 à 316 px et le tour sortait en œuf, ce que Ian a refusé.
+    : le fil ressort par la **droite** de la perle et monte hors du cadre. La descente par le haut
+    à gauche, les trois bulles en perles, la remontée par la droite : c'est la forme de collier
+    voulue par Ian (21/11).
+    La cible est une **courbe de Bézier cubique** posée dans `placerCibles()`, mélangée avec le
+    poids `lisser()` de `FIN_RAMPE` (poids nul aux deux bords) : P0 sur `point(FIN_U0)` (centre de
+    la perle), P1 à droite et un peu haut (le coude se fait *derrière* la perle, donc invisible),
+    P2 sur la verticale de sortie à 800 px du haut, P3 à `y = −24` (24 px au-dessus du cadre, la
+    queue invisible minimale) sur cette même verticale — le fil arrive donc parfaitement vertical.
+    La sortie se pose `min(perle + 300, largeur − 90)` : **pas au-dessus de la perle**, parce que
+    le tracé y fait un virage (mesuré jusqu'à 1 311 px de large en 1 500–1 800 px de haut) et la
+    remontée le traversait. Mesuré à 1 583 et 1 263 px de large : la remontée ne croise plus rien
+    du tracé, et le fil quitte le cadre à **99,6 %** de sa longueur, avec `strokeDashoffset` à 0
+    seulement quand `scrollY` atteint le bas de la page.
+    **Ne pas revenir à un arc de cercle.** La tangente au point de sortie de la bulle part vers la
+    **gauche** (≈ 40°), et un cercle tangent à une telle pente ne peut revenir à la verticale qu'en
+    décrivant une boucle : l'arc repassait sur le tracé, d'où l'X que Ian voyait près du bloc vert
+    (rayons essayés de 900 à 8 000 px, aucun ne donnait une remontée droite dans la largeur de la
+    page). Ni un mélange vers un point qui se déplace : mesuré plus tôt, le rayon y variait de 166
+    à 316 px et le tour sortait en œuf.
 - **Passage dans la présentation** (le paragraphe « J'aime mélanger… », à droite du `f`) : le
   tracé y faisait un repli qui barrait une ligne de texte. Il est maintenant **aplati** autour de
   l'interligne par `TEXTE_C` / `TEXTE_LARGEUR` / `TEXTE_PLAT` (0,38) : son parcours ne change pas,
