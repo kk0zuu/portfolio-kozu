@@ -3652,6 +3652,12 @@ if (!document.body.classList.contains('photo-fusion')) construireTambour();
     const TEXTE_C = 0.5;        // sa place, en part du tracé
     const TEXTE_LARGEUR = 0.105;
     const TEXTE_PLAT = 0.38;    // facteur d'aplatissement vertical
+    /* juste là, le tracé fait demi-tour sur place : il n'a presque aucune
+       longueur à parcourir, donc un profil fondé sur la seule longueur le
+       traverse d'un cran. On lui rend un temps d'arrêt en y ajoutant une part
+       de scroll « au pas », indépendante de la longueur. */
+    const ARRET = 4;            // part de scroll au pas ajoutée au virage
+    const ARRET_LARGEUR = 0.055;
     const NS = 'http://www.w3.org/2000/svg';
 
     const svg = document.createElementNS(NS, 'svg');
@@ -3710,8 +3716,12 @@ if (!document.body.classList.contains('photo-fusion')) construireTambour();
         };
         profil = [0];
         let somme = 0;
+        const pasLong = total / PAS;
         for (let i = 1; i <= PAS; i++) {
-            somme += (cumul[i] - cumul[i - 1]) / lenteur((i - 0.5) / PAS);
+            const u = (i - 0.5) / PAS;
+            const d = (u - TEXTE_C) / ARRET_LARGEUR;
+            const arret = ARRET * Math.exp(-d * d) * pasLong;
+            somme += ((cumul[i] - cumul[i - 1]) + arret) / lenteur(u);
             profil.push(somme);
         }
         for (let i = 0; i <= PAS; i++) profil[i] /= somme;

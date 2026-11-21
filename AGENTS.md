@@ -559,8 +559,9 @@ Autres points de vigilance de l'accueil :
   relever `stroke-dashoffset`, faire la différence). Le tracé fait ~5 400 px pour une course de
   ~2 000 px : **il avance donc en moyenne 2,7 fois plus vite que la page**, et on ne peut pas
   ralentir un endroit sans accélérer le reste. Sur cette base, les valeurs relevées sont de
-  ~55 à ~410 px de tracé par cran (contre 27 à 864 avant le 20/11) : ~330 dans la descente, ~250
-  à 330 dans le virage, ~215 à 335 dans le tour final.
+  ~55 à ~510 px de tracé par cran (contre 27 à 864 avant le 20/11) : ~320 à 420 dans la descente,
+  ~250 à 320 dans le virage, ~215 à 335 dans le tour final, et le trou du virage du texte
+  (voir plus bas) à 27-98.
 - Le profil (`construireProfil` / `avance`) est construit **après** le tracé, sur ses longueurs
   réelles : chaque tronçon coûte « sa longueur divisée par la vitesse voulue », on cumule, on
   normalise (`u(1) = 1` : la fin tombe pile en bas de page et rien ne recule), et `avance(s)`
@@ -573,6 +574,17 @@ Autres points de vigilance de l'accueil :
   tracé dans la page, et comme le profil est normalisé, il accélère même tout le reste. Quand un
   endroit paraît trop rapide, mesurer d'abord **où il se trouve en `u`** (relever la position de
   la pointe pendant le scroll), puis régler la cloche à cet endroit-là.
+  **Deuxième piège, le 21/11** : un profil fondé sur la seule **longueur** traverse d'un cran les
+  endroits où le tracé fait demi-tour sur place. Au virage du texte, la pointe n'y parcourt
+  presque aucune longueur quand elle boucle : elle n'y passe donc aucun temps, et le ralenti
+  qu'on y voyait — la pointe qui s'arrête le temps de boucler — a disparu (404 px de tracé par
+  cran au lieu de 29). D'où **`ARRET` / `ARRET_LARGEUR`** : on ajoute au coût de chaque pas une
+  part **indépendante de la longueur** (`ARRET` × cloche × longueur moyenne d'un pas), ce qui
+  rend au virage son temps d'arrêt sans toucher au reste. Réglé à 4 / 0,055, la suite mesurée
+  autour du virage est 146 → 50 → 27 → 98 px de tracé par cran (max 510 ailleurs, contre 404).
+  Pour vérifier qu'un trou de vitesse tombe au bon endroit, relever à chaque cran l'avancement
+  (`stroke-dashoffset`) **et** la position de la pointe (`transform` du `.fleche-pointe`, en
+  coordonnées de page) : le ralenti doit coïncider avec le point le plus à droite du tracé.
 - `DELAI_DEPART` (140 px) décale le départ : le tracé ne bouge pas pendant les premiers pixels
   de scroll, la pointe attend sous le titre. C'est `s` qui est recalculé sur
   `course - DELAI_DEPART`, pas la longueur du tracé.
