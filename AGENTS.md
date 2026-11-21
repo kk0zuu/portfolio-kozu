@@ -419,6 +419,12 @@ Ce n'est **pas** une opération de données. Il faut :
 - Les images sont ordonnées **par le DOM**, jamais par le nom de fichier.
 - Une carte sans image donne un fond vide et une visionneuse vide : toujours au moins une
   `.editorial-img-frame`.
+- **Cases penchées et clic** : la visionneuse écoute le clic en phase de capture et retrouve la
+  photo sous le curseur avec `elementsFromPoint`. Quand la case est inclinée en perspective
+  (entre deux cases), la cible du clic n'est pas forcément l'image : le cadre, un plan voisin,
+  ou le conteneur quand la case bouge entre l'appui et le relâchement. Ne pas revenir à un
+  simple `e.target`, les photos redeviendraient muettes dès que la case est penchée. La barre
+  de navigation, les liens et les boutons gardent leur clic.
 - `#choix` n'existe pas comme ancre : le retour se fait par `data-retour` (le `href="#choix"`
   n'est qu'un fallback).
 - `photo-pro.html` et `photo-expressive.html` sont d'anciennes pages isolées : ne pas y

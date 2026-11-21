@@ -1744,16 +1744,45 @@ mm.add({
         else if (e.key === 'ArrowRight') { e.preventDefault(); show(current + 1, 1); }
     });
 
+    /* La photo réellement sous le curseur. Les cases photo sont inclinées en 3D
+       par le carrousel (`preserve-3d`, rotateX, translateZ) : à cet endroit,
+       c'est un autre plan qui reçoit le clic — le cadre, le haut de la case
+       suivante, parfois le conteneur entre deux cases. L'élément cliqué n'est
+       donc pas forcément l'image ; on regarde toute la pile aux coordonnées du
+       clic et on y prend la première photo. */
+    function photoSousLeCurseur(target, x, y) {
+        const estPhoto = (el) => !!el && el.tagName === 'IMG' &&
+            !!el.closest('.editorial-img-frame, .bubble-img-card, .lightbox-trigger');
+        if (estPhoto(target)) return target;
+        if (typeof document.elementsFromPoint !== 'function') return null;
+        const pile = document.elementsFromPoint(x, y) || [];
+        /* la barre de navigation, les boutons et les liens restent prioritaires :
+           leur clic ne doit jamais ouvrir la photo qui passe dessous */
+        const dessus = pile[0];
+        if (dessus && !estPhoto(dessus) && dessus.closest &&
+            dessus.closest('nav, header, .top-bar, .portfolio-lightbox, button, a')) return null;
+        for (let i = 0; i < pile.length; i++) {
+            if (estPhoto(pile[i])) return pile[i];
+        }
+        return null;
+    }
+
+    /* En phase de capture : un calque posé au-dessus de la case ne peut plus
+       avaler le clic, et la visionneuse s'ouvre même quand la case est penchée
+       (le cas où l'on est entre deux cases, en pleine perspective). */
     document.addEventListener('click', (e) => {
         const target = e.target;
         if (!target || !target.closest) return;
         if (lightbox.contains(target)) return;
-        const card = target.closest('.bubble-img-card, .lightbox-trigger, .editorial-img-frame');
-        // Un clic direct sur une photo doit ouvrir la visionneuse, même quand la
-        // carte qui la contient est transformée en 3D par le carrousel.
-        const img = target.tagName === 'IMG' ? target : (card && card.querySelector('img'));
+        /* un lien ou un bouton qui n'est pas une photo garde son clic */
+        if (target.closest('a, button') && !target.closest('.editorial-img-frame, .bubble-img-card, .lightbox-trigger')) return;
+        let img = photoSousLeCurseur(target, e.clientX, e.clientY);
+        if (!img) {
+            const card = target.closest('.bubble-img-card, .lightbox-trigger, .editorial-img-frame');
+            img = card && card.querySelector('img');
+        }
         if (img && img.src) openWith(img);
-    });
+    }, true);
 
     // Préchauffe les images voisines pour une navigation instantanée
     function preloadNeighbours() {
