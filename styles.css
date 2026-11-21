@@ -5425,6 +5425,12 @@ body.contact-page .flow-cta-btn {
     border-radius: 16px;
 }
 
+/* les blocs-titres noirs à texte magenta n'ont plus de seconde couche
+   d'ombre : elle alourdissait le bloc sans rien apporter (demandé par Ian) */
+.brutal-highlight {
+    box-shadow: none;
+}
+
 .cv-telecharger {
     border-radius: 14px;
 }
