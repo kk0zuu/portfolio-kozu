@@ -160,7 +160,7 @@ Variables CSS globales : `--color-neon-pink`, `--color-neon-green`, `--font-disp
   plus son inclinaison propre, et « projet plastique » est la seule **d'aplomb** (`rotate(0deg)`).
   Les trois ombres sont **à 70 % d'opacité** (`--ombre-etiquette: rgba(0, 0, 0, 0.7)`), Ian l'a
   demandé : à noir plein elles pesaient plus que la case.
-  Les feuilles sont appelées avec `styles.css?v=4` dans les six pages : **incrémenter ce numéro**
+  Les feuilles sont appelées avec `styles.css?v=5` dans les six pages : **incrémenter ce numéro**
   à chaque retouche de `styles.css`, sinon Ian voit l'ancienne version dans son navigateur.
   **Exceptions** : les boutons rectangulaires de Numérique (« ← Rayon », « son activé »…) et,
   sur `plastique.html`, les **boosters** (`.pm-pack`, `.pm-slab`, `.pm-foil`) et les **cartes
@@ -811,16 +811,20 @@ Autres points de vigilance de l'accueil :
     `delay` + `scrollTrigger` (`top 88%`, `once`), et l'élément ne devient jamais invisible pour de
     bon. La version posée est le **Skew Kinetic** (départ `y: 40`, `skewY: 3°`, ancrage en haut à
     gauche, 0,8 s en `expo.out` — c'est exactement `cubic-bezier(0.16, 1, 0.3, 1)` —, fondu en
-    0,4 s). La variante **mise au point optique** (flou 8 px + `scale(1.04)` → net, 0,85 s) vit
-    dans **`contact-focus.html`**, une copie jetable et `noindex` de la page : Ian choisit, on
-    garde la gagnante dans `contact.html` et on **supprime ce fichier**. GSAP interpole très bien
-    `filter: blur()`, il n'y a donc rien à ajouter au CSS. Une modification de texte se
+    0,4 s). La variante **mise au point optique** (flou 8 px + `scale(1.04)` → net) avait sa copie
+    jetable dans `contact-focus.html` : Ian a **choisi le Skew Kinetic** et le fichier a été
+    supprimé le 21/11. Ne pas recréer de variante d'essai dans une page en ligne. Une
+    modification de texte se
   fait directement dans le HTML ; ne pas ajouter de formulaire (il n'y a pas de backend).
   - **Le CV est décomposé dans la page** (`.cv` → `.cv-tete` / `.cv-corps`), son CSS vit dans
     `styles.css` (chercher `/* ---------- CV décomposé dans la page ---------- */`). C'est une
     **maquette** : elle doit dire la même chose que le PDF téléchargeable, mais elle n'est pas
     générée depuis lui — une nouvelle version du CV se reporte à la main dans le HTML. Ne pas
     changer sa mise en page pour y faire tenir du texte : raccourcir le texte.
+    **Tout y est d'aplomb** : le 21/11 Ian a fait retirer *toutes* les rotations du bloc `.cv` —
+    le scotch, l'étiquette « curriculum vitæ », le nom, les titres de section et leur numéro,
+    les pastilles de date, la note manuscrite et les puces en losange (redevenues des carrés).
+    Ne pas les remettre : « je veux rien de penché ».
   - **Téléchargement** : `.cv-telecharger` dans l'en-tête du CV (`href` vers
     `images/cv/CV%20alternance…pdf`, chemins encodés comme partout, `download` pour donner un
     nom propre au fichier). Le PDF doit être **suivi par git**, sinon le bouton renvoie une 404
@@ -871,9 +875,13 @@ d'office :
 1. **Poids des images** : ~212 Mo / 265 fichiers, jusqu'à 4,8 Mo par PNG. La conversion WebP, le
    plafonnement et l'ajout de `width`/`height` sont validés sur le principe mais pas lancés
    (attendre le « go »).
-2. **Fichiers orphelins** : `photo-pro.html`, `photo-expressive.html`, `_archive/`,
-   `images/manifest.json`, une vidéo `problème swipe des pages photos.mp4` (~7,5 Mo), des
-   dizaines d'images non référencées dans `images/accueil/`.
+2. **Fichiers orphelins** — **nettoyés le 21/11** : `_archive/`, `photo-pro.html`,
+   `photo-expressive.html`, `images/manifest.json`, la vidéo de test et **127 images jamais
+   citées** (108 Mo, dont la moitié de `images/plastique/` et la série d'imports de
+   `images/accueil/`) ont été supprimés. Un fichier est « orphelin » quand son **nom de fichier
+   n'apparaît dans aucune page, feuille ou script** (les chemins sont construits en littéral,
+   même quand le dossier est dans une variable : `IMG + 'fichier.jpg'`) ; refaire ce contrôle
+   avant toute nouvelle suppression, et garder le fichier en cas de doute.
 3. **Pieds de page incohérents** : absents sur `index.html` et `contact.html`, présents ailleurs.
 4. **Accessibilité / SEO** : pas de `meta description` ni Open Graph sauf contact, trois `h1`
    sur `photographie.html`, focus clavier à revoir par endroits.

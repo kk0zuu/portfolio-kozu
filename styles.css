@@ -4103,12 +4103,10 @@ body.contact-page .nav-links a {
 
 .cv::before {
     left: 52px;
-    transform: rotate(-6deg);
 }
 
 .cv::after {
     right: 58px;
-    transform: rotate(5deg);
 }
 
 .cv-tete {
@@ -4164,7 +4162,6 @@ body.contact-page .nav-links a {
     font-size: 0.6rem;
     letter-spacing: 0.16em;
     text-transform: uppercase;
-    transform: rotate(-2deg);
 }
 
 .cv-nom {
@@ -4176,8 +4173,6 @@ body.contact-page .nav-links a {
     line-height: 1;
     text-transform: uppercase;
     background: linear-gradient(transparent 64%, rgba(156, 29, 189, 0.24) 64% 94%, transparent 94%);
-    transform: rotate(-0.8deg);
-    transform-origin: left center;
 }
 
 .cv-objectif {
@@ -4203,14 +4198,13 @@ body.contact-page .nav-links a {
     text-transform: uppercase;
     text-decoration: none;
     white-space: nowrap;
-    transform: rotate(-1.4deg);
     transition: transform 0.22s ease, box-shadow 0.22s ease;
     cursor: none;
 }
 
 .cv-telecharger:hover,
 .cv-telecharger:focus-visible {
-    transform: rotate(-1.4deg) translate(-2px, -2px);
+    transform: translate(-2px, -2px);
     box-shadow: 8px 8px 0 var(--color-black);
 }
 
@@ -4307,25 +4301,19 @@ body.contact-page .nav-links a {
     font-family: var(--font-bungee);
     font-size: 0.56rem;
     letter-spacing: 0.04em;
-    transform: rotate(-3deg);
 }
 
 .cv-principal .cv-titre::before {
     background: var(--color-neon-green);
     color: var(--color-black);
-    transform: rotate(3deg);
 }
 
 .cv-colonne .cv-titre {
     border-color: var(--color-magenta);
-    transform: rotate(-0.7deg);
-    transform-origin: left center;
 }
 
 .cv-principal .cv-titre {
     border-color: var(--color-neon-green);
-    transform: rotate(0.5deg);
-    transform-origin: left center;
 }
 
 .cv-liste {
@@ -4349,7 +4337,6 @@ body.contact-page .nav-links a {
     width: 7px;
     height: 7px;
     background: var(--color-magenta);
-    transform: rotate(45deg);
 }
 
 .cv-liste li:nth-child(even)::before {
@@ -4397,8 +4384,6 @@ body.contact-page .nav-links a {
     font-size: 0.95rem;
     color: #3A3A3A;
     line-height: 1.45;
-    transform: rotate(-0.8deg);
-    transform-origin: left center;
 }
 
 .cv-texte {
@@ -4436,12 +4421,10 @@ body.contact-page .nav-links a {
     text-transform: uppercase;
     color: var(--color-black);
     white-space: nowrap;
-    transform: rotate(-1.6deg);
 }
 
 .cv-entree:nth-child(even) .cv-date {
     border-left-color: var(--color-neon-green);
-    transform: rotate(1.6deg);
     box-shadow: -2px 2px 0 var(--color-black);
 }
 
