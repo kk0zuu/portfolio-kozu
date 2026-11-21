@@ -629,7 +629,7 @@ Autres points de vigilance de l'accueil :
   ~2 000 px : **il avance donc en moyenne 2,7 fois plus vite que la page**, et on ne peut pas
   ralentir un endroit sans accélérer le reste. Sur cette base, les valeurs relevées sont de
   ~55 à ~600 px de tracé par cran (contre 27 à 864 avant le 20/11) : ~320 à 430 dans la descente,
-  ~250 à 320 dans le virage, ~210 à 340 dans le tour final, et les **deux trous d'arrêt** (voir
+  ~250 à 320 dans le virage, ~210 à 340 dans la remontée finale, et les **deux trous d'arrêt** (voir
   plus bas) : 28-71 au premier demi-tour, 49-62 à celui du texte.
 - Le profil (`construireProfil` / `avance`) est construit **après** le tracé, sur ses longueurs
   réelles : chaque tronçon coûte « sa longueur divisée par la vitesse voulue », on cumule, on
@@ -638,7 +638,7 @@ Autres points de vigilance de l'accueil :
   vitesse normale) et `RAMPE` (12 % du scroll) donnent le démarrage lent, `VIRAGE` /
   `VIRAGE_LARGEUR` / `VIRAGE_LENT` ralentissent le grand virage qui balaie à gauche sous
   « qui suis-je ? » (u ≈ 0,31 : c'est là que la pointe est au plus à gauche, pas à 0,17), et
-  `FIN_LENT` / `FIN_RENTREE` font de même pour le tour final.
+  `FIN_LENT` / `FIN_RENTREE` font de même pour la remontée finale.
   **Piège vécu** : un ralentissement exprimé en `u` ne ralentit rien du tout — il déplace le
   tracé dans la page, et comme le profil est normalisé, il accélère même tout le reste. Quand un
   endroit paraît trop rapide, mesurer d'abord **où il se trouve en `u`** (relever la position de
@@ -713,24 +713,24 @@ Autres points de vigilance de l'accueil :
   - **Premier looping** : élargi par la cloche gaussienne `BOSSE` / `BOSSE_X` / `BOSSE_Y` /
     `BOSSE_BAS`. **Ne pas trop l'augmenter** : au-delà de ~0,5 la boucle se referme en pointe
     (les deux branches se rejoignent) et le tracé a l'air cassé. `BOSSE_X` reste modéré.
-  - **Fin du tracé : un vrai cercle**, à partir de `FIN_U0` (0,88 — **après** le passage dans la
-    bulle Photographie, sinon le tour l'avalerait). Le tour est décrit **en polaire** — un rayon,
-    un angle — et non en tirant la courbe vers un point qui se déplace :
-    `rr = finR0 + (FIN_RAYON − finR0) × w` puis `p = centre + (cos a, sin a) × rr`. Dès que
-    `rr = FIN_RAYON` (190 px, au bout de `FIN_RAMPE` = 30 % de la section), le tracé est
-    **exactement** sur le cercle, rayon 190 sur 190. `FIN_TOUR` (−360°) fait **un tour complet**
-    en douceur (`lisser`) et le tracé **se referme sur lui-même** : il s'arrête sur le cercle.
-    Pourquoi pas un mélange vers un cercle, comme avant ? Mesuré : le rayon y variait de **166 à
-    316 px** — le tour sortait en œuf, ce que Ian a refusé (« il faut un beau cercle »).
-    Pourquoi pas de sortie vers le bas de la page ? La glissade finale partait du cercle en
-    biais et le coupait (virages de 98° d'un point au suivant). Ian a demandé un beau cercle :
-    on s'arrête dessus. `finAngle` et `finR0` se lisent sur `point(FIN_U0)` — cloches des bulles
-    comprises — dans `placerCibles()`, sinon la spirale d'entrée part à côté et le raccord
-    s'ouvre en bosse.
-    **Piège** : l'entrée se règle par la rampe (le rayon) **et** par le balayage de l'angle
-    (`ps = lisser(t)` sur toute la section). Rampe trop courte (8 %), le tracé sort de la spirale
-    en biais : 39° de virage d'un point au suivant. Balayage fini avant la fin, il **stagne**
-    (des points identiques) et l'aiguille s'arrête 20 px de scroll avant le bas.
+  - **Fin du tracé : le fil d'un collier qui sort de la page.** À partir de `FIN_U0` (0,88 —
+    **après** le passage dans la bulle Photographie), le tracé ne fait plus le tour de « où on va ? »
+    : il remonte et **sort par le haut de la page**, en **arc de cercle** de grand rayon. La
+    descente par le haut à gauche, les trois bulles en perles, la remontée par le haut à droite :
+    c'est la forme de collier voulue par Ian (21/11). L'arc est décrit **en polaire** (centre,
+    rayon, angle) et raccordé par `FIN_RAMPE` (30 % de la section, poids **et** pente nuls aux deux
+    bords) : dès que le poids vaut 1 le tracé est *exactement* sur le cercle, donc d'une courbure
+    **constante** — mesuré, 8 à 9° de rotation par tranche de 3 % de tracé sur toute la fin, et le
+    dernier point tombe à y = −62, hors du cadre.
+    `placerCibles()` lit le point et la **tangente** de sortie de la bulle (sur `point(FIN_U0)` et
+    `point(FIN_U0 − 0,0006)`, donc sans dépendre de l'arc lui-même) et cherche, parmi les rayons
+    `RAYONS` (900 → 2 200 px) et les deux côtés de la normale, le premier arc dont le sommet passe
+    **au-dessus** du haut de la page. C'est le piège de ce dessin : un cercle ne monte que jusqu'à
+    son sommet, donc un rayon trop court (essayé à 640) ne sort jamais du cadre — l'arc redescend
+    avant, et le code retombait silencieusement sur la courbe de base. Le sens de parcours se
+    déduit de la tangente, jamais du hasard.
+    Ne pas revenir à un mélange vers un point qui se déplace : mesuré plus tôt, le rayon y variait
+    de 166 à 316 px et le tour sortait en œuf, ce que Ian a refusé.
 - **Passage dans la présentation** (le paragraphe « J'aime mélanger… », à droite du `f`) : le
   tracé y faisait un repli qui barrait une ligne de texte. Il est maintenant **aplati** autour de
   l'interligne par `TEXTE_C` / `TEXTE_LARGEUR` / `TEXTE_PLAT` (0,38) : son parcours ne change pas,
@@ -772,7 +772,7 @@ Autres points de vigilance de l'accueil :
     le tracé fait un **cran** de 12 px — une vraie cassure, que Ian a vue tout de suite. La
     fenêtre est donc en **cosinus** (`0,5 + 0,5·cos(π·t)`) : poids **et** pente nuls aux deux
     bords, aucun cran possible ;
-  - posé **avant** le mélange du tour final, le décalage est combattu par lui (23° de coude à
+  - posé **avant** le mélange de la remontée finale, le décalage est combattu par lui (23° de coude à
     u ≈ 0,84) ; posé **après**, c'est lui qui a le dernier mot, il n'y a plus de lutte.
   Résultat mesuré (1600 × 950) : rayon de courbure minimal de **121 px** dans la zone des bulles,
   aucun saut d'angle de plus de **4,6°** d'un point au suivant — le U se lit comme une seule
@@ -783,7 +783,7 @@ Autres points de vigilance de l'accueil :
   mettre les décalages à jour, sinon le plongeon vise à côté. Réglages pensés pour le desktop
   (branche `isDesktop`) : la branche mobile a ses propres trajectoires.
 - La pente de la pointe est mesurée par différence finie sur `point()`, pour rester juste malgré
-  la boucle et le tour final.
+  la boucle et la remontée finale.
 - **Demi-tour au départ** : au clic sur une bulle de domaine **sauf la photographie**, `rentrer()`
   fait reculer le tracé jusqu'à zéro en `RETOUR` (380 ms), pointe comprise (elle refait le chemin
   en sens inverse). La variable `recul` bloque `dessiner()` pendant ce temps : la flèche n'est donc

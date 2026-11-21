@@ -3759,10 +3759,12 @@ if (!document.body.classList.contains('photo-fusion')) construireTambour();
        Le poids du mélange monte et redescend en douceur, et la courbe de base
        comme la cible sont lisses : le raccord l'est donc aussi, sans point de
        contrôle ni cassure. */
-    const FIN_U0 = 0.88;        // début du tour final (après la bulle Photo)
-    const FIN_RAYON = 190;      // rayon du tour : c'est un vrai cercle
-    const FIN_RAMPE = 0.3;      // part de la fin où le tracé rejoint le cercle
-    const FIN_TOUR = -360;      // balayage du tour : un tour complet, horaire
+    /* La fin n'est plus un tour autour de « où on va ? » : le fil remonte et
+       sort de la page, comme le cordon d'un collier dont les trois bulles sont
+       les perles. C'est un **arc de cercle** de grand rayon, donc de courbure
+       constante : une courbe régulière, sans à-coup. */
+    const FIN_U0 = 0.88;        // début de la remontée (après la bulle Photo)
+    const FIN_RAMPE = 0.3;      // part de la fin où le tracé rejoint l'arc
     /* le passage dans le texte de présentation : le tracé y est aplati autour
        de l'interligne pour glisser entre deux lignes au lieu de les barrer */
     const TEXTE_C = 0.5;        // sa place, en part du tracé
@@ -3829,7 +3831,7 @@ if (!document.body.classList.contains('photo-fusion')) construireTambour();
     let recul = false;    // le tracé est-il en train de rentrer (demi-tour)
     let rattrapage = 0;   // jeton du dessin automatique au chargement
     /* forme cible du tour final, recalée à chaque mesure de la page */
-    let finCx = 0, finCy = 0, finAngle = 0, finR0 = 0;
+    let finCx = 0, finCy = 0, finA0 = 0, finDir = 1, finBalayage = 0, finArcR = 0;
     let texteY = 0;             // le centre du repli dans la présentation
     let texteGap = 0;           // l'interligne à viser
     let texteX0 = 0, texteX1 = 0;   // la colonne de la présentation
@@ -3947,28 +3949,23 @@ if (!document.body.classList.contains('photo-fusion')) construireTambour();
             }
         }
 
-        /* fin : le tracé rejoint le cercle de « où on va ? », en fait le tour,
-           puis quitte la page par le bas. Le tour est décrit **en polaire**
-           (un rayon, un angle) et non en tirant la courbe vers un point qui
-           se déplace : dès que le rayon vaut FIN_RAYON, le tracé est
-           *exactement* sur le cercle. En mélangeant, la courbe restait en
-           dehors et le tour sortait en œuf (rayon mesuré de 166 à 316 px).
+        /* fin : le fil remonte et sort par le haut de la page, comme le cordon
+           d'un collier. Il est posé sur un **arc de cercle** décrit en polaire
+           (centre, rayon, angle) : dès que le poids de raccord vaut 1, le tracé
+           est *exactement* sur le cercle, donc d'une courbure constante du
+           premier au dernier point — c'est ce qui donne l'arrondi régulier.
+           L'arc est tangent à la courbe au point de sortie de la bulle
+           Photographie : même pente des deux côtés, aucune cassure au raccord.
            Posé **en dernier** : c'est lui qui a le dernier mot, aucune cloche
            de bulle ne vient le déformer. */
-        if (finCx && u > FIN_U0) {
+        if (finBalayage && u > FIN_U0) {
             const t = (u - FIN_U0) / (1 - FIN_U0);
-            /* la rampe d'entrée : le rayon passe du point d'arrivée au rayon
-               du cercle, poids et pente nuls aux deux bords */
+            /* rampe d'entrée : poids et pente nuls aux deux bords, donc aucune
+               cassure au moment où le fil quitte la bulle Photographie */
             const w = lisser(t / FIN_RAMPE);
-            const rr = finR0 + (FIN_RAYON - finR0) * w;
-            /* le tour : un tour complet, démarré et fini en douceur. Il se
-               referme sur lui-même — le tracé s'arrête sur le cercle au lieu
-               de repartir vers le bas de la page, sinon la sortie coupait le
-               cercle en biais. */
-            const ps = lisser(t);
-            const a = (finAngle + FIN_TOUR * ps) * Math.PI / 180;
-            const cibleX = finCx + Math.cos(a) * rr;
-            const cibleY = finCy + Math.sin(a) * rr;
+            const a = finA0 + finDir * finBalayage * lisser(t);
+            const cibleX = finCx + Math.cos(a) * finArcR;
+            const cibleY = finCy + Math.sin(a) * finArcR;
             p.x += (cibleX - p.x) * w;
             p.y += (cibleY - p.y) * w;
         }
@@ -4042,17 +4039,40 @@ if (!document.body.classList.contains('photo-fusion')) construireTambour();
             }
         }
 
-        const fin = document.querySelector('.titre-centre');
-        if (!fin) return;
-        const r = fin.getBoundingClientRect();
-        finCx = r.left + r.width / 2 + 60;
-        finCy = r.top + window.scrollY - 20;
-        /* on démarre le cercle là où le tracé arrive **vraiment** — cloches des
-           bulles comprises — et à sa distance réelle du centre : la spirale
-           d'entrée part de ce point, donc aucune bosse au raccord */
-        const j = point(FIN_U0);
-        finAngle = Math.atan2(j.y - finCy, j.x - finCx) * 180 / Math.PI;
-        finR0 = Math.max(FIN_RAYON, Math.hypot(j.x - finCx, j.y - finCy));
+        /* l'arc final : tangent à la courbe au point où le fil sort de la bulle
+           Photographie — cloches des bulles comprises — et orienté pour monter
+           hors de la page. Le centre du cercle est sur la normale à la tangente,
+           d'un côté ou de l'autre : on essaie les deux et on garde celui qui sort
+           par le haut le plus tôt (l'arc le plus franchement ascendant). */
+        const avan = point(FIN_U0 - 0.0006);
+        const ici = point(FIN_U0);
+        const tx = ici.x - avan.x, ty = ici.y - avan.y;
+        const norme = Math.hypot(tx, ty) || 1;
+        const ux = tx / norme, uy = ty / norme;
+        finBalayage = 0;
+        /* Le rayon n'est pas libre : un cercle ne monte que jusqu'à son sommet,
+           donc il faut un rayon assez grand pour que ce sommet passe **au-dessus**
+           du haut de la page (sinon l'arc redescend avant d'être sorti). On prend
+           le plus petit qui y arrive, et on le garde assez grand pour rester une
+           courbe douce plutôt qu'un virage serré. */
+        const RAYONS = [900, 1100, 1300, 1500, 1800, 2200];
+        for (let e = 0; e < RAYONS.length && !finBalayage; e++) {
+            const R = RAYONS[e];
+            [1, -1].forEach(function (sens) {
+                if (finBalayage) return;
+                const cxT = ici.x + sens * uy * R;
+                const cyT = ici.y - sens * ux * R;
+                const a0 = Math.atan2(ici.y - cyT, ici.x - cxT);
+                /* sens de parcours : la tangente du cercle doit être celle du trajet */
+                const dir = (ux * -Math.sin(a0) + uy * Math.cos(a0)) < 0 ? -1 : 1;
+                let sweep = 0;
+                for (let k = 1; k <= 314; k++) {
+                    const aa = a0 + dir * k * 0.01;
+                    if (cyT + Math.sin(aa) * R < -60) { sweep = k * 0.01; break; }
+                }
+                if (sweep) { finCx = cxT; finCy = cyT; finA0 = a0; finDir = dir; finArcR = R; finBalayage = sweep; }
+            });
+        }
     }
 
     /* le passage dans la présentation : le tracé y est aplati autour d'un
