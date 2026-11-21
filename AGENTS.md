@@ -651,39 +651,12 @@ Autres points de vigilance de l'accueil :
     `FIN_TOUR` (−320°) donne le sens et l'amplitude ; le tour démarre à l'angle où la courbe
     arrive (`finAngle`, calculé dans `placerCibles`), pour que la jonction ne fasse pas de saut.
     Sur les derniers `FIN_PLONGEE` (60 %) de la fin, la cible quitte le cercle et **glisse
-    jusqu'au départ du paraphe** (`finBx` / `finBy` = premier point de la signature) : le tracé
-    descend entre les bulles et vient **signer en bas à droite**. Ne pas le faire finir dans le
-    cadre du titre (ce qu'on voyait avant) ; il sortait autrefois par le bas de la page, c'est
-    la signature qui a pris cette place.
+    jusqu'au pied du document** (`finBx` = centre de `.titre-centre`, `finBy` = hauteur de la
+    page) : le tracé descend entre les bulles et **sort par le bas de la page**. Ne pas le
+    faire finir dans le cadre du titre (ce qu'on voyait avant) : Ian veut qu'il quitte la page.
     **Piège** : `finBy` s'appuie sur `hauteurPage`, la hauteur mesurée dans `mesurer()` **SVG
     masqué**. Lue directement, `scrollHeight` inclut les quelques pixels de pointe qui dépassent,
     et la page grandit à chaque mesure (vu : +18 px par passe).
-  - **La signature « Christian »** : la fin du geste n'est plus une sortie de page mais le
-    paraphe, tracé dans le même trait, **en bas à droite** (marge de 60 px, 420 px de large,
-    bleu `#1232B4` comme le reste).
-    - Géométrie : `SIGNATURE` est une liste d'ancres dans une boîte locale de 420 × 210 (y vers
-      le bas, ligne de base y = 136), dans l'ordre du geste : entrée, grande boucle haute du C,
-      boucle basse, mot (`h r i t i a n`), puis sortie du n qui revient faire la barre du t.
-      Les lettres sont décrites debout puis inclinées à la volée (`INCLINAISON` 0,24, `SX` 1,9,
-      `SY` 1,1) : c'est ce qui donne l'italique régulier, sans retoucher chaque ancre.
-    - `placerSignature()` lisse ces ancres en **Catmull-Rom** (`SIGN_PAS` échantillons par
-      segment) : courbes franches, aucun tremblé — c'est la demande explicite de Ian. Puis elle
-      les pose en coordonnées de page à `SIGN_MARGE` des bords bas et droit, et remplit `sigPts`
-      avec `sigLong` (longueur cumulée). `pointSignature(s)` y avance **à la longueur d'arc**,
-      pas au paramètre, pour que la vitesse soit régulière le long des boucles.
-    - `point(u)` réserve `SIGN_U…1` (0,88…1) au paraphe et **ramène le reste sur `u / SIGN_U`** :
-      toutes les constantes calées à la main (`ARRETS`, `VIRAGE`, `PHOTO_U`, `FIN_U0`, les
-      repères de `base`) gardent donc exactement leur sens. `construireProfil()` fait le même
-      `u0 = u / SIGN_U` pour ses lenteurs et ses arrêts, et donne au paraphe `SIGN_VITESSE`
-      (0,8) : il s'écrit un peu plus posément que la courbe.
-    - `PAS` est passé de 900 à **4000** : à 900, la part du paraphe tombait à ~100 points et les
-      boucles sortaient en facettes.
-    - **Pièges vécus** : `sigLong` doit avoir exactement la longueur de `sigPts` (un `0` en trop
-      au départ → `TypeError` dans `pointSignature`) ; la boucle Catmull-Rom s'arrête un segment
-      avant la fin, il faut **ajouter la dernière ancre à la main** ; l'entrée du paraphe doit
-      partir **dans la direction où le tracé arrive** (mesuré : 33° d'écart entre les deux
-      tangentes à la jonction, sinon on voit un coude) ; et le rayon minimal du paraphe tourne
-      autour de 11 px — en dessous, une boucle se replie sur elle-même et fait une épingle.
 - **Passage dans la présentation** (le paragraphe « J'aime mélanger… », à droite du `f`) : le
   tracé y faisait un repli qui barrait une ligne de texte. Il est maintenant **aplati** autour de
   l'interligne par `TEXTE_C` / `TEXTE_LARGEUR` / `TEXTE_PLAT` (0,38) : son parcours ne change pas,

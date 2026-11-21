@@ -3624,7 +3624,7 @@ if (!document.body.classList.contains('photo-fusion')) construireTambour();
     /* et le tour final, autour de « où on va ? », se prend le temps d'être lu */
     const FIN_LENT = 0.6;       // part de la vitesse normale dans le tour final
     const FIN_RENTREE = 0.09;   // sur quelle part de la courbe on y descend
-    const PAS = 4000;           // points d'échantillonnage du tracé
+    const PAS = 900;            // points d'échantillonnage du tracé
     /* le tracé ne démarre pas au premier pixel de scroll : il laisse passer
        quelques centimètres, le temps que la page se mette en route */
     const DELAI_DEPART = 140;   // en px de scroll
@@ -3664,38 +3664,6 @@ if (!document.body.classList.contains('photo-fusion')) construireTambour();
        propre en CSS (elle est centrée au départ), c'est ce décalage, repris des
        motionPath de `initSpirale`, qui l'écarte du centre de la zone */
     const PHOTO_DECALAGE = { x: 300, y: 10 };
-    /* le paraphe « Christian » : le tracé ne sort plus par le bas de la page,
-       il finit par signer en bas à droite. Points en unités locales (boîte
-       420 x 210, y vers le bas), lissés en Catmull-Rom par `placerSignature`.
-       Ordre du geste : entrée, grande boucle haute du C, boucle basse, mot
-       (h r i t i a n), puis sortie du n qui revient faire la barre du t. */
-    const SIGNATURE = [
-        [34, 10], [52, 34], [44, 66], [30, 98], [25, 128], [27, 140],
-        [33, 122], [44, 96], [62, 66], [88, 44], [118, 36], [146, 46],
-        [160, 70], [158, 96], [142, 114], [112, 124], [80, 128], [50, 132],
-        [30, 134], [34, 146], [24, 168], [32, 190], [60, 202], [96, 202],
-        [128, 190], [148, 168], [154, 148], [142, 132], [118, 128], [92, 130],
-        [110, 133], [130, 135], [130, 136], [142, 118], [154, 101], [162, 83],
-        [160, 74], [149, 81], [140, 101], [135, 123], [132, 136], [144, 116],
-        [157, 103], [171, 100], [181, 105], [182, 118], [178, 136], [176, 136],
-        [185, 121], [196, 105], [209, 101], [217, 106], [212, 118], [206, 136],
-        [204, 136], [214, 116], [224, 101], [225, 110], [222, 123], [219, 136],
-        [217, 136], [228, 116], [240, 94], [248, 77], [245, 101], [240, 121],
-        [238, 136], [236, 136], [246, 116], [256, 101], [258, 110], [254, 123],
-        [251, 136], [249, 136], [261, 118], [278, 103], [294, 101], [301, 112],
-        [289, 127], [274, 129], [271, 118], [283, 105], [299, 103], [304, 114],
-        [300, 129], [299, 136], [297, 136], [304, 121], [315, 105], [328, 102],
-        [333, 112], [329, 129], [327, 136], [340, 107], [352, 102], [358, 112],
-        [353, 129], [352, 136], [360, 106], [376, 90], [394, 90], [406, 102],
-        [406, 120], [394, 134], [374, 136], [352, 130], [330, 118], [308, 108],
-        [288, 100], [268, 96]
-    ];
-    const SIGN_LARGEUR = 420;
-    const SIGN_HAUTEUR = 210;
-    const SIGN_MARGE = 60;      // sa distance aux bords bas et droit
-    const SIGN_U = 0.88;        // où le paraphe commence, en part du tracé
-    const SIGN_VITESSE = 0.8;   // il s'écrit un peu plus lentement que la courbe
-    const SIGN_PAS = 10;        // échantillons par segment dans le lissage
     /* aux deux endroits où le tracé fait demi-tour sur place (le premier
        looping autour de « qui suis-je ? », et le virage du texte), il n'a
        presque aucune longueur à parcourir : un profil fondé sur la seule
@@ -3746,8 +3714,6 @@ if (!document.body.classList.contains('photo-fusion')) construireTambour();
     let texteGap = 0;           // l'interligne à viser
     let texteX0 = 0, texteX1 = 0;   // la colonne de la présentation
     let photoDx = 0, photoDy = 0;   // de combien le tracé plonge vers la bulle Photo
-    let sigPts = [];            // le paraphe, en coordonnées de page
-    let sigLong = [0];          // sa longueur accumulée
     let profil = [];    // avancement du tracé en fonction du scroll, normalisé
 
     /* Profil de vitesse, en pixels de tracé par pixel de scroll. Il se
@@ -3758,7 +3724,6 @@ if (!document.body.classList.contains('photo-fusion')) construireTambour();
     function construireProfil() {
         if (!total) { profil = [0]; return; }
         const lenteur = function (u) {
-            if (u >= 1) return SIGN_VITESSE;   // le paraphe garde son allure
             const d = (u - VIRAGE) / VIRAGE_LARGEUR;
             const virage = 1 - (1 - VIRAGE_LENT) * Math.exp(-d * d);
             const fin = 1 - (1 - FIN_LENT) * lisser((u - FIN_U0) / FIN_RENTREE);
@@ -3771,13 +3736,12 @@ if (!document.body.classList.contains('photo-fusion')) construireTambour();
         const pasLong = total / PAS;
         for (let i = 1; i <= PAS; i++) {
             const u = (i - 0.5) / PAS;
-            const u0 = u / SIGN_U;   // les réglages sont exprimés sur le tracé seul
             let arret = 0;
             for (let k = 0; k < ARRETS.length; k++) {
-                const d = (u0 - ARRETS[k]) / ARRET_LARGEUR;
+                const d = (u - ARRETS[k]) / ARRET_LARGEUR;
                 arret += Math.exp(-d * d);
             }
-            somme += ((cumul[i] - cumul[i - 1]) + ARRET * arret * pasLong) / lenteur(u0);
+            somme += ((cumul[i] - cumul[i - 1]) + ARRET * arret * pasLong) / lenteur(u);
             profil.push(somme);
         }
         for (let i = 0; i <= PAS; i++) profil[i] /= somme;
@@ -3824,13 +3788,6 @@ if (!document.body.classList.contains('photo-fusion')) construireTambour();
     }
 
     function point(u) {
-        /* le paraphe : la toute fin du geste, en bas à droite. Il prend la part
-           SIGN_U…1 du paramètre, et le reste du tracé garde ses réglages en
-           étant ramené sur 0…1 (mêmes formes, mêmes arrêts, même finale). */
-        if (sigPts.length && u >= SIGN_U) {
-            return pointSignature((u - SIGN_U) / (1 - SIGN_U));
-        }
-        u = u / SIGN_U;
         const p = base(u);
 
         /* le passage dans la présentation : on rapproche le tracé de
@@ -3879,58 +3836,6 @@ if (!document.body.classList.contains('photo-fusion')) construireTambour();
     }
 
     /* cale le tour final sur le titre de la page réelle */
-    /* le paraphe : on lisse la liste d'ancres en Catmull-Rom (courbe qui passe
-       par chaque ancre, sans tremblement), puis on le pose en coordonnées de
-       page, à SIGN_MARGE des bords bas et droit. */
-    function placerSignature() {
-        sigPts = [];
-        sigLong = [];
-        if (!largeur || !hauteurPage) return;
-        const x0 = largeur - SIGN_MARGE - SIGN_LARGEUR;
-        const y0 = hauteurPage - SIGN_MARGE - SIGN_HAUTEUR;
-        const P = [SIGNATURE[0]].concat(SIGNATURE, [SIGNATURE[SIGNATURE.length - 1]]);
-        let prec = null;
-        let long = 0;
-        for (let i = 1; i < P.length - 2; i++) {
-            const p0 = P[i - 1], p1 = P[i], p2 = P[i + 1], p3 = P[i + 2];
-            for (let k = 0; k < SIGN_PAS; k++) {
-                const t = k / SIGN_PAS, t2 = t * t, t3 = t2 * t;
-                const x = 0.5 * ((2 * p1[0]) + (-p0[0] + p2[0]) * t +
-                    (2 * p0[0] - 5 * p1[0] + 4 * p2[0] - p3[0]) * t2 +
-                    (-p0[0] + 3 * p1[0] - 3 * p2[0] + p3[0]) * t3) + x0;
-                const y = 0.5 * ((2 * p1[1]) + (-p0[1] + p2[1]) * t +
-                    (2 * p0[1] - 5 * p1[1] + 4 * p2[1] - p3[1]) * t2 +
-                    (-p0[1] + 3 * p1[1] - 3 * p2[1] + p3[1]) * t3) + y0;
-                if (prec) long += Math.hypot(x - prec.x, y - prec.y);
-                prec = { x: x, y: y };
-                sigPts.push(prec);
-                sigLong.push(long);
-            }
-        }
-        /* le tout dernier point, posé exactement sur la dernière ancre */
-        const bout = SIGNATURE[SIGNATURE.length - 1];
-        const dernier = { x: bout[0] + x0, y: bout[1] + y0 };
-        if (prec) long += Math.hypot(dernier.x - prec.x, dernier.y - prec.y);
-        sigPts.push(dernier);
-        sigLong.push(long);
-    }
-
-    /* point du paraphe à la fraction s de sa longueur */
-    function pointSignature(s) {
-        const but = Math.min(1, Math.max(0, s)) * sigLong[sigLong.length - 1];
-        let bas = 0, haut = sigLong.length - 1;
-        while (haut - bas > 1) {
-            const mid = (bas + haut) >> 1;
-            if (sigLong[mid] <= but) bas = mid; else haut = mid;
-        }
-        const ecart = sigLong[haut] - sigLong[bas];
-        const f = ecart > 0 ? (but - sigLong[bas]) / ecart : 0;
-        return {
-            x: sigPts[bas].x + (sigPts[haut].x - sigPts[bas].x) * f,
-            y: sigPts[bas].y + (sigPts[haut].y - sigPts[bas].y) * f
-        };
-    }
-
     function placerCibles() {
         /* le centre où la bulle Photographie se pose à la fin de la spirale :
            le tracé doit y passer une fois, comme dans Numérique et Plastique */
@@ -3989,12 +3894,8 @@ if (!document.body.classList.contains('photo-fusion')) construireTambour();
            On vise le bord inférieur exact (et pas plus bas) pour ne pas
            agrandir la zone de défilement : le SVG laisse déborder ses traits,
            et un point posé sous la page ajouterait des pixels de scroll. */
-        /* la sortie : au lieu de filer par le bas de la page, le tracé vient
-           signer en bas à droite. On vise le premier point du paraphe, pour
-           que la finale s'y branche sans cassure. */
-        placerSignature();
-        finBx = sigPts.length ? sigPts[0].x : r.left + r.width / 2;
-        finBy = sigPts.length ? sigPts[0].y : hauteurPage || document.documentElement.scrollHeight;
+        finBx = r.left + r.width / 2;
+        finBy = hauteurPage || document.documentElement.scrollHeight;
         /* on démarre le tour du côté où le tracé arrive, pour que la jonction
            ne fasse pas de saut */
         const j = base(FIN_U0);
