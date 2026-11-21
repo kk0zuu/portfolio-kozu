@@ -3759,9 +3759,13 @@ body.contact-page .flow-cta-btn:hover i {
     max-width: 100%;
     margin-left: auto;
     padding: 0.5rem 0.95rem;
-    border: 1px solid rgba(255, 255, 255, 0.32);
+    border: 1px solid rgba(255, 255, 255, 0.42);
     border-radius: 999px;
-    background: rgba(255, 255, 255, 0.08);
+    /* Le fond des pois passe derrière les pastilles : un verre à 8 % les laissait
+       traverser et le texte blanc se perdait dessus. Même teinte qu'avant, mais
+       posée sur le bleu de la page, donc opaque : les pois ne passent plus au
+       travers et la pastille reste lisible. */
+    background: linear-gradient(rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.08)), #1232B4;
     color: #ffffff;
     font-size: 0.66rem;
     letter-spacing: 0.14em;
@@ -3777,7 +3781,7 @@ body.contact-page .flow-cta-btn:hover i {
 .cv-merci a:hover,
 .cv-merci a:focus-visible {
     border-color: rgba(255, 255, 255, 0.7);
-    background: rgba(255, 255, 255, 0.18);
+    background: linear-gradient(rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.2)), #1232B4;
 }
 
 .cv-merci a:focus-visible {
