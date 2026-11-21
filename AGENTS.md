@@ -665,23 +665,32 @@ Autres points de vigilance de l'accueil :
   soit le retour à la ligne) et `calerTexte()` décale ensuite le centre du repli jusqu'à ce que
   son passage tombe vraiment dans l'interligne. Baisser `TEXTE_PLAT` aplatit davantage ; le
   remonter redonne au repli sa hauteur d'origine, mais il retombe sur les lignes.
-- **Passage dans les trois bulles** : le tracé doit traverser une fois chaque case de domaine.
-  C'était déjà le cas pour Numérique (u ≈ 0,71–0,76) et Plastique (u ≈ 0,97–0,98, sur la descente
-  finale), mais il **ratait Photographie de 248 px** (son point le plus proche tombait juste
-  au-dessus du coin haut-gauche de la bulle). D'où `PHOTO_U` (0,856), `PHOTO_LARGEUR` (0,05) et
-  `PHOTO_PLONGEE` (0,62) : sur une cloche, tout le voisinage du tracé est **décalé** vers la bulle
-  (62 % du chemin qui manquait pour l'atteindre), puis relâché. Résultat : 77 px à l'intérieur de
-  la bulle, comme Numérique (79) et Plastique (124).
-  **Piège vécu** : tirer le point vers le centre de la bulle (`p += (centre − p) × poids`) marche
-  aussi, mais la courbe repart ensuite de l'autre côté et fait une **épingle à 135°** — une ligne
-  brisée, ce que Ian refuse. Un **décalage** (`p += décalage × poids`) garde la forme et le sens
-  de marche ; les virages les plus serrés restent ceux du repli du texte (72°). C'est appliqué
-  **après** le mélange du tour final, sinon celui-ci le tire de son côté.
-  `PHOTO_DECALAGE` (360, 40) vient des `motionPath` de `initSpirale` : la bulle n'a **pas** de
-  position propre en CSS (elle est centrée au départ, c'est la spirale qui l'écarte), donc sa
-  position finale se lit « centre mesuré + ce décalage ». Si l'on retouche la trajectoire de la
-  spirale, mettre ce décalage à jour, sinon le plongeon vise à côté. Réglages pensés pour le
-  desktop (branche `isDesktop`) : la branche mobile a ses propres trajectoires.
+- **Passage dans les trois bulles** : le tracé traverse une fois chaque case de domaine —
+  Numérique (u ≈ 0,71–0,76, 79 px sous le bord), Photographie (u ≈ 0,85, 94 px) et Plastique
+  (u ≈ 0,97–0,98, 124 px). Au départ il **ratait Photographie de 248 px** (son point le plus
+  proche passait juste au-dessus du coin haut-gauche). Deux réglages le corrigent ensemble :
+  `PHOTO_U` / `PHOTO_LARGEUR` / `PHOTO_PLONGEE` (0,862 / 0,075 / 0,3) et un **déplacement de 60 px**
+  de la bulle elle-même (`PHOTO_DECALAGE` = 300, 10, repris de son `motionPath` dans
+  `initSpirale`). Sur une fenêtre de u, tout le voisinage du tracé est **décalé** vers la bulle
+  (30 % du chemin qui manquait), puis relâché.
+  **Trois pièges vécus, dans l'ordre où ils se sont présentés** :
+  - tirer le point vers le centre de la bulle (`p += (centre − p) × poids`) fait une **épingle à
+    135°** : la courbe repart de l'autre côté. Un **décalage** (`p += décalage × poids`) garde la
+    forme et le sens de marche ;
+  - une **cloche gaussienne coupée** (`if (|d| < 1,6)`) laisse encore 7,7 % du décalage au bord :
+    le tracé fait un **cran** de 12 px — une vraie cassure, que Ian a vue tout de suite. La
+    fenêtre est donc en **cosinus** (`0,5 + 0,5·cos(π·t)`) : poids **et** pente nuls aux deux
+    bords, aucun cran possible ;
+  - posé **avant** le mélange du tour final, le décalage est combattu par lui (23° de coude à
+    u ≈ 0,84) ; posé **après**, c'est lui qui a le dernier mot, il n'y a plus de lutte.
+  Résultat mesuré : écart maximal de 120 px à la courbe d'origine, rayon de courbure minimal de
+  83 px dans la zone (les cusp naturels du tracé descendent à 20–50 px), et aucun virage plus
+  serré que ceux qui existaient déjà.
+  `PHOTO_DECALAGE` vient des `motionPath` de `initSpirale` : la bulle n'a **pas** de position
+  propre en CSS (elle est centrée au départ, c'est la spirale qui l'écarte), donc sa position
+  finale se lit « centre mesuré + ce décalage ». Si l'on retouche la trajectoire de la spirale,
+  mettre ce décalage à jour, sinon le plongeon vise à côté. Réglages pensés pour le desktop
+  (branche `isDesktop`) : la branche mobile a ses propres trajectoires.
 - La pente de la pointe est mesurée par différence finie sur `point()`, pour rester juste malgré
   la boucle et le tour final.
 - **Demi-tour au départ** : au clic sur une bulle de domaine **sauf la photographie**, `rentrer()`
