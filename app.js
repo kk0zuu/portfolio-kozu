@@ -3641,12 +3641,10 @@ if (!document.body.classList.contains('photo-fusion')) construireTambour();
        Le poids du mélange monte et redescend en douceur, et la courbe de base
        comme la cible sont lisses : le raccord l'est donc aussi, sans point de
        contrôle ni cassure. */
-    const FIN_U0 = 0.84;        // début du mélange de la fin
-    const FIN_RAYON = 190;      // rayon du tour final
-    const FIN_RAMPE = 0.3;      // part de la fin où le tracé rejoint le tour
-    const FIN_TOUR = -320;      // balayage du tour (négatif : sens horaire)
-    const FIN_PLONGEE = 0.6;    // part de la fin à partir de laquelle le tracé
-                                // quitte le tour et entre derrière le titre
+    const FIN_U0 = 0.88;        // début du tour final (après la bulle Photo)
+    const FIN_RAYON = 190;      // rayon du tour : c'est un vrai cercle
+    const FIN_RAMPE = 0.3;      // part de la fin où le tracé rejoint le cercle
+    const FIN_TOUR = -360;      // balayage du tour : un tour complet, horaire
     /* le passage dans le texte de présentation : le tracé y est aplati autour
        de l'interligne pour glisser entre deux lignes au lieu de les barrer */
     const TEXTE_C = 0.5;        // sa place, en part du tracé
@@ -3713,9 +3711,7 @@ if (!document.body.classList.contains('photo-fusion')) construireTambour();
     let recul = false;    // le tracé est-il en train de rentrer (demi-tour)
     let rattrapage = 0;   // jeton du dessin automatique au chargement
     /* forme cible du tour final, recalée à chaque mesure de la page */
-    let finCx = 0, finCy = 0, finAngle = 0;
-    let finBx = 0, finBy = 0;   // l'arrivée : derrière le titre
-    let hauteurPage = 0;        // hauteur du document, sans le débord du SVG
+    let finCx = 0, finCy = 0, finAngle = 0, finR0 = 0;
     let texteY = 0;             // le centre du repli dans la présentation
     let texteGap = 0;           // l'interligne à viser
     let texteX0 = 0, texteX1 = 0;   // la colonne de la présentation
@@ -3797,32 +3793,13 @@ if (!document.body.classList.contains('photo-fusion')) construireTambour();
     function point(u) {
         const p = base(u);
 
+
         /* le passage dans la présentation : on rapproche le tracé de
            l'interligne, sans changer son parcours */
         const dt = (u - TEXTE_C) / TEXTE_LARGEUR;
         if (texteGap && dt > -1 && dt < 1) {
             const w = lisser(1 - Math.abs(dt));
             p.y += ((texteY + (p.y - texteY) * TEXTE_PLAT) - p.y) * w;
-        }
-
-        /* fin : le tracé est tiré vers un grand tour autour de « où on va ? »,
-           et s'arrête dessus, la pointe visible sous le titre */
-        if (finCx && u > FIN_U0) {
-            const t = (u - FIN_U0) / (1 - FIN_U0);
-            /* le tracé rejoint le tour en quelques pour cent, puis le suit
-               exactement : le cercle est donc parcouru en entier, et la
-               jonction reste lisse puisque le poids repart de zéro */
-            const w = lisser(t / FIN_RAMPE);
-            const a = (finAngle + t * FIN_TOUR) * Math.PI / 180;
-            let cibleX = finCx + Math.cos(a) * FIN_RAYON;
-            let cibleY = finCy + Math.sin(a) * FIN_RAYON;
-            /* sur la fin, la cible quitte le cercle et glisse jusqu'au titre :
-               la pointe y entre et disparaît derrière le cadre */
-            const d = lisser((t - FIN_PLONGEE) / (1 - FIN_PLONGEE));
-            cibleX += (finBx - cibleX) * d;
-            cibleY += (finBy - cibleY) * d;
-                        p.x += (cibleX - p.x) * w;
-            p.y += (cibleY - p.y) * w;
         }
 
         /* le plongeon dans la bulle Plastique : même principe, une cloche en
@@ -3841,8 +3818,8 @@ if (!document.body.classList.contains('photo-fusion')) construireTambour();
            « où on va ? » et la rate de peu. On ne tire pas le point vers un
            centre (la courbe y ferait une épingle) : on **décale** le voisinage,
            en cosinus — poids et pente nuls aux deux bords, donc aucune cassure —
-           puis on le relâche. Posé **après** le tour final : c'est lui qui a le
-           dernier mot, sans lutte entre les deux qui ferait un coude. */
+           puis on le relâche. Posé **avant** le tour final, qui démarre plus
+           loin sur le tracé : les deux ne se disputent pas. */
         if (photoDx || photoDy) {
             const tp = (u - PHOTO_U) / PHOTO_LARGEUR;
             if (tp > -1 && tp < 1) {
@@ -3850,6 +3827,32 @@ if (!document.body.classList.contains('photo-fusion')) construireTambour();
                 p.x += photoDx * wp;
                 p.y += photoDy * wp;
             }
+        }
+
+        /* fin : le tracé rejoint le cercle de « où on va ? », en fait le tour,
+           puis quitte la page par le bas. Le tour est décrit **en polaire**
+           (un rayon, un angle) et non en tirant la courbe vers un point qui
+           se déplace : dès que le rayon vaut FIN_RAYON, le tracé est
+           *exactement* sur le cercle. En mélangeant, la courbe restait en
+           dehors et le tour sortait en œuf (rayon mesuré de 166 à 316 px).
+           Posé **en dernier** : c'est lui qui a le dernier mot, aucune cloche
+           de bulle ne vient le déformer. */
+        if (finCx && u > FIN_U0) {
+            const t = (u - FIN_U0) / (1 - FIN_U0);
+            /* la rampe d'entrée : le rayon passe du point d'arrivée au rayon
+               du cercle, poids et pente nuls aux deux bords */
+            const w = lisser(t / FIN_RAMPE);
+            const rr = finR0 + (FIN_RAYON - finR0) * w;
+            /* le tour : un tour complet, démarré et fini en douceur. Il se
+               referme sur lui-même — le tracé s'arrête sur le cercle au lieu
+               de repartir vers le bas de la page, sinon la sortie coupait le
+               cercle en biais. */
+            const ps = lisser(t);
+            const a = (finAngle + FIN_TOUR * ps) * Math.PI / 180;
+            const cibleX = finCx + Math.cos(a) * rr;
+            const cibleY = finCy + Math.sin(a) * rr;
+            p.x += (cibleX - p.x) * w;
+            p.y += (cibleY - p.y) * w;
         }
         return p;
     }
@@ -3923,16 +3926,12 @@ if (!document.body.classList.contains('photo-fusion')) construireTambour();
         const r = fin.getBoundingClientRect();
         finCx = r.left + r.width / 2 + 60;
         finCy = r.top + window.scrollY - 20;
-        /* la sortie : le tracé quitte la page par le bas, au pied du document.
-           On vise le bord inférieur exact (et pas plus bas) pour ne pas
-           agrandir la zone de défilement : le SVG laisse déborder ses traits,
-           et un point posé sous la page ajouterait des pixels de scroll. */
-        finBx = r.left + r.width / 2;
-        finBy = hauteurPage || document.documentElement.scrollHeight;
-        /* on démarre le tour du côté où le tracé arrive, pour que la jonction
-           ne fasse pas de saut */
-        const j = base(FIN_U0);
-        finAngle = Math.atan2((j.y - finCy) / FIN_RAYON, (j.x - finCx) / FIN_RAYON) * 180 / Math.PI;
+        /* on démarre le cercle là où le tracé arrive **vraiment** — cloches des
+           bulles comprises — et à sa distance réelle du centre : la spirale
+           d'entrée part de ce point, donc aucune bosse au raccord */
+        const j = point(FIN_U0);
+        finAngle = Math.atan2(j.y - finCy, j.x - finCx) * 180 / Math.PI;
+        finR0 = Math.max(FIN_RAYON, Math.hypot(j.x - finCx, j.y - finCy));
     }
 
     /* le passage dans la présentation : le tracé y est aplati autour d'un
@@ -3973,7 +3972,6 @@ if (!document.body.classList.contains('photo-fusion')) construireTambour();
         svg.style.display = 'none';
         const page = document.documentElement.scrollHeight;
         svg.style.display = affichage;
-        hauteurPage = page;
         largeur = document.documentElement.clientWidth;
         haut = t.bottom + window.scrollY + 64;
         course = Math.max(0, page - vh);

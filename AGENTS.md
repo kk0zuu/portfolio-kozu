@@ -645,18 +645,24 @@ Autres points de vigilance de l'accueil :
   - **Premier looping** : élargi par la cloche gaussienne `BOSSE` / `BOSSE_X` / `BOSSE_Y` /
     `BOSSE_BAS`. **Ne pas trop l'augmenter** : au-delà de ~0,5 la boucle se referme en pointe
     (les deux branches se rejoignent) et le tracé a l'air cassé. `BOSSE_X` reste modéré.
-  - **Fin du tracé** : à partir de `FIN_U0` (0,84), la courbe est tirée vers un **cercle**
-    (`FIN_RAYON`, 190 px) centré sur `.titre-centre`, en `(finCx, finCy)` ; le poids atteint 1 au
-    bout de `FIN_RAMPE` (30 % de la fin) et y reste, si bien que le cercle est parcouru en entier.
-    `FIN_TOUR` (−320°) donne le sens et l'amplitude ; le tour démarre à l'angle où la courbe
-    arrive (`finAngle`, calculé dans `placerCibles`), pour que la jonction ne fasse pas de saut.
-    Sur les derniers `FIN_PLONGEE` (60 %) de la fin, la cible quitte le cercle et **glisse
-    jusqu'au pied du document** (`finBx` = centre de `.titre-centre`, `finBy` = hauteur de la
-    page) : le tracé descend entre les bulles et **sort par le bas de la page**. Ne pas le
-    faire finir dans le cadre du titre (ce qu'on voyait avant) : Ian veut qu'il quitte la page.
-    **Piège** : `finBy` s'appuie sur `hauteurPage`, la hauteur mesurée dans `mesurer()` **SVG
-    masqué**. Lue directement, `scrollHeight` inclut les quelques pixels de pointe qui dépassent,
-    et la page grandit à chaque mesure (vu : +18 px par passe).
+  - **Fin du tracé : un vrai cercle**, à partir de `FIN_U0` (0,88 — **après** le passage dans la
+    bulle Photographie, sinon le tour l'avalerait). Le tour est décrit **en polaire** — un rayon,
+    un angle — et non en tirant la courbe vers un point qui se déplace :
+    `rr = finR0 + (FIN_RAYON − finR0) × w` puis `p = centre + (cos a, sin a) × rr`. Dès que
+    `rr = FIN_RAYON` (190 px, au bout de `FIN_RAMPE` = 30 % de la section), le tracé est
+    **exactement** sur le cercle, rayon 190 sur 190. `FIN_TOUR` (−360°) fait **un tour complet**
+    en douceur (`lisser`) et le tracé **se referme sur lui-même** : il s'arrête sur le cercle.
+    Pourquoi pas un mélange vers un cercle, comme avant ? Mesuré : le rayon y variait de **166 à
+    316 px** — le tour sortait en œuf, ce que Ian a refusé (« il faut un beau cercle »).
+    Pourquoi pas de sortie vers le bas de la page ? La glissade finale partait du cercle en
+    biais et le coupait (virages de 98° d'un point au suivant). Ian a demandé un beau cercle :
+    on s'arrête dessus. `finAngle` et `finR0` se lisent sur `point(FIN_U0)` — cloches des bulles
+    comprises — dans `placerCibles()`, sinon la spirale d'entrée part à côté et le raccord
+    s'ouvre en bosse.
+    **Piège** : l'entrée se règle par la rampe (le rayon) **et** par le balayage de l'angle
+    (`ps = lisser(t)` sur toute la section). Rampe trop courte (8 %), le tracé sort de la spirale
+    en biais : 39° de virage d'un point au suivant. Balayage fini avant la fin, il **stagne**
+    (des points identiques) et l'aiguille s'arrête 20 px de scroll avant le bas.
 - **Passage dans la présentation** (le paragraphe « J'aime mélanger… », à droite du `f`) : le
   tracé y faisait un repli qui barrait une ligne de texte. Il est maintenant **aplati** autour de
   l'interligne par `TEXTE_C` / `TEXTE_LARGEUR` / `TEXTE_PLAT` (0,38) : son parcours ne change pas,
