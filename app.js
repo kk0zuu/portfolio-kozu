@@ -1837,7 +1837,8 @@ mm.add({
     });
 
     // 3. Éléments à l'intérieur des bulles et planches (Images en Stagger 0.1s + translation vers le haut)
-    //    Les cases photo (.pr-card) sont traitées plus bas, photo par photo.
+    //    Les cases photo (.pr-card) ne sont pas concernées : leurs images sont
+    //    visibles dès le départ (voir la section 4).
     document.querySelectorAll('.project-bubble:not(.pr-card), .editorial-board').forEach(container => {
         const items = container.querySelectorAll('.bubble-img-card, .editorial-img-frame');
         if (items.length > 0) {
@@ -1858,50 +1859,9 @@ mm.add({
             );
         }
     });
-    // 4. Pages photo : chaque photo apparaît dès qu'elle devient visible.
-    //    Les cases étant transformées en 3D par le carrousel, les positions
-    //    calculées par ScrollTrigger seraient faussées : on observe donc la
-    //    visibilité réelle de chaque photo.
-    const photos = [...document.querySelectorAll('.pr-card .editorial-img-frame, .pe-section .editorial-img-frame')];
-
-    if (photos.length) {
-        photos.forEach((item, index) => {
-            gsap.set(item, { opacity: 0, y: 22 });
-            item.dataset.revealDelay = String(Math.min(index, 8) * 0.06);
-        });
-
-        if ('IntersectionObserver' in window) {
-            // Les cases Expressive sont plus basses dans le viewport : leurs photos
-            // n'apparaissaient qu'une fois déjà bien installées à l'écran. On les
-            // déclenche donc avant même qu'elles ne franchissent le bord bas.
-            const creerObservateur = (marge) => {
-                const observateur = new IntersectionObserver((entries) => {
-                    entries.forEach((entry) => {
-                        if (!entry.isIntersecting) return;
-                        const el = entry.target;
-                        observateur.unobserve(el);
-                        gsap.to(el, {
-                            opacity: 1,
-                            y: 0,
-                            duration: 0.7,
-                            ease: 'power2.out',
-                            delay: parseFloat(el.dataset.revealDelay) || 0
-                        });
-                    });
-                }, { rootMargin: marge, threshold: 0.01 });
-                return observateur;
-            };
-
-            const tot = creerObservateur('0px 0px 14% 0px');    // cases Expressive : plus tôt
-            const tard = creerObservateur('0px 0px -8% 0px');   // cases Studio & Pro
-
-            photos.forEach((el) => {
-                (el.closest('.pe-section') ? tot : tard).observe(el);
-            });
-        } else {
-            gsap.set(photos, { opacity: 1, y: 0 });
-        }
-    }
+    // 4. Pages photo : les photos sont là dès le départ, sans fondu d'apparition
+    //    (demandé par Ian). Le carrousel 3D gère déjà l'opacité des cases
+    //    lointaines ; un fondu de plus retardait la lecture des images.
 })();
 // --- HERO ÉPINGLÉ (PAGES PHOTOGRAPHIE) ---
 // Le titre de la page reste en place et les cases défilent par-dessus lui.
