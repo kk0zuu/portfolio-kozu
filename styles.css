@@ -1112,8 +1112,8 @@ body.contact-page .logiciels-aide-point {
     background: var(--color-white);
     padding: 0.3rem 1.2rem;
     border: 3px solid var(--color-black);
-    /* ombre centrée sous l'étiquette, sans décalage latéral */
-    box-shadow: 0 4px 0 var(--color-black);
+    /* ombre portée à gauche et vers le bas (demandé par Ian) */
+    box-shadow: -4px 4px 0 var(--color-black);
     text-transform: lowercase;
     z-index: 15;
     white-space: nowrap;

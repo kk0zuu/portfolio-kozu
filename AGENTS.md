@@ -154,8 +154,8 @@ Variables CSS globales : `--color-neon-pink`, `--color-neon-green`, `--font-disp
   droits : ce sont des images, pas des boutons — leur case, elle, reste arrondie.
   L'étiquette manuscrite des bulles de l'accueil (`.handwritten-label`, « numérique »,
   « photographie », « projet plastique ») fait exception : **angles droits au repos**, coins
-  arrondis au survol de sa bulle ; son ombre est centrée et tombe droit sous elle
-  (`box-shadow: 0 4px 0`). Ian l'a demandé ainsi.
+  arrondis au survol de sa bulle ; son ombre tombe **à gauche et vers le bas**
+  (`box-shadow: -4px 4px 0`). Ian l'a demandé ainsi.
   **Exceptions** : les boutons rectangulaires de Numérique (« ← Rayon », « son activé »…) et,
   sur `plastique.html`, les **boosters** (`.pm-pack`, `.pm-slab`, `.pm-foil`) et les **cartes
   projet** (`.pm-face`) gardent leurs angles droits — leur silhouette de sachet déchiré et leur
