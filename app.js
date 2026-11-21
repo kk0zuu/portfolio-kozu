@@ -3652,6 +3652,16 @@ if (!document.body.classList.contains('photo-fusion')) construireTambour();
     const TEXTE_C = 0.5;        // sa place, en part du tracé
     const TEXTE_LARGEUR = 0.105;
     const TEXTE_PLAT = 0.38;    // facteur d'aplatissement vertical
+    /* le passage dans la bulle Photographie : le tracé descend le long de
+       « où on va ? » et la ratat de peu. Une cloche l'y tire une seule fois,
+       vers le centre de la bulle, puis relâche. */
+    const PHOTO_U = 0.856;      // sa place, en part du tracé
+    const PHOTO_LARGEUR = 0.05;
+    const PHOTO_PLONGEE = 0.62;  // part du chemin qui reste à faire vers la bulle
+    /* où la bulle se pose à la fin de la spirale : elle n'a pas de position
+       propre en CSS (elle est centrée au départ), c'est ce décalage, repris des
+       motionPath de `initSpirale`, qui l'écarte du centre de la zone */
+    const PHOTO_DECALAGE = { x: 360, y: 40 };
     /* aux deux endroits où le tracé fait demi-tour sur place (le premier
        looping autour de « qui suis-je ? », et le virage du texte), il n'a
        presque aucune longueur à parcourir : un profil fondé sur la seule
@@ -3700,6 +3710,7 @@ if (!document.body.classList.contains('photo-fusion')) construireTambour();
     let texteY = 0;             // le centre du repli dans la présentation
     let texteGap = 0;           // l'interligne à viser
     let texteX0 = 0, texteX1 = 0;   // la colonne de la présentation
+    let photoDx = 0, photoDy = 0;   // de combien le tracé plonge vers la bulle Photo
     let profil = [];    // avancement du tracé en fonction du scroll, normalisé
 
     /* Profil de vitesse, en pixels de tracé par pixel de scroll. Il se
@@ -3803,11 +3814,41 @@ if (!document.body.classList.contains('photo-fusion')) construireTambour();
             p.x += (cibleX - p.x) * w;
             p.y += (cibleY - p.y) * w;
         }
+
+        /* le plongeon dans la bulle Photographie, posé **après** le tour final
+           pour que celui-ci ne le tire pas de son côté. On ne tire pas le point
+           vers un centre (la courbe y ferait une épingle) : on **décale** toute
+           la zone sur quelques dizaines de pixels, en cloche, puis on la
+           relâche. Le tracé garde sa forme et son sens de marche. */
+        if (photoDx || photoDy) {
+            const dp = (u - PHOTO_U) / PHOTO_LARGEUR;
+            if (dp > -1.6 && dp < 1.6) {
+                const wp = Math.exp(-dp * dp);
+                p.x += photoDx * wp;
+                p.y += photoDy * wp;
+            }
+        }
         return p;
     }
 
     /* cale le tour final sur le titre de la page réelle */
     function placerCibles() {
+        /* le centre où la bulle Photographie se pose à la fin de la spirale :
+           le tracé doit y passer une fois, comme dans Numérique et Plastique */
+        photoDx = 0;
+        photoDy = 0;
+        const bullePhoto = document.querySelector('.bubble-photo');
+        if (bullePhoto) {
+            const rb = bullePhoto.getBoundingClientRect();
+            const cibleX = rb.left + rb.width / 2 + PHOTO_DECALAGE.x;
+            const cibleY = rb.top + rb.height / 2 + window.scrollY + PHOTO_DECALAGE.y;
+            /* le point que la courbe occupe déjà à cet endroit : on décale de
+               la part du chemin qui manque pour entrer dans la bulle */
+            const nat = point(PHOTO_U);
+            photoDx = (cibleX - nat.x) * PHOTO_PLONGEE;
+            photoDy = (cibleY - nat.y) * PHOTO_PLONGEE;
+        }
+
         /* l'interligne de la présentation : entre la 5ᵉ et la 6ᵉ ligne du
            paragraphe, là où le tracé doit passer sans barrer le texte */
         texteGap = 0;
