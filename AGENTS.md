@@ -559,9 +559,9 @@ Autres points de vigilance de l'accueil :
   relever `stroke-dashoffset`, faire la différence). Le tracé fait ~5 400 px pour une course de
   ~2 000 px : **il avance donc en moyenne 2,7 fois plus vite que la page**, et on ne peut pas
   ralentir un endroit sans accélérer le reste. Sur cette base, les valeurs relevées sont de
-  ~55 à ~510 px de tracé par cran (contre 27 à 864 avant le 20/11) : ~320 à 420 dans la descente,
-  ~250 à 320 dans le virage, ~215 à 335 dans le tour final, et le trou du virage du texte
-  (voir plus bas) à 27-98.
+  ~55 à ~600 px de tracé par cran (contre 27 à 864 avant le 20/11) : ~320 à 430 dans la descente,
+  ~250 à 320 dans le virage, ~210 à 340 dans le tour final, et les **deux trous d'arrêt** (voir
+  plus bas) : 28-71 au premier demi-tour, 49-62 à celui du texte.
 - Le profil (`construireProfil` / `avance`) est construit **après** le tracé, sur ses longueurs
   réelles : chaque tronçon coûte « sa longueur divisée par la vitesse voulue », on cumule, on
   normalise (`u(1) = 1` : la fin tombe pile en bas de page et rien ne recule), et `avance(s)`
@@ -578,13 +578,25 @@ Autres points de vigilance de l'accueil :
   endroits où le tracé fait demi-tour sur place. Au virage du texte, la pointe n'y parcourt
   presque aucune longueur quand elle boucle : elle n'y passe donc aucun temps, et le ralenti
   qu'on y voyait — la pointe qui s'arrête le temps de boucler — a disparu (404 px de tracé par
-  cran au lieu de 29). D'où **`ARRET` / `ARRET_LARGEUR`** : on ajoute au coût de chaque pas une
-  part **indépendante de la longueur** (`ARRET` × cloche × longueur moyenne d'un pas), ce qui
-  rend au virage son temps d'arrêt sans toucher au reste. Réglé à 4 / 0,055, la suite mesurée
-  autour du virage est 146 → 50 → 27 → 98 px de tracé par cran (max 510 ailleurs, contre 404).
+  cran au lieu de 29). D'où **`ARRETS` / `ARRET` / `ARRET_LARGEUR`** : on ajoute au coût de chaque
+  pas une part **indépendante de la longueur** (`ARRET` × cloche × longueur moyenne d'un pas), ce
+  qui rend au virage son temps d'arrêt sans toucher au reste.
+  `ARRETS` contient les **deux** endroits où le tracé fait demi-tour sur place : `0,132` (le
+  premier looping, juste au-dessus de « qui suis-je ? », page y ≈ 1 036) et `TEXTE_C` (le virage
+  du texte). Ian a demandé que le premier ait le même ralenti que le second : même `ARRET` (4)
+  et même `ARRET_LARGEUR` (0,055) pour les deux. Mesuré à 4 / 0,055 : 179 → 71 → **28** → 174 px
+  de tracé par cran autour du premier demi-tour (la pointe y est à son point le plus à droite,
+  `(469 ; 1 068)`), 221 → 62 → **49** → 177 autour de celui du texte ; max 600 ailleurs (contre
+  510 avec un seul arrêt, 404 sans aucun). Chaque arrêt coûte du scroll, donc le reste accélère
+  d'autant : c'est le compromis normal du profil (voir le premier piège).
+  **La géométrie ne bouge pas** : ces réglages ne touchent que le profil de vitesse, jamais
+  `base()` ni `point()`.
   Pour vérifier qu'un trou de vitesse tombe au bon endroit, relever à chaque cran l'avancement
   (`stroke-dashoffset`) **et** la position de la pointe (`transform` du `.fleche-pointe`, en
   coordonnées de page) : le ralenti doit coïncider avec le point le plus à droite du tracé.
+  Astuce : quand le scroll piloté par script rend la page trop lente (évaluations coupées à 10 s),
+  on peut recalculer le profil hors navigation à partir du `d` du `.fleche-trait` (points →
+  `cumul` → `profil` → `avance`) et retrouver les mêmes chiffres sans défiler.
 - `DELAI_DEPART` (140 px) décale le départ : le tracé ne bouge pas pendant les premiers pixels
   de scroll, la pointe attend sous le titre. C'est `s` qui est recalculé sur
   `course - DELAI_DEPART`, pas la longueur du tracé.

@@ -3652,11 +3652,14 @@ if (!document.body.classList.contains('photo-fusion')) construireTambour();
     const TEXTE_C = 0.5;        // sa place, en part du tracé
     const TEXTE_LARGEUR = 0.105;
     const TEXTE_PLAT = 0.38;    // facteur d'aplatissement vertical
-    /* juste là, le tracé fait demi-tour sur place : il n'a presque aucune
-       longueur à parcourir, donc un profil fondé sur la seule longueur le
-       traverse d'un cran. On lui rend un temps d'arrêt en y ajoutant une part
-       de scroll « au pas », indépendante de la longueur. */
-    const ARRET = 4;            // part de scroll au pas ajoutée au virage
+    /* aux deux endroits où le tracé fait demi-tour sur place (le premier
+       looping autour de « qui suis-je ? », et le virage du texte), il n'a
+       presque aucune longueur à parcourir : un profil fondé sur la seule
+       longueur les traverse d'un cran. On leur rend un temps d'arrêt en y
+       ajoutant une part de scroll « au pas », indépendante de la longueur.
+       La géométrie ne bouge pas : seule la vitesse change. */
+    const ARRETS = [0.132, TEXTE_C];
+    const ARRET = 4;            // part de scroll au pas ajoutée à chaque virage
     const ARRET_LARGEUR = 0.055;
     const NS = 'http://www.w3.org/2000/svg';
 
@@ -3719,9 +3722,12 @@ if (!document.body.classList.contains('photo-fusion')) construireTambour();
         const pasLong = total / PAS;
         for (let i = 1; i <= PAS; i++) {
             const u = (i - 0.5) / PAS;
-            const d = (u - TEXTE_C) / ARRET_LARGEUR;
-            const arret = ARRET * Math.exp(-d * d) * pasLong;
-            somme += ((cumul[i] - cumul[i - 1]) + arret) / lenteur(u);
+            let arret = 0;
+            for (let k = 0; k < ARRETS.length; k++) {
+                const d = (u - ARRETS[k]) / ARRET_LARGEUR;
+                arret += Math.exp(-d * d);
+            }
+            somme += ((cumul[i] - cumul[i - 1]) + ARRET * arret * pasLong) / lenteur(u);
             profil.push(somme);
         }
         for (let i = 0; i <= PAS; i++) profil[i] /= somme;
