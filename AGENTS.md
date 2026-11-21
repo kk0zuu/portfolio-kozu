@@ -156,8 +156,10 @@ Variables CSS globales : `--color-neon-pink`, `--color-neon-green`, `--font-disp
   « photographie », « projet plastique ») fait exception : **angles droits au repos**, coins
   arrondis au survol de sa bulle, et **chacune son ombre** — Numérique à gauche (`-4px 0`),
   Plastique en bas (`0 4px`), Photographie à droite (`4px 0`) — en plus de son inclinaison
-  propre. « Projet plastique » est la seule **d'aplomb** (`rotate(0deg)`). Ian l'a demandé ainsi.
-  Les feuilles sont appelées avec `styles.css?v=2` dans les six pages : **incrémenter ce numéro**
+  propre. Les trois ombres sont **à 70 % d'opacité** (`--ombre-etiquette: rgba(0, 0, 0, 0.7)`),
+  Ian l'a demandé : à noir plein elles pesaient plus que la case. « Projet plastique » est la
+  seule **d'aplomb** (`rotate(0deg)`).
+  Les feuilles sont appelées avec `styles.css?v=3` dans les six pages : **incrémenter ce numéro**
   à chaque retouche de `styles.css`, sinon Ian voit l'ancienne version dans son navigateur.
   **Exceptions** : les boutons rectangulaires de Numérique (« ← Rayon », « son activé »…) et,
   sur `plastique.html`, les **boosters** (`.pm-pack`, `.pm-slab`, `.pm-foil`) et les **cartes
