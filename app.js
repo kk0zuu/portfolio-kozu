@@ -698,9 +698,14 @@ if (introLine && heroSection) {
        partent donc toutes du même haut, hors champ, se posent en décalé, puis
        les cordes remontent, tirées par le haut. */
     const SURPLOMB = 140;           // départ au-dessus du cadre (px)
-    const DUREE_CHUTE = 0.62;       // descente d'une lettre (s)
-    const ECART_CHUTE = 0.03;       // décalage d'une lettre à la suivante (s)
+    const DUREE_CHUTE = 0.52;       // descente d'une lettre (s)
+    const ECART_CHUTE = 0.025;      // décalage d'une lettre à la suivante (s)
 
+    /* Ordre de pose tiré au hasard, pas de gauche à droite : `ordrePose[k]`
+       est la lettre qui arrive en k-ième position. Il sert aussi au rangement
+       des cordes, pour qu'elles remontent dans le désordre où elles ont lâché
+       les lettres. */
+    const ordrePose = gsap.utils.shuffle(Array.from(ransomWrappers, (_, i) => i));
     const cordes = [];
 
     ransomWrappers.forEach((wrapper, i) => {
@@ -714,6 +719,8 @@ if (introLine && heroSection) {
         const chute = Math.max(320, haut + SURPLOMB);
         // la corde annule la rotation de sa lettre pour rester bien verticale
         const rot = parseFloat(wrapper.getAttribute('data-rot')) || 0;
+        // rang de cette lettre dans la pose, tiré au hasard
+        const rang = ordrePose.indexOf(i);
 
         corde.style.height = chute + 'px';
         gsap.set(corde, { rotation: -rot, transformOrigin: '50% 100%' });
@@ -722,15 +729,15 @@ if (introLine && heroSection) {
             y: -chute,
             duration: DUREE_CHUTE,
             ease: 'power2.out'
-        }, i * ECART_CHUTE);
+        }, rang * ECART_CHUTE);
 
         tlHero.from(corde, {
             scaleY: 0,
             duration: DUREE_CHUTE,
             ease: 'power2.out'
-        }, i * ECART_CHUTE);
+        }, rang * ECART_CHUTE);
 
-        cordes.push(corde);
+        cordes[rang] = corde;
     });
 
     // le titre paraît : la flèche guide monte en même temps

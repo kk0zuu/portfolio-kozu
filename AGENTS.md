@@ -570,7 +570,8 @@ Autres points de vigilance de l'accueil :
   modification de la hauteur de page change ce déclenchement : vérifier que les étoiles
   partent toujours.
 - **Ordre de l'apparition de l'accueil** (section 1 de `app.js`) : le titre d'abord, chaque
-  lettre **descendue au bout d'une corde** — un trait bleu (`#1232B4`, comme la flèche) que
+  lettre **descendue au bout d'une corde**, posée dans un ordre **tiré au hasard** (pas de
+  gauche à droite) — un trait bleu (`#1232B4`, comme la flèche) que
   `app.js` pose dans le wrapper de sa lettre, hauteur égale à la chute mesurée, `scaleY` animé
   pour que le haut reste fixe hors cadre. Une fois la dernière lettre posée, les cordes
   remontent (origine de transformation prise en haut) **en même temps** que la ligne d'intro
