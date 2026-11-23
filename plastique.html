@@ -231,23 +231,23 @@ body.pm-cartes-ouvertes .pm-retour-focus{opacity:0;visibility:hidden;pointer-eve
   backdrop-filter:blur(12px);}
 .pm-retour:hover{background:var(--color-neon-pink);border-color:var(--color-neon-pink);color:#0B0B0C;}
 
-/* ---------- fiche projet : une planche de papier ----------
+/* ---------- fiche projet : une planche de présentation ----------
    Les quatre pièces reprennent la composition des planches de présentation
    du site d'origine : bandeau de titre en pointillés, sous-titre
    « techniques / thème », pièce à gauche, texte et fiche technique à droite,
    annotations manuscrites numérotées, puis les vues en collage. Les deux
    séries (Dessins, Personnalisation Matériaux) ont leur propre composition,
-   plus bas : images entières, jamais rognées, en colonnes. */
-.pm-pl{--papier:#F5F2E9;--trait:#D6D0C0;max-width:1180px;margin:0 auto;
-  background:var(--papier);color:#0B0B0C;
-  padding:4.4rem clamp(1.1rem,3.6vw,3.4rem) clamp(2.2rem,5vw,4rem);
-  box-shadow:0 40px 90px -50px #000;}
+   plus bas : images entières, jamais rognées, en cases.
+   Le fond reste celui de la fiche d'avant (#0B0B0C), seuls la composition et
+   les cartouches changent : pas de feuille claire. */
+.pm-pl{--trait:rgba(255,255,255,.14);max-width:1180px;margin:0 auto;color:#EDEDED;
+  padding:4.4rem clamp(1.1rem,3.6vw,3.4rem) clamp(2.2rem,5vw,4rem);}
 
 .pm-pl-tete{margin-bottom:clamp(1.2rem,2.6vw,2rem);}
 .pm-pl-cat{font-family:var(--font-bungee);font-size:.55rem;letter-spacing:.16em;text-transform:uppercase;
   color:var(--color-magenta);margin:0 0 .9rem;}
 .pm-pl-bande{display:flex;align-items:center;gap:clamp(.6rem,1.8vw,1.3rem);}
-.pm-pl-regle{flex:1;height:3px;background:repeating-linear-gradient(90deg,#BDB6A6 0 9px,transparent 9px 18px);}
+.pm-pl-regle{flex:1;height:3px;background:repeating-linear-gradient(90deg,rgba(255,255,255,.32) 0 9px,transparent 9px 18px);}
 .pm-pl-titre{flex:0 1 auto;font-family:var(--font-display);font-size:clamp(1.5rem,4.2vw,3.1rem);
   line-height:.94;text-transform:uppercase;letter-spacing:-.015em;margin:0;text-align:center;
   text-shadow:3px 2px 0 rgba(255,0,255,.3);}
@@ -257,15 +257,14 @@ body.pm-cartes-ouvertes .pm-retour-focus{opacity:0;visibility:hidden;pointer-eve
 
 .pm-pl-haut{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(0,1fr);
   gap:clamp(1.1rem,2.8vw,2.4rem);align-items:stretch;}
-.pm-pl-hero{position:relative;margin:0;background:#fff;border:1px solid var(--trait);
-  box-shadow:0 16px 34px -28px rgba(0,0,0,.9);}
+.pm-pl-hero{position:relative;margin:0;background:#151517;border:1px solid rgba(255,255,255,.12);}
 .pm-pl-hero img{display:block;width:100%;height:auto;max-height:min(72vh,50rem);
-  object-fit:contain;background:#fff;}
+  object-fit:contain;background:#151517;}
 .pm-pl-point{position:absolute;left:var(--x);top:var(--y);width:var(--t,3rem);height:var(--t,3rem);
-  transform:translate(-50%,-50%);border:3px solid #0B0B0C;border-radius:50%;
-  box-shadow:0 0 0 2px rgba(255,255,255,.65),0 0 26px rgba(255,0,255,.45);}
+  transform:translate(-50%,-50%);border:3px solid #fff;border-radius:50%;
+  box-shadow:0 0 0 2px rgba(11,11,12,.5),0 0 26px rgba(255,0,255,.45);}
 .pm-pl-point b{position:absolute;top:-.72rem;right:-.72rem;width:1.5rem;height:1.5rem;border-radius:50%;
-  background:#0B0B0C;color:#fff;font-family:var(--font-bungee);font-size:.62rem;font-weight:400;
+  background:#fff;color:#0B0B0C;font-family:var(--font-bungee);font-size:.62rem;font-weight:400;
   display:grid;place-items:center;}
 
 /* pièce photographiée à l'horizontale : elle prend toute la largeur et le
@@ -277,11 +276,11 @@ body.pm-cartes-ouvertes .pm-retour-focus{opacity:0;visibility:hidden;pointer-eve
 
 .pm-pl-marge{display:flex;flex-direction:column;gap:1.5rem;}
 .pm-pl-intro{margin:0;font-size:.94rem;line-height:1.72;text-align:justify;hyphens:auto;}
-.pm-pl-fiche{margin:0;border-top:1.5px solid #0B0B0C;}
+.pm-pl-fiche{margin:0;border-top:1.5px solid rgba(255,255,255,.45);}
 .pm-pl-ligne{display:grid;grid-template-columns:6.6rem minmax(0,1fr);gap:.7rem;
   padding:.55rem 0;border-bottom:1px solid var(--trait);}
 .pm-pl-ligne dt{font-family:var(--font-bungee);font-size:.48rem;letter-spacing:.12em;
-  text-transform:uppercase;color:#6E6858;padding-top:.16rem;}
+  text-transform:uppercase;color:#A8A8A8;padding-top:.16rem;}
 .pm-pl-ligne dd{margin:0;font-size:.82rem;line-height:1.5;}
 
 .pm-f-notes{display:flex;flex-wrap:wrap;gap:.8rem;margin:0;}
@@ -291,22 +290,21 @@ body.pm-cartes-ouvertes .pm-retour-focus{opacity:0;visibility:hidden;pointer-eve
 
 .pm-pl-vues{display:grid;grid-template-columns:repeat(12,1fr);gap:clamp(.6rem,1.5vw,1.1rem);
   align-items:start;margin-top:clamp(1.5rem,3.2vw,2.6rem);}
-.pm-pl-vues figure{margin:0;background:#fff;padding:.4rem;border:1px solid var(--trait);
-  box-shadow:0 14px 28px -24px rgba(0,0,0,.9);}
+.pm-pl-vues figure{margin:0;background:#151517;padding:.4rem;border:1px solid rgba(255,255,255,.12);}
 .pm-pl-vues img{display:block;width:100%;height:auto;}
 .pm-pl-vues figcaption{font-family:var(--font-schoolbell);font-size:.9rem;line-height:1.24;
-  padding:.4rem .15rem .05rem;color:#3B372E;}
+  padding:.4rem .15rem .05rem;color:#C6C6C6;}
 
 /* série : un seul bloc de texte, puis la légende des techniques en pastilles */
 .pm-pl-serie-haut{max-width:74ch;margin:clamp(1rem,2.4vw,1.8rem) 0 0;}
 .pm-pl-tags{list-style:none;margin:1.1rem 0 0;padding:0;display:flex;flex-wrap:wrap;gap:.45rem;}
 .pm-pl-tags li{font-family:var(--font-bungee);font-size:.55rem;letter-spacing:.1em;text-transform:uppercase;
-  border:1.5px solid #0B0B0C;background:#FFFDF0;padding:.36rem .6rem;}
+  border:1.5px solid rgba(255,255,255,.34);background:rgba(255,255,255,.06);color:#EDEDED;padding:.36rem .6rem;}
 /* planche-contact : une case par pièce, l'image entière dedans, jamais rognée */
 .pm-pl-planche{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));
   gap:clamp(.6rem,1.5vw,1.1rem);margin-top:clamp(1.5rem,3.2vw,2.6rem);}
 .pm-pl-planche figure{margin:0;aspect-ratio:4/5;display:flex;align-items:center;justify-content:center;
-  background:#fff;padding:.5rem;border:1px solid var(--trait);box-shadow:0 12px 24px -22px rgba(0,0,0,.9);}
+  background:#151517;padding:.5rem;border:1px solid rgba(255,255,255,.12);}
 .pm-pl-planche img{display:block;width:auto;height:auto;max-width:100%;max-height:100%;object-fit:contain;}
 
 .pm-f-corps{padding:0;}

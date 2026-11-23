@@ -524,16 +524,19 @@ Champs d'un projet :
 
 `ouvrirProjet` choisit le rendu selon `mise` :
 
-- **`planche`** (les quatre pièces) — reprise des planches de présentation du site
-d'origine (Canva) : feuille de papier `#F5F2E9` posée sur le fond noir, bandeau de titre
-entre deux filets pointillés, sous-titre `tech / theme`, pièce à gauche sur une plaque
-blanche, texte justifié + `fiche` à droite, `notes` en étiquettes manuscrites, `gal` en
-collage de vues légendées (`leg`), et `appels` qui cerclent un détail de la photo avec un
-numéro repris sur l'étiquette. Avec `large: true` (photo horizontale), la pièce prend toute
-la largeur et le texte se répartit dessous ; sinon les vues montent dans la marge droite.
+- **`planche`** (les quatre pièces) — reprise de la **composition** des planches de
+présentation du site d'origine (Canva), **sur le fond sombre `#0B0B0C` de la fiche d'avant**
+(Ian y tient : seuls la mise en page et les cartouches changent) : bandeau de titre entre
+deux filets pointillés, sous-titre `tech / theme`, pièce à gauche dans une case `#151517`,
+texte justifié + `fiche` à droite, `notes` en étiquettes manuscrites, `gal` en collage de
+vues légendées (`leg`), et `appels` qui cerclent un détail de la photo (cercle blanc) avec
+un numéro repris sur l'étiquette. Avec `large: true` (photo horizontale), la pièce prend
+toute la largeur et le texte se répartit dessous ; sinon les vues montent dans la marge droite.
+**Ne pas reposer de feuille claire** : `.pm-pl` n'a pas de fond propre, il hérite du noir de
+`.pm-fenetre`.
 - **`serie`** (Dessins, Personnalisation Matériaux) — une collection, pas un objet :
-planche-contact en cases `4/5` où chaque image est **entière** (`object-fit:contain`, jamais
-rognée), et les techniques en pastilles (`tags`) sous le texte. C'est la mise en page
+planche-contact en cases `4/5` `#151517` où chaque image est **entière** (`object-fit:contain`,
+jamais rognée), et les techniques en pastilles (`tags`) sous le texte. C'est la mise en page
 adaptée : un cadrage `cover` couperait les dessins.
 
 Aucune des deux n'utilise l'ancien hero plein écran (`.pm-f-hero`) : il a été retiré avec
