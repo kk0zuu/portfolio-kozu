@@ -176,7 +176,7 @@ Variables CSS globales : `--color-neon-pink`, `--color-neon-green`, `--font-disp
   jamais être renommé** une fois publié : un lien externe peut pointer dessus.
 - Registre actuel (ne pas réutiliser) :
   - Numérique : `chris-soleil`, `oko`, `2d-en-vrac`, `3d-en-vrac`, `branding`, `prints`,
-    `retouches`, `jeu-ordinateur`, `jeu-mobile`.
+    `retouches`, `site-web`, `jeu-ordinateur`, `jeu-mobile`.
   - Photo Pro : `architecture`, `couple-lifestyle`, `studio`, `packshot`, `portrait`.
   - Photo Expressive : `exp-architecture`, `exp-urbain`, `exp-transports`, `exp-portraits`,
     `exp-portraits-rue`, `exp-montagne`, `exp-lumiere`, `exp-obscurite`.

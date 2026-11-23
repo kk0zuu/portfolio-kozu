@@ -830,7 +830,7 @@ body.sas-actif .wrap,body.sas-actif .portes-zone,body.sas-actif .num-foot{opacit
     <div class="wrap">
       <main class="split">
         <div class="list">
-          <p class="kicker">Trois catégories · neuf projets</p>
+          <p class="kicker">Trois catégories · dix projets</p>
           <h1>Le numérique<br><em>en rayons</em></h1>
           <div id="liste"></div>
           <p class="hint"><b>Cliquez</b> pour ouvrir le rayon et choisir un projet.</p>
@@ -988,9 +988,19 @@ body.sas-actif .wrap,body.sas-actif .portes-zone,body.sas-actif .num-foot{opacit
       ]
     },
     {
-      num: '03', nom: 'Site web',
-      note: 'Ce site est lui-même un projet : structure, typographie, interactions, code. Et parce qu’un site peut aussi se jouer, deux mini-jeux y sont intégrés — un pour la souris, un pour le tactile.',
+      num: '03', nom: 'Code',
+      note: 'Le code de ce site, page par page : structure, typographie, interactions, et deux mini-jeux écrits à la main, un pour la souris, un pour le tactile.',
       projets: [
+        {
+          id:'site-web', nom:'Site web', discipline:'Conception & développement · HTML, CSS, JavaScript', annee:'2026',
+          texte:"Ce portfolio est un projet à part entière : chaque page est écrite à la main en HTML, CSS et JavaScript, sans framework ni outil de compilation. Le rayonnage du Numérique, les deux axes de la Photographie, le rail de boosters de la Plastique et l’accueil ont chacun leur système, leur mise en page et leurs transitions, tenus ensemble par un style partagé (barre de navigation, curseur, formes arrondies). GSAP anime la spirale des bulles et la flèche qui traverse les domaines ; le site ne charge que du texte et des images.",
+          media:[
+            { t:'image', src:'images/numerique/site/01_accueil.jpg', alt:'Accueil : le titre suspendu à ses cordes et les trois bulles de domaine' },
+            { t:'image', src:'images/numerique/site/02_numerique.jpg', alt:'Numérique : les rayons et l’aperçu de la catégorie' },
+            { t:'image', src:'images/numerique/site/03_plastique.jpg', alt:'Projets plastiques : le rail des familles en boosters' },
+            { t:'image', src:'images/numerique/site/04_photographie.jpg', alt:'Photographie : l’écran de choix entre Studio & Pro et Expressive' }
+          ]
+        },
         {
           id:'jeu-ordinateur', nom:'Mini-jeu · Ordinateur', discipline:'Souris & clavier', annee:'',
           texte:"Le rayon perdu : un pixel RPG à parcourir aux ZQSD pour retrouver les coffres cachés, puis à ouvrir avec E ou Entrée. Chaque trésor est un clin d’œil aux projets du site, et la porte du fond ne s’ouvre qu’une fois le rayon fouillé.",
