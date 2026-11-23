@@ -228,6 +228,7 @@
     var cles = {};
     var dernier = 0;
     var enCours = false;
+    var survol = null;   /* tuile sous le curseur, pour l’effet d’invite */
 
     var infos = jauge(ui.hud, 3);
 
@@ -655,6 +656,20 @@
         }
       }
 
+      /* tuile survolée : on comprend qu’un clic y emmène le personnage */
+      if (survol && enCours && etat && !etat.fin && !etat.transition) {
+        var visee = caseArrivee(survol.x, survol.y);
+        if (visee) {
+          var hx = visee.x * T;
+          var hy = visee.y * T;
+          ctx.fillStyle = 'rgba(228,246,208,0.07)';
+          ctx.fillRect(hx, hy, T, T);
+          ctx.strokeStyle = 'rgba(228,246,208,0.34)';
+          ctx.lineWidth = 1;
+          ctx.strokeRect(hx + 0.5, hy + 0.5, T - 1, T - 1);
+        }
+      }
+
       /* case de destination d’un trajet au clic */
       if (etat.chemin.length) {
         var dest = etat.chemin[etat.chemin.length - 1];
@@ -932,14 +947,30 @@
     });
     document.addEventListener('keyup', function (e) { surTouche(e, false); });
 
+    /* tuile sous le curseur, en coordonnées de grille */
+    function tuileSous(e) {
+      var r = canvas.getBoundingClientRect();
+      if (!r.width || !r.height) return null;
+      var cx = Math.floor((e.clientX - r.left) / r.width * TX);
+      var cy = Math.floor((e.clientY - r.top) / r.height * TY);
+      if (cx < 0 || cy < 0 || cx >= TX || cy >= TY) return null;
+      return { x: cx, y: cy };
+    }
+
+    /* le survol montre où le clic emmènerait le personnage */
+    canvas.addEventListener('pointermove', function (e) {
+      if (!enCours || !etat || etat.fin || etat.transition) { survol = null; return; }
+      survol = tuileSous(e);
+    });
+    canvas.addEventListener('pointerleave', function () { survol = null; });
+
     /* clic sur le plateau : le personnage rejoint la case, chemin en largeur */
     canvas.addEventListener('pointerdown', function (e) {
       if (!enCours || !etat || etat.fin || etat.transition) return;
-      var r = canvas.getBoundingClientRect();
-      if (!r.width || !r.height) return;
-      var cx = Math.floor((e.clientX - r.left) / r.width * TX);
-      var cy = Math.floor((e.clientY - r.top) / r.height * TY);
-      if (cx < 0 || cy < 0 || cx >= TX || cy >= TY) return;
+      var cible = tuileSous(e);
+      if (!cible) return;
+      var cx = cible.x;
+      var cy = cible.y;
       var arrivee = caseArrivee(cx, cy);
       if (!arrivee) return;
       var chemin = cheminVers(arrivee.x, arrivee.y);
