@@ -105,7 +105,13 @@
 }
 
 .jeu-hote[data-jeu="desktop"] .jeu-scene {
-    max-width: 860px;
+    /* centrée dans la colonne du projet et un peu plus large : le plateau
+       restait collé à gauche d'un conteneur deux fois plus large */
+    max-width: 1040px;
+    /* sans width, la marge automatique annule l'étirement de la grille et la
+       scène se réduit à la taille intrinsèque du canvas (640 px) */
+    width: 100%;
+    margin: 0 auto;
 }
 
 .jeu-hote[data-jeu="mobile"] .jeu-scene {
