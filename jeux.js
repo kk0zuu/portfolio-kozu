@@ -758,11 +758,12 @@
       if (proche) {
         var tx = proche.x * T + T / 2;
         var ty = proche.y * T - 4;
-        var txt = 'E  OUVRIR';
+        var txt = 'ENTRÉE  OUVRIR';
         ctx.font = '8px "Archivo Black", sans-serif';
         ctx.textBaseline = 'middle';
         var larg = Math.max(48, ctx.measureText(txt).width + 16);
-        var bbx = Math.round(tx - larg / 2);
+        /* le libellé est plus large : on le garde dans le plateau */
+        var bbx = Math.max(4, Math.min(canvas.width - larg - 4, Math.round(tx - larg / 2)));
         var bby = Math.round(ty - 18);
         ctx.fillStyle = 'rgba(11,11,12,0.93)';
         ctx.fillRect(bbx, bby, Math.round(larg), 15);
