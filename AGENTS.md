@@ -482,7 +482,8 @@ Ce n'est **pas** une opération de données. Il faut :
 
 Un **rail de boosters** (une famille = un paquet de cartes à déchirer). Déchirer le paquet
 ouvre une grille de cartes ; une carte se retourne au clic, s'ouvre au double-clic dans une
-**fiche projet** plein écran. Tout vient d'un tableau `CATS` et le rail est construit
+**fiche projet** plein écran, rendue soit en **planche** de présentation, soit en
+**planche-contact** selon `mise` (§6.2). Tout vient d'un tableau `CATS` et le rail est construit
 automatiquement (compteur `01 / 04`, positions circulaires, rayon borné).
 
 ```js
@@ -507,12 +508,38 @@ Champs d'un projet :
 | `nom` | oui | carte + fiche |
 | `meta` | oui | sous-titre technique (carte et fiche) |
 | `court` | oui | texte du dos de la carte |
-| `texte` | oui | texte long de la fiche (**texte brut**, injecté en `textContent`) |
+| `texte` | oui | texte long de la fiche (**texte brut**, échappé par `ech()` puis injecté en HTML) |
 | `img` | oui | **chemin complet** `IMG + 'fichier'` |
-| `gal` | non | tableau de **noms de fichiers seuls** ; la 1re image devient la grande |
+| `gal` | non | tableau de **noms de fichiers seuls** |
 | `notes` | non | `[{ t:'libellé', c:'' \| 'magenta' \| 'verte' }]` |
+| `mise` | non | `'planche'` (défaut : pièce unique) ou `'serie'` (planche-contact) |
+| `tech` / `theme` | non | sous-titre de la planche : « techniques / thème » |
+| `large` | non | `true` quand la photo de la pièce est **à l'horizontale** (elle passe pleine largeur) |
+| `fiche` | non | `[['Techniques', '…'], ['Matériaux', '…'], …]` — fiche technique de la planche |
+| `leg` | non | légendes des `gal`, **alignées par index** (les trous restent sans légende) |
+| `appels` | non | `{ indexDeNote: [x%, y%, tailleRem] }` — cible cerclée sur la photo |
+| `tags` | non | `'serie'` : pastilles de techniques affichées sous le texte |
 
-### 6.2 Recette — ajouter un projet
+### 6.2 Les deux mises en page
+
+`ouvrirProjet` choisit le rendu selon `mise` :
+
+- **`planche`** (les quatre pièces) — reprise des planches de présentation du site
+d'origine (Canva) : feuille de papier `#F5F2E9` posée sur le fond noir, bandeau de titre
+entre deux filets pointillés, sous-titre `tech / theme`, pièce à gauche sur une plaque
+blanche, texte justifié + `fiche` à droite, `notes` en étiquettes manuscrites, `gal` en
+collage de vues légendées (`leg`), et `appels` qui cerclent un détail de la photo avec un
+numéro repris sur l'étiquette. Avec `large: true` (photo horizontale), la pièce prend toute
+la largeur et le texte se répartit dessous ; sinon les vues montent dans la marge droite.
+- **`serie`** (Dessins, Personnalisation Matériaux) — une collection, pas un objet :
+planche-contact en cases `4/5` où chaque image est **entière** (`object-fit:contain`, jamais
+rognée), et les techniques en pastilles (`tags`) sous le texte. C'est la mise en page
+adaptée : un cadrage `cover` couperait les dessins.
+
+Aucune des deux n'utilise l'ancien hero plein écran (`.pm-f-hero`) : il a été retiré avec
+ses styles, la fenêtre n'a plus qu'un conteneur `#pmFCorps` rempli par le rendu.
+
+### 6.3 Recette — ajouter un projet
 
 ```js
 {
@@ -521,14 +548,18 @@ Champs d'un projet :
   texte:"Le texte long de la fiche : matériaux, procédé, intention. Pas de HTML.",
   img: IMG + 'XX_nom.jpg',
   gal: ['YY_nom.jpg', 'ZZ_nom.jpg'],
-  notes: [{ t:'Détail technique', c:'verte' }, { t:'Contrainte ou intention', c:'' }]
+  notes: [{ t:'Détail technique', c:'verte' }, { t:'Contrainte ou intention', c:'' }],
+  mise: 'planche', tech: 'soudure, moulage', theme: 'nature & hybridation',
+  fiche: [['Techniques', 'soudure à l’arc, moulage'], ['Matériaux', 'acier, résine, papier de soie']],
+  leg: ['Vue de face', 'Détail'],
+  appels: { 0: [50, 45, 4.6] }
 }
 ```
 
 Puis vérifier : déchirer le paquet, compter les cartes, retourner la carte (clic), double-clic
 → fiche, `Échap` pour fermer.
 
-### 6.3 Recette — ajouter une famille
+### 6.4 Recette — ajouter une famille
 
 Ajouter un objet dans `CATS` (`id`, `num` suivant, `nom`, `def`, `projets`), puis :
 1. mettre à jour la phrase statique de la page :
@@ -537,7 +568,7 @@ Ajouter un objet dans `CATS` (`id`, `num` suivant, `nom`, `def`, `projets`), pui
 3. vérifier la roue : les positions sont calculées à partir de `CATS.length` (rayon borné
    entre 300 et 520 px), aucune retouche CSS nécessaire pour 5 ou 6 familles.
 
-### 6.4 Pièges spécifiques
+### 6.5 Pièges spécifiques
 
 - **Une famille sans projet fait planter la construction** du rail : le paquet empile
   `cat.projets[0].img`. Toujours au moins un projet par famille.
@@ -546,7 +577,11 @@ Ajouter un objet dans `CATS` (`id`, `num` suivant, `nom`, `def`, `projets`), pui
 - `gal` ne contient **que** des noms de fichiers ; `img` contient le chemin complet. C'est la
   seule incohérence du projet, la respecter.
 - `texte` est du texte brut : les apostrophes typographiques sont bienvenues, le HTML ne sera
-  pas interprété.
+  pas interprété (tout passe par `ech()`).
+- `appels` se cale sur l'index de `notes` : `{ 0: [50, 45, 4.6] }` cercle la **première**
+  note. Une note sans appel reste une simple étiquette, sans numéro.
+- Ne pas remettre `object-fit:cover` sur les pièces des séries : le cadrage est le sujet.
+- `lignes` de `fiche` : deux colonnes seulement, le libellé est mis en capitales par le CSS.
 
 ---
 
