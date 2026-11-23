@@ -192,6 +192,13 @@ C'est un **rayonnage** : trois catégories à gauche, un aperçu à droite. Un c
 catégorie ouvre un **rayon** (bande horizontale de vignettes), un clic sur une vignette ouvre la
 **page projet** en plein écran.
 
+Le titre du hero (« Le numérique / en rayons ») est le **seul texte du site en Nabla**, la police
+variable colorée de Google Fonts (ajoutée au `<link>` de la page, axes `EDPT` et `EHLT`). Elle
+**porte ses propres couleurs** : le `color:var(--neon)` de `h1 em` ne s'applique plus qu'au repli
+`Archivo Black` si la police ne charge pas, et la deuxième ligne n'est donc plus magenta. Les
+navigateurs sans COLRv1 la rendent en monochrome noir : le titre reste lisible, mais l'effet 3D
+disparaît. Pour changer l'effet, régler `font-variation-settings: 'EDPT' / 'EHLT'` sur `h1`.
+
 Tout le contenu vient d'un seul tableau, dans le `<script>` de la page (repère :
 `var CATS = [`), et le rendu est fait par des fonctions juste en dessous (`apercuCat`,
 `vignetteHtml`, `ouvrirRayon`, `ouvrirProjet`).

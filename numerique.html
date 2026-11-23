@@ -7,7 +7,7 @@
 <link rel="icon" type="image/svg+xml" href="images/favicons/etoile-blanc.svg?v=3">
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Schoolbell&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Nabla:EDPT@0..200&EHLT@0..2&family=Schoolbell&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet" />
 <link rel="stylesheet" href="styles.css?v=5" />
 <link rel="stylesheet" href="jeux.css" />
 <style>
@@ -35,7 +35,10 @@ body.gele{overflow:hidden}
 .split{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.02fr);gap:clamp(1.4rem,4vw,4.5rem);align-items:start}
 .list{padding:clamp(1.6rem,4vw,3.4rem) 0 2rem}
 .kicker{font-size:.66rem;letter-spacing:.24em;text-transform:uppercase;color:#7d7d7d}
-h1{font-family:'Archivo Black',sans-serif;font-size:clamp(2.1rem,4.4vw,4rem);line-height:.92;text-transform:uppercase;letter-spacing:-.02em;margin:1rem 0 0;color:var(--blanc)}
+/* le titre du hero est le seul endroit du site en Nabla (police variable
+   coloree de Google Fonts) : elle porte ses propres couleurs, donc `color` ne
+   joue plus que sur le repli 'Archivo Black' si la police ne charge pas */
+h1{font-family:'Nabla','Archivo Black',sans-serif;font-size:clamp(2.1rem,4.4vw,4rem);line-height:1.02;text-transform:uppercase;letter-spacing:0;margin:1rem 0 0;color:var(--blanc)}
 h1 em{font-style:normal;color:var(--neon)}
 #liste{margin-top:clamp(1.6rem,3.4vw,2.6rem)}
 .cat-row{
