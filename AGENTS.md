@@ -203,8 +203,12 @@ seule et de renommer toute version dérivée visée par un nom réservé.
 Nabla **porte ses propres palettes** : `color` n'a aucune prise dessus, même en `!important`.
 Les couleurs sont donc remplacées par deux palettes maison dans `@font-palette-values`
 (`--num-titre` : face blanche, flancs gris ; `--num-neon` : face magenta, flancs prune),
-posées sur `h1` et `h1 em` avec `font-palette`. Index utiles de Nabla, relevés au banc :
-**7 = face avant, 6 = flanc visible, 1 = liseré, 5/4/8/0/3 = gradins du relief**. `color` ne sert
+posées sur `h1` et `h1 em` avec `font-palette`. Nabla empile trois familles de faces, et non
+des « liserés » : **7 = face principale** (et 9 son dégradé), **1 = face supérieure, celle qui
+prend la lumière** (8 = son arête), **3/4/5/6/0 = les flancs d'ombre**, du plus clair au plus
+profond. Une palette sans face supérieure plus claire que la face principale donne des lettres
+noires en haut : c'est l'erreur à ne pas refaire (relevé au banc, un index isolé à la fois puis
+en arc-en-ciel). `color` ne sert
 plus qu'au repli sur les navigateurs sans COLRv1 (Safari), où le titre se dessine en
 monochrome : blanc et magenta, lisible mais sans volume. Pour changer l'épaisseur du relief,
 ajouter `font-variation-settings: 'EDPT' … / 'EHLT' …` sur `h1`.
