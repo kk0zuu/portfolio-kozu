@@ -160,18 +160,24 @@ body.pm-focus .pm-commandes,body.pm-focus .pm-aide{opacity:0;pointer-events:none
 .pm-retour-domaines{position:fixed;left:clamp(1rem,3vw,2.4rem);bottom:1.6rem;z-index:6;}
 body.pm-focus .pm-retour-domaines{opacity:0;pointer-events:none;}
 
-.pm-retour-focus{position:fixed;top:1rem;left:clamp(1rem,3vw,2.4rem);z-index:70;
+.pm-retour-focus{position:fixed;top:4.4rem;left:clamp(1rem,3vw,2.4rem);z-index:70;
   background:rgba(11,11,12,.85);border:1px solid rgba(255,255,255,.34);color:#fff;
   font-size:.62rem;letter-spacing:.16em;text-transform:uppercase;padding:.62rem 1rem;cursor:none;
   opacity:0;visibility:hidden;transition:opacity .3s ease,visibility .3s;}
 .pm-retour-focus:hover{background:var(--color-neon-pink);border-color:var(--color-neon-pink);color:#0B0B0C;}
 body.pm-focus .pm-retour-focus{opacity:1;visibility:visible;}
+/* les cartes ont leur propre « ← Familles » dans leur en-tête : celui de la mise
+   au point disparaît, sinon les deux boutons se recouvrent */
+body.pm-cartes-ouvertes .pm-retour-focus{opacity:0;visibility:hidden;pointer-events:none;}
 
 /* ---------- cartes sorties du booster ---------- */
 .pm-cartes{position:fixed;inset:0;z-index:60;overflow-y:auto;overflow-x:hidden;
   visibility:hidden;opacity:0;transition:opacity .3s ease,visibility .3s;}
 .pm-cartes.on{visibility:visible;opacity:1;}
-.pm-cartes-tete{position:sticky;top:0;z-index:5;display:flex;align-items:center;justify-content:flex-start;gap:1.1rem;
+/* la barre de navigation du site est fixée à `top:1rem` pour 3rem de haut et passe
+   devant l'écran des cartes (z-index 1000) : l'en-tête se cale sous elle, sinon le
+   bouton « ← Familles » est caché. Même décalage pour le bouton de mise au point. */
+.pm-cartes-tete{position:sticky;top:4rem;margin-top:4rem;z-index:5;display:flex;align-items:center;justify-content:flex-start;gap:1.1rem;
   padding:1rem clamp(1rem,3vw,2.4rem);background:rgba(11,11,12,.72);backdrop-filter:blur(14px);
   border-bottom:1px solid rgba(255,255,255,.12);flex-wrap:nowrap;transition:opacity .45s ease;}
 .pm-cartes.en-attente .pm-cartes-tete,
@@ -179,7 +185,7 @@ body.pm-focus .pm-retour-focus{opacity:1;visibility:visible;}
 .pm-cartes-id{display:flex;align-items:baseline;gap:.8rem;min-width:0;}
 .pm-cartes-num{font-size:.64rem;letter-spacing:.16em;color:var(--color-neon-pink);}
 .pm-cartes-nom{font-family:var(--font-display);font-size:clamp(.9rem,1.6vw,1.25rem);text-transform:uppercase;line-height:1;
-  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:#fff;}
 .pm-btn{background:none;border:1px solid rgba(255,255,255,.32);color:inherit;font:inherit;font-size:.62rem;
   letter-spacing:.16em;text-transform:uppercase;padding:.6rem .95rem;cursor:none;white-space:nowrap;}
 .pm-btn:hover{border-color:var(--color-neon-pink);color:var(--color-neon-pink);}
@@ -951,6 +957,7 @@ body.pm-focus .pm-retour-focus{opacity:1;visibility:visible;}
         cartesEl.classList.add('on');
         cartesEl.setAttribute('aria-hidden', 'false');
         cartesEl.classList.add('en-attente');
+        document.body.classList.add('pm-cartes-ouvertes');
         cartesEl.scrollTop = 0;
         b.classList.add('cartes-sorties');
 
@@ -1032,6 +1039,7 @@ body.pm-focus .pm-retour-focus{opacity:1;visibility:visible;}
     function terminerFermeture() {
         cartesEl.classList.add('en-attente');
         cartesEl.classList.remove('on');
+        document.body.classList.remove('pm-cartes-ouvertes');
         cartesEl.setAttribute('aria-hidden', 'true');
         flou.classList.remove('on');
         grille.innerHTML = '';
