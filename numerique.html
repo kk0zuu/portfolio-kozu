@@ -632,7 +632,9 @@ body.sas-actif .wrap,body.sas-actif .portes-zone,body.sas-actif .num-foot{opacit
         .cs-kick::after{content:"";flex:1;height:1px;background:linear-gradient(90deg,rgba(255,255,255,.18),rgba(255,255,255,0))}
         .cs-titre{margin:0;max-width:24ch;font-family:'Archivo Black',sans-serif;font-size:clamp(1.3rem,2.4vw,2.05rem);line-height:1.04;text-transform:uppercase;letter-spacing:-.02em;color:#F1F1F1}
         .cs-texte{margin:0;max-width:60ch;font-size:.9rem;line-height:1.78;color:#b3b3b3}
-        .cs-chapeau{margin:0;max-width:28ch;font-family:'Archivo Black',sans-serif;font-size:clamp(1.45rem,3vw,2.7rem);line-height:1.08;letter-spacing:-.02em;color:#F1F1F1}
+        /* la logline se lit comme un chapeau, pas comme un titre : corps de texte,
+           pas d'Archivo Black géant (demandé par Ian le 23/11) */
+        .cs-chapeau{margin:0;max-width:64ch;font-size:clamp(.98rem,1.2vw,1.12rem);line-height:1.75;color:#bdbdbd}
         .cs-chapeau em{font-style:normal;color:var(--cs-soleil)}
         .cs-fiche{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:1px;margin:0;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.1);border-radius:12px;overflow:hidden}
         .cs-fiche > div{display:grid;gap:.45rem;align-content:start;padding:1rem 1.05rem;background:#0d0d0f}
@@ -1632,7 +1634,7 @@ body.sas-actif .wrap,body.sas-actif .portes-zone,body.sas-actif .num-foot{opacit
 
       '<section class="cs-bloc">' +
         '<p class="cs-kick"><i>01</i> Logline</p>' +
-        '<p class="cs-chapeau">Après une rupture brutale avec la fille qui éclairait sa vie, un lycéen hanté par ses traumatismes sombre dans une <em>psychose hallucinatoire</em> — contraint de traverser les étapes du deuil pour ne pas se perdre définitivement.</p>' +
+        '<p class="cs-chapeau">Après une rupture brutale avec la fille qui éclairait sa vie, un lycéen hanté par ses traumatismes sombre dans une <em>psychose hallucinatoire</em>, contraint de traverser les étapes du deuil pour ne pas se perdre définitivement.</p>' +
         '<dl class="cs-fiche">' +
           '<div><dt>Format</dt><dd>Court / moyen-métrage hybride<br>20 à 45 min</dd></div>' +
           '<div><dt>Genre</dt><dd>Drame psychologique<br>Horreur poétique</dd></div>' +
