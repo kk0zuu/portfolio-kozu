@@ -585,13 +585,17 @@ Ajouter un objet dans `CATS` (`id`, `num` suivant, `nom`, `def`, `projets`), pui
   note. Une note sans appel reste une simple étiquette, sans numéro.
 - **La barre de navigation passe devant les écrans de la page** (`position:fixed`, `top:1rem`,
   3rem de haut, `z-index:1000` dans `styles.css`). L'écran des cartes est en `z-index:60` : son
-  en-tête est donc `position:sticky` à `top:4rem` **avec** `margin-top:4rem`, faute de quoi
-  « ← Familles » est caché sous la barre (même correction pour `.pm-retour-focus`, à
-  `top:4.4rem`). Pendant les cartes, ce bouton de mise au point s'efface
-  (`body.pm-cartes-ouvertes`), sinon les deux « ← Familles » se superposent — c'est cette
-  classe qui porte l'état, pas `:has()`. `.pm-cartes-nom` est en blanc : sans ça il héritait
-  du noir du `body` et disparaissait sur l'en-tête sombre (vu quand l'en-tête est remonté sous
-  la barre).
+  bloc d'en-tête garde donc `margin-top:4rem`, faute de quoi le titre passe sous la barre
+  (même correction pour `.pm-retour-focus`, à `top:4.4rem`).
+- **L'écran des cartes n'a pas de barre d'en-tête** : plus de fond, de filet, de numéro de
+  famille ni de définition, et pas de bouton « ← Familles » (retiré le 21/11). Il ne reste que
+  `.pm-cartes-nom`, un petit titre en capitales gris (`rgba(255,255,255,.42)`, 0,66–0,78 rem)
+  posé au-dessus de la grille, qui défile avec elle. Il reste en blanc cassé et non en noir :
+  sans couleur il héritait du noir du `body` et disparaissait. La définition de la famille
+  (`cat.def`) ne s'affiche plus que sous le booster, sur le rail.
+- Le bouton de retour de la **mise au point** (`#pmRetourFocus`) s'appelle « ← Boosters » et
+  s'efface pendant les cartes (`body.pm-cartes-ouvertes`) — c'est cette classe qui porte
+  l'état, pas `:has()`.
 - Ne pas remettre `object-fit:cover` sur les pièces des séries : le cadrage est le sujet.
 - `lignes` de `fiche` : deux colonnes seulement, le libellé est mis en capitales par le CSS.
 

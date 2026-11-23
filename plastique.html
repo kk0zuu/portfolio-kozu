@@ -176,7 +176,7 @@ body.pm-focus .pm-retour-domaines{opacity:0;pointer-events:none;}
   opacity:0;visibility:hidden;transition:opacity .3s ease,visibility .3s;}
 .pm-retour-focus:hover{background:var(--color-neon-pink);border-color:var(--color-neon-pink);color:#0B0B0C;}
 body.pm-focus .pm-retour-focus{opacity:1;visibility:visible;}
-/* les cartes ont leur propre « ← Familles » dans leur en-tête : celui de la mise
+/* les cartes ont leur propre retour dans leur en-tête : celui de la mise
    au point disparaît, sinon les deux boutons se recouvrent */
 body.pm-cartes-ouvertes .pm-retour-focus{opacity:0;visibility:hidden;pointer-events:none;}
 
@@ -185,27 +185,21 @@ body.pm-cartes-ouvertes .pm-retour-focus{opacity:0;visibility:hidden;pointer-eve
   visibility:hidden;opacity:0;transition:opacity .3s ease,visibility .3s;}
 .pm-cartes.on{visibility:visible;opacity:1;}
 /* la barre de navigation du site est fixée à `top:1rem` pour 3rem de haut et passe
-   devant l'écran des cartes (z-index 1000) : l'en-tête se cale sous elle, sinon le
-   bouton « ← Familles » est caché. Même décalage pour le bouton de mise au point. */
-.pm-cartes-tete{position:sticky;top:4rem;margin-top:4rem;z-index:5;display:flex;align-items:center;justify-content:flex-start;gap:1.1rem;
-  padding:1rem clamp(1rem,3vw,2.4rem);background:rgba(11,11,12,.72);backdrop-filter:blur(14px);
-  border-bottom:1px solid rgba(255,255,255,.12);flex-wrap:nowrap;transition:opacity .45s ease;}
-.pm-cartes.en-attente .pm-cartes-tete,
-.pm-cartes.en-attente .pm-cartes-note{opacity:0;pointer-events:none;}
-.pm-cartes-id{display:flex;align-items:baseline;gap:.8rem;min-width:0;}
-.pm-cartes-num{font-size:.64rem;letter-spacing:.16em;color:var(--color-neon-pink);}
-.pm-cartes-nom{font-family:var(--font-display);font-size:clamp(.9rem,1.6vw,1.25rem);text-transform:uppercase;line-height:1;
-  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:#fff;}
+   devant l'écran des cartes (z-index 1000) : le titre se cale sous elle. Pas de
+   barre, pas de fond : la famille se nomme en petit au-dessus des cartes. */
+.pm-cartes-tete{position:relative;margin-top:4rem;z-index:5;display:flex;align-items:center;
+  justify-content:flex-start;padding:1.5rem clamp(1rem,3vw,2.4rem) 0;transition:opacity .45s ease;}
+.pm-cartes.en-attente .pm-cartes-tete{opacity:0;pointer-events:none;}
+.pm-cartes-nom{font-family:var(--font-display);font-size:clamp(.66rem,1vw,.78rem);letter-spacing:.2em;text-transform:uppercase;
+  line-height:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:rgba(255,255,255,.42);}
 .pm-btn{background:none;border:1px solid rgba(255,255,255,.32);color:inherit;font:inherit;font-size:.62rem;
   letter-spacing:.16em;text-transform:uppercase;padding:.6rem .95rem;cursor:none;white-space:nowrap;}
 .pm-btn:hover{border-color:var(--color-neon-pink);color:var(--color-neon-pink);}
 .pm-retour-cartes{background:rgba(11,11,12,.85);border:1px solid rgba(255,255,255,.34);color:#fff;
   font-size:.62rem;letter-spacing:.16em;text-transform:uppercase;padding:.62rem 1rem;cursor:none;}
 .pm-retour-cartes:hover{background:var(--color-neon-pink);border-color:var(--color-neon-pink);color:#0B0B0C;}
-.pm-cartes-note{padding:1.1rem clamp(1rem,3vw,2.4rem) 0;max-width:60ch;font-family:var(--font-schoolbell);font-size:1.05rem;color:#E2E2E2;line-height:1.4;transition:opacity .45s ease;}
-
 .pm-grille{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,300px));justify-content:center;gap:2rem;
-  padding:clamp(3rem,11vh,8rem) clamp(1rem,3vw,2.4rem) 3rem;max-width:1180px;margin:0 auto;}
+  padding:clamp(1.6rem,4vh,2.6rem) clamp(1rem,3vw,2.4rem) 3rem;max-width:1180px;margin:0 auto;}
 .pm-item{perspective:1200px;}
 .pm-tilt{transform-style:preserve-3d;}
 .pm-carte{position:relative;width:100%;aspect-ratio:3/4;transform-style:preserve-3d;
@@ -369,7 +363,6 @@ body.pm-cartes-ouvertes .pm-retour-focus{opacity:0;visibility:hidden;pointer-eve
             border-radius: 20px;
         }
 
-        .pm-cartes-tete,
         .pm-btn, .pm-retour, .pm-retour-cartes, .pm-retour-focus,
         .pm-fleche, .pm-voir {
             border-radius: 12px;
@@ -424,16 +417,12 @@ body.pm-cartes-ouvertes .pm-retour-focus{opacity:0;visibility:hidden;pointer-eve
 
 <div class="pm-voile" id="pmVoile"></div>
 <div class="pm-flou" id="pmFlou"></div>
-<button class="pm-retour-focus" type="button" id="pmRetourFocus">← Familles</button>
+<button class="pm-retour-focus" type="button" id="pmRetourFocus">← Boosters</button>
 
 <section class="pm-cartes" id="pmCartes" aria-hidden="true">
     <div class="pm-cartes-tete">
-        <div class="pm-cartes-id">
-            <span class="pm-cartes-num" id="pmCartesNum">01</span>
-            <span class="pm-cartes-nom" id="pmCartesNom">Famille</span>
-        </div>
+        <span class="pm-cartes-nom" id="pmCartesNom">Famille</span>
     </div>
-    <p class="pm-cartes-note" id="pmCartesNote"></p>
     <div class="pm-grille" id="pmGrille"></div>
     <p class="pm-cartes-aide">Survole une carte pour l'incliner · clique pour la retourner · double-clique pour ouvrir le projet</p>
 </section>
@@ -953,9 +942,7 @@ body.pm-cartes-ouvertes .pm-retour-focus{opacity:0;visibility:hidden;pointer-eve
         var pack = b.querySelector('.pm-pack');
         catCourante = cat;
 
-        document.getElementById('pmCartesNum').textContent = cat.num;
         document.getElementById('pmCartesNom').textContent = cat.nom;
-        document.getElementById('pmCartesNote').textContent = cat.def;
 
         constructionsCartes(cat);
         brancherCartes(cat);
