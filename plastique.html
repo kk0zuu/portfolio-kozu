@@ -37,6 +37,15 @@ body.pm-focus .pm-halo{opacity:.2;}
    .etoile dans styles.css. */
 .pm-ciel{position:fixed;inset:0;z-index:0;overflow:hidden;pointer-events:none;}
 
+/* Plaque sombre glissée sous les étoiles quand une fiche projet s'ouvre : la
+   fenêtre, légèrement translucide, laisse alors deviner le ciel étoilé sans
+   perdre son fond noir. Sans la plaque, les cartes de la famille passeraient
+   à travers. */
+.pm-plate{position:fixed;inset:0;z-index:61;pointer-events:none;background:rgba(5,5,6,.9);
+  opacity:0;visibility:hidden;transition:opacity .55s ease,visibility .55s;}
+body.pm-fiche .pm-plate{opacity:1;visibility:visible;}
+body.pm-fiche .pm-ciel{z-index:62;}
+
 .pm-voile{position:fixed;inset:0;z-index:30;background:rgba(5,5,6,.86);
   opacity:0;visibility:hidden;transition:opacity .45s ease,visibility .45s;}
 .pm-voile.on{opacity:1;visibility:visible;}
@@ -221,7 +230,7 @@ body.pm-cartes-ouvertes .pm-retour-focus{opacity:0;visibility:hidden;pointer-eve
 .pm-cartes-aide{padding:0 clamp(1rem,3vw,2.4rem) 2.4rem;text-align:center;font-size:.68rem;letter-spacing:.1em;text-transform:uppercase;color:#D6D6D6;text-shadow:0 1px 10px rgba(0,0,0,.55);}
 
 /* ---------- fenêtre projet (seul slide-up) ---------- */
-.pm-fenetre{position:fixed;inset:0;z-index:1600;background:#0B0B0C;overflow-y:auto;
+.pm-fenetre{position:fixed;inset:0;z-index:1600;background:rgba(11,11,12,.82);overflow-y:auto;
   transform:translateY(100%);visibility:hidden;
   transition:transform .8s cubic-bezier(.76,0,.24,1),visibility .8s;}
 .pm-fenetre.on{transform:none;visibility:visible;}
@@ -391,6 +400,7 @@ body.pm-cartes-ouvertes .pm-retour-focus{opacity:0;visibility:hidden;pointer-eve
 </div>
 
 <div class="pm-ciel" id="pmCiel" aria-hidden="true"></div>
+<div class="pm-plate" aria-hidden="true"></div>
 
 <header class="pm-entete">
     <h1 class="pm-titre">Scénographies &amp; Projets Plastiques</h1>
@@ -1145,6 +1155,8 @@ body.pm-cartes-ouvertes .pm-retour-focus{opacity:0;visibility:hidden;pointer-eve
     function ouvrirProjet(cat, p) {
         corps.innerHTML = p.mise === 'serie' ? rendreSerie(cat, p) : rendrePlanche(cat, p);
         fenetre.classList.add('on');
+        /* les étoiles repassent au-dessus de la plaque sombre, sous la fiche */
+        document.body.classList.add('pm-fiche');
         fenetre.setAttribute('aria-hidden', 'false');
         fenetre.scrollTop = 0;
     }
@@ -1152,6 +1164,7 @@ body.pm-cartes-ouvertes .pm-retour-focus{opacity:0;visibility:hidden;pointer-eve
     function fermerProjet() {
         fenetre.classList.remove('on');
         fenetre.setAttribute('aria-hidden', 'true');
+        document.body.classList.remove('pm-fiche');
     }
 
     document.getElementById('pmFRetour').addEventListener('click', fermerProjet);
