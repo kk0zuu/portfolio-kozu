@@ -418,7 +418,6 @@ body.pm-cartes-ouvertes .pm-retour-focus{opacity:0;visibility:hidden;pointer-eve
 
 <section class="pm-cartes" id="pmCartes" aria-hidden="true">
     <div class="pm-cartes-tete">
-        <button class="pm-btn pm-retour-cartes" type="button" id="pmCartesRetour">← Familles</button>
         <div class="pm-cartes-id">
             <span class="pm-cartes-num" id="pmCartesNum">01</span>
             <span class="pm-cartes-nom" id="pmCartesNom">Famille</span>
@@ -1048,8 +1047,6 @@ body.pm-cartes-ouvertes .pm-retour-focus{opacity:0;visibility:hidden;pointer-eve
             }
         }
     }
-
-    document.getElementById('pmCartesRetour').addEventListener('click', fermerCartes);
 
     // clic dans le vide : retour aux familles
     cartesEl.addEventListener('click', function (e) {
