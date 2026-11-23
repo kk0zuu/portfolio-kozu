@@ -36,6 +36,17 @@ body.pm-focus .pm-halo{opacity:.2;}
    .etoile dans styles.css. */
 .pm-ciel{position:fixed;inset:0;z-index:0;overflow:hidden;pointer-events:none;}
 
+/* ---------- éclosion : la sortie propre à cette page, vers contact ----------
+   Une étoile du ciel prend sa place à l'identique puis grandit jusqu'à
+   couvrir l'écran du bleu de contact. Posée juste sous la barre (1000) et
+   au-dessus de la page, elle laisse donc la barre seule au-dessus d'elle. */
+.pm-eclosion{position:fixed;inset:0;z-index:950;overflow:hidden;pointer-events:none;
+  visibility:hidden;opacity:0;}
+.pm-eclosion.on{visibility:visible;opacity:1;}
+.pm-eclosion-etoile{position:absolute;left:0;top:0;width:84px;height:84px;margin:-42px 0 0 -42px;
+  background:#1232B4;clip-path:var(--etoile-cinq);transform-origin:50% 50%;
+  will-change:transform,opacity;}
+
 .pm-voile{position:fixed;inset:0;z-index:30;background:rgba(5,5,6,.86);
   opacity:0;visibility:hidden;transition:opacity .45s ease,visibility .45s;}
 .pm-voile.on{opacity:1;visibility:visible;}
@@ -1249,6 +1260,167 @@ body.pm-cartes-ouvertes .pm-retour-focus{opacity:0;visibility:hidden;pointer-eve
         { y: 0, opacity: 1, duration: 0.55, ease: 'power2.out', delay: calme ? 0 : 0.9 });
 })();
 
+</script>
+
+<script>
+/* --- ÉCLOSION VERS CONTACT : la sortie propre à cette page ------------------
+   Au clic sur Contact, les boosters et les titres s'effacent, l'étoile du ciel
+   la plus proche du haut-droit prend leur place à l'identique puis grandit
+   jusqu'à couvrir l'écran du bleu de contact, et c'est alors contact.html qui
+   s'ouvre, sur ce même bleu. La tête d'origine est masquée à l'instant où le
+   clone se pose sur elle : le raccord ne se voit pas. Seule la barre reste
+   au-dessus de l'étoile. */
+(function () {
+    if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+    var ATTENTE = 90;      /* ms avant que l'étoile ne gonfle */
+    var DUREE = 760;       /* ms de croissance */
+    var EFFACEMENT = 360;  /* ms : fondu des boosters et des titres */
+    var RAYON = 12.93;     /* px : rayon du plus grand cercle inscrit dans l'étoile de 84 px */
+
+    var enCours = false;
+    var voile = null;
+    var clone = null;
+    var teteMasquee = null;
+    var touches = [];
+
+    function construire() {
+        voile = document.createElement('div');
+        voile.className = 'pm-eclosion';
+        voile.setAttribute('aria-hidden', 'true');
+        clone = document.createElement('i');
+        clone.className = 'pm-eclosion-etoile';
+        voile.appendChild(clone);
+        document.body.appendChild(voile);
+    }
+
+    /* le centre de la tête, à l'écran */
+    function centreDe(tete) {
+        var r = tete.getBoundingClientRect();
+        return { x: r.left + r.width / 2, y: r.top + r.height / 2 };
+    }
+
+    /* celle qui est en haut à droite à cet instant */
+    function etoileDuCoin() {
+        var cibleX = window.innerWidth * 0.78;
+        var cibleY = window.innerHeight * 0.22;
+        var liste = document.querySelectorAll('#pmCiel .etoile');
+        var choix = null;
+        var dmin = Infinity;
+        for (var i = 0; i < liste.length; i++) {
+            var el = liste[i];
+            var op = parseFloat(getComputedStyle(el).opacity);
+            if (!(op > 0.2)) continue;   /* étoile en train de s'éteindre au bord */
+            var tete = el.querySelector('.etoile-tete');
+            if (!tete) continue;
+            var c = centreDe(tete);
+            if (c.x < 30 || c.y < 30 || c.x > window.innerWidth - 30 || c.y > window.innerHeight - 30) continue;
+            var d = (c.x - cibleX) * (c.x - cibleX) + (c.y - cibleY) * (c.y - cibleY);
+            if (d < dmin) { dmin = d; choix = { el: el, tete: tete, opacite: op }; }
+        }
+        return choix;
+    }
+
+    function effacerLaPage() {
+        var gardes = ['.pm-ciel', '.top-bar', '.custom-cursor', '.pm-eclosion'];
+        [].slice.call(document.body.children).forEach(function (n) {
+            if (n.tagName === 'SCRIPT' || n.tagName === 'STYLE') return;
+            for (var i = 0; i < gardes.length; i++) { if (n.matches(gardes[i])) return; }
+            n.style.transition = 'opacity ' + EFFACEMENT + 'ms ease-out';
+            n.style.opacity = '0';
+            n.style.pointerEvents = 'none';
+            touches.push(n);
+        });
+    }
+
+    function grandir(etoile, href) {
+        var w = window.innerWidth;
+        var h = window.innerHeight;
+        /* la trame avance encore : on relève la tête à l'instant même du
+           raccord, sinon le clone se poserait quelques pixels à côté */
+        var tete = etoile.tete;
+        var c = centreDe(tete);
+        var opacite = parseFloat(getComputedStyle(etoile.el).opacity) || 0.85;
+
+        var pose = 'translate3d(' + c.x.toFixed(1) + 'px,' + c.y.toFixed(1) + 'px,0) rotate(135deg) scale(';
+        clone.style.transform = pose + '1)';
+        clone.style.opacity = opacite;
+        tete.style.visibility = 'hidden';
+        teteMasquee = tete;
+        voile.classList.add('on');
+
+        /* l'étoile doit finir par contenir les quatre coins de l'écran, creux
+           compris : on part du coin le plus éloigné d'elle */
+        var coins = [[0, 0], [w, 0], [0, h], [w, h]];
+        var loin = 0;
+        for (var i = 0; i < coins.length; i++) {
+            var dx = coins[i][0] - c.x;
+            var dy = coins[i][1] - c.y;
+            var d = Math.sqrt(dx * dx + dy * dy);
+            if (d > loin) loin = d;
+        }
+        var seuil = loin / RAYON;        /* l'échelle où les quatre coins sont couverts */
+        var echelle = seuil * 1.06;
+
+        var depart = null;
+        var couvert = false;
+        function pas(t) {
+            if (depart === null) depart = t;
+            var p = (t - depart) / DUREE;
+            if (p < 0) p = 0;
+            if (p > 1) p = 1;
+            /* fondu d'entrée et de sortie sur le logarithme de l'échelle : elle
+               grandit à vitesse relative constante, donc le bleu gagne l'écran
+               régulièrement au lieu de tout avaler dès les premières ms */
+            var e = p < 0.5 ? 2 * p * p : 1 - Math.pow(-2 * p + 2, 2) / 2;
+            var s = Math.exp(Math.log(echelle) * e);
+            clone.style.transform = pose + s.toFixed(2) + ')';
+            clone.style.opacity = (opacite + (1 - opacite) * Math.min(1, p * 2.5)).toFixed(3);
+
+            /* dès que le bleu contient les quatre coins, la page peut s'ouvrir :
+               la fin de la croissance se fait dessous, invisible */
+            if (!couvert && (s >= seuil || p >= 1)) {
+                couvert = true;
+                setTimeout(function () { window.location.href = href; }, 110);
+            }
+            if (p < 1) requestAnimationFrame(pas);
+        }
+        requestAnimationFrame(pas);
+    }
+
+    document.addEventListener('click', function (e) {
+        if (enCours) return;
+        if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button === 1) return;
+        var lien = e.target && e.target.closest ? e.target.closest('a[href]') : null;
+        if (!lien) return;
+        if (lien.target && lien.target !== '_self') return;
+        var href = lien.getAttribute('href') || '';
+        if (!/^contact\.html(#.*)?$/.test(href)) return;
+
+        var etoile = etoileDuCoin();
+        if (!etoile) return;   /* aucune étoile dans le coin : navigation simple */
+
+        enCours = true;
+        e.preventDefault();
+        if (!voile) construire();
+        effacerLaPage();
+        setTimeout(function () { grandir(etoile, href); }, ATTENTE);
+    }, true);
+
+    /* retour depuis l'historique : la page doit être intacte */
+    window.addEventListener('pageshow', function (e) {
+        if (!e.persisted) return;
+        enCours = false;
+        if (voile) voile.classList.remove('on');
+        if (teteMasquee) { teteMasquee.style.visibility = ''; teteMasquee = null; }
+        touches.forEach(function (n) {
+            n.style.transition = '';
+            n.style.opacity = '';
+            n.style.pointerEvents = '';
+        });
+        touches = [];
+    });
+})();
 </script>
 </body>
 </html>

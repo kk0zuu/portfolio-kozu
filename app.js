@@ -1412,6 +1412,9 @@ mm.add({
 // fond depuis le sombre dans la page contact elle-même, après son chargement.
 (function initSasContact() {
     if (/contact\.html$/.test(location.pathname)) return;
+    /* plastique a sa propre sortie vers contact, l'étoile du ciel qui éclot
+       (voir plastique.html) : pas de voile bleu par-dessus. */
+    if (/plastique\.html$/.test(location.pathname)) return;
 
     let voile = document.querySelector('.sas-contact-voile');
     if (!voile) {
