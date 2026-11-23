@@ -120,7 +120,7 @@
       racine,
       'Le rayon perdu',
       'Pixel RPG · trouver les coffres, puis la porte',
-      'ZQSD ou flèches pour marcher, E ou Entrée pour ouvrir un coffre quand tu es devant, A ou Maj droite pour frapper avec la côte. Trois cœurs, un demi-cœur perdu par contact. La porte s’ouvre une fois tout trouvé.'
+      'ZQSD ou flèches pour marcher, ou clic sur une case : le personnage s’y rend seul, à la manière d’un Habbo. E ou Entrée ouvre un coffre quand tu es devant, A ou Maj droite frappe avec la côte. Trois cœurs, un demi-cœur perdu par contact. La porte s’ouvre une fois tout trouvé.'
     );
 
     var canvas = document.createElement('canvas');
@@ -179,6 +179,7 @@
         coffres: coffres,
         porte: porte,
         joueur: { x: joueur.x * T + T / 2, y: joueur.y * T + T / 2, dir: 'bas', pas: 0 },
+        chemin: [],
         temps: i === 0 ? 100 : 0,
         total: 100,
         trouves: 0,
@@ -313,6 +314,114 @@
       return solide(x - dx, y - dy) || solide(x + dx, y - dy) || solide(x - dx, y + dy) || solide(x + dx, y + dy);
     }
 
+    /* ---------------- déplacement au clic, à la manière d’un Habbo ---------------- */
+    function marchable(x, y) {
+      return x >= 0 && y >= 0 && x < TX && y < TY && etat.grille[y][x] !== '#';
+    }
+
+    /* un coffre ne se piétine pas : on vise la case libre la plus proche de lui */
+    function caseArrivee(cx, cy) {
+      if (!marchable(cx, cy)) return null;
+      if (etat.grille[cy][cx] !== 'C') return { x: cx, y: cy };
+      var j = etat.joueur;
+      var px = Math.floor(j.x / T);
+      var py = Math.floor(j.y / T);
+      var cotes = [[0, 1], [0, -1], [1, 0], [-1, 0]];
+      var meilleur = null;
+      var dmin = 1e9;
+      for (var i = 0; i < cotes.length; i++) {
+        var nx = cx + cotes[i][0];
+        var ny = cy + cotes[i][1];
+        if (!marchable(nx, ny)) continue;
+        var dd = Math.abs(nx - px) + Math.abs(ny - py);
+        if (dd < dmin) { dmin = dd; meilleur = { x: nx, y: ny }; }
+      }
+      return meilleur;
+    }
+
+    /* parcours en largeur sur la grille, quatre voisins, le plus court chemin */
+    function cheminVers(cx, cy) {
+      var j = etat.joueur;
+      var sx = Math.max(0, Math.min(TX - 1, Math.floor(j.x / T)));
+      var sy = Math.max(0, Math.min(TY - 1, Math.floor(j.y / T)));
+      var chemin = [];
+
+      /* le personnage se recale d’abord sur le centre de sa tuile */
+      var centre = { x: sx * T + T / 2, y: sy * T + T / 2 };
+      if (Math.abs(j.x - centre.x) > 1 || Math.abs(j.y - centre.y) > 1) chemin.push(centre);
+      if (sx === cx && sy === cy) return chemin;
+
+      var vus = new Uint8Array(TX * TY);
+      var avant = new Int16Array(TX * TY);
+      var depart = sy * TX + sx;
+      var arrive = cy * TX + cx;
+      var file = [depart];
+      vus[depart] = 1;
+      avant[depart] = -1;
+      var cotes = [[1, 0], [-1, 0], [0, 1], [0, -1]];
+      var trouve = false;
+
+      for (var tete = 0; tete < file.length; tete++) {
+        var c = file[tete];
+        if (c === arrive) { trouve = true; break; }
+        var x = c % TX;
+        var y = (c - x) / TX;
+        for (var k = 0; k < 4; k++) {
+          var nx = x + cotes[k][0];
+          var ny = y + cotes[k][1];
+          if (!marchable(nx, ny)) continue;
+          var n = ny * TX + nx;
+          if (vus[n]) continue;
+          vus[n] = 1;
+          avant[n] = c;
+          file.push(n);
+        }
+      }
+      if (!trouve) return null;
+
+      var suite = [];
+      for (var p = arrive; p !== -1 && p !== depart; p = avant[p]) {
+        var px2 = p % TX;
+        suite.push({ x: px2 * T + T / 2, y: ((p - px2) / TX) * T + T / 2 });
+      }
+      suite.reverse();
+      return chemin.concat(suite);
+    }
+
+    function marcherChemin(dt) {
+      var j = etat.joueur;
+      var reste = 118 * dt;
+      var avance = 0;
+      while (reste > 0 && etat.chemin.length) {
+        var p = etat.chemin[0];
+        var dx = p.x - j.x;
+        var dy = p.y - j.y;
+        var d = Math.abs(dx) + Math.abs(dy);
+        if (d <= reste) {
+          j.x = p.x;
+          j.y = p.y;
+          avance += d;
+          reste -= d;
+          etat.chemin.shift();
+          continue;
+        }
+        var ux = 0;
+        var uy = 0;
+        if (Math.abs(dx) >= Math.abs(dy)) ux = dx > 0 ? 1 : -1;
+        else uy = dy > 0 ? 1 : -1;
+        if (collision(j.x + ux * reste, j.y + uy * reste)) { etat.chemin.length = 0; break; }
+        j.x += ux * reste;
+        j.y += uy * reste;
+        if (ux < 0) j.dir = 'gauche';
+        else if (ux > 0) j.dir = 'droite';
+        else if (uy < 0) j.dir = 'haut';
+        else if (uy > 0) j.dir = 'bas';
+        avance += reste;
+        reste = 0;
+      }
+      if (avance > 0) j.pas += dt * 9;
+    }
+
     function deplacer(dt) {
       var j = etat.joueur;
       var vx = 0;
@@ -322,6 +431,10 @@
       if (cles.KeyD || cles.ArrowRight) vx += 1;
       if (cles.KeyW || cles.ArrowUp) vy -= 1;
       if (cles.KeyS || cles.ArrowDown) vy += 1;
+
+      /* le clavier reprend toujours la main sur un trajet demandé au clic */
+      if (vx || vy) etat.chemin.length = 0;
+
       if (vx && vy) { vx *= 0.72; vy *= 0.72; }
 
       if (vx < 0) j.dir = 'gauche';
@@ -335,6 +448,8 @@
       if (!collision(nx, j.y)) j.x = nx;
       var ny = j.y + vy * v * dt;
       if (!collision(j.x, ny)) j.y = ny;
+
+      if (!vx && !vy && etat.chemin.length) marcherChemin(dt);
 
       j.x = Math.max(10, Math.min(canvas.width - 10, j.x));
       j.y = Math.max(10, Math.min(canvas.height - 10, j.y));
@@ -450,6 +565,17 @@
             ctx.fillRect(px + 4, py + 4, 2, 2);
           }
         }
+      }
+
+      /* case de destination d’un trajet au clic */
+      if (etat.chemin.length) {
+        var dest = etat.chemin[etat.chemin.length - 1];
+        var mx = Math.floor(dest.x / T) * T;
+        var my = Math.floor(dest.y / T) * T;
+        var puls = 0.62 + 0.18 * Math.sin(performance.now() / 240);
+        ctx.strokeStyle = 'rgba(255,0,255,' + puls.toFixed(3) + ')';
+        ctx.lineWidth = 1;
+        ctx.strokeRect(mx + 1.5, my + 1.5, T - 3, T - 3);
       }
 
       /* porte, tirée des assets */
@@ -697,6 +823,22 @@
     });
     document.addEventListener('keyup', function (e) { surTouche(e, false); });
 
+    /* clic sur le plateau : le personnage rejoint la case, chemin en largeur */
+    canvas.addEventListener('pointerdown', function (e) {
+      if (!enCours || !etat || etat.fin || etat.transition) return;
+      var r = canvas.getBoundingClientRect();
+      if (!r.width || !r.height) return;
+      var cx = Math.floor((e.clientX - r.left) / r.width * TX);
+      var cy = Math.floor((e.clientY - r.top) / r.height * TY);
+      if (cx < 0 || cy < 0 || cx >= TX || cy >= TY) return;
+      var arrivee = caseArrivee(cx, cy);
+      if (!arrivee) return;
+      var chemin = cheminVers(arrivee.x, arrivee.y);
+      if (!chemin || !chemin.length) return;
+      etat.chemin = chemin;
+      e.preventDefault();
+    });
+
     nouveauNiveau(0);
     dessiner();
     voile(
@@ -769,7 +911,7 @@
       '<div class="gd-bloc">' +
         '<h5 class="gd-sous-titre">Règles</h5>' +
         '<ul class="gd-regles">' +
-          '<li>Se déplacer aux ZQSD ou aux flèches, sans grille : la collision se fait tuile par tuile.</li>' +
+          '<li>Se déplacer aux ZQSD ou aux flèches, sans grille : la collision se fait tuile par tuile. Un clic sur une case trace le plus court chemin et le personnage le suit seul ; n’importe quelle touche de déplacement reprend la main.</li>' +
           '<li>E ou Entrée ouvre le coffre devant lequel on s’arrête ; rien ne s’ouvre au simple contact.</li>' +
           '<li>Chaque coffre dévoile un objet, gagne du temps et s’affiche au-dessus de la tête.</li>' +
           '<li>La porte du fond reste close tant qu’un coffre du rayon est fermé.</li>' +
