@@ -213,23 +213,6 @@ plus qu'au repli sur les navigateurs sans COLRv1 (Safari), où le titre se dessi
 monochrome : blanc et magenta, lisible mais sans volume. Pour changer l'épaisseur du relief,
 ajouter `font-variation-settings: 'EDPT' … / 'EHLT' …` sur `h1`.
 
-**Le titre se redresse à l'ouverture** (script de fin de page). Les lettres sont découpées en
-`span.nl` (`display:inline-block`, `transform-origin` en bas, `perspective:900px` sur le `h1`),
-chacune part `rotateX 68°`, `y:18`, `opacity:0` et **plate** (`'EDPT' 0`), puis se relève en
-cascade de 38 ms pendant que sa profondeur remonte à **62** (valeur par défaut de l'axe,
-vérifiée au banc — on la fixe sur `h1` dans le CSS pour que l'arrivée de l'animation soit
-connue). Chromium n'interpole **pas** `font-variation-settings` en transition : la profondeur
-doit être poussée image par image (`onUpdate` sur un objet intermédiaire), une transition CSS
-ne ferait qu'un saut.
-Points tenus par le script : le `<br>` et le `<em>` sont respectés (le découpage descend dans
-`em`, s'arrête sur `br`) ; `br` compte pour une espace dans `aria-label`, sinon le titre
-s'annonce « numériqueen rayons » ; les lettres sont `aria-hidden` et le titre garde son
-`aria-label` (19 spans sinon le lecteur d'écran épelle) ; en `prefers-reduced-motion` ou sans
-GSAP, **aucun découpage** n'est fait, le titre reste du texte normal. Le départ attend la fin
-du sas (`body.sas-actif` retiré, observé au `MutationObserver`, filet à 4 s) et `fonts.ready`,
-sinon l'animation se joue derrière l'écran noir. Mesuré : les spans ne changent pas la largeur
-du titre (517 px avant comme après, le crénage de cette police est nul en capitales).
-
 Tout le contenu vient d'un seul tableau, dans le `<script>` de la page (repère :
 `var CATS = [`), et le rendu est fait par des fonctions juste en dessous (`apercuCat`,
 `vignetteHtml`, `ouvrirRayon`, `ouvrirProjet`).
