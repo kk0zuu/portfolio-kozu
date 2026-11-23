@@ -404,5 +404,24 @@
         });
     })();
     </script>
+
+    <!-- Retour depuis un domaine (index.html#choix-domaines) : la page s'ouvre
+         au pied, la note du choix des domaines déjà sous les yeux, sans un cran
+         de molette de plus. -->
+    <script>
+    (function () {
+        if (location.hash !== '#choix-domaines') return;
+
+        function auPied() {
+            var doc = document.documentElement;
+            window.scrollTo(0, Math.max(0, doc.scrollHeight - window.innerHeight));
+        }
+
+        auPied();
+        /* la hauteur définitive n'arrive qu'après les images et les polices */
+        window.addEventListener('load', function () { requestAnimationFrame(auPied); });
+        window.addEventListener('pageshow', function (e) { if (e.persisted) auPied(); });
+    })();
+    </script>
 </body>
 </html>
