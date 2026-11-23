@@ -54,11 +54,15 @@ body.gele{overflow:hidden}
 }
 h1{font-family:'Nabla','Archivo Black',sans-serif;font-size:clamp(2.1rem,4.4vw,4rem);line-height:1.02;text-transform:uppercase;letter-spacing:0;margin:1rem 0 0;color:var(--blanc);font-palette:--num-titre}
 h1 em{font-style:normal;color:var(--neon);font-palette:--num-neon}
-/* survol : chaque ligne prend la palette de l'autre (l'argent devient magenta,
-   le magenta devient argent). `font-palette` n'est pas une propriete animable :
-   l'echange est net, sans transition. `color` suit pour le repli sans COLRv1. */
-h1 .titre-argent:hover{font-palette:--num-neon;color:var(--neon)}
-h1 em:hover{font-palette:--num-titre;color:var(--blanc)}
+/* Survol au mot : chaque mot porte deux couches de texte superposees, la seconde
+   etant celle de l'autre ligne. `font-palette` n'est pas animable, donc le fondu
+   se fait en opacite sur la couche du dessus, alignee au pixel sur celle du
+   dessous (meme texte, meme position). `color` suit pour le repli sans COLRv1. */
+h1 .mot{position:relative;display:inline-block}
+h1 .mot-cache{position:absolute;left:0;top:0;white-space:nowrap;opacity:0;pointer-events:none;
+  font-palette:--num-neon;color:var(--neon);transition:opacity .26s ease}
+h1 .mot:hover .mot-cache{opacity:1}
+h1 em .mot-cache{font-palette:--num-titre;color:var(--blanc)}
 #liste{margin-top:clamp(1.6rem,3.4vw,2.6rem)}
 .cat-row{
   width:100%;display:grid;grid-template-columns:56px 1fr auto;align-items:center;gap:1.1rem;
@@ -853,7 +857,14 @@ body.sas-actif .wrap,body.sas-actif .portes-zone,body.sas-actif .num-foot{opacit
       <main class="split">
         <div class="list">
           <p class="kicker">Trois catégories · dix projets</p>
-          <h1><span class="titre-argent">Le numérique</span><br><em>en rayons</em></h1>
+          <h1>
+            <span class="mot"><span>Le</span><span class="mot-cache" aria-hidden="true">Le</span></span>
+            <span class="mot"><span>numérique</span><span class="mot-cache" aria-hidden="true">numérique</span></span><br>
+            <em>
+              <span class="mot"><span>en</span><span class="mot-cache" aria-hidden="true">en</span></span>
+              <span class="mot"><span>rayons</span><span class="mot-cache" aria-hidden="true">rayons</span></span>
+            </em>
+          </h1>
           <div id="liste"></div>
           <p class="hint"><b>Cliquez</b> pour ouvrir le rayon et choisir un projet.</p>
         </div>

@@ -212,10 +212,20 @@ en arc-en-ciel). `color` ne sert
 plus qu'au repli sur les navigateurs sans COLRv1 (Safari), où le titre se dessine en
 monochrome : blanc et magenta, lisible mais sans volume.
 
-**Les deux lignes échangent leur palette au survol** : `.titre-argent:hover` (le span qui
-enveloppe « Le numérique ») prend `--num-neon`, `h1 em:hover` prend `--num-titre`, et `color` suit
-pour le repli. Le survol ne porte que sur la boîte du texte, pas sur la largeur du `h1`.
-`font-palette` n'est **pas animable** : l'échange est net, une transition serait sans effet. Pour changer l'épaisseur du relief,
+**Chaque mot échange sa palette au survol**, en fondu. Un mot n'a pas de palette animable
+(`font-palette` ne s'interpole pas), donc chaque mot du titre est un `span.mot` qui porte **deux
+couches** : le texte de base, puis `.mot-cache` en `position:absolute` juste au-dessus, au pixel,
+avec la palette de l'autre ligne. Seule `opacity` bouge (`transition .26s`), sur `.mot:hover`.
+Les couches sont identiques en texte, police et position, donc le fondu ne fait pas de double
+contour (vérifié). `.mot-cache` est `aria-hidden` : un lecteur d'écran ne lit le titre qu'une
+fois. Le survol ne porte que sur la boîte du mot, jamais sur la largeur du `h1` ni sur toute la
+ligne. `color` suit dans les deux couches pour le repli sans COLRv1.
+
+Piège vécu : les boîtes d'une couche en flux et d'une couche absolue ne coïncident pas
+(`getBoundingClientRect` donne 84 px de haut pour le texte en flux contre 52 px pour l'absolue)
+parce qu'une boîte inline prend l'ascendante/descendante de la police couleur, pas la hauteur de
+ligne. Les **glyphes**, eux, sont bien alignés : c'est le rendu qu'il faut regarder, pas les
+rectangles, avant de croire à un décalage. Pour changer l'épaisseur du relief,
 ajouter `font-variation-settings: 'EDPT' … / 'EHLT' …` sur `h1`.
 
 Tout le contenu vient d'un seul tableau, dans le `<script>` de la page (repère :
