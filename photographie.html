@@ -767,8 +767,9 @@
             [].forEach.call(document.querySelectorAll('.photo-domaine-bloc'), function (b) {
                 b.classList.remove('pin-hero');
                 var h = b.querySelector('.domain-hero-section');
-                if (h) { h.style.opacity = ''; h.style.visibility = ''; }
+                if (h) { h.style.opacity = ''; h.style.visibility = ''; h.style.clipPath = ''; }
             });
+            decoupe = '';
 
             choix.style.display = '';
             body.classList.remove('etape-domaine');
@@ -938,6 +939,9 @@
            Le titre, la description et les boutons restent en place : les cases
            montent par-dessus et les recouvrent, puis le hero s'efface pour de bon
            (jusqu'à ce qu'on remonte en haut de la page). */
+        /* le hero est rogné à l'arête de la première case, puis retiré */
+        var decoupe = '';
+
         function majerHero() {
             var bloc = document.querySelector('.photo-domaine-bloc.pin-hero:not([hidden])');
             if (!bloc) return;
@@ -946,20 +950,39 @@
             if (window.innerWidth < 901) {
                 hero.style.opacity = '';
                 hero.style.visibility = '';
+                hero.style.clipPath = '';
+                decoupe = '';
                 return;
             }
             /* pas de fondu : l'en-tête reste opaque et passe derrière la case.
                Il n'est retiré qu'une fois entièrement couvert par elle. */
             hero.style.opacity = '';
+            var hautHero = hero.getBoundingClientRect().height;
             var premiere = bloc.querySelector('.domain-content .pr-card, .domain-content .pe-section');
-            var couvert;
+            var hautCase, rogne;
             if (premiere) {
-                couvert = premiere.getBoundingClientRect().top <= 2;
+                /* Le hero est coupé à l'arête de la première case : tout ce qui
+                   est sous elle est déjà recouvert, et son bas ne doit jamais
+                   réapparaître dans l'interligne entre deux cases. Sans ce
+                   rognage, il restait entier jusqu'à ce que le HAUT de la case
+                   atteigne le haut de l'écran — bien après que son BAS a dépassé
+                   le bas du hero : c'étaient les boutons qu'on voyait flotter
+                   sous la première case au scroll rapide. */
+                hautCase = premiere.getBoundingClientRect().top;
+                rogne = hautHero - hautCase;
             } else {
                 var y = window.scrollY || window.pageYOffset || 0;
-                couvert = y >= hero.getBoundingClientRect().height;
+                hautCase = hautHero - y;
+                rogne = y;
             }
-            hero.style.visibility = couvert ? 'hidden' : '';
+            if (!(rogne > 0.5)) rogne = 0;
+            if (rogne > hautHero) rogne = hautHero;
+            var valeur = rogne ? 'inset(0px 0px ' + rogne.toFixed(1) + 'px 0px)' : '';
+            if (valeur !== decoupe) {
+                hero.style.clipPath = valeur;
+                decoupe = valeur;
+            }
+            hero.style.visibility = hautCase <= 2 ? 'hidden' : '';
         }
 
         function poserHero(bloc) {
@@ -967,9 +990,10 @@
                 if (b !== bloc) {
                     b.classList.remove('pin-hero');
                     var h = b.querySelector('.domain-hero-section');
-                    if (h) { h.style.opacity = ''; h.style.visibility = ''; }
+                    if (h) { h.style.opacity = ''; h.style.visibility = ''; h.style.clipPath = ''; }
                 }
             });
+            decoupe = '';
             if (!bloc) return;
 
             bloc.classList.remove('pin-hero');
@@ -993,6 +1017,9 @@
 
         window.addEventListener('scroll', majerHero, { passive: true });
         window.addEventListener('resize', majerHero, { passive: true });
+        /* filet après une glissade : si la dernière image n'a pas été rendue,
+           l'en-tête se remet d'aplomb sans attendre le geste suivant */
+        window.addEventListener('scrollend', majerHero, { passive: true });
 
         function installer(bloc, url) {
             choix.style.display = 'none';

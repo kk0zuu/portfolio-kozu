@@ -460,6 +460,17 @@ Ce n'est **pas** une opération de données. Il faut :
   de navigation, les liens et les boutons gardent leur clic.
 - `#choix` n'existe pas comme ancre : le retour se fait par `data-retour` (le `href="#choix"`
   n'est qu'un fallback).
+- **Le hero épinglé est rogné à l'arête de la première case.** `majerHero()` (dans le
+  `<script>` de `photographie.html`, appelé sur `scroll`, `resize` et `scrollend`) pose un
+  `clip-path: inset(0 0 X 0)` où `X` vaut « bas du hero − haut de la première case », puis
+  passe le hero en `visibility: hidden` quand cette arête a atteint le haut de l'écran.
+  **Ne pas revenir à un test sur le seul haut de la case** : le hero restait entier jusqu'à ce
+  que le haut de la case touche le haut de l'écran, alors que son **bas** avait déjà dépassé le
+  bas du hero — ses deux boutons (« Retour au choix d'axe », « Voir photos… ») flottaient dans
+  l'interligne entre deux cases au scroll rapide (les cases sont plus courtes que le hero, et
+  leur arrivée en perspective les rétrécit encore). La découpe est effacée à `y = 0`, sous
+  901 px de large, au retour au choix d'axe (`revenir()`) et à chaque changement d'axe
+  (`poserHero()`), sinon un axe hérite de la découpe de l'autre.
 - `photo-pro.html` et `photo-expressive.html` sont d'anciennes pages isolées : ne pas y
   ajouter de contenu.
 
