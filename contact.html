@@ -466,17 +466,22 @@
            le bloc arrive de travers (penché de 3°, ancré en haut à gauche, 40 px
            plus bas) et se redresse en freinant net. `expo.out` est exactement la
            courbe de référence (0.16, 1, 0.3, 1) ; le fondu, lui, est plus court
-           que la redressée (0,4 s contre 0,8 s), comme dans la référence. */
+           que la redressée (0,4 s contre 0,8 s), comme dans la référence.
+
+           L'animation n'est plus accrochée au défilement : seuls les blocs déjà
+           dans la fenêtre à l'ouverture arrivent, le reste est posé dans son état
+           final tout de suite. Plus bas, tout est donc déjà là, sans apparition. */
         function apparait(sel, base, ecart) {
             var els = [].slice.call(document.querySelectorAll(sel));
             els.forEach(function (el, i) {
+                if (el.getBoundingClientRect().top > window.innerHeight) {
+                    gsap.set(el, { opacity: 1, y: 0, skewY: 0 });
+                    return;
+                }
                 /* état de départ explicite : un simple from() repartirait de
                    l'opacité déjà mise à 0 par le CSS et laisserait l'élément
                    invisible */
-                var tl = gsap.timeline({
-                    delay: base + i * (ecart || 0),
-                    scrollTrigger: { trigger: el, start: 'top 88%', once: true }
-                });
+                var tl = gsap.timeline({ delay: base + i * (ecart || 0) });
                 tl.fromTo(el,
                     { y: 40, skewY: 3, transformOrigin: 'top left', opacity: 0 },
                     { y: 0, skewY: 0, duration: 0.8, ease: 'expo.out' }, 0)

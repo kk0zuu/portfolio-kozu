@@ -880,10 +880,15 @@ Autres points de vigilance de l'accueil :
 
 - `contact.html` : page statique, aucun contenu structuré. Le contact passe par un
   `mailto:` (`gandou.christian@gmail.com`) et des liens externes.
-  - **L'arrivée des blocs est en essai** (21/11). Tout passe par une seule fonction,
-    `apparait(sel, base, ecart)` dans le `<script>` de la page : état de départ explicite,
-    `delay` + `scrollTrigger` (`top 88%`, `once`), et l'élément ne devient jamais invisible pour de
-    bon. La version posée est le **Skew Kinetic** (départ `y: 40`, `skewY: 3°`, ancrage en haut à
+  - **L'arrivée des blocs n'est plus déclenchée par le défilement** (23/11). Tout passe par une
+    seule fonction, `apparait(sel, base, ecart)` dans le `<script>` de la page : état de départ
+    explicite, `delay` en cascade, **sans `scrollTrigger`**. Seuls les blocs dont le haut est
+    déjà dans la fenêtre au moment du départ (`getBoundingClientRect().top <= innerHeight`)
+    jouent l'animation ; les autres reçoivent directement leur état final (`gsap.set`).
+    Conséquence voulue par Ian : on ne voit le geste qu'à l'ouverture de la page, le reste
+    est déjà en place dès qu'on descend. Pour revenir à des apparitions au scroll, il faudrait
+    remettre un `scrollTrigger` (`top 88%`, `once`) et retirer le test de fenêtre. La version
+    posée est le **Skew Kinetic** (départ `y: 40`, `skewY: 3°`, ancrage en haut à
     gauche, 0,8 s en `expo.out` — c'est exactement `cubic-bezier(0.16, 1, 0.3, 1)` —, fondu en
     0,4 s). La variante **mise au point optique** (flou 8 px + `scale(1.04)` → net) avait sa copie
     jetable dans `contact-focus.html` : Ian a **choisi le Skew Kinetic** et le fichier a été
