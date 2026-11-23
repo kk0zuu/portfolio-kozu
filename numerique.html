@@ -35,11 +35,24 @@ body.gele{overflow:hidden}
 .split{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.02fr);gap:clamp(1.4rem,4vw,4.5rem);align-items:start}
 .list{padding:clamp(1.6rem,4vw,3.4rem) 0 2rem}
 .kicker{font-size:.66rem;letter-spacing:.24em;text-transform:uppercase;color:#7d7d7d}
-/* le titre du hero est le seul endroit du site en Nabla (police variable
-   coloree de Google Fonts) : elle porte ses propres couleurs, donc `color` ne
-   joue plus que sur le repli 'Archivo Black' si la police ne charge pas */
-h1{font-family:'Nabla','Archivo Black',sans-serif;font-size:clamp(2.1rem,4.4vw,4rem);line-height:1.02;text-transform:uppercase;letter-spacing:0;margin:1rem 0 0;color:var(--blanc)}
-h1 em{font-style:normal;color:var(--neon)}
+/* Le titre du hero est le seul endroit du site en Nabla (police variable coloree
+   de Google Fonts). Une police couleur peint avec ses propres palettes : `color`
+   n'a aucune prise dessus (meme en !important). On remplace donc sa palette par
+   deux palettes maison, calées sur la charte : blanc à flanc gris pour « Le
+   numérique », magenta à flanc prune pour « en rayons ». Les index utilises par
+   Nabla : 7 = face avant, 6 = flanc visible, 1 = liseré entre les deux, 5/4/8/0/3
+   = gradins du relief et des ombres. `color` ne sert plus qu'au repli (navigateur
+   sans COLRv1, la police s'y dessine en monochrome). */
+@font-palette-values --num-titre{
+  font-family:'Nabla';
+  override-colors:0 #141414,1 #0B0B0C,3 #2A2A2A,4 #2A2A2A,5 #3E3E3E,6 #6A6A6A,7 #EFEFEF,8 #1C1C1C,9 #EFEFEF;
+}
+@font-palette-values --num-neon{
+  font-family:'Nabla';
+  override-colors:0 #220022,1 #0B0B0C,3 #4B004B,4 #4B004B,5 #6A006A,6 #8E008E,7 #FF00FF,8 #2E002E,9 #FF00FF;
+}
+h1{font-family:'Nabla','Archivo Black',sans-serif;font-size:clamp(2.1rem,4.4vw,4rem);line-height:1.02;text-transform:uppercase;letter-spacing:0;margin:1rem 0 0;color:var(--blanc);font-palette:--num-titre}
+h1 em{font-style:normal;color:var(--neon);font-palette:--num-neon}
 #liste{margin-top:clamp(1.6rem,3.4vw,2.6rem)}
 .cat-row{
   width:100%;display:grid;grid-template-columns:56px 1fr auto;align-items:center;gap:1.1rem;

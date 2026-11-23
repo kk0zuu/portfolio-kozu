@@ -193,11 +193,21 @@ catégorie ouvre un **rayon** (bande horizontale de vignettes), un clic sur une 
 **page projet** en plein écran.
 
 Le titre du hero (« Le numérique / en rayons ») est le **seul texte du site en Nabla**, la police
-variable colorée de Google Fonts (ajoutée au `<link>` de la page, axes `EDPT` et `EHLT`). Elle
-**porte ses propres couleurs** : le `color:var(--neon)` de `h1 em` ne s'applique plus qu'au repli
-`Archivo Black` si la police ne charge pas, et la deuxième ligne n'est donc plus magenta. Les
-navigateurs sans COLRv1 la rendent en monochrome noir : le titre reste lisible, mais l'effet 3D
-disparaît. Pour changer l'effet, régler `font-variation-settings: 'EDPT' / 'EHLT'` sur `h1`.
+variable colorée de Google Fonts (ajoutée au `<link>` de la page, axes `EDPT` et `EHLT`) —
+licence **SIL Open Font License 1.1** (Arthur Reinders Folmer & Just van Rossum), usage
+commercial libre, aucune mention obligatoire. Elle est chargée par le CDN de Google Fonts : rien
+n'est redistribué, donc rien à joindre au dépôt. Si un jour on héberge soi-même une version
+modifiée du fichier, l'OFL impose de garder sa licence avec la police, de ne pas la vendre
+seule et de renommer toute version dérivée visée par un nom réservé.
+
+Nabla **porte ses propres palettes** : `color` n'a aucune prise dessus, même en `!important`.
+Les couleurs sont donc remplacées par deux palettes maison dans `@font-palette-values`
+(`--num-titre` : face blanche, flancs gris ; `--num-neon` : face magenta, flancs prune),
+posées sur `h1` et `h1 em` avec `font-palette`. Index utiles de Nabla, relevés au banc :
+**7 = face avant, 6 = flanc visible, 1 = liseré, 5/4/8/0/3 = gradins du relief**. `color` ne sert
+plus qu'au repli sur les navigateurs sans COLRv1 (Safari), où le titre se dessine en
+monochrome : blanc et magenta, lisible mais sans volume. Pour changer l'épaisseur du relief,
+ajouter `font-variation-settings: 'EDPT' … / 'EHLT' …` sur `h1`.
 
 Tout le contenu vient d'un seul tableau, dans le `<script>` de la page (repère :
 `var CATS = [`), et le rendu est fait par des fonctions juste en dessous (`apercuCat`,
