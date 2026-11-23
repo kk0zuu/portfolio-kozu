@@ -241,6 +241,7 @@ Le compteur du haut (« Trois catégories · neuf projets ») et le nombre par c
 | `'retouches'` | collage magazine (duo, texte, tirage large) | `media[0]`, `[1]`, `[3]`, `[4]` |
 | `'galerie'` | bandeau « model sheets » + grille cliquable + visionneuse | **toutes** les `media` |
 | `'lecteur'` | faux lecteur vidéo (média + recommandations) | `videos`, pas `media` |
+| `'chris'` | page documentaire (logline, dualité lune / soleil, recherches, entités, actes, état de production, emplacements réservés) | toutes les `media`, **par index** |
 
 Les CSS de ces mises en page sont dans le `<style>` de `numerique.html` (chercher `.moches`,
 `.kozu`, `.mr`, `.galerie`, `.yt`, `.ms`, `.lt`).
@@ -317,6 +318,13 @@ Puis :
   Ne pas laisser un autre projet hériter des planches d'O.K.O.
 - **L'ordre de `media` compte** pour `moches` (index 3), `kozu` (0/1/2) et `retouches`
   (3/4) : ce ne sont pas des collages génériques.
+- **`layout:'chris'` a son propre rendu** (`chrisHtml()`, CSS `.cs-*` dans le `<style>` de la
+  page, images dans `images/numerique/chris-soleil/`). La fonction lit les visuels **par
+  index** : 0 = hero et vignette, 1 = planche de rotation, 2–5 = les quatre carnations de
+  Chris, 6 = Soleil au crayon, 7–9 = les entités. Réordonner `media` casse les légendes ;
+  ajouter une image à la fin du tableau ne pose aucun problème. Les neuf `.cs-slot` sont des
+  emplacements réservés : quand un contenu arrive, il remplace la case correspondante (et son
+  texte dans le tableau `slots` de `chrisHtml`).
 - Un projet avec **une seule** image n'affiche ni collage ni emplacements (juste texte + hero).
 - `titreHtml()` découpe le nom en morceaux : les mots de plus de 9 lettres sont coupés et les
   symboles `&`, `/`, `·`, `—` sont ignorés. Éviter les noms très longs ou purement

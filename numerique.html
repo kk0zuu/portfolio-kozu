@@ -615,6 +615,133 @@ body.sas-actif .wrap,body.sas-actif .portes-zone,body.sas-actif .num-foot{opacit
   body{padding-top:4.2rem}
 }
 
+        /* ---------- Chris & Soleil — page projet ----------
+           Page documentaire : logline, dualité lune / soleil, recherches,
+           entités, actes, état de production, emplacements réservés.
+           Tout est préfixé .cs- pour ne rien toucher aux autres projets. */
+        .cs{
+            --cs-soleil:#F5C044;
+            --cs-chris:#B457CE;
+            display:grid;gap:clamp(3.2rem,7vw,7rem);
+            margin-top:clamp(2rem,4.5vw,3.6rem);
+        }
+        .cs-bloc{display:grid;gap:clamp(1.1rem,2.2vw,1.8rem)}
+        .cs-bloc--duo{grid-template-columns:minmax(0,1.02fr) minmax(0,.98fr);gap:clamp(1.6rem,3.4vw,3.4rem);align-items:start}
+        .cs-kick{display:flex;align-items:center;gap:.75rem;margin:0;font-size:.6rem;letter-spacing:.22em;text-transform:uppercase;color:#8c8c8c}
+        .cs-kick i{font-style:normal;font-family:'Archivo Black',sans-serif;font-size:.58rem;letter-spacing:.08em;color:var(--cs-soleil)}
+        .cs-kick::after{content:"";flex:1;height:1px;background:linear-gradient(90deg,rgba(255,255,255,.18),rgba(255,255,255,0))}
+        .cs-titre{margin:0;max-width:24ch;font-family:'Archivo Black',sans-serif;font-size:clamp(1.3rem,2.4vw,2.05rem);line-height:1.04;text-transform:uppercase;letter-spacing:-.02em;color:#F1F1F1}
+        .cs-texte{margin:0;max-width:60ch;font-size:.9rem;line-height:1.78;color:#b3b3b3}
+        .cs-chapeau{margin:0;max-width:28ch;font-family:'Archivo Black',sans-serif;font-size:clamp(1.45rem,3vw,2.7rem);line-height:1.08;letter-spacing:-.02em;color:#F1F1F1}
+        .cs-chapeau em{font-style:normal;color:var(--cs-soleil)}
+        .cs-fiche{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:1px;margin:0;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.1);border-radius:12px;overflow:hidden}
+        .cs-fiche > div{display:grid;gap:.45rem;align-content:start;padding:1rem 1.05rem;background:#0d0d0f}
+        .cs-fiche dt{margin:0;font-size:.54rem;letter-spacing:.2em;text-transform:uppercase;color:#6f6f6f}
+        .cs-fiche dd{margin:0;font-size:.8rem;line-height:1.5;color:#d2d2d2}
+
+        /* l'éclipse, dessinée en CSS */
+        .cs-cosm{
+            position:relative;aspect-ratio:5/4;border-radius:16px;overflow:hidden;
+            border:1px solid rgba(255,255,255,.09);
+            background:radial-gradient(circle at 70% 40%,rgba(245,192,68,.18),transparent 46%),
+                       radial-gradient(circle at 16% 82%,rgba(180,87,206,.16),transparent 52%),#08080A;
+        }
+        .cs-cosm-soleil{position:absolute;right:9%;top:16%;width:46%;aspect-ratio:1;border-radius:50%;background:radial-gradient(circle at 38% 34%,#FFF4D2,#F5C044 46%,#B07415 100%);box-shadow:0 0 70px 20px rgba(245,192,68,.18)}
+        .cs-cosm-lune{position:absolute;right:20%;top:9%;width:46%;aspect-ratio:1;border-radius:50%;background:#08080A;box-shadow:inset -16px -8px 34px rgba(245,192,68,.42),0 0 46px 8px rgba(8,8,10,.92)}
+        .cs-cosm-anneau{position:absolute;inset:9% 2%;border:1px solid rgba(255,255,255,.14);border-radius:50%;transform:rotate(-16deg) scaleY(.56)}
+        .cs-cosm-tour{position:absolute;inset:9% 2%;transform:rotate(-16deg) scaleY(.56);animation:cs-tour 36s linear infinite}
+        .cs-cosm-tour i{position:absolute;left:50%;top:0;width:7px;height:7px;margin:-3.5px 0 0 -3.5px;border-radius:50%;background:var(--cs-chris);box-shadow:0 0 12px var(--cs-chris)}
+        @keyframes cs-tour{from{transform:rotate(-16deg) scaleY(.56)}to{transform:rotate(344deg) scaleY(.56)}}
+        .cs-cosm-legende{display:flex;justify-content:space-between;gap:1rem;margin:.75rem 0 0;font-size:.56rem;letter-spacing:.16em;text-transform:uppercase;color:#6d6d6d}
+
+        .cs-astres{list-style:none;margin:0;padding:0;border-top:1px solid rgba(255,255,255,.1)}
+        .cs-astres li{position:relative;display:grid;grid-template-columns:13ch minmax(0,1fr);gap:1rem;align-items:baseline;padding:.95rem 0 .95rem 1.6rem;border-bottom:1px solid rgba(255,255,255,.1);color:var(--cs-astre,#8c8c8c)}
+        .cs-astres li::before{content:"";position:absolute;left:.15rem;top:1.25rem;width:8px;height:8px;border-radius:50%;background:currentColor;box-shadow:0 0 10px currentColor}
+        .cs-astres b{font-family:'Archivo Black',sans-serif;font-size:.86rem;text-transform:uppercase;letter-spacing:.02em;color:#EFEFEF}
+        .cs-astres span{font-size:.82rem;line-height:1.65;color:#a6a6a6}
+
+        .cs-persos{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:clamp(1rem,2vw,1.6rem)}
+        .cs-perso{position:relative;display:grid;grid-template-columns:minmax(0,.82fr) minmax(0,1.18fr);gap:clamp(.9rem,1.8vw,1.5rem);align-items:start;padding:clamp(1rem,1.6vw,1.3rem);border:1px solid rgba(255,255,255,.09);border-radius:16px;background:#0d0d0f;overflow:hidden}
+        .cs-perso::before{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;background:linear-gradient(155deg,rgba(255,255,255,.05),transparent 55%)}
+        .cs-perso figure{margin:0;border-radius:12px;overflow:hidden;background:#08080A}
+        .cs-perso img{display:block;width:100%;aspect-ratio:3/4;object-fit:cover}
+        .cs-perso-txt{display:grid;gap:.65rem;align-content:start}
+        .cs-tag{margin:0;font-size:.54rem;letter-spacing:.2em;text-transform:uppercase;color:var(--cs-accent,var(--cs-soleil))}
+        .cs-perso h3{margin:0;font-family:'Archivo Black',sans-serif;font-size:clamp(1.15rem,2vw,1.7rem);line-height:1;text-transform:uppercase;letter-spacing:-.01em;color:#F1F1F1}
+        .cs-perso p{margin:0;font-size:.8rem;line-height:1.72;color:#a9a9a9}
+        .cs-detail{list-style:none;margin:.1rem 0 0;padding:0;display:grid;gap:.35rem}
+        .cs-detail li{position:relative;padding-left:.85rem;font-size:.68rem;line-height:1.5;color:#7f7f7f}
+        .cs-detail li::before{content:"";position:absolute;left:0;top:.42rem;width:4px;height:4px;border-radius:50%;background:var(--cs-accent,var(--cs-soleil))}
+
+        .cs-rech{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+        .cs-rech figure{margin:0;display:grid;gap:.6rem;padding:8px;border:1px solid rgba(255,255,255,.08);border-radius:12px;background:#0d0d0f}
+        .cs-rech img{display:block;width:100%;aspect-ratio:3/4;object-fit:cover;border-radius:8px;background:#08080A}
+        .cs-rech figcaption{font-size:.56rem;letter-spacing:.14em;text-transform:uppercase;line-height:1.45;color:#7d7d7d}
+        .cs-rech--large{grid-column:1/-1}
+        .cs-rech--large img{aspect-ratio:auto;height:auto;object-fit:contain}
+        .cs-rech-note{margin:0;max-width:70ch;font-size:.76rem;line-height:1.7;color:#8f8f8f}
+
+        .cs-concept{display:grid;grid-template-columns:1.35fr 1fr 1fr;gap:10px}
+        .cs-concept figure{position:relative;margin:0;border-radius:12px;overflow:hidden;background:#08080A}
+        .cs-concept img{display:block;width:100%;aspect-ratio:4/5;object-fit:cover}
+        .cs-concept figcaption{position:absolute;left:0;right:0;bottom:0;padding:2.2rem .8rem .7rem;font-size:.54rem;letter-spacing:.14em;text-transform:uppercase;line-height:1.5;color:#c9c9c9;background:linear-gradient(transparent,rgba(6,6,8,.92))}
+
+        .cs-actes{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+        .cs-acte{position:relative;padding:1.5rem 1.15rem 1.4rem;border:1px solid rgba(255,255,255,.08);border-radius:12px;background:#0d0d0f;overflow:hidden}
+        .cs-acte::before{content:"";position:absolute;left:0;right:0;top:0;height:3px;background:var(--teinte)}
+        .cs-acte em{display:block;font-style:normal;font-size:.54rem;letter-spacing:.2em;text-transform:uppercase;color:var(--teinte)}
+        .cs-acte b{display:block;margin:.65rem 0 .55rem;font-family:'Archivo Black',sans-serif;font-size:.92rem;line-height:1.16;text-transform:uppercase;color:#EDEDED}
+        .cs-acte p{margin:0;font-size:.76rem;line-height:1.68;color:#989898}
+
+        .cs-da{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+        .cs-da article{display:grid;gap:.7rem;align-content:start;padding:clamp(1.1rem,1.8vw,1.6rem);border:1px solid rgba(255,255,255,.08);border-radius:12px;background:#0d0d0f}
+        .cs-da h4{margin:0;font-family:'Archivo Black',sans-serif;font-size:.9rem;text-transform:uppercase;letter-spacing:.01em;color:#EDEDED}
+        .cs-da p{margin:0;font-size:.82rem;line-height:1.72;color:#a3a3a3}
+        .cs-nuancier{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:6px;margin-top:.3rem}
+        .cs-nuancier i{display:block;height:44px;border-radius:8px}
+        .cs-nuancier-legende{display:flex;justify-content:space-between;gap:1rem;font-size:.54rem;letter-spacing:.14em;text-transform:uppercase;color:#6a6a6a}
+
+        .cs-etat{margin:0;display:grid;border-top:1px solid rgba(255,255,255,.1)}
+        .cs-etat-ligne{display:grid;grid-template-columns:minmax(0,15ch) minmax(0,1fr) auto;gap:1.2rem;align-items:center;padding:.85rem 0;border-bottom:1px solid rgba(255,255,255,.1)}
+        .cs-etat-ligne b{font-size:.82rem;font-weight:500;color:#E4E4E4}
+        .cs-etat-ligne span{font-size:.76rem;line-height:1.55;color:#8d8d8d}
+        .cs-etat-tag{justify-self:end;padding:.28rem .55rem;border-radius:8px;border:1px solid rgba(255,255,255,.16);font-size:.52rem;letter-spacing:.18em;text-transform:uppercase;color:#b5b5b5;white-space:nowrap}
+        .cs-etat-tag--fait{background:var(--cs-soleil);border-color:var(--cs-soleil);color:#0B0B0C}
+        .cs-etat-tag--encours{border-color:rgba(180,87,206,.65);color:#C68BD8}
+        .cs-etat-tag--avenir{border-style:dashed;color:#6f6f6f}
+
+        .cs-slots{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+        .cs-slot{
+            position:relative;display:grid;gap:.5rem;align-content:start;min-height:172px;
+            padding:1.2rem 1.2rem 1.35rem;border:1px solid rgba(255,255,255,.12);border-radius:12px;
+            background:linear-gradient(180deg,rgba(255,255,255,.028),transparent 68%),#0b0b0d;
+            overflow:hidden;transition:border-color .3s ease;
+        }
+        .cs-slot::after{content:"";position:absolute;right:-34px;bottom:-34px;width:116px;height:116px;border-radius:50%;border:1px solid rgba(255,255,255,.07);pointer-events:none}
+        .cs-slot:hover{border-color:rgba(245,192,68,.45)}
+        .cs-slot-num{font-family:'Archivo Black',sans-serif;font-size:.58rem;letter-spacing:.14em;color:var(--cs-soleil)}
+        .cs-slot b{font-size:.88rem;font-weight:500;line-height:1.3;color:#E4E4E4}
+        .cs-slot p{margin:0;font-size:.75rem;line-height:1.66;color:#8b8b8b}
+        .cs-slot em{justify-self:start;margin-top:.35rem;padding:.24rem .5rem;border-radius:8px;border:1px solid rgba(255,255,255,.14);font-style:normal;font-size:.5rem;letter-spacing:.18em;text-transform:uppercase;color:#5f5f5f}
+        .cs-fin{display:flex;flex-wrap:wrap;justify-content:space-between;gap:.6rem 2rem;padding-top:1.1rem;border-top:1px solid rgba(255,255,255,.1);font-size:.58rem;letter-spacing:.16em;text-transform:uppercase;color:#6d6d6d}
+
+        @media (max-width:1100px){
+            .cs-bloc--duo{grid-template-columns:1fr}
+            .cs-persos,.cs-actes,.cs-slots{grid-template-columns:repeat(2,minmax(0,1fr))}
+            .cs-concept{grid-template-columns:1fr 1fr}
+            .cs-rech{grid-template-columns:repeat(2,minmax(0,1fr))}
+        }
+        @media (max-width:700px){
+            .cs-fiche{grid-template-columns:1fr 1fr}
+            .cs-persos,.cs-actes,.cs-da,.cs-slots,.cs-concept,.cs-rech{grid-template-columns:1fr}
+            .cs-perso{grid-template-columns:1fr}
+            .cs-etat-ligne{grid-template-columns:1fr auto}
+            .cs-etat-ligne span{grid-column:1/-1}
+        }
+        @media (prefers-reduced-motion:reduce){
+            .cs-cosm-tour{animation:none}
+        }
+
         /* --- FORME UNIQUE : cases en rectangles aux coins arrondis.
            Les boutons rectangulaires (« ← Rayon », « son activé »…) gardent
            leurs angles droits : c'est l'exception demandée. Seuls les rayons
@@ -757,7 +884,22 @@ body.sas-actif .wrap,body.sas-actif .portes-zone,body.sas-actif .num-foot{opacit
       num: '01', nom: 'Animation',
       note: 'Personnages, décors et mouvement — de la pré-production aux line-tests.',
       projets: [
-        { id:'chris-soleil', nom:'Chris & Soleil', discipline:'Série animée', annee:'', texte:'', media:[] },
+        {
+          id:'chris-soleil', nom:'Chris & Soleil', discipline:'Série animée · 2D/3D hybride', annee:'En cours', layout:'chris',
+          texte:"Drame psychologique et horreur poétique : après une rupture brutale, un lycéen hanté par ses traumatismes sombre dans une psychose hallucinatoire. Développement d’une série animée hybride 2D/3D — écriture, recherches graphiques et character design.",
+          media:[
+            { t:'image', src:'images/numerique/chris-soleil/concept_chris_etoile.jpg', alt:'Chris de profil, dessiné au trait sur fond noir, face à une grande étoile jaune' },
+            { t:'image', src:'images/numerique/chris-soleil/planche_chris_5vues.jpg', alt:'Planche de rotation de Chris : cinq vues à l’échelle, face, trois quarts, profil et dos' },
+            { t:'image', src:'images/numerique/chris-soleil/recherche_chris_teinte_1-2.jpg', alt:'Recherche de carnation — Chris, peau violette, rapport 1:2' },
+            { t:'image', src:'images/numerique/chris-soleil/recherche_chris_teinte_1-3.jpg', alt:'Recherche de carnation — Chris, cheveux teints en violet, rapport 1:3' },
+            { t:'image', src:'images/numerique/chris-soleil/recherche_chris_teinte_1-6.jpg', alt:'Recherche de carnation — Chris, peau violette et hoodie lavande, rapport 1:6' },
+            { t:'image', src:'images/numerique/chris-soleil/recherche_chris_teinte_0-6.jpg', alt:'Recherche de carnation — Chris, carnation naturelle, rapport 0:6' },
+            { t:'image', src:'images/numerique/chris-soleil/recherche_soleil_crayon.png', alt:'Soleil — recherche au crayon et surligneur jaune, mains levées' },
+            { t:'image', src:'images/numerique/chris-soleil/concept_soleil_forme.jpg', alt:'Soleil — forme pleine, être de lumière translucide' },
+            { t:'image', src:'images/numerique/chris-soleil/concept_entite_visage.jpg', alt:'Le visage solaire — gros plan sur fond noir' },
+            { t:'image', src:'images/numerique/chris-soleil/concept_entite_corps.png', alt:'Entité — corps entier jaune accompagné d’une bulle de dialogue' }
+          ]
+        },
         {
           id:'oko', nom:'O.K.O.', discipline:'Character design · Pré-production', annee:'2025', layout:'galerie', lineTests:true,
           texte:"Bible graphique et conception de personnages pour une série de science-fiction animée : model sheets avec lignes directrices, expressions faciales, attitudes clés et roughs préparatoires. Une recherche sur l'anatomie, les proportions en rotation et le character design.",
@@ -1422,6 +1564,196 @@ body.sas-actif .wrap,body.sas-actif .portes-zone,body.sas-actif .num-foot{opacit
     '<p class="note-slot">Emplacements réservés : dès que les éléments arrivent, ils se posent ici.</p>';
   }
 
+  /* Mise en page du projet « Chris & Soleil » : page documentaire.
+     Les visuels sont pris dans p.media (le premier sert de hero et de vignette).
+     Chaque .cs-slot est un emplacement réservé pour un contenu à produire. */
+  function chrisHtml(p) {
+    var m = p.media || [];
+
+    function src(i) { return (m[i] && m[i].src) || ''; }
+    function alt(i) { return (m[i] && m[i].alt) || ''; }
+    function figure(i, cls, legende) {
+      if (!src(i)) return '';
+      return '<figure' + (cls ? ' class="' + cls + '"' : '') + '>' +
+        '<img src="' + src(i) + '" alt="' + alt(i) + '" loading="lazy" />' +
+        (legende ? '<figcaption>' + legende + '</figcaption>' : '') +
+      '</figure>';
+    }
+
+    var astres = [
+      { c:'#F5C044', n:'Soleil', d:'L’astre lumineux : tout le monde en a besoin, elle ne cesse de grandir, et un jour elle emportera la galaxie qu’elle éclairait.' },
+      { c:'#B457CE', n:'Chris', d:'La lune toxique : petite, dépendante, elle ne brille que d’une lumière qui n’est pas la sienne — et finit par dériver.' },
+      { c:'#8C8C8C', n:'L’éclipse', d:'La relation : un alignement rare et très court, qui laisse des séquelles à ceux qui l’ont regardé sans s’y préparer.' }
+    ].map(function (a) {
+      return '<li style="--cs-astre:' + a.c + '"><b>' + a.n + '</b><span>' + a.d + '</span></li>';
+    }).join('');
+
+    var actes = [
+      { n:'Acte I', t:'L’éclipse et le refuge', c:'#E9A94A', d:'Six mois de parenthèse lumineuse : le bras redevient humain, les démons se taisent, Chris se croit guéri.' },
+      { n:'Acte II', t:'La dérive et la dégradation', c:'#A99A6E', d:'La rupture, sans une explication. Le corps lâche, les entités reviennent trois fois plus fortes.' },
+      { n:'Acte III', t:'Le climax et la chute', c:'#7A4E8E', d:'L’obsession, la guitare brisée, le toit de l’immeuble. Chris saute.' },
+      { n:'Acte IV', t:'Le réveil monochrome', c:'#9E9E9E', d:'Il survit. Le monde perd ses couleurs. À la toute fin, Soleil parle : « Je suis désolée. »' }
+    ].map(function (a) {
+      return '<li class="cs-acte" style="--teinte:' + a.c + '">' +
+        '<em>' + a.n + '</em><b>' + a.t + '</b><p>' + a.d + '</p></li>';
+    }).join('');
+
+    var etat = [
+      { t:'Note d’intention', d:'Quatre chapitres : ambiguïté morale, dualité des astres, direction artistique, catharsis.', s:'fait' },
+      { t:'Logline', d:'Trois versions de la même histoire, du deuil à la reconstruction.', s:'fait' },
+      { t:'Synopsis détaillé', d:'Quatre actes : le lycée, la rupture, le toit, l’hôpital.', s:'fait' },
+      { t:'Script v1', d:'Première version dialoguée du court-métrage.', s:'fait' },
+      { t:'Recherches graphiques', d:'Chris, Soleil, les entités : carnations, silhouettes, regards.', s:'encours' },
+      { t:'Planche de rotation', d:'Chris, cinq vues à l’échelle — la base de l’animation 2D.', s:'fait' },
+      { t:'Animatic, scène pilote', d:'Rien n’est encore monté ni animé.', s:'avenir' }
+    ].map(function (e) {
+      var cls = e.s === 'fait' ? ' cs-etat-tag--fait' : (e.s === 'encours' ? ' cs-etat-tag--encours' : ' cs-etat-tag--avenir');
+      var mot = e.s === 'fait' ? 'fait' : (e.s === 'encours' ? 'en cours' : 'à venir');
+      return '<div class="cs-etat-ligne"><b>' + e.t + '</b><span>' + e.d + '</span>' +
+        '<span class="cs-etat-tag' + cls + '">' + mot + '</span></div>';
+    }).join('');
+
+    var slots = [
+      { t:'Bible graphique', d:'Model sheets de Soleil : rotations, expressions, mains. Chris a sa planche ; Soleil attend la sienne.' },
+      { t:'Décors', d:'Le lycée, la chambre, le toit de l’immeuble à seize étages — concept art et vues de décor.' },
+      { t:'Color script', d:'La bascule chaud → poisseux → sombre → monochrome, séquence par séquence.' },
+      { t:'Storyboard & animatic', d:'L’ouverture (l’éclipse) et la chute du toit, en cases puis en temps.' },
+      { t:'Line-tests', d:'Le bras gauche, la démarche de Chris, les entités : boucles d’animation à comparer.' },
+      { t:'Planche des entités', d:'Silhouettes, règles d’apparition, ce qu’elles disent — et à qui.' },
+      { t:'Son & musique', d:'Le thème de guitare, désaccordé puis rejoué : le motif sonore de la reconstruction.' },
+      { t:'Affiche & générique', d:'Titre, composition, typographie : l’image qui résume le film en une seule.' },
+      { t:'Extraits animés', d:'Une scène pilote en mp4 ou webm, à poser ici comme dans les autres projets du rayon.' }
+    ].map(function (s, i) {
+      return '<div class="cs-slot"><span class="cs-slot-num">' + deux(i + 1) + '</span>' +
+        '<b>' + s.t + '</b><p>' + s.d + '</p><em>à produire</em></div>';
+    }).join('');
+
+    return '<div class="cs">' +
+
+      '<section class="cs-bloc">' +
+        '<p class="cs-kick"><i>01</i> Logline</p>' +
+        '<p class="cs-chapeau">Après une rupture brutale avec la fille qui éclairait sa vie, un lycéen hanté par ses traumatismes sombre dans une <em>psychose hallucinatoire</em> — contraint de traverser les étapes du deuil pour ne pas se perdre définitivement.</p>' +
+        '<dl class="cs-fiche">' +
+          '<div><dt>Format</dt><dd>Court / moyen-métrage hybride<br>20 à 45 min</dd></div>' +
+          '<div><dt>Genre</dt><dd>Drame psychologique<br>Horreur poétique</dd></div>' +
+          '<div><dt>Studio</dt><dd>Kozu Pictures</dd></div>' +
+          '<div><dt>État</dt><dd>Développement — écriture<br>et recherche graphique</dd></div>' +
+        '</dl>' +
+      '</section>' +
+
+      '<section class="cs-bloc cs-bloc--duo">' +
+        '<div>' +
+          '<div class="cs-cosm" aria-hidden="true">' +
+            '<span class="cs-cosm-soleil"></span>' +
+            '<span class="cs-cosm-lune"></span>' +
+            '<span class="cs-cosm-anneau"></span>' +
+            '<span class="cs-cosm-tour"><i></i></span>' +
+          '</div>' +
+          '<p class="cs-cosm-legende"><span>Le soleil, immense</span><span>La lune, en orbite</span></p>' +
+        '</div>' +
+        '<div class="cs-bloc">' +
+          '<p class="cs-kick"><i>02</i> Le motif</p>' +
+          '<h3 class="cs-titre">La lune ne brille que de la lumière du soleil</h3>' +
+          '<p class="cs-texte">Chris &amp; Soleil ne raconte pas une histoire d’amour heureuse : il raconte ce qui reste quand la lumière s’en va. Deux astres que tout sépare — l’un immense et aimé de tous, l’autre minuscule, dépendant, qui s’éloigne un peu plus à chaque orbite. Leur rencontre est une éclipse : rare, magnifique, très courte, et dangereuse pour qui la regarde sans s’y préparer.</p>' +
+          '<ul class="cs-astres">' + astres + '</ul>' +
+        '</div>' +
+      '</section>' +
+
+      '<section class="cs-bloc">' +
+        '<p class="cs-kick"><i>03</i> Deux astres</p>' +
+        '<div class="cs-persos">' +
+          '<article class="cs-perso" style="--cs-accent:#B457CE">' +
+            figure(2) +
+            '<div class="cs-perso-txt">' +
+              '<p class="cs-tag">La lune toxique</p>' +
+              '<h3>Chris</h3>' +
+              '<p>18 ans, en terminale. Son avant-bras gauche, broyé par son père quand il était enfant, est devenu le support de toutes ses terreurs : une masse de chair qu’il ne peut pas regarder. À côté de Soleil, le bras redevient humain ; sans elle, il redevient monstrueux — et Chris avec lui.</p>' +
+              '<ul class="cs-detail">' +
+                '<li>Dysmorphie, dépression psychotique</li>' +
+                '<li>Deux alters : pupille rouge, yeux en étoile</li>' +
+                '<li>La guitare, jouée pour elle</li>' +
+              '</ul>' +
+            '</div>' +
+          '</article>' +
+          '<article class="cs-perso" style="--cs-accent:#F5C044">' +
+            figure(6) +
+            '<div class="cs-perso-txt">' +
+              '<p class="cs-tag">L’astre lumineux</p>' +
+              '<h3>Soleil</h3>' +
+              '<p>Elle traverse tout le film sans prononcer un mot — jusqu’à une seule phrase, à la toute fin. Son silence est le sujet : elle voit la douleur qu’elle provoque, n’agit pas, et reste aimée de tous. Le récit laisse ouvert ce qu’elle a vraiment vécu : un choix, une lâcheté, ou une peur qu’elle ne sait pas dire.</p>' +
+              '<ul class="cs-detail">' +
+                '<li>Muette jusqu’à la dernière scène</li>' +
+                '<li>Aimée de tous, sans effort</li>' +
+                '<li>Le point aveugle du récit</li>' +
+              '</ul>' +
+            '</div>' +
+          '</article>' +
+        '</div>' +
+      '</section>' +
+
+      '<section class="cs-bloc">' +
+        '<p class="cs-kick"><i>04</i> Character design</p>' +
+        '<div class="cs-rech">' +
+          figure(1, 'cs-rech--large', 'Chris — planche de rotation, cinq vues, échelle 19 modules') +
+          figure(2, '', 'Teinte 1:2 — peau violette') +
+          figure(3, '', 'Teinte 1:3 — cheveux violets') +
+          figure(4, '', 'Teinte 1:6 — hoodie lavande') +
+          figure(5, '', 'Teinte 0:6 — carnation naturelle') +
+        '</div>' +
+        '<p class="cs-rech-note">La carnation de Chris a été cherchée en quatre rapports peau / cheveux / vêtement, du plus naturaliste (0:6) au plus surnaturel (1:2). Plus le violet gagne, plus le personnage quitte le réel : c’est ce réglage qui décidera de sa couleur au fil des actes.</p>' +
+      '</section>' +
+
+      '<section class="cs-bloc">' +
+        '<p class="cs-kick"><i>05</i> Les entités</p>' +
+        '<h3 class="cs-titre">Ce que la psychose dessine</h3>' +
+        '<div class="cs-concept">' +
+          figure(9, '', 'Entité — étude de corps et de dialogue') +
+          figure(8, '', 'Le visage solaire, en gros plan') +
+          figure(7, '', 'Soleil — forme pleine, lumière sans contour') +
+        '</div>' +
+        '<p class="cs-texte">Les hallucinations de Chris ne sont pas des jump scares : ce sont des formes. Un soleil trop grand, aux yeux blancs, qui lui parle comme un juge ; des silhouettes qui veulent son bien et s’y prennent très mal. La toute première entité est son père — une masse noire. Toutes les autres en descendent.</p>' +
+      '</section>' +
+
+      '<section class="cs-bloc">' +
+        '<p class="cs-kick"><i>06</i> La déchéance, en quatre temps</p>' +
+        '<ol class="cs-actes">' + actes + '</ol>' +
+      '</section>' +
+
+      '<section class="cs-bloc">' +
+        '<p class="cs-kick"><i>07</i> Direction artistique</p>' +
+        '<div class="cs-da">' +
+          '<article>' +
+            '<h4>Le trait se crispe</h4>' +
+            '<p>Animation hybride 2D / 3D : le dessin se tend, devient anguleux, presque sale à mesure que Chris déraille. Le trait de Soleil se dégrade avec le regard qu’il porte sur elle.</p>' +
+          '</article>' +
+          '<article>' +
+            '<h4>Le code des couleurs</h4>' +
+            '<p>Des teintes chaudes de la rencontre aux tons poisseux et pâles de l’aigreur, puis au très sombre de la panique, et enfin au monochrome gris de l’hôpital : la couleur raconte la perte d’humanité.</p>' +
+            '<div class="cs-nuancier">' +
+              '<i style="background:#F5C044"></i><i style="background:#E08A4A"></i>' +
+              '<i style="background:#A99A6E"></i><i style="background:#4A3A52"></i>' +
+              '<i style="background:#8C8C8C"></i>' +
+            '</div>' +
+            '<p class="cs-nuancier-legende"><span>Rencontre</span><span>Hôpital</span></p>' +
+          '</article>' +
+        '</div>' +
+      '</section>' +
+
+      '<section class="cs-bloc">' +
+        '<p class="cs-kick"><i>08</i> État du projet</p>' +
+        '<div class="cs-etat">' + etat + '</div>' +
+      '</section>' +
+
+      '<section class="cs-bloc">' +
+        '<p class="cs-kick"><i>09</i> Emplacements à venir</p>' +
+        '<p class="cs-texte">Ces cases sont réservées : elles disent ce qui manque encore pour documenter le film, et ce que chaque pièce apporterait à cette page. Elles se rempliront au fil du projet.</p>' +
+        '<div class="cs-slots">' + slots + '</div>' +
+      '</section>' +
+
+      '<p class="cs-fin"><span>Page en construction — les emplacements se remplissent au fil du projet.</span><span>Chris &amp; Soleil · Kozu Pictures</span></p>' +
+    '</div>';
+  }
+
   function ouvrirProjet(p) {
     projetCourant = p;
 
@@ -1454,6 +1786,8 @@ body.sas-actif .wrap,body.sas-actif .portes-zone,body.sas-actif .num-foot{opacit
       corps = sectionModelSheets() + galerieHtml(p) + (p.lineTests ? sectionLineTests(p) : '');
     } else if (p.layout === 'lecteur') {
       corps = lecteurHtml(p);
+    } else if (p.layout === 'chris') {
+      corps = chrisHtml(p);
     } else if (p.game) corps += caseJeu(p);
     else if (p.media.length > 1) corps += '<div class="gal">' + p.media.slice(1).map(cellule).join('') + '</div>';
     else if (!p.media.length) corps += caseVide();
