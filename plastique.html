@@ -181,7 +181,10 @@ body.pm-focus .pm-retour-focus{opacity:1;visibility:visible;}
 body.pm-cartes-ouvertes .pm-retour-focus{opacity:0;visibility:hidden;pointer-events:none;}
 
 /* ---------- cartes sorties du booster ---------- */
-.pm-cartes{position:fixed;inset:0;z-index:60;overflow-y:auto;overflow-x:hidden;
+/* colonne : le titre reste en haut, la grille et la ligne d'aide se centrent dans
+   ce qui reste (marges automatiques) et débordent normalement si la famille est
+   longue, sans jamais être rognées */
+.pm-cartes{position:fixed;inset:0;z-index:60;overflow-y:auto;overflow-x:hidden;display:flex;flex-direction:column;
   visibility:hidden;opacity:0;transition:opacity .3s ease,visibility .3s;}
 .pm-cartes.on{visibility:visible;opacity:1;}
 /* la barre de navigation du site est fixée à `top:1rem` pour 3rem de haut et passe
@@ -198,8 +201,8 @@ body.pm-cartes-ouvertes .pm-retour-focus{opacity:0;visibility:hidden;pointer-eve
 .pm-retour-cartes{background:rgba(11,11,12,.85);border:1px solid rgba(255,255,255,.34);color:#fff;
   font-size:.62rem;letter-spacing:.16em;text-transform:uppercase;padding:.62rem 1rem;cursor:none;}
 .pm-retour-cartes:hover{background:var(--color-neon-pink);border-color:var(--color-neon-pink);color:#0B0B0C;}
-.pm-grille{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,300px));justify-content:center;gap:2rem;
-  padding:clamp(1.6rem,4vh,2.6rem) clamp(1rem,3vw,2.4rem) 3rem;max-width:1180px;margin:0 auto;}
+.pm-grille{flex:0 0 auto;display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,300px));justify-content:center;gap:2rem;
+  padding:clamp(1.2rem,3vh,2rem) clamp(1rem,3vw,2.4rem) 1.4rem;max-width:1180px;width:100%;margin:auto auto 0;align-self:center;}
 .pm-item{perspective:1200px;}
 .pm-tilt{transform-style:preserve-3d;}
 .pm-carte{position:relative;width:100%;aspect-ratio:3/4;transform-style:preserve-3d;
@@ -222,7 +225,7 @@ body.pm-cartes-ouvertes .pm-retour-focus{opacity:0;visibility:hidden;pointer-eve
   text-transform:uppercase;background:var(--color-neon-green);color:#0B0B0C;border:2px solid var(--color-neon-green);
   padding:.45rem .8rem;cursor:none;text-align:center;}
 .pm-voir:hover{background:var(--color-neon-pink);border-color:var(--color-neon-pink);}
-.pm-cartes-aide{padding:0 clamp(1rem,3vw,2.4rem) 2.4rem;text-align:center;font-size:.68rem;letter-spacing:.1em;text-transform:uppercase;color:#D6D6D6;text-shadow:0 1px 10px rgba(0,0,0,.55);}
+.pm-cartes-aide{flex:0 0 auto;margin-bottom:auto;padding:0 clamp(1rem,3vw,2.4rem) 2.4rem;text-align:center;font-size:.68rem;letter-spacing:.1em;text-transform:uppercase;color:#D6D6D6;text-shadow:0 1px 10px rgba(0,0,0,.55);}
 
 /* ---------- fenêtre projet (seul slide-up) ---------- */
 .pm-fenetre{position:fixed;inset:0;z-index:1600;background:rgba(11,11,12,.82);overflow-y:auto;

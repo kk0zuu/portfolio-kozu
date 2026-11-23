@@ -592,7 +592,11 @@ Ajouter un objet dans `CATS` (`id`, `num` suivant, `nom`, `def`, `projets`), pui
   `.pm-cartes-nom`, un petit titre en capitales gris (`rgba(255,255,255,.42)`, 0,66–0,78 rem)
   posé au-dessus de la grille, qui défile avec elle. Il reste en blanc cassé et non en noir :
   sans couleur il héritait du noir du `body` et disparaissait. La définition de la famille
-  (`cat.def`) ne s'affiche plus que sous le booster, sur le rail.
+  (`cat.def`) ne s'affiche plus que sous le booster, sur le rail. L'écran est une **colonne
+  flex** : la grille porte `margin-top:auto` et la ligne d'aide `margin-bottom:auto`, si bien
+  que le couple cartes + aide se centre dans la hauteur libre et défile normalement quand une
+  famille est trop longue (marges automatiques = zéro en débordement). Sans ça, les deux
+  cartes d'une petite famille restaient collées sous le titre, en haut d'un écran vide.
 - Le bouton de retour de la **mise au point** (`#pmRetourFocus`) s'appelle « ← Boosters » et
   s'efface pendant les cartes (`body.pm-cartes-ouvertes`) — c'est cette classe qui porte
   l'état, pas `:has()`.
