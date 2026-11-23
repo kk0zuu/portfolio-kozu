@@ -52,8 +52,15 @@ body.gele{overflow:hidden}
   font-family:'Nabla';
   override-colors:0 #240024,1 #FF7AF0,3 #8A008A,4 #6A006A,5 #A800A8,6 #4E004E,7 #FF00FF,8 #E85CE8,9 #FF3CFF;
 }
-h1{font-family:'Nabla','Archivo Black',sans-serif;font-size:clamp(2.1rem,4.4vw,4rem);line-height:1.02;text-transform:uppercase;letter-spacing:0;margin:1rem 0 0;color:var(--blanc);font-palette:--num-titre}
+/* Le titre se redresse à l'arrivée (script en bas de page) : chaque lettre part
+   couchée en arrière et plate, puis se releve et prend son relief. EDPT 62 est
+   la profondeur par defaut de Nabla ; on la fixe ici pour que le point d'arrivee
+   de l'animation soit connu (Chromium n'interpole pas font-variation-settings en
+   transition, la profondeur est donc animee image par image). */
+h1{font-family:'Nabla','Archivo Black',sans-serif;font-size:clamp(2.1rem,4.4vw,4rem);line-height:1.02;text-transform:uppercase;letter-spacing:0;margin:1rem 0 0;color:var(--blanc);font-palette:--num-titre;font-variation-settings:'EDPT' 62;perspective:900px}
 h1 em{font-style:normal;color:var(--neon);font-palette:--num-neon}
+h1 .nl{display:inline-block;transform-origin:50% 100%;backface-visibility:hidden;will-change:transform}
+@media (prefers-reduced-motion: reduce){h1 .nl{will-change:auto}}
 #liste{margin-top:clamp(1.6rem,3.4vw,2.6rem)}
 .cat-row{
   width:100%;display:grid;grid-template-columns:56px 1fr auto;align-items:center;gap:1.1rem;
@@ -1958,5 +1965,82 @@ body.sas-actif .wrap,body.sas-actif .portes-zone,body.sas-actif .num-foot{opacit
 <script src="jeux-assets.js"></script>
 <script src="jeux.js"></script>
 <script src="app.js"></script>
+<script>
+/* ---------- LE TITRE SE REDRESSE ----------
+   Les lettres de Nabla sont dessinees en volume : on les fait arriver plates et
+   couchees en arriere (rotateX 68deg, EDPT 0), puis elles se relevent et gagnent
+   leur profondeur, en cascade de gauche a droite. Une seule fois, a l'ouverture,
+   apres le sas d'arrivee de la page. */
+(function () {
+  var h1 = document.querySelector('.list h1');
+  if (!h1) return;
+  var reduit = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  /* en mouvement reduit ou sans GSAP, on ne touche a rien : le titre reste du
+     texte normal, sans decoupage ni etat de depart */
+  if (reduit || !window.gsap) return;
+
+  /* le titre reste annonce d'un bloc, les lettres ne sont pas epellees ; le <br>
+     compte pour une espace, sinon « numerique » et « en rayons » se collent */
+  var clone = h1.cloneNode(true);
+  Array.prototype.forEach.call(clone.querySelectorAll('br'), function (b) {
+    b.parentNode.replaceChild(document.createTextNode(' '), b);
+  });
+  h1.setAttribute('aria-label', clone.textContent.replace(/\s+/g, ' ').trim());
+
+  var lettres = [];
+  (function decouper(parent) {
+    Array.prototype.slice.call(parent.childNodes).forEach(function (n) {
+      if (n.nodeType === 3) {
+        var frag = document.createDocumentFragment();
+        Array.prototype.forEach.call(n.nodeValue, function (c) {
+          if (c === ' ' || c === '\u00A0') { frag.appendChild(document.createTextNode(c)); return; }
+          var s = document.createElement('span');
+          s.className = 'nl';
+          s.textContent = c;
+          frag.appendChild(s);
+          lettres.push(s);
+        });
+        parent.replaceChild(frag, n);
+      } else if (n.nodeType === 1 && n.tagName !== 'BR') {
+        decouper(n);
+      }
+    });
+  })(h1);
+  if (!lettres.length) return;
+  lettres.forEach(function (l) { l.setAttribute('aria-hidden', 'true'); });
+
+  var DEPTH = 62;
+  gsap.set(lettres, { rotateX: 68, y: 18, opacity: 0, fontVariationSettings: "'EDPT' 0" });
+
+  var tl = gsap.timeline({ paused: true });
+  lettres.forEach(function (l, i) {
+    var d = 0.05 + i * 0.038;
+    var prof = { v: 0 };
+    tl.to(l, { rotateX: 0, y: 0, opacity: 1, duration: 0.84, ease: 'power3.out' }, d);
+    tl.to(prof, {
+      v: DEPTH, duration: 0.84, ease: 'power2.out',
+      onUpdate: function () { l.style.fontVariationSettings = "'EDPT' " + prof.v.toFixed(1); }
+    }, d);
+  });
+
+  function lancer() { tl.play(0); }
+
+  /* on attend la fin du sas d'arrivee de la page, sinon l'animation se joue
+     derriere l'ecran noir */
+  function attendreReveil() {
+    if (!document.body.classList.contains('sas-actif')) { lancer(); return; }
+    var obs = new MutationObserver(function () {
+      if (document.body.classList.contains('sas-actif')) return;
+      obs.disconnect();
+      lancer();
+    });
+    obs.observe(document.body, { attributes: true, attributeFilter: ['class'] });
+    setTimeout(function () { obs.disconnect(); if (tl.progress() === 0) lancer(); }, 4000);
+  }
+
+  if (document.fonts && document.fonts.ready) { document.fonts.ready.then(attendreReveil); }
+  else { attendreReveil(); }
+})();
+</script>
 </body>
 </html>
