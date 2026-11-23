@@ -210,7 +210,12 @@ profond. Une palette sans face supérieure plus claire que la face principale do
 noires en haut : c'est l'erreur à ne pas refaire (relevé au banc, un index isolé à la fois puis
 en arc-en-ciel). `color` ne sert
 plus qu'au repli sur les navigateurs sans COLRv1 (Safari), où le titre se dessine en
-monochrome : blanc et magenta, lisible mais sans volume. Pour changer l'épaisseur du relief,
+monochrome : blanc et magenta, lisible mais sans volume.
+
+**Les deux lignes échangent leur palette au survol** : `.titre-argent:hover` (le span qui
+enveloppe « Le numérique ») prend `--num-neon`, `h1 em:hover` prend `--num-titre`, et `color` suit
+pour le repli. Le survol ne porte que sur la boîte du texte, pas sur la largeur du `h1`.
+`font-palette` n'est **pas animable** : l'échange est net, une transition serait sans effet. Pour changer l'épaisseur du relief,
 ajouter `font-variation-settings: 'EDPT' … / 'EHLT' …` sur `h1`.
 
 Tout le contenu vient d'un seul tableau, dans le `<script>` de la page (repère :
