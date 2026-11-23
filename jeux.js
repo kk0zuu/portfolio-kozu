@@ -827,6 +827,27 @@
         }
       }
 
+      /* coffres du rayon : un par coffre, ouvert ou à ouvrir, en haut à droite */
+      var nbCoffres = etat.coffres.length;
+      var ech = 1.5;
+      var icone = 10 * ech;
+      var ecart = icone + 4;
+      var largCompteur = nbCoffres * ecart + 46;
+      var xCompteur = canvas.width - 10 - largCompteur;
+      ctx.fillStyle = 'rgba(11,11,12,0.66)';
+      ctx.fillRect(xCompteur, 8, largCompteur, 26);
+      for (var ci = 0; ci < nbCoffres; ci++) {
+        var cxi = xCompteur + 8 + ci * ecart;
+        var cyi = 8 + (26 - icone) / 2;
+        if (!etat.coffres[ci].ouvert) ctx.globalAlpha = 0.5;
+        A.dessiner(ctx, etat.coffres[ci].ouvert ? A.coffreOuvert : A.coffreFerme, cxi, cyi, ech);
+        ctx.globalAlpha = 1;
+      }
+      ctx.fillStyle = etat.trouves === nbCoffres ? '#ff00ff' : '#e4f6d0';
+      ctx.font = '8px "Archivo Black", sans-serif';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(etat.trouves + '/' + nbCoffres, xCompteur + 8 + nbCoffres * ecart + 3, 21);
+
       /* message trésor */
       if (etat.messageT > 0) {
         var a = Math.min(1, etat.messageT);
