@@ -688,12 +688,19 @@ body.sas-actif .wrap,body.sas-actif .portes-zone,body.sas-actif .num-foot{opacit
         .cs-concept img{display:block;width:100%;aspect-ratio:4/5;object-fit:cover}
         .cs-concept figcaption{position:absolute;left:0;right:0;bottom:0;padding:2.2rem .8rem .7rem;font-size:.54rem;letter-spacing:.14em;text-transform:uppercase;line-height:1.5;color:#c9c9c9;background:linear-gradient(transparent,rgba(6,6,8,.92))}
 
+        /* les quatre actes : plus de filet de couleur en haut du cadre ; la teinte
+           ne porte plus que le chiffre romain qui ouvre la case */
         .cs-actes{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
-        .cs-acte{position:relative;padding:1.5rem 1.15rem 1.4rem;border:1px solid rgba(255,255,255,.08);border-radius:12px;background:#0d0d0f;overflow:hidden}
-        .cs-acte::before{content:"";position:absolute;left:0;right:0;top:0;height:3px;background:var(--teinte)}
-        .cs-acte em{display:block;font-style:normal;font-size:.54rem;letter-spacing:.2em;text-transform:uppercase;color:var(--teinte)}
-        .cs-acte b{display:block;margin:.65rem 0 .55rem;font-family:'Archivo Black',sans-serif;font-size:.92rem;line-height:1.16;text-transform:uppercase;color:#EDEDED}
-        .cs-acte p{margin:0;font-size:.76rem;line-height:1.68;color:#989898}
+        .cs-acte{position:relative;display:flex;flex-direction:column;padding:1.25rem 1.2rem 1.35rem;
+            border:1px solid rgba(255,255,255,.07);border-radius:12px;background:#0d0d0f}
+        .cs-acte-num{display:block;font-family:'Archivo Black',sans-serif;font-size:1.35rem;
+            line-height:1;letter-spacing:.02em;color:var(--teinte)}
+        /* « Acte I » reste lu par les lecteurs d'écran, le chiffre le dit à l'œil */
+        .cs-acte-lbl{position:absolute;width:1px;height:1px;margin:-1px;padding:0;overflow:hidden;
+            clip-path:inset(50%);white-space:nowrap;border:0}
+        .cs-acte b{display:block;margin:.8rem 0 .55rem;font-family:'Archivo Black',sans-serif;
+            font-size:.95rem;line-height:1.16;text-transform:uppercase;color:#EDEDED}
+        .cs-acte p{margin:0;font-size:.78rem;line-height:1.66;color:#989898}
 
         .cs-da{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
         .cs-da article{display:grid;gap:.7rem;align-content:start;padding:clamp(1.1rem,1.8vw,1.6rem);border:1px solid rgba(255,255,255,.08);border-radius:12px;background:#0d0d0f}
@@ -1597,7 +1604,9 @@ body.sas-actif .wrap,body.sas-actif .portes-zone,body.sas-actif .num-foot{opacit
       { n:'Acte IV', t:'Le réveil monochrome', c:'#9E9E9E', d:'Il survit. Le monde perd ses couleurs. À la toute fin, Soleil parle : « Je suis désolée. »' }
     ].map(function (a) {
       return '<li class="cs-acte" style="--teinte:' + a.c + '">' +
-        '<em>' + a.n + '</em><b>' + a.t + '</b><p>' + a.d + '</p></li>';
+        '<em class="cs-acte-lbl">' + a.n + '</em>' +
+        '<span class="cs-acte-num" aria-hidden="true">' + a.n.replace('Acte ', '') + '</span>' +
+        '<b>' + a.t + '</b><p>' + a.d + '</p></li>';
     }).join('');
 
     var etat = [
