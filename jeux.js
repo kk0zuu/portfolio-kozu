@@ -40,6 +40,88 @@
     });
   }
 
+  /* ------------------------------ musique ------------------------------ */
+  /* Une petite boucle 8 bit, deux voix très douces (carré pour l’arpège,
+     triangle pour la basse), programmée d’avance pour ne pas dépendre du
+     minuteur. Quatre accords : do, sol, la mineur, fa. */
+  var MUSIQUE = { voulue: false, actif: false, timer: 0, pas: 0, prochain: 0, gain: null, ancre: null };
+
+  var MELODIE = [
+    72, 76, 79, 76, 79, 76, 72, 67, /* do */
+    71, 74, 79, 74, 79, 74, 71, 67, /* sol */
+    69, 72, 76, 72, 76, 72, 69, 64, /* la mineur */
+    69, 72, 77, 72, 77, 72, 69, 65  /* fa */
+  ];
+  var BASSE = [48, 55, 43, 50, 45, 52, 41, 48];
+  var PAS_MUSIQUE = 60 / 138 / 2; /* une croche à 138 bpm */
+
+  function frequence(n) {
+    return 440 * Math.pow(2, (n - 69) / 12);
+  }
+
+  function noteMusique(n, t, duree, vol, type) {
+    var c = ctxSon();
+    if (!c) return;
+    var o = c.createOscillator();
+    var g = c.createGain();
+    o.type = type || 'square';
+    o.frequency.setValueAtTime(frequence(n), t);
+    g.gain.setValueAtTime(0.0001, t);
+    g.gain.exponentialRampToValueAtTime(vol, t + 0.018);
+    g.gain.exponentialRampToValueAtTime(0.0001, t + duree);
+    o.connect(g);
+    g.connect(MUSIQUE.gain || c.destination);
+    o.start(t);
+    o.stop(t + duree + 0.03);
+  }
+
+  function planifierMusique() {
+    var c = ctxSon();
+    if (!c) return;
+    if (MUSIQUE.ancre && !document.body.contains(MUSIQUE.ancre)) { arreterMusique(); return; }
+    while (MUSIQUE.prochain < c.currentTime + 0.2) {
+      var i = MUSIQUE.pas % MELODIE.length;
+      var t = MUSIQUE.prochain;
+      noteMusique(MELODIE[i], t, PAS_MUSIQUE * 1.55, 0.05);
+      if (i % 2 === 0) noteMusique(BASSE[(MUSIQUE.pas / 2) % BASSE.length], t, PAS_MUSIQUE * 1.5, 0.055, 'triangle');
+      MUSIQUE.prochain += PAS_MUSIQUE;
+      MUSIQUE.pas++;
+    }
+  }
+
+  function lancerMusique(ancre) {
+    MUSIQUE.voulue = true;
+    if (ancre) MUSIQUE.ancre = ancre;
+    if (son.muet || MUSIQUE.actif) return;
+    var c = ctxSon();
+    if (!c) return;
+    if (!MUSIQUE.gain) {
+      MUSIQUE.gain = c.createGain();
+      MUSIQUE.gain.gain.value = 0.55;
+      MUSIQUE.gain.connect(c.destination);
+    }
+    MUSIQUE.actif = true;
+    MUSIQUE.prochain = c.currentTime + 0.14;
+    planifierMusique();
+    MUSIQUE.timer = setInterval(planifierMusique, 40);
+  }
+
+  /* coupe les prochaines notes sans oublier qu’elle doit revenir */
+  function suspendreMusique() {
+    MUSIQUE.actif = false;
+    if (MUSIQUE.timer) { clearInterval(MUSIQUE.timer); MUSIQUE.timer = 0; }
+  }
+
+  function arreterMusique() {
+    MUSIQUE.voulue = false;
+    suspendreMusique();
+  }
+
+  document.addEventListener('visibilitychange', function () {
+    if (document.hidden) suspendreMusique();
+    else if (MUSIQUE.voulue && !son.muet) lancerMusique();
+  });
+
   /* ------------------------------ chrome ------------------------------ */
   function boutonSon() {
     var b = document.createElement('button');
@@ -52,7 +134,11 @@
     b.addEventListener('click', function () {
       son.muet = !son.muet;
       maj();
-      if (!son.muet) bip(740, 0.1, 'square', 0.05);
+      if (son.muet) suspendreMusique();
+      else {
+        bip(740, 0.1, 'square', 0.05);
+        if (MUSIQUE.voulue) lancerMusique();
+      }
     });
     maj();
     return b;
@@ -299,6 +385,7 @@
       dernier = performance.now();
       requestAnimationFrame(boucle);
       arpege([523, 659, 784]);
+      lancerMusique(canvas);
     }
 
     function solide(x, y) {
@@ -522,6 +609,7 @@
     }
 
     function finDePartie(gagne, raison) {
+      arreterMusique();
       var score = etat.tresor * 100 + Math.round(Math.max(0, tempsRestant())) * 5;
       voile(
         ui.scene,
