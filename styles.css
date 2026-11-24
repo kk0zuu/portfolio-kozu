@@ -19,7 +19,10 @@
     --font-display: 'Archivo Black', sans-serif;
     --font-body: 'Space Grotesk', sans-serif;
     --font-bungee: 'Bungee', cursive;
-    --font-schoolbell: 'Schoolbell', cursive;
+    /* plus de police manuscrite sur le site (demandé par Ian le 23/11) : les
+       annotations prennent la police de texte. La variable garde son nom
+       puisqu'elle est appelée partout, mais ne contient plus Schoolbell. */
+    --font-schoolbell: 'Space Grotesk', 'Helvetica Neue', Arial, sans-serif;
     --font-ransom-serif: 'Playfair Display', serif;
     --font-ransom-typewriter: 'Special Elite', cursive;
     --font-ransom-cinzel: 'Cinzel', serif;
@@ -341,7 +344,7 @@ body.hovering .cursor-spiral {
     max-width: 1600px;
 }
 
-/* Ligne supérieure : "et voici mon" (Schoolbell en minuscule) + "PORTFOLIO" (Badge) */
+/* Ligne supérieure : "et voici mon" (police de texte, en minuscule) + "PORTFOLIO" (Badge) */
 .hero-intro-line {
     position: relative;
     z-index: 3; /* au-dessus de la case secrète, qui reste derrière le badge */
@@ -356,7 +359,7 @@ body.hovering .cursor-spiral {
     transform-origin: center center;
 }
 
-/* Typographie Schoolbell en minuscule */
+/* « et voici mon » : minuscules, dans la police de texte (plus de manuscrit) */
 .hero-manuscript-text {
     font-family: var(--font-schoolbell);
     font-size: clamp(1.8rem, 3.2vw, 3rem);
@@ -1127,12 +1130,12 @@ body.contact-page .logiciels-aide-point {
 /* chacune son ombre, demandé par Ian : Numérique à gauche, Plastique en bas,
    Photographie à droite */
 .bubble-num .handwritten-label {
-    transform: rotate(-5deg);
+    transform: none;
     box-shadow: -4px 0 0 var(--ombre-etiquette);
 }
 
 .bubble-photo .handwritten-label {
-    transform: rotate(4deg);
+    transform: none;
     box-shadow: 4px 0 0 var(--ombre-etiquette);
 }
 
@@ -1565,13 +1568,13 @@ body.contact-page .logiciels-aide-point {
     padding: 0.35rem 0.9rem;
     border-radius: 8px;
     box-shadow: 2px 3px 0px rgba(0, 0, 0, 0.8);
-    transform: rotate(-1.5deg);
+    transform: none;
     margin: 0.8rem 0;
     width: fit-content;
 }
 
 .scrapbook-note.rotate-right {
-    transform: rotate(2deg);
+    transform: none;
 }
 
 .scrapbook-note.highlight-magenta {
@@ -3722,7 +3725,6 @@ body.contact-page .flow-pre-badge {
     font-size: 0.55rem;
     letter-spacing: 0.14em;
     text-transform: uppercase;
-    transform: rotate(-1.5deg);
 }
 
 body.contact-page .flow-main-title {

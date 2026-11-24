@@ -135,6 +135,16 @@ balises `<link rel="icon">` (aujourd'hui `?v=3`), sinon les navigateurs resserve
 Variables CSS globales : `--color-neon-pink`, `--color-neon-green`, `--font-display`,
 `--font-body`, `--font-schoolbell`, `--color-black`, `--color-bg-end`.
 
+**Il n'y a plus de police manuscrite sur le site** (23/11). `--font-schoolbell` pointait sur
+Schoolbell, utilisée pour les annotations (notes des fiches plastique, légendes de vues,
+« et voici mon » de l'accueil, note du CV, mentions de la 404). Elle contient maintenant
+`'Space Grotesk', 'Helvetica Neue', Arial, sans-serif`, et Schoolbell a été retirée des
+`<link>` Google Fonts des six pages. La variable **garde son nom** : il est encore lisible dans
+une dizaine de règles, et la renommer obligerait à toutes les toucher sans gain. Conséquence
+pratique : les annotations prennent la police de texte, donc elles sont plus larges à taille
+égale — c'est pour ça que `Space Grotesk:wght@400` a été ajouté au chargement de l'accueil, de
+Contact et de Photographie, qui ne chargeaient que 700.
+
 ### 3.4 CSS : où écrire
 
 - **`styles.css`** : uniquement ce qui est partagé par plusieurs pages (barre de navigation,
@@ -156,11 +166,14 @@ Variables CSS globales : `--color-neon-pink`, `--color-neon-green`, `--font-disp
   « photographie », « projet plastique ») **suit la règle commune** : rectangles à coins
   arrondis (`--forme-bouton`) au repos comme au survol. Elle a eu un temps des angles droits
   (demandé puis retiré par Ian le 21/11). Ce qui lui reste de particulier : **chacune son ombre**
-  — Numérique à gauche (`-4px 0`), Plastique en bas (`0 4px`), Photographie à droite (`4px 0`) —
-  plus son inclinaison propre, et « projet plastique » est la seule **d'aplomb** (`rotate(0deg)`).
+  — Numérique à gauche (`-4px 0`), Plastique en bas (`0 4px`), Photographie à droite (`4px 0`).
+  Depuis le 23/11 **aucune étiquette du site n'est inclinée** : Ian a demandé que toutes les
+  cases penchées redeviennent droites (labels des bulles, `scrapbook-note`, `.pm-f-note`,
+  `.flow-pre-badge`, `.ms-boite`, `.lt-tag`, `erreur-manuscrit`). Le bercement au survol des
+  étiquettes est conservé ; seules les rotations de repos ont disparu.
   Les trois ombres sont **à 70 % d'opacité** (`--ombre-etiquette: rgba(0, 0, 0, 0.7)`), Ian l'a
   demandé : à noir plein elles pesaient plus que la case.
-  Les feuilles sont appelées avec `styles.css?v=5` dans les six pages : **incrémenter ce numéro**
+  Les feuilles sont appelées avec `styles.css?v=6` dans les six pages : **incrémenter ce numéro**
   à chaque retouche de `styles.css`, sinon Ian voit l'ancienne version dans son navigateur.
   **Exceptions** : les boutons rectangulaires de Numérique (« ← Rayon », « son activé »…) et,
   sur `plastique.html`, les **boosters** (`.pm-pack`, `.pm-slab`, `.pm-foil`) et les **cartes
@@ -564,7 +577,7 @@ Champs d'un projet :
 présentation du site d'origine (Canva), **sur le fond sombre `#0B0B0C` de la fiche d'avant**
 (Ian y tient : seuls la mise en page et les cartouches changent) : bandeau de titre entre
 deux filets pointillés, sous-titre `tech / theme`, pièce à gauche dans une case `#151517`,
-texte justifié + `fiche` à droite, `notes` en étiquettes manuscrites, `gal` en collage de
+texte justifié + `fiche` à droite, `notes` en étiquettes (police de texte, droites), `gal` en collage de
 vues légendées (`leg`), et `appels` qui cerclent un détail de la photo (cercle blanc) avec
 un numéro repris sur l'étiquette. Avec `large: true` (photo horizontale), la pièce prend
 toute la largeur et le texte se répartit dessous ; sinon les vues montent dans la marge droite.
