@@ -707,11 +707,14 @@ Autres points de vigilance de l'accueil :
   sans passer par GSAP, pour qu'elle vaille aussi en mouvement réduit. L'accueil la consomme
   dans un script du `<head>` (classe `retour-domaines-arrivee` sur `<html>`, retirée dans le
   même passage), puis un script juste après la ligne d'intro remplace « et voici mon » par
-  « pourquoi tu remontes ? » et **retire** le badge `PORTFOLIO` : `app.js` ne monte donc pas la
-  case secrète pour ce chargement. La trace est effacée à la lecture, donc un rechargement, la
-  barre ou un lien ordinaire rendent la page normale. La phrase est plus longue que
-  l'originale : `.hero-intro-line.phrase-retour` la fait rétrécir sous 480 px, sinon le hero la
-  rogne. Ne pas déplacer le script de la ligne d'intro après `app.js`, il arriverait trop tard.
+  « pourquoi tu remontes ? Y'a rien à voir, choisi un domaine :P » et **retire** le badge
+  `PORTFOLIO` : `app.js` ne monte donc pas la case secrète pour ce chargement. La trace est
+  effacée à la lecture, donc un rechargement, la barre ou un lien ordinaire rendent la page
+  normale. La phrase est bien plus longue que l'originale : `.hero-intro-line.phrase-retour` lui
+  donne sa propre taille (`clamp(1.15rem, 2.4vw, 2.4rem)`), annule le `text-transform:
+  lowercase` de la ligne (pour garder « Y'a ») et autorise le retour à la ligne — la ligne
+  elle-même est en `white-space: nowrap` et le hero rogne ses débordements. Ne pas déplacer le
+  script de la ligne d'intro après `app.js`, il arriverait trop tard.
 - `initEtoilesDomaines` pose son champ (`.etoiles-domaines`) **hors** de `#choix-domaines`,
   directement dans `body`, et le cale en JS du haut de `.intro-section` au bas de
   `#choix-domaines` : les étoiles pointent déjà pendant « qui suis-je ? ». Le champ est en

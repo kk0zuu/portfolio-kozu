@@ -50,13 +50,16 @@
     }
     .fleche-pointe { fill: #1232B4; }
 
-    /* retour au choix des domaines : la phrase d'accueil y est plus longue que
-       « et voici mon ». Sur les écrans étroits elle rétrécit pour tenir dans
-       la ligne, que le hero rogne à ses débordements. */
-    @media (max-width: 480px) {
-        .hero-intro-line.phrase-retour .hero-manuscript-text {
-            font-size: clamp(1.2rem, 7vw, 1.8rem);
-        }
+    /* retour au choix des domaines : la phrase d'accueil est bien plus longue
+       que « et voici mon ». Elle prend donc sa propre taille, garde ses
+       majuscules (le texte n'est plus forcé en minuscules) et passe à la ligne
+       au lieu de sortir du hero, qui rogne ses débordements. */
+    .hero-intro-line.phrase-retour { white-space: normal; }
+    .hero-intro-line.phrase-retour .hero-manuscript-text {
+        text-transform: none;
+        white-space: normal;
+        font-size: clamp(1.15rem, 2.4vw, 2.4rem);
+        line-height: 1.25;
     }
     </style>
     <script>
@@ -146,7 +149,7 @@
                 if (!racine.classList.contains('retour-domaines-arrivee')) return;
                 racine.classList.remove('retour-domaines-arrivee');
                 var phrase = document.querySelector('.hero-manuscript-text');
-                if (phrase) phrase.textContent = 'pourquoi tu remontes ?';
+                if (phrase) phrase.textContent = "pourquoi tu remontes ? Y'a rien à voir, choisi un domaine :P";
                 var lignePhrase = document.querySelector('.hero-intro-line');
                 if (lignePhrase) lignePhrase.classList.add('phrase-retour');
                 var badge = document.querySelector('.portfolio-badge');
