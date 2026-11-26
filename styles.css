@@ -5225,8 +5225,8 @@ body > footer {
     z-index: 2;
     /* le filet ne doit pas coller à la dernière ligne du contenu
        (sur l'accueil, la note du choix tombe pile au bas de sa section) */
-    margin-top: clamp(2rem, 4vw, 3.4rem);
-    padding: clamp(2.2rem, 4.4vw, 3.6rem) clamp(1.4rem, 4vw, 3.4rem) clamp(1.4rem, 2.4vw, 2rem);
+    margin-top: clamp(1.2rem, 2.2vw, 2rem);
+    padding: clamp(1.3rem, 2.2vw, 1.9rem) clamp(1.4rem, 4vw, 3.4rem) clamp(0.8rem, 1.2vw, 1rem);
     border-top: 1px solid var(--pied-trait);
     background: var(--pied-fond);
     color: var(--pied-texte);
@@ -5256,7 +5256,7 @@ body > footer {
 .pied-site-in {
     display: grid;
     grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr) minmax(0, 1fr);
-    gap: clamp(1.4rem, 4vw, 3.4rem);
+    gap: clamp(1.2rem, 3vw, 2.6rem);
     align-items: start;
     max-width: 1380px;
     margin: 0 auto;
@@ -5276,13 +5276,14 @@ body > footer {
 .pied-site-nom:hover { color: var(--pied-accent); }
 
 .pied-site-role {
-    max-width: 28ch;
-    margin: 0.6rem 0 0;
+    max-width: 22rem;
+    margin: 0.4rem 0 0;
+    line-height: 1.45;
     color: var(--pied-doux);
 }
 
 .pied-site-titre {
-    margin: 0 0 0.75rem;
+    margin: 0 0 0.45rem;
     font-size: 0.62rem;
     letter-spacing: 0.2em;
     text-transform: uppercase;
@@ -5293,12 +5294,13 @@ body > footer {
     display: flex;
     flex-direction: column;
     align-items: flex-start;
-    gap: 0.4rem;
+    gap: 0.18rem;
 }
 .pied-site-nav a,
 .pied-site-reseaux a {
     color: inherit;
     font-size: 0.82rem;
+    line-height: 1.45;
     text-decoration: none;
     border-bottom: 1px solid transparent;
     transition: color 0.2s ease, border-color 0.2s ease;
@@ -5328,7 +5330,7 @@ body > footer {
     display: flex;
     flex-wrap: wrap;
     gap: 0.3rem 1rem;
-    margin: 0.85rem 0 0;
+    margin: 0.55rem 0 0;
 }
 
 .pied-site-bas {
@@ -5337,10 +5339,10 @@ body > footer {
     justify-content: space-between;
     gap: 0.4rem 1.4rem;
     max-width: 1380px;
-    margin: clamp(1.6rem, 3vw, 2.6rem) auto 0;
-    padding-top: 1rem;
+    margin: clamp(0.9rem, 1.6vw, 1.2rem) auto 0;
+    padding-top: 0.6rem;
     border-top: 1px solid var(--pied-trait);
-    font-size: 0.64rem;
+    font-size: 0.62rem;
     letter-spacing: 0.08em;
     text-transform: uppercase;
     color: var(--pied-doux);
@@ -5385,7 +5387,7 @@ body > footer {
 @media (max-width: 760px) {
     .pied-site-in {
         grid-template-columns: 1fr;
-        gap: 1.6rem;
+        gap: 1.1rem;
     }
     .pied-site--compact .pied-site-in {
         grid-template-columns: 1fr;
