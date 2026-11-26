@@ -4332,6 +4332,21 @@ if (!document.body.classList.contains('photo-fusion')) construireTambour();
     var hauts = [].slice.call(document.querySelectorAll('[data-haut-page]'));
     if (!copieurs.length && !boites.length && !hauts.length) return;
 
+    /* Le curseur maison est un simple div : aucun z-index ne passe au-dessus
+       du top layer d'un <dialog> modal. On le déplace donc dans la boîte
+       ouverte, puis on le remet exactement à sa place à la fermeture. */
+    var curseur = document.querySelector('.custom-cursor');
+    var parentCurseur = curseur ? curseur.parentNode : null;
+
+    function poserCurseur(boite) {
+        if (curseur && curseur.parentNode !== boite) boite.appendChild(curseur);
+    }
+
+    function rendreCurseur() {
+        if (!curseur || !parentCurseur) return;
+        if (curseur.parentNode !== parentCurseur) parentCurseur.appendChild(curseur);
+    }
+
     function copierAncien(texte) {
         return new Promise(function (resolve, reject) {
             var zone = document.createElement('textarea');
@@ -4382,6 +4397,7 @@ if (!document.body.classList.contains('photo-fusion')) construireTambour();
             if (!boite) return;
             if (typeof boite.showModal === 'function') boite.showModal();
             else boite.setAttribute('open', '');
+            poserCurseur(boite);
         });
     });
 
@@ -4393,6 +4409,12 @@ if (!document.body.classList.contains('photo-fusion')) construireTambour();
         });
         var fermer = boite.querySelector('[data-fermer-mentions]');
         if (fermer) fermer.addEventListener('click', function () { boite.close(); });
+        /* l'événement « close » n'est pas toujours délivré (onglet en
+           arrière-plan, moteur ancien) : l'attribut open est le signal fiable,
+           y compris quand Échap ferme la boîte sans passer par nos boutons */
+        new MutationObserver(function () {
+            if (!boite.open) rendreCurseur();
+        }).observe(boite, { attributes: true, attributeFilter: ['open'] });
     });
 
     hauts.forEach(function (btn) {
