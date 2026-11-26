@@ -5465,8 +5465,8 @@ body > footer {
     overflow-y: auto;
     padding: clamp(1.4rem, 3vw, 2.2rem);
     background: #0B0B0C;
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    border-radius: var(--forme-bloc, 20px);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 8px;
     box-shadow: 0 30px 80px rgba(0, 0, 0, 0.55);
     font-family: var(--font-body);
     text-align: left;
