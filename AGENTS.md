@@ -693,6 +693,16 @@ Autres points de vigilance de l'accueil :
 - `initSasAccueil` intercepte les liens vers `index.html` depuis les autres pages pour rejouer
   le sas : ne pas ajouter de lien vers l'accueil dans un endroit où cette animation serait
   indésirable.
+- **Retour au choix des domaines** : le bouton `.retour-domaines` pose une trace
+  `sessionStorage['retour-domaines']` dans `initRetourDomaines` (`app.js`), au clic seulement et
+  sans passer par GSAP, pour qu'elle vaille aussi en mouvement réduit. L'accueil la consomme
+  dans un script du `<head>` (classe `retour-domaines-arrivee` sur `<html>`, retirée dans le
+  même passage), puis un script juste après la ligne d'intro remplace « et voici mon » par
+  « pourquoi tu remontes ? » et **retire** le badge `PORTFOLIO` : `app.js` ne monte donc pas la
+  case secrète pour ce chargement. La trace est effacée à la lecture, donc un rechargement, la
+  barre ou un lien ordinaire rendent la page normale. La phrase est plus longue que
+  l'originale : `.hero-intro-line.phrase-retour` la fait rétrécir sous 480 px, sinon le hero la
+  rogne. Ne pas déplacer le script de la ligne d'intro après `app.js`, il arriverait trop tard.
 - `initEtoilesDomaines` pose son champ (`.etoiles-domaines`) **hors** de `#choix-domaines`,
   directement dans `body`, et le cale en JS du haut de `.intro-section` au bas de
   `#choix-domaines` : les étoiles pointent déjà pendant « qui suis-je ? ». Le champ est en

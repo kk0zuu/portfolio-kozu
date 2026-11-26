@@ -1251,6 +1251,16 @@ mm.add({
     }
 
     boutons.forEach(function (btn) {
+        /* le bouton laisse une trace pour le chargement suivant : l'accueil sait
+           ainsi qu'on remonte du choix des domaines, et pas d'ailleurs. Elle
+           est posée ici, sans animation ni GSAP, pour valoir aussi quand la
+           transition d'arrivée est coupée (mouvement réduit). */
+        btn.addEventListener('click', function (e) {
+            if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button === 1) return;
+            var href = btn.getAttribute('href') || '';
+            if (href.indexOf('#choix-domaines') === -1) return;
+            try { sessionStorage.setItem('retour-domaines', '1'); } catch (err) {}
+        });
         ['pointerenter', 'mouseenter', 'focus'].forEach(function (ev) {
             btn.addEventListener(ev, function () { mesurer(btn); });
         });

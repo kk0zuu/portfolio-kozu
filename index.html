@@ -49,6 +49,15 @@
         stroke-linejoin: round;
     }
     .fleche-pointe { fill: #1232B4; }
+
+    /* retour au choix des domaines : la phrase d'accueil y est plus longue que
+       « et voici mon ». Sur les écrans étroits elle rétrécit pour tenir dans
+       la ligne, que le hero rogne à ses débordements. */
+    @media (max-width: 480px) {
+        .hero-intro-line.phrase-retour .hero-manuscript-text {
+            font-size: clamp(1.2rem, 7vw, 1.8rem);
+        }
+    }
     </style>
     <script>
     (function () {
@@ -66,6 +75,17 @@
             if (sessionStorage.getItem('sas-domaines') !== '1') return;
             sessionStorage.removeItem('sas-domaines');
             document.documentElement.classList.add('sas-domaines-arrivee');
+        } catch (e) {}
+    })();
+    </script>
+    <script>
+    /* retour au choix des domaines : la trace du bouton, elle, ne vaut que pour
+       ce chargement. Recharger la page ou passer par la barre ne laisse rien. */
+    (function () {
+        try {
+            if (sessionStorage.getItem('retour-domaines') !== '1') return;
+            sessionStorage.removeItem('retour-domaines');
+            document.documentElement.classList.add('retour-domaines-arrivee');
         } catch (e) {}
     })();
     </script>
@@ -116,6 +136,23 @@
                 <span class="hero-manuscript-text">et voici mon</span>
                 <span class="portfolio-badge">PORTFOLIO</span>
             </div>
+            <!-- Retour au choix des domaines : la phrase d'accueil change et
+                 PORTFOLIO s'en va. Le marqueur posé plus haut ne vaut que pour
+                 ce chargement, donc un rechargement rend la page normale. Le
+                 badge est retiré avant app.js : la case secrète ne se monte pas. -->
+            <script>
+            (function () {
+                var racine = document.documentElement;
+                if (!racine.classList.contains('retour-domaines-arrivee')) return;
+                racine.classList.remove('retour-domaines-arrivee');
+                var phrase = document.querySelector('.hero-manuscript-text');
+                if (phrase) phrase.textContent = 'pourquoi tu remontes ?';
+                var lignePhrase = document.querySelector('.hero-intro-line');
+                if (lignePhrase) lignePhrase.classList.add('phrase-retour');
+                var badge = document.querySelector('.portfolio-badge');
+                if (badge && badge.parentNode) badge.parentNode.removeChild(badge);
+            })();
+            </script>
 
             <!-- Titre principal sur UNE SEULE LIGNE : IAN BOSSUT-GANDOU (Grand format, ombres diffuses) -->
             <div class="ransom-title-wrapper">
