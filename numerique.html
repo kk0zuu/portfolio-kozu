@@ -8,7 +8,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Nabla:EDPT@0..200&EHLT@0..2&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet" />
-<link rel="stylesheet" href="styles.css?v=7" />
+<link rel="stylesheet" href="styles.css?v=8" />
 <link rel="stylesheet" href="jeux.css" />
 <style>
 :root{
@@ -225,6 +225,8 @@ h1 em .mot-cache{font-palette:--num-titre;color:var(--blanc)}
 }
 @media (prefers-reduced-motion:reduce){.descendre{animation:none}}
 .projet-corps{padding:clamp(2rem,5vw,4.6rem) var(--pad) 5rem;max-width:1500px;margin:0 auto}
+/* le colophon du projet suit la largeur de l'article */
+.projet-foot{max-width:1500px;margin:0 auto}
 .projet-cat{font-size:.62rem;letter-spacing:.18em;text-transform:uppercase;color:var(--neon);margin-bottom:.9rem}
 .lead{max-width:62ch;color:#bdbdbd;line-height:1.75;margin-top:.6rem;font-size:.95rem}
 .lead.attente{color:#6b6b6b;font-style:italic}
@@ -583,8 +585,6 @@ h1 em .mot-cache{font-palette:--num-titre;color:var(--blanc)}
   .portes-bande{gap:9px}
   .porte{min-width:120px;max-width:none}
 }
-.num-foot{text-align:center;padding:1.5rem 1.5rem 3rem;font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;color:#6b6b6b}
-.projet-foot{text-align:center;padding:1.4rem 1.5rem 3.2rem;font-size:.68rem;letter-spacing:.12em;text-transform:uppercase;color:#6b6b6b}
 
 /* ---------- sas d'entrée ---------- */
 body.sas-actif{overflow:hidden}
@@ -899,8 +899,36 @@ body.sas-actif .wrap,body.sas-actif .portes-zone,body.sas-actif .num-foot{opacit
         </a>
     </div>
 
-    <footer class="num-foot">
-        <p>© 2026 Ian Bossut‑Gandou – Tous droits réservés.</p>
+    <!-- Pied de page : signature, domaines, contact -->
+    <footer class="num-foot pied-site pied-site--sombre" role="contentinfo">
+        <div class="pied-site-in">
+            <div class="pied-site-signature">
+                <a class="pied-site-nom" href="index.html">Ian Bossut‑Gandou</a>
+                <p class="pied-site-role">Animation, image &amp; volumes. Portfolio 2026.</p>
+            </div>
+            <div class="pied-site-col">
+                <p class="pied-site-titre">Domaines</p>
+                <nav class="pied-site-nav" aria-label="Les domaines">
+                    <a href="numerique.html">Numérique</a>
+                    <a href="photographie.html">Photographie</a>
+                    <a href="plastique.html">Projets plastiques</a>
+                    <a href="contact.html">Contact</a>
+                </nav>
+            </div>
+            <div class="pied-site-col">
+                <p class="pied-site-titre">Écrire</p>
+                <a class="pied-site-mail" href="mailto:gandou.christian@gmail.com">gandou.christian@gmail.com</a>
+                <p class="pied-site-reseaux">
+                    <a href="https://www.instagram.com/kkozuu/" target="_blank" rel="noopener noreferrer">Instagram</a>
+                    <a href="https://www.behance.net/christiangandou" target="_blank" rel="noopener noreferrer">Behance</a>
+                    <a href="https://www.linkedin.com/in/ian-bossut-gandou-b87b21382/" target="_blank" rel="noopener noreferrer">LinkedIn</a>
+                </p>
+            </div>
+        </div>
+        <div class="pied-site-bas">
+            <p>© 2026 Ian Bossut‑Gandou · Tous droits réservés.</p>
+            <p>Site personnel, sans cookies ni formulaire.</p>
+        </div>
     </footer>
 
     <section class="rayon" id="rayon" aria-hidden="true">
@@ -919,8 +947,20 @@ body.sas-actif .wrap,body.sas-actif .portes-zone,body.sas-actif .num-foot{opacit
       <button class="btn retour" type="button" id="retour">← Rayon</button>
       <div class="hero" id="hero"></div>
       <div class="projet-corps" id="projetCorps"></div>
-      <footer class="projet-foot">
-        <p>© 2026 Ian Bossut‑Gandou – Tous droits réservés.</p>
+      <footer class="projet-foot pied-site pied-site--compact pied-site--sombre" role="contentinfo">
+        <div class="pied-site-in">
+          <a class="pied-site-nom" href="index.html">Ian Bossut‑Gandou</a>
+          <nav class="pied-site-nav" aria-label="Les domaines">
+            <a href="numerique.html">Numérique</a>
+            <a href="photographie.html">Photographie</a>
+            <a href="plastique.html">Projets plastiques</a>
+            <a href="contact.html">Contact</a>
+          </nav>
+        </div>
+        <div class="pied-site-bas">
+          <p>© 2026 Ian Bossut‑Gandou · Tous droits réservés.</p>
+          <p>Site personnel, sans cookies ni formulaire.</p>
+        </div>
       </footer>
       <button class="descendre cache" type="button" id="descendre" aria-label="Faire défiler vers le bas">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v15"/><path d="M5.5 12.5 12 19l6.5-6.5"/></svg>

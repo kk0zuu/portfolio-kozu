@@ -5205,6 +5205,197 @@ body > footer {
 }
 
 /* ==================================================== */
+/* PIED DE PAGE : LE COLOPHON DU SITE                   */
+/* Une seule pièce partout : la signature, les domaines, */
+/* l'adresse et les réseaux, puis la ligne du bas.       */
+/* Trois tons (clair, sombre, bleu) et une variante      */
+/* d'une ligne pour les écrans qui ne défilent pas       */
+/* (fiche plastique, page projet, 404).                  */
+/* ==================================================== */
+.pied-site {
+    --pied-texte: #0B0B0C;
+    --pied-doux: rgba(11, 11, 12, 0.6);
+    --pied-trait: rgba(11, 11, 12, 0.16);
+    --pied-accent: var(--color-magenta);
+    --pied-fond: transparent;
+    position: relative;
+    z-index: 2;
+    /* le filet ne doit pas coller à la dernière ligne du contenu
+       (sur l'accueil, la note du choix tombe pile au bas de sa section) */
+    margin-top: clamp(2rem, 4vw, 3.4rem);
+    padding: clamp(2.2rem, 4.4vw, 3.6rem) clamp(1.4rem, 4vw, 3.4rem) clamp(1.4rem, 2.4vw, 2rem);
+    border-top: 1px solid var(--pied-trait);
+    background: var(--pied-fond);
+    color: var(--pied-texte);
+    font-family: var(--font-body);
+    font-size: 0.86rem;
+    line-height: 1.55;
+    letter-spacing: normal;
+    text-transform: none;
+    text-align: left;
+}
+.pied-site--sombre {
+    --pied-texte: #F2F2F3;
+    --pied-doux: rgba(242, 242, 243, 0.58);
+    --pied-trait: rgba(255, 255, 255, 0.16);
+    --pied-accent: var(--color-neon-pink);
+    --pied-fond: #0B0B0C;
+}
+.pied-site--bleu {
+    --pied-texte: #FFFFFF;
+    --pied-doux: rgba(255, 255, 255, 0.68);
+    --pied-trait: rgba(255, 255, 255, 0.24);
+    --pied-accent: var(--color-neon-pink);
+}
+/* la page photo a son propre noir, un peu plus clair que celui du site */
+.pied-fusion { --pied-fond: #0d0d0f; }
+
+.pied-site-in {
+    display: grid;
+    grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr) minmax(0, 1fr);
+    gap: clamp(1.4rem, 4vw, 3.4rem);
+    align-items: start;
+    max-width: 1380px;
+    margin: 0 auto;
+}
+
+.pied-site-nom {
+    display: inline-block;
+    color: inherit;
+    font-family: var(--font-display);
+    font-size: clamp(1.1rem, 2.2vw, 1.8rem);
+    line-height: 1.05;
+    letter-spacing: -0.01em;
+    text-transform: uppercase;
+    text-decoration: none;
+    transition: color 0.2s ease;
+}
+.pied-site-nom:hover { color: var(--pied-accent); }
+
+.pied-site-role {
+    max-width: 28ch;
+    margin: 0.6rem 0 0;
+    color: var(--pied-doux);
+}
+
+.pied-site-titre {
+    margin: 0 0 0.75rem;
+    font-size: 0.62rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--pied-doux);
+}
+
+.pied-site-nav {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.4rem;
+}
+.pied-site-nav a,
+.pied-site-reseaux a {
+    color: inherit;
+    font-size: 0.82rem;
+    text-decoration: none;
+    border-bottom: 1px solid transparent;
+    transition: color 0.2s ease, border-color 0.2s ease;
+}
+.pied-site-nav a:hover,
+.pied-site-reseaux a:hover {
+    color: var(--pied-accent);
+    border-bottom-color: currentColor;
+}
+
+.pied-site-mail {
+    display: inline-block;
+    padding-bottom: 0.15rem;
+    color: inherit;
+    font-weight: 700;
+    text-decoration: none;
+    border-bottom: 1px solid var(--pied-trait);
+    transition: color 0.2s ease, border-color 0.2s ease;
+    word-break: break-word;
+}
+.pied-site-mail:hover {
+    color: var(--pied-accent);
+    border-color: currentColor;
+}
+
+.pied-site-reseaux {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.3rem 1rem;
+    margin: 0.85rem 0 0;
+}
+
+.pied-site-bas {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 0.4rem 1.4rem;
+    max-width: 1380px;
+    margin: clamp(1.6rem, 3vw, 2.6rem) auto 0;
+    padding-top: 1rem;
+    border-top: 1px solid var(--pied-trait);
+    font-size: 0.64rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--pied-doux);
+}
+.pied-site-bas p { margin: 0; }
+
+.pied-site a:focus-visible {
+    outline: 2px solid var(--pied-accent);
+    outline-offset: 3px;
+}
+
+/* la variante d'une ligne : le panneau garde son pied de page sans
+   prendre la hauteur d'un vrai colophon */
+.pied-site--compact {
+    margin-top: 0;
+    padding: 1rem clamp(1.2rem, 4vw, 3.4rem) 1.2rem;
+}
+.pied-site--compact .pied-site-in {
+    grid-template-columns: auto minmax(0, 1fr);
+    align-items: center;
+    gap: 0.5rem 2rem;
+}
+.pied-site--compact .pied-site-col,
+.pied-site--compact .pied-site-role {
+    display: none;
+}
+.pied-site--compact .pied-site-nom {
+    font-size: clamp(0.82rem, 1.5vw, 0.98rem);
+    letter-spacing: 0.02em;
+}
+.pied-site--compact .pied-site-nav {
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: 0.3rem 1.1rem;
+}
+.pied-site--compact .pied-site-bas {
+    margin-top: 0.9rem;
+    padding-top: 0.7rem;
+}
+
+@media (max-width: 760px) {
+    .pied-site-in {
+        grid-template-columns: 1fr;
+        gap: 1.6rem;
+    }
+    .pied-site--compact .pied-site-in {
+        grid-template-columns: 1fr;
+    }
+    .pied-site--compact .pied-site-nav {
+        justify-content: flex-start;
+    }
+}
+@media (prefers-reduced-motion: reduce) {
+    .pied-site a { transition: none; }
+}
+
+/* ==================================================== */
 /* CASES DE DOMAINE : LA FORME CHANGE AU SURVOL         */
 /* cercle au repos, puis écran 16:10 (numérique),       */
 /* triangle (photo), étoile (plastique).                */
@@ -5344,10 +5535,14 @@ body.photo-fusion .domain-content { padding-top: 0; }
     transition: opacity 0.7s ease;
 }
 
-/* pied de page clair une fois le domaine ouvert */
+/* pied de page clair une fois le domaine ouvert : la page repasse sur son
+   fond papier, le colophon doit suivre (le ton sombre est celui du choix) */
 body.etape-domaine .pied-fusion {
+    --pied-texte: #0B0B0C;
+    --pied-doux: rgba(11, 11, 12, 0.6);
+    --pied-trait: rgba(0, 0, 0, 0.14);
+    --pied-accent: var(--color-magenta);
     background: transparent !important;
-    border-top-color: rgba(0, 0, 0, 0.12) !important;
 }
 
 /* ==================================================== */

@@ -9,7 +9,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Bebas+Neue&family=Bungee&family=Cinzel:wght@900&family=Playfair+Display:ital,wght@1,900&family=Schoolbell&family=Space+Grotesk:wght@400;700&family=Special+Elite&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles.css?v=7">
+    <link rel="stylesheet" href="styles.css?v=8">
     <style>
     /* la barre reste invisible tant que son animation d'apparition n'est pas prête :
        plus d'éclair de la barre à sa place définitive au chargement */
@@ -293,6 +293,38 @@
         <p class="domain-note">Chaque domaine a été pensé comme un monde à part : découvrez chacun de ces mondes dans des visuels qui leur sont propres.</p>
     </section>
 
+    <!-- Pied de page : signature, domaines, contact -->
+    <footer class="pied-site" role="contentinfo">
+        <div class="pied-site-in">
+            <div class="pied-site-signature">
+                <a class="pied-site-nom" href="index.html">Ian Bossut‑Gandou</a>
+                <p class="pied-site-role">Animation, image &amp; volumes. Portfolio 2026.</p>
+            </div>
+            <div class="pied-site-col">
+                <p class="pied-site-titre">Domaines</p>
+                <nav class="pied-site-nav" aria-label="Les domaines">
+                    <a href="numerique.html">Numérique</a>
+                    <a href="photographie.html">Photographie</a>
+                    <a href="plastique.html">Projets plastiques</a>
+                    <a href="contact.html">Contact</a>
+                </nav>
+            </div>
+            <div class="pied-site-col">
+                <p class="pied-site-titre">Écrire</p>
+                <a class="pied-site-mail" href="mailto:gandou.christian@gmail.com">gandou.christian@gmail.com</a>
+                <p class="pied-site-reseaux">
+                    <a href="https://www.instagram.com/kkozuu/" target="_blank" rel="noopener noreferrer">Instagram</a>
+                    <a href="https://www.behance.net/christiangandou" target="_blank" rel="noopener noreferrer">Behance</a>
+                    <a href="https://www.linkedin.com/in/ian-bossut-gandou-b87b21382/" target="_blank" rel="noopener noreferrer">LinkedIn</a>
+                </p>
+            </div>
+        </div>
+        <div class="pied-site-bas">
+            <p>© 2026 Ian Bossut‑Gandou · Tous droits réservés.</p>
+            <p>Site personnel, sans cookies ni formulaire.</p>
+        </div>
+    </footer>
+
     <!-- Passage vers le domaine numérique : la fente du rideau d'entrée de numerique.html -->
     <div class="sas-num" id="sasNum" aria-hidden="true">
         <span class="sas-num-trait"></span>
@@ -453,8 +485,14 @@
         if (location.hash !== '#choix-domaines') return;
 
         function auPied() {
-            var doc = document.documentElement;
-            window.scrollTo(0, Math.max(0, doc.scrollHeight - window.innerHeight));
+            /* le colophon est maintenant sous le choix : on vise le bas de la
+               section, pas le bas du document, pour que la note du choix reste
+               sous les yeux (app.js recale ensuite sur le haut du choix) */
+            var section = document.getElementById('choix-domaines');
+            var bas = section
+                ? section.getBoundingClientRect().bottom + window.pageYOffset
+                : document.documentElement.scrollHeight;
+            window.scrollTo(0, Math.max(0, bas - window.innerHeight));
         }
 
         auPied();

@@ -180,7 +180,7 @@ endroit où l'on remet volontairement du manuscrit : ne pas étendre l'exception
   étiquettes est conservé ; seules les rotations de repos ont disparu.
   Les trois ombres sont **à 70 % d'opacité** (`--ombre-etiquette: rgba(0, 0, 0, 0.7)`), Ian l'a
   demandé : à noir plein elles pesaient plus que la case.
-  Les feuilles sont appelées avec `styles.css?v=7` dans les six pages : **incrémenter ce numéro**
+  Les feuilles sont appelées avec `styles.css?v=8` dans les six pages : **incrémenter ce numéro**
   à chaque retouche de `styles.css`, sinon Ian voit l'ancienne version dans son navigateur.
   **Exceptions** : les boutons rectangulaires de Numérique (« ← Rayon », « son activé »…) et,
   sur `plastique.html`, les **boosters** (`.pm-pack`, `.pm-slab`, `.pm-foil`) et les **cartes
@@ -201,6 +201,33 @@ endroit où l'on remet volontairement du manuscrit : ne pas étendre l'exception
   - Photo Expressive : `exp-architecture`, `exp-urbain`, `exp-transports`, `exp-portraits`,
     `exp-portraits-rue`, `exp-montagne`, `exp-lumiere`, `exp-obscurite`.
   - Plastique : `bobby`, `gant`, `prothese`, `pates`, `materiaux`, `dessins`.
+
+### 3.6 Le pied de page
+
+Un seul composant dans `styles.css`, `.pied-site` : la signature (`.pied-site-nom`), la phrase
+de rôle, la colonne des domaines (`.pied-site-nav`), la colonne d'écriture (mail + Instagram,
+Behance, LinkedIn) et la ligne du bas (copyright + « sans cookies ni formulaire »). Le bloc
+HTML est **copié tel quel** dans chaque page (pas de gabarit) ; seules les classes de ton
+changent :
+
+| Page | Classes | Pourquoi |
+|---|---|---|
+| `index.html` | `pied-site` | fond vert pâle de la fin de page, texte noir |
+| `contact.html` | `pied-site pied-site--bleu` | fond bleu `#1232B4`, texte blanc |
+| `numerique.html` | `pied-site pied-site--sombre` (garde `num-foot`, le sas s'en sert) | page noire |
+| `photographie.html` | `pied-site pied-site--sombre` (garde `pied-fusion`) | `--pied-fond: #0d0d0f` ; le ton repasse en clair quand `body.etape-domaine` est posé (la page papier) |
+| page projet de Numérique, fiche de Plastique, `404.html` | `pied-site--compact` | une ligne : nom + liens + copyright |
+
+Règles :
+- Les couleurs passent par `--pied-texte`, `--pied-doux`, `--pied-trait`, `--pied-accent` et
+  `--pied-fond` : un nouveau fond = un modificateur, jamais une couleur en dur dans la page.
+- `plastique.html` ne défile pas (`body.pm-page` en `100vh`, `overflow: hidden`) : son pied de
+  page n'existe que dans la fiche projet, aligné sur `.pm-pl` (1180 px). La page projet de
+  Numérique l'aligne sur `.projet-corps` (1500 px).
+- Le `404` a son colophon compact **après** `</main>` : `.erreur` garde son écran plein.
+- Sur l'accueil, le retour `#choix-domaines` recale désormais sur le **bas de la section**, pas
+  sur le bas du document : le colophon est dessous. `app.js` (`poserSurLeChoix`) reprend la main
+  ensuite.
 
 ---
 
@@ -1014,6 +1041,7 @@ Autres points de vigilance de l'accueil :
 8. Design : grands titres `--font-display`, blocs brutalistes (contour noir, ombre décalée),
    un accent de couleur, étoiles si le domaine s'y prête.
 9. Tester au clavier (`Échap` ferme les couches), vérifier le sas d'arrivée et le retour accueil.
+10. Copier le bloc `.pied-site` (voir §3.6) avant les scripts, avec le ton de la page.
 
 ---
 

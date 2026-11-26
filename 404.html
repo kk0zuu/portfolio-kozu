@@ -10,7 +10,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Space+Grotesk:wght@400;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles.css?v=7">
+    <link rel="stylesheet" href="styles.css?v=8">
     <style>
     /* ==================================================== */
     /* PAGE 404 : la charte du choix des domaines            */
@@ -193,12 +193,8 @@
         background: #111111;
     }
 
-    .erreur-pied {
-        font-family: var(--font-body);
-        font-size: 0.75rem;
-        color: rgba(11, 11, 12, 0.55);
-        margin: 0;
-    }
+    /* la signature de bas de page est maintenant le colophon commun
+       (.pied-site dans styles.css), elle n'a plus de style propre ici */
 
     @media (max-width: 900px) {
         .erreur-fleche {
@@ -286,8 +282,24 @@
             <a class="erreur-btn" href="index.html">Retour à l'accueil</a>
         </div>
 
-        <p class="erreur-pied">© 2026 Ian Bossut‑Gandou</p>
     </main>
+
+    <!-- Pied de page : signature, domaines, contact -->
+    <footer class="pied-site pied-site--compact" role="contentinfo">
+        <div class="pied-site-in">
+            <a class="pied-site-nom" href="index.html">Ian Bossut‑Gandou</a>
+            <nav class="pied-site-nav" aria-label="Les domaines">
+                <a href="numerique.html">Numérique</a>
+                <a href="photographie.html">Photographie</a>
+                <a href="plastique.html">Projets plastiques</a>
+                <a href="contact.html">Contact</a>
+            </nav>
+        </div>
+        <div class="pied-site-bas">
+            <p>© 2026 Ian Bossut‑Gandou · Tous droits réservés.</p>
+            <p>Site personnel, sans cookies ni formulaire.</p>
+        </div>
+    </footer>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
