@@ -5460,6 +5460,23 @@ body > footer {
     backdrop-filter: blur(5px);
     -webkit-backdrop-filter: blur(5px);
 }
+/* ouverture de fenêtre : le panneau se déploie depuis son centre, le voile
+   s'assombrit en même temps ; l'animation repart à chaque réouverture
+   puisque [open] disparaît à la fermeture */
+.mentions[open] .mentions-boite {
+    animation: mentionsOuverture 0.34s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+.mentions[open]::backdrop {
+    animation: mentionsVoile 0.24s ease both;
+}
+@keyframes mentionsOuverture {
+    from { opacity: 0; transform: translateY(14px) scale(0.94); }
+    to { opacity: 1; transform: none; }
+}
+@keyframes mentionsVoile {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
 .mentions-boite {
     max-height: 86vh;
     overflow-y: auto;
@@ -5589,6 +5606,8 @@ body > footer {
     .pied-site button,
     .pied-site-fleche,
     .mentions-fermer { transition: none; }
+    .mentions[open] .mentions-boite,
+    .mentions[open]::backdrop { animation: none; }
 }
 
 /* ==================================================== */
