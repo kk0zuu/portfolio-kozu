@@ -5952,3 +5952,19 @@ body.contact-page .flow-pre-badge {
 .bubble-card:hover .bubble-image-wrapper {
     border-radius: 12px;
 }
+
+/* ==================================================== */
+/* CURSEUR NATIF : NE JAMAIS DOUBLER LA SPIRALE         */
+/* Le site masque le curseur système avec `* { cursor:  */
+/* none }`, mais les règles de survol de la visionneuse,*/
+/* des boutons du CV, des moitiés photo et du pied de   */
+/* page le réactivaient en `pointer`. Sur les largeurs  */
+/* où le curseur maison est affiché (≥ 901 px), on le   */
+/* remasque ; en dessous, le curseur maison disparaît   */
+/* et le natif doit rester.                             */
+/* ==================================================== */
+@media (min-width: 901px) {
+    :is([href], button, .bubble-img-card) {
+        cursor: none;
+    }
+}
