@@ -235,7 +235,10 @@ monochrome : blanc et magenta, lisible mais sans volume.
 **Chaque mot échange sa palette au survol**, en fondu. Un mot n'a pas de palette animable
 (`font-palette` ne s'interpole pas), donc chaque mot du titre est un `span.mot` qui porte **deux
 couches** : le texte de base, puis `.mot-cache` en `position:absolute` juste au-dessus, au pixel,
-avec la palette de l'autre ligne. Seule `opacity` bouge (`transition .26s`), sur `.mot:hover`.
+avec la palette de l'autre ligne. Seule `opacity` bouge (`transition .26s`), sur `.mot:hover`. Le mot survolé se **surélève** en
+plus, d'un rien : `transform: translateY(-.08em)` sur `h1 .mot:hover` (en `em`, donc il suit la
+taille du titre), avec sa propre transition de 0,3 s ; la couche cachée étant dans le mot, les
+deux montent ensemble. Coupé en `prefers-reduced-motion`.
 Les couches sont identiques en texte, police et position, donc le fondu ne fait pas de double
 contour (vérifié). `.mot-cache` est `aria-hidden` : un lecteur d'écran ne lit le titre qu'une
 fois. Le survol ne porte que sur la boîte du mot, jamais sur la largeur du `h1` ni sur toute la

@@ -58,11 +58,18 @@ h1 em{font-style:normal;color:var(--neon);font-palette:--num-neon}
    etant celle de l'autre ligne. `font-palette` n'est pas animable, donc le fondu
    se fait en opacite sur la couche du dessus, alignee au pixel sur celle du
    dessous (meme texte, meme position). `color` suit pour le repli sans COLRv1. */
-h1 .mot{position:relative;display:inline-block}
+h1 .mot{position:relative;display:inline-block;
+  /* le mot survolé se surélève d'un rien, en même temps que sa palette change */
+  transition:transform .3s cubic-bezier(.2,.8,.2,1)}
+h1 .mot:hover{transform:translateY(-.08em)}
 h1 .mot-cache{position:absolute;left:0;top:0;white-space:nowrap;opacity:0;pointer-events:none;
   font-palette:--num-neon;color:var(--neon);transition:opacity .26s ease}
 h1 .mot:hover .mot-cache{opacity:1}
 h1 em .mot-cache{font-palette:--num-titre;color:var(--blanc)}
+@media (prefers-reduced-motion: reduce){
+  h1 .mot{transition:none}
+  h1 .mot:hover{transform:none}
+}
 #liste{margin-top:clamp(1.6rem,3.4vw,2.6rem)}
 .cat-row{
   width:100%;display:grid;grid-template-columns:56px 1fr auto;align-items:center;gap:1.1rem;
