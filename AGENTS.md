@@ -284,8 +284,10 @@ Champs d'un projet :
 page projet, et aperçu de la catégorie si c'est la première image trouvée. C'est donc l'image
 la plus représentative qui doit être en position 0.
 
-Le compteur du haut (« Trois catégories · neuf projets ») et le nombre par catégorie sont
-**écrits à la main** pour le premier, **calculés** pour les autres (`cat.projets.length`).
+Le compteur « Trois catégories · dix projets » qui surplombait le titre a été **retiré** le
+26/11 (Ian le trouvait de trop au-dessus de Nabla). Seul le nombre par catégorie subsiste, et
+il est **calculé** (`cat.projets.length`) : il n'y a donc plus rien à tenir à la main quand un
+projet s'ajoute.
 
 ### 4.2 Les cinq mises en page
 
@@ -319,9 +321,7 @@ Les CSS de ces mises en page sont dans le `<style>` de `numerique.html` (cherche
 }
 ```
 
-3. Mettre à jour la phrase du haut si le total change :
-   `<p class="kicker">Trois catégories · neuf projets</p>` → nouveau total.
-4. Vérifier : survol de la catégorie (aperçu), clic → rayon, vignette, clic → projet,
+3. Vérifier : survol de la catégorie (aperçu), clic → rayon, vignette, clic → projet,
    bouton « ← Rayon », `Échap`.
 
 ### 4.4 Recette — projet « à venir » (emplacement réservé)
@@ -361,8 +361,7 @@ Un nouveau type de jeu exige du code dans `jeux.js`, pas seulement une entrée d
 
 Puis :
 1. `num` doit suivre la numérotation (`'04'`), il est affiché tel quel.
-2. Mettre à jour la phrase du haut (« Quatre catégories · … projets »).
-3. Vérifier l'aperçu de droite : s'il n'y a **aucune image** dans la catégorie, la page affiche
+2. Vérifier l'aperçu de droite : s'il n'y a **aucune image** dans la catégorie, la page affiche
    « visuels à venir » (état prévu, pas un bug).
 
 ### 4.8 Pièges spécifiques
