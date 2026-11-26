@@ -359,9 +359,11 @@ body.hovering .cursor-spiral {
     transform-origin: center center;
 }
 
-/* « et voici mon » : minuscules, dans la police de texte (plus de manuscrit) */
+/* « et voici mon » : minuscules. Seul texte du site en Schoolbell (la police
+   manuscrite d'origine), chargée par index.html seulement ; la variable, elle,
+   reste en Space Grotesk pour tout le reste des annotations. */
 .hero-manuscript-text {
-    font-family: var(--font-schoolbell);
+    font-family: 'Schoolbell', var(--font-schoolbell);
     font-size: clamp(1.8rem, 3.2vw, 3rem);
     text-transform: lowercase; /* STRICTEMENT EN MINUSCULE */
     letter-spacing: 1px;

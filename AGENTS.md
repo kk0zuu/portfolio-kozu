@@ -135,15 +135,22 @@ balises `<link rel="icon">` (aujourd'hui `?v=3`), sinon les navigateurs resserve
 Variables CSS globales : `--color-neon-pink`, `--color-neon-green`, `--font-display`,
 `--font-body`, `--font-schoolbell`, `--color-black`, `--color-bg-end`.
 
-**Il n'y a plus de police manuscrite sur le site** (23/11). `--font-schoolbell` pointait sur
-Schoolbell, utilisée pour les annotations (notes des fiches plastique, légendes de vues,
-« et voici mon » de l'accueil, note du CV, mentions de la 404). Elle contient maintenant
-`'Space Grotesk', 'Helvetica Neue', Arial, sans-serif`, et Schoolbell a été retirée des
-`<link>` Google Fonts des six pages. La variable **garde son nom** : il est encore lisible dans
-une dizaine de règles, et la renommer obligerait à toutes les toucher sans gain. Conséquence
-pratique : les annotations prennent la police de texte, donc elles sont plus larges à taille
-égale — c'est pour ça que `Space Grotesk:wght@400` a été ajouté au chargement de l'accueil, de
-Contact et de Photographie, qui ne chargeaient que 700.
+**Il n'y a plus de police manuscrite sur le site** (23/11), **sauf « et voici mon »** (26/11).
+`--font-schoolbell` pointait sur Schoolbell, utilisée pour les annotations (notes des fiches
+plastique, légendes de vues, « et voici mon » de l'accueil, note du CV, mentions de la 404).
+Elle contient maintenant `'Space Grotesk', 'Helvetica Neue', Arial, sans-serif`, et Schoolbell a
+été retirée des `<link>` Google Fonts des six pages. La variable **garde son nom** : il est
+encore lisible dans une dizaine de règles, et la renommer obligerait à toutes les toucher sans
+gain. Conséquence pratique : les annotations prennent la police de texte, donc elles sont plus
+larges à taille égale — c'est pour ça que `Space Grotesk:wght@400` a été ajouté au chargement de
+l'accueil, de Contact et de Photographie, qui ne chargeaient que 700.
+
+**L'exception** : Ian a demandé (26/11) que la ligne d'intro de l'accueil retrouve sa police
+manuscrite. `.hero-manuscript-text` porte donc `font-family: 'Schoolbell', var(--font-schoolbell)`
+en dur — une règle directe, pas la variable, qui reste en Space Grotesk pour toutes les autres
+annotations (le « ? » de `.case-signe`, les notes de fiche, le CV, la 404). Schoolbell n'est
+rechargée que par `index.html` (poids 400 unique), pas par les six pages. C'est aussi le seul
+endroit où l'on remet volontairement du manuscrit : ne pas étendre l'exception.
 
 ### 3.4 CSS : où écrire
 
@@ -173,7 +180,7 @@ Contact et de Photographie, qui ne chargeaient que 700.
   étiquettes est conservé ; seules les rotations de repos ont disparu.
   Les trois ombres sont **à 70 % d'opacité** (`--ombre-etiquette: rgba(0, 0, 0, 0.7)`), Ian l'a
   demandé : à noir plein elles pesaient plus que la case.
-  Les feuilles sont appelées avec `styles.css?v=6` dans les six pages : **incrémenter ce numéro**
+  Les feuilles sont appelées avec `styles.css?v=7` dans les six pages : **incrémenter ce numéro**
   à chaque retouche de `styles.css`, sinon Ian voit l'ancienne version dans son navigateur.
   **Exceptions** : les boutons rectangulaires de Numérique (« ← Rayon », « son activé »…) et,
   sur `plastique.html`, les **boosters** (`.pm-pack`, `.pm-slab`, `.pm-foil`) et les **cartes
