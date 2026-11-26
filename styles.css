@@ -366,7 +366,10 @@ body.hovering .cursor-spiral {
     font-family: 'Schoolbell', var(--font-schoolbell);
     font-size: clamp(1.8rem, 3.2vw, 3rem);
     text-transform: lowercase; /* STRICTEMENT EN MINUSCULE */
-    letter-spacing: 1px;
+    /* les lettres se resserrent d'un rien, les mots respirent un peu plus
+       (en em, pour suivre la taille du titre et de la phrase de retour) */
+    letter-spacing: 0.4px;
+    word-spacing: 0.07em;
     color: var(--color-black);
     display: inline-block;
     user-select: none;
