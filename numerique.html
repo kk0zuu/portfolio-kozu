@@ -8,7 +8,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Nabla:EDPT@0..200&EHLT@0..2&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet" />
-<link rel="stylesheet" href="styles.css?v=10" />
+<link rel="stylesheet" href="styles.css?v=11" />
 <link rel="stylesheet" href="jeux.css" />
 <style>
 :root{
@@ -904,7 +904,8 @@ body.sas-actif .wrap,body.sas-actif .portes-zone,body.sas-actif .num-foot{opacit
         <div class="pied-site-in">
             <div class="pied-site-signature">
                 <a class="pied-site-nom" href="index.html">Ian Bossut‑Gandou</a>
-                <p class="pied-site-role">Animation, image &amp; volumes. Portfolio 2026.</p>
+                <p class="pied-site-role">Animation, image &amp; volumes.</p>
+                <p class="pied-site-dispo">Paris, France · Disponible pour une alternance.</p>
             </div>
             <div class="pied-site-col">
                 <p class="pied-site-titre">Domaines</p>
@@ -912,24 +913,57 @@ body.sas-actif .wrap,body.sas-actif .portes-zone,body.sas-actif .num-foot{opacit
                     <a href="numerique.html">Numérique</a>
                     <a href="photographie.html">Photographie</a>
                     <a href="plastique.html">Projets plastiques</a>
-                    <a href="contact.html">Contact</a>
                 </nav>
             </div>
             <div class="pied-site-col">
                 <p class="pied-site-titre">Écrire</p>
-                <a class="pied-site-mail" href="mailto:gandou.christian@gmail.com">gandou.christian@gmail.com</a>
+                <div class="pied-site-mail-ligne">
+                    <a class="pied-site-mail" href="mailto:gandou.christian@gmail.com">gandou.christian@gmail.com</a>
+                    <button class="pied-site-copier" type="button" data-copier="gandou.christian@gmail.com" aria-label="Copier l’adresse e-mail">Copier</button>
+                </div>
                 <p class="pied-site-reseaux">
-                    <a href="https://www.instagram.com/kkozuu/" target="_blank" rel="noopener noreferrer">Instagram</a>
-                    <a href="https://www.behance.net/christiangandou" target="_blank" rel="noopener noreferrer">Behance</a>
-                    <a href="https://www.linkedin.com/in/ian-bossut-gandou-b87b21382/" target="_blank" rel="noopener noreferrer">LinkedIn</a>
+                    <a href="https://www.instagram.com/kkozuu/" target="_blank" rel="noopener noreferrer">Instagram <span class="pied-site-fleche" aria-hidden="true">↗</span></a>
+                    <a href="https://www.behance.net/christiangandou" target="_blank" rel="noopener noreferrer">Behance <span class="pied-site-fleche" aria-hidden="true">↗</span></a>
+                    <a href="https://www.linkedin.com/in/ian-bossut-gandou-b87b21382/" target="_blank" rel="noopener noreferrer">LinkedIn <span class="pied-site-fleche" aria-hidden="true">↗</span></a>
                 </p>
             </div>
         </div>
         <div class="pied-site-bas">
             <p>© 2026 Ian Bossut‑Gandou · Tous droits réservés.</p>
-            <p>Site personnel, sans cookies ni formulaire.</p>
+            <div class="pied-site-liens">
+                <button class="pied-site-legal" type="button" data-ouvrir-mentions="mentionsLegales">Mentions légales</button>
+                <button class="pied-site-haut" type="button" data-haut-page>Haut de page ↑</button>
+            </div>
         </div>
     </footer>
+
+    <dialog class="mentions" id="mentionsLegales" aria-labelledby="mentionsTitre">
+        <div class="mentions-boite">
+            <p class="mentions-kicker">Le site</p>
+            <h2 class="mentions-titre" id="mentionsTitre">Mentions légales</h2>
+            <div class="mentions-corps">
+                <section>
+                    <h3>Éditeur du site</h3>
+                    <p>Ian Bossut‑Gandou<br>Contact : <a href="mailto:gandou.christian@gmail.com">gandou.christian@gmail.com</a></p>
+                </section>
+                <section>
+                    <h3>Hébergement</h3>
+                    <p>Vercel Inc., 440 N Barranca Ave #4133, Covina, CA 91723, États-Unis (<a href="https://vercel.com" target="_blank" rel="noopener noreferrer">vercel.com <span aria-hidden="true">↗</span></a>)</p>
+                </section>
+                <section>
+                    <h3>Propriété intellectuelle</h3>
+                    <p>L’ensemble des créations graphiques, animations, photographies, volumes et textes présentés sur ce portfolio sont la propriété exclusive d’Ian Bossut‑Gandou. Toute reproduction ou utilisation sans autorisation préalable est interdite.</p>
+                </section>
+                <section>
+                    <h3>Données personnelles</h3>
+                    <p>Ce site est un portfolio personnel vitrine et ne dépose aucun cookie publicitaire ni traceur.</p>
+                </section>
+            </div>
+            <div class="mentions-pied">
+                <button class="mentions-fermer" type="button" data-fermer-mentions>Fermer</button>
+            </div>
+        </div>
+    </dialog>
 
     <section class="rayon" id="rayon" aria-hidden="true">
       <header class="rayon-head">
@@ -954,12 +988,14 @@ body.sas-actif .wrap,body.sas-actif .portes-zone,body.sas-actif .num-foot{opacit
             <a href="numerique.html">Numérique</a>
             <a href="photographie.html">Photographie</a>
             <a href="plastique.html">Projets plastiques</a>
-            <a href="contact.html">Contact</a>
           </nav>
         </div>
         <div class="pied-site-bas">
           <p>© 2026 Ian Bossut‑Gandou · Tous droits réservés.</p>
-          <p>Site personnel, sans cookies ni formulaire.</p>
+          <div class="pied-site-liens">
+            <button class="pied-site-legal" type="button" data-ouvrir-mentions="mentionsLegales">Mentions légales</button>
+            <button class="pied-site-haut" type="button" data-haut-page>Haut de page ↑</button>
+          </div>
         </div>
       </footer>
       <button class="descendre cache" type="button" id="descendre" aria-label="Faire défiler vers le bas">

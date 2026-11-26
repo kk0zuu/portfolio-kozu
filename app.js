@@ -4320,3 +4320,95 @@ if (!document.body.classList.contains('photo-fusion')) construireTambour();
     window.addEventListener('load', function () { mesurer(); if (!rattraper()) dessiner(); });
     window.addEventListener('resize', function () { mesurer(); dessiner(); });
 })();
+
+// --- PIED DE PAGE : copie de l'adresse, mentions légales, retour en haut ---
+// Le même bloc est copié dans chaque page ; ce module ne fait rien sur une page
+// qui n'a pas de pied de page. Le bouton « haut de page » remonte le premier
+// conteneur qui défile (la page, l'écran projet de Numérique, la fiche Plastique).
+(function initPiedSite() {
+    var copieurs = [].slice.call(document.querySelectorAll('.pied-site-copier'));
+    var boites = [].slice.call(document.querySelectorAll('dialog.mentions'));
+    var ouvrants = [].slice.call(document.querySelectorAll('[data-ouvrir-mentions]'));
+    var hauts = [].slice.call(document.querySelectorAll('[data-haut-page]'));
+    if (!copieurs.length && !boites.length && !hauts.length) return;
+
+    function copierAncien(texte) {
+        return new Promise(function (resolve, reject) {
+            var zone = document.createElement('textarea');
+            zone.value = texte;
+            zone.setAttribute('readonly', '');
+            zone.style.position = 'fixed';
+            zone.style.top = '-1000px';
+            zone.style.opacity = '0';
+            document.body.appendChild(zone);
+            zone.select();
+            var ok = false;
+            try { ok = document.execCommand('copy'); } catch (err) {}
+            document.body.removeChild(zone);
+            if (ok) resolve(); else reject();
+        });
+    }
+
+    function copier(texte) {
+        /* le presse-papiers moderne peut être refusé (permission, contexte non
+           sécurisé) : on retombe alors sur la sélection + execCommand */
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+            return navigator.clipboard.writeText(texte).catch(function () {
+                return copierAncien(texte);
+            });
+        }
+        return copierAncien(texte);
+    }
+
+    copieurs.forEach(function (btn) {
+        var initial = btn.textContent;
+        btn.addEventListener('click', function () {
+            copier(btn.getAttribute('data-copier') || '').then(function () {
+                btn.textContent = 'Copié ✓';
+                btn.classList.add('copie');
+                clearTimeout(btn._retour);
+                btn._retour = setTimeout(function () {
+                    btn.textContent = initial;
+                    btn.classList.remove('copie');
+                }, 1800);
+            }).catch(function () {});
+        });
+    });
+
+    ouvrants.forEach(function (btn) {
+        btn.addEventListener('click', function () {
+            var cible = btn.getAttribute('data-ouvrir-mentions');
+            var boite = (cible && document.getElementById(cible)) || boites[0];
+            if (!boite) return;
+            if (typeof boite.showModal === 'function') boite.showModal();
+            else boite.setAttribute('open', '');
+        });
+    });
+
+    boites.forEach(function (boite) {
+        /* le clic sur le fond de la boîte (::backdrop) a la boîte pour cible ;
+           les clics dans le contenu, eux, partent des enfants */
+        boite.addEventListener('click', function (e) {
+            if (e.target === boite) boite.close();
+        });
+        var fermer = boite.querySelector('[data-fermer-mentions]');
+        if (fermer) fermer.addEventListener('click', function () { boite.close(); });
+    });
+
+    hauts.forEach(function (btn) {
+        btn.addEventListener('click', function () {
+            var calme = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+            var comportement = calme ? 'auto' : 'smooth';
+            var zone = btn.parentElement;
+            while (zone && zone !== document.body) {
+                var st = getComputedStyle(zone);
+                if (/(auto|scroll)/.test(st.overflowY) && zone.scrollHeight > zone.clientHeight + 4) {
+                    zone.scrollTo({ top: 0, behavior: comportement });
+                    return;
+                }
+                zone = zone.parentElement;
+            }
+            window.scrollTo({ top: 0, behavior: comportement });
+        });
+    });
+})();

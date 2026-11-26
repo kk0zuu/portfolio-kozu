@@ -5349,9 +5349,192 @@ body > footer {
 }
 .pied-site-bas p { margin: 0; }
 
-.pied-site a:focus-visible {
+/* ligne de statut sous la signature : un point d'accent, puis le lieu */
+.pied-site-dispo {
+    margin: 0.35rem 0 0;
+    font-size: 0.72rem;
+    line-height: 1.4;
+    letter-spacing: 0.01em;
+    color: var(--pied-doux);
+}
+.pied-site-dispo::before {
+    content: "";
+    display: inline-block;
+    width: 5px;
+    height: 5px;
+    margin-right: 0.42rem;
+    border-radius: 50%;
+    background: var(--pied-accent);
+    vertical-align: 0.12em;
+}
+
+/* l'adresse et son bouton de copie tiennent sur la même ligne */
+.pied-site-mail-ligne {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem 0.65rem;
+}
+.pied-site-copier {
+    font: inherit;
+    font-size: 0.56rem;
+    line-height: 1;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--pied-doux);
+    background: none;
+    border: 1px solid var(--pied-trait);
+    border-radius: var(--forme-tag, 8px);
+    padding: 0.28rem 0.42rem 0.24rem;
+    cursor: pointer;
+    transition: color 0.2s ease, border-color 0.2s ease;
+}
+.pied-site-copier:hover,
+.pied-site-copier.copie {
+    color: var(--pied-accent);
+    border-color: currentColor;
+}
+
+/* la flèche des liens sortants */
+.pied-site-fleche {
+    display: inline-block;
+    margin-left: 0.14em;
+    font-size: 0.92em;
+    opacity: 0.72;
+    transition: transform 0.2s ease, opacity 0.2s ease;
+}
+.pied-site-reseaux a:hover .pied-site-fleche {
+    transform: translate(0.1em, -0.1em);
+    opacity: 1;
+}
+
+/* la barre du bas : copyright à gauche, mentions et retour en haut à droite */
+.pied-site-liens {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.4rem 1.2rem;
+}
+.pied-site-legal,
+.pied-site-haut {
+    font: inherit;
+    letter-spacing: inherit;
+    text-transform: inherit;
+    color: inherit;
+    background: none;
+    border: 0;
+    padding: 0;
+    cursor: pointer;
+    transition: color 0.2s ease;
+}
+.pied-site-legal:hover,
+.pied-site-haut:hover {
+    color: var(--pied-accent);
+}
+
+.pied-site a:focus-visible,
+.pied-site button:focus-visible {
     outline: 2px solid var(--pied-accent);
     outline-offset: 3px;
+}
+
+/* MODALE MENTIONS LEGALES : <dialog> natif, fermé au clic extérieur ou sur
+   « Fermer ». Le fond est le noir des panneaux du site, la seule couleur
+   est l'accent du pied de page. */
+.mentions {
+    position: fixed;
+    inset: 0;
+    width: min(92vw, 620px);
+    height: fit-content;
+    max-width: none;
+    max-height: none;
+    margin: auto;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    color: #F2F2F3;
+    overflow: visible;
+}
+.mentions::backdrop {
+    background: rgba(7, 7, 8, 0.62);
+    backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px);
+}
+.mentions-boite {
+    max-height: 86vh;
+    overflow-y: auto;
+    padding: clamp(1.4rem, 3vw, 2.2rem);
+    background: #0B0B0C;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: var(--forme-bloc, 20px);
+    box-shadow: 0 30px 80px rgba(0, 0, 0, 0.55);
+    font-family: var(--font-body);
+    text-align: left;
+}
+.mentions-kicker {
+    margin: 0 0 0.55rem;
+    font-size: 0.6rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--color-neon-pink);
+}
+.mentions-titre {
+    margin: 0;
+    font-family: var(--font-display);
+    font-size: clamp(1.4rem, 3vw, 2rem);
+    line-height: 1;
+    letter-spacing: -0.01em;
+    text-transform: uppercase;
+}
+.mentions-corps {
+    display: grid;
+    gap: 1.15rem;
+    margin-top: 1.5rem;
+}
+.mentions-corps h3 {
+    margin: 0 0 0.35rem;
+    font-family: var(--font-display);
+    font-size: 0.68rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--color-neon-pink);
+}
+.mentions-corps p {
+    margin: 0;
+    font-size: 0.86rem;
+    line-height: 1.65;
+    color: rgba(242, 242, 243, 0.76);
+}
+.mentions-corps a {
+    color: #FFFFFF;
+    text-decoration: none;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.4);
+}
+.mentions-corps a:hover {
+    color: var(--color-neon-pink);
+    border-color: currentColor;
+}
+.mentions-pied {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 1.6rem;
+}
+.mentions-fermer {
+    font: inherit;
+    font-size: 0.66rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: #0B0B0C;
+    background: #F2F2F3;
+    border: 0;
+    border-radius: var(--forme-bouton, 12px);
+    padding: 0.6rem 1rem;
+    cursor: pointer;
+    transition: background 0.2s ease, color 0.2s ease;
+}
+.mentions-fermer:hover {
+    background: var(--color-neon-pink);
+    color: #0B0B0C;
 }
 
 /* la variante d'une ligne : le panneau garde son pied de page sans
@@ -5395,9 +5578,17 @@ body > footer {
     .pied-site--compact .pied-site-nav {
         justify-content: flex-start;
     }
+    .pied-site-bas {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.5rem;
+    }
 }
 @media (prefers-reduced-motion: reduce) {
-    .pied-site a { transition: none; }
+    .pied-site a,
+    .pied-site button,
+    .pied-site-fleche,
+    .mentions-fermer { transition: none; }
 }
 
 /* ==================================================== */
